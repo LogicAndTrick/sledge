@@ -18,7 +18,7 @@ namespace Sledge.BspEditor.Tools
             if (!document.Map.Data.Any(x => x is ActiveTexture))
             {
                 var tc = await document.Environment.GetTextureCollection();
-                var first = tc.GetAllTextures()
+                var first = tc.GetBrowsableTextures()
                     .OrderBy(t => t, StringComparer.CurrentCultureIgnoreCase)
                     .Where(item => item.Length > 0)
                     .Select(item => new { item, c = Char.ToLower(item[0]) })

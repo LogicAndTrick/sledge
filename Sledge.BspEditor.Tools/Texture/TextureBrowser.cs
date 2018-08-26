@@ -92,7 +92,7 @@ namespace Sledge.BspEditor.Tools.Texture
             _textureList.Collection = await _document.Environment.GetTextureCollection();
 
             _textures.Clear();
-            _textures.AddRange(_textureList.Collection.GetAllTextures());
+            _textures.AddRange(_textureList.Collection.GetBrowsableTextures());
 
             _textureList.SetTextureList(_textures);
             _textureList.SortTextureList(x => x, GetMemory("SortDescending", false));
@@ -220,7 +220,7 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             var selected = PackageTree.SelectedNode;
             var selectedKey = selected == null ? GetMemory<string>("SelectedPackage") : selected.Name;
-            var packages = _textureList.Collection.Packages;
+            var packages = _textureList.Collection.Packages.Where(p => _textures.Any(p.HasTexture));
             PackageTree.Nodes.Clear();
             var parent = PackageTree.Nodes.Add("", "All Packages");
             TreeNode reselect = null;

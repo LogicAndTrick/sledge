@@ -14,7 +14,7 @@ namespace Sledge.Providers.Texture.Spr
         private readonly IFile _file;
         protected override IEqualityComparer<string> GetComparer => StringComparer.InvariantCultureIgnoreCase;
 
-        public SprTexturePackage(TexturePackageReference reference) : base(reference.File.FullPathName)
+        public SprTexturePackage(TexturePackageReference reference) : base("sprites", "Spr")
         {
             _file = reference.File;
 

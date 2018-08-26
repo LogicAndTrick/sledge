@@ -13,6 +13,23 @@ namespace Sledge.BspEditor.Environment.Goldsource
         {
         }
 
+        public override IEnumerable<string> GetBrowsableTextures()
+        {
+            var hs = new HashSet<string>();
+            foreach (var pack in Packages.Where(x => x.Type == "Wad3")) hs.UnionWith(pack.Textures);
+            return hs;
+        }
+
+        public override IEnumerable<string> GetDecalTextures()
+        {
+            return Packages.Where(x => string.Equals(x.Location, "decals.wad", StringComparison.CurrentCultureIgnoreCase)).SelectMany(x => x.Textures);
+        }
+
+        public override IEnumerable<string> GetSpriteTextures()
+        {
+            return Packages.Where(x => string.Equals(x.Location, "sprites", StringComparison.InvariantCultureIgnoreCase)).SelectMany(x => x.Textures);
+        }
+
         public override bool IsNullTexture(string name)
         {
             switch (name?.ToLower())

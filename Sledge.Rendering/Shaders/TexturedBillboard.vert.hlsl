@@ -36,6 +36,8 @@ GeometryIn main(VertexIn input)
     float4 position = float4(input.Position, 1);
     float4 normal = float4(input.Normal, 1);
 
+    position = mul(position, lerp(Identity, transpose(Selective), (input.Flags.x & Flags_SelectiveTransformed) / Flags_SelectiveTransformed));
+
     output.gPosition = position;
     output.gNormal = normal;
     output.gColour = input.Colour;

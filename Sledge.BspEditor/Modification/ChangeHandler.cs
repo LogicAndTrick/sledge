@@ -14,7 +14,7 @@ namespace Sledge.BspEditor.Modification
 
         public Task OnInitialise()
         {
-            Oy.Subscribe<Change>("MapDocument:Changed", Changed);
+            Oy.Subscribe<Change>("MapDocument:Changed:Early", Changed);
             Oy.Subscribe<MapDocument>("Document:Opened", Opened);
             return Task.CompletedTask;
         }

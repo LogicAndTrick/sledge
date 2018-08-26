@@ -29,7 +29,7 @@ namespace Sledge.BspEditor.Tools.Texture
             _textBox.TextChanged += (sender, e) => OnValueChanged();
             Controls.Add(_textBox);
 
-            _browseButton = new Button { Text = "Browse...", Margin = new Padding(1), Height = 24 };
+            _browseButton = new Button { Text = "Browse...", Margin = new Padding(1), UseVisualStyleBackColor = true };
             _browseButton.Click += OpenModelBrowser;
             Controls.Add(_browseButton);
 
@@ -55,9 +55,8 @@ namespace Sledge.BspEditor.Tools.Texture
             using (var tb = new TextureBrowser(doc))
             {
                 tb.Initialise(_translation.Value).Wait();
-                //tb.SetTextureList(GetTextureList(doc));
+                tb.SetTextureList(GetTextureList(doc));
                 tb.SetSelectedTextures(GetSelectedTextures());
-                tb.SetFilterText(GetFilterText(doc));
                 tb.ShowDialog();
                 if (tb.SelectedTexture != null)
                 {
@@ -71,38 +70,17 @@ namespace Sledge.BspEditor.Tools.Texture
             yield return _textBox.Text;
         }
 
-        private IEnumerable<string> GetTextureList()
+        private IEnumerable<string> GetTextureList(MapDocument doc)
         {
-            // todo texture list
-            throw new NotImplementedException();
-            //switch (Property.VariableType)
-            //{
-            //    case VariableType.Decal:
-            //        // TODO goldsource/source
-            //        if (Document.Game.Engine == Engine.Goldsource) return Document.TextureCollection.Packages.Where(x => x.PackageRelativePath.Contains("decal")).SelectMany(x => x.Items.Values);
-            //        else return Document.TextureCollection.GetAllBrowsableItems();
-            //    case VariableType.Sprite:
-            //        // TODO goldsource/source
-            //        if (Document.Game.Engine == Engine.Goldsource) return Document.TextureCollection.Packages.Where(x => !x.IsBrowsable).SelectMany(x => x.Items.Values);
-            //        else return Document.TextureCollection.GetAllItems();
-            //    default:
-            //        return Document.TextureCollection.GetAllBrowsableItems();
-            //}
-        }
-
-        private string GetFilterText(MapDocument doc)
-        {
+            var tc = doc.Environment.GetTextureCollection().Result;
             switch (Property.VariableType)
             {
-                case VariableType.Sprite:
-                    return "sprites/";
                 case VariableType.Decal:
-                    // TODO goldsource/source
-                    //if (Document.Game.Engine == Engine.Goldsource) return "{";
-                    //else return "decals/";
-                    return ""; // todo environment
+                    return tc.GetDecalTextures();
+                case VariableType.Sprite:
+                    return tc.GetSpriteTextures();
                 default:
-                    return null;
+                    return tc.GetAllTextures();
             }
         }
 

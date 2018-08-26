@@ -59,6 +59,7 @@ namespace Sledge.Providers.Texture.Wad
                 }*/
 
             // Can't be clever and detect the transparency type automatically - Goldsource is too unpredictable
+            // decal.wad is hard-coded in the engine, so this is relatively safe, except for custom engines
             var blueTransparency = packageName.IndexOf("decal", StringComparison.CurrentCultureIgnoreCase) < 0;
 
             if (blueTransparency)

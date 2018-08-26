@@ -13,7 +13,7 @@ namespace Sledge.Providers.Texture.Wad
 
         protected override IEqualityComparer<string> GetComparer => StringComparer.InvariantCultureIgnoreCase;
 
-        public WadTexturePackage(TexturePackageReference reference) : base(reference.File.Name)
+        public WadTexturePackage(TexturePackageReference reference) : base(reference.File.Name, "Wad3")
         {
             _file = reference.File;
             using (var stream = reference.File.Open())

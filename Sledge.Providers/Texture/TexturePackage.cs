@@ -8,14 +8,16 @@ namespace Sledge.Providers.Texture
     public abstract class TexturePackage : IDisposable
     {
         public string Location { get; }
+        public string Type { get; }
         public HashSet<string> Textures { get; }
         
         protected virtual IEqualityComparer<string> GetComparer => StringComparer.InvariantCultureIgnoreCase;
 
-        public TexturePackage(string location)
+        public TexturePackage(string location, string type)
         {
             Textures = new HashSet<string>(GetComparer);
             Location = location;
+            Type = type;
         }
 
         public bool HasTexture(string name)

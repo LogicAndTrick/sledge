@@ -40,19 +40,22 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         private Box MakeBoundingBox()
         {
-            var ed = EntityData;
-            if (!String.IsNullOrWhiteSpace(ed?.Name))
+            foreach (var p in Data.Get<IBoundingBoxProvider>())
             {
-                var root = this.GetRoot();
-                if (root != null)
+                var box = p.GetBoundingBox(this);
+                if (box != null) return box;
+            }
+
+            var root = this.GetRoot();
+            if (root != null)
+            {
+                foreach (var p in root.Data.Get<IBoundingBoxProvider>())
                 {
-                    foreach (var bb in root.Data.Get<IBoundingBoxProvider>())
-                    {
-                        var box = bb.GetBoundingBox(this);
-                        if (box != null) return box;
-                    }
+                    var box = p.GetBoundingBox(this);
+                    if (box != null) return box;
                 }
             }
+
             return new Box(Origin - Vector3.One * 16, Origin + Vector3.One * 16);
         }
 

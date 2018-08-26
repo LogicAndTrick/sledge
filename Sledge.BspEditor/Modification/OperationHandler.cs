@@ -39,7 +39,9 @@ namespace Sledge.BspEditor.Modification
 
         private async Task SendChange(Change change)
         {
+            await Oy.Publish("MapDocument:Changed:Early", change);
             await Oy.Publish("MapDocument:Changed", change);
+            await Oy.Publish("MapDocument:Changed:Late", change);
         }
     }
 }

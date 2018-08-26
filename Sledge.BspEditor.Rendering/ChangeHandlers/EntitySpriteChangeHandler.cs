@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.DataStructures.GameData;
@@ -20,15 +21,17 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             {
                 var sn = GetSpriteName(entity, gd);
                 if (sn == null) entity.Data.Remove(x => x is EntitySprite);
-                else entity.Data.Replace(CreateSpriteData(entity, gd, sn));
+                else entity.Data.Replace(await CreateSpriteData(entity, change.Document, gd, sn));
+                entity.Invalidate();
             }
         }
 
-        private static EntitySprite CreateSpriteData(Entity entity, GameData gd, string name)
+        private static async Task<EntitySprite> CreateSpriteData(Entity entity, MapDocument doc, GameData gd, string name)
         {
             var cls = gd?.GetClass(entity.EntityData.Name);
             var scale = 1f;
-            var color = Color.Black;
+            var color = Color.White;
+            var size = new SizeF(entity.BoundingBox.Width, entity.BoundingBox.Height);
 
             if (cls != null)
             {
@@ -42,12 +45,19 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
                 if (colProp != null)
                 {
                     var col = entity.EntityData.GetVector3(colProp.Name);
-                    if (colProp.VariableType == VariableType.Color1) col *= 255f;
+                    if (colProp.VariableType == VariableType.Color255) col /= 255f;
                     if (col.HasValue) color = col.Value.ToColor();
                 }
             }
 
-            return new EntitySprite(name, scale, color);
+            var tc = await doc.Environment.GetTextureCollection();
+            var texture = await tc.GetTextureItem(name);
+            if (texture != null)
+            {
+                size = texture.Size;
+            }
+
+            return new EntitySprite(name, scale, color, size);
         }
 
         private static string GetSpriteName(Entity entity, GameData gd)

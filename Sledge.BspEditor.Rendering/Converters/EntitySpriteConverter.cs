@@ -61,22 +61,17 @@ namespace Sledge.BspEditor.Rendering.Converters
             if (t != null)
             {
                 _engine.UploadTexture(texture, () => new EnvironmentTextureSource(document.Environment, t));
-
-                width = t.Width;
-                height = t.Height;
             }
 
-            width *= scale;
-            height *= scale;
-
             var tint = sd.Color.ToVector4();
-            tint = Vector4.One - tint;
-            tint.W = 1;
+
+            var flags = VertexFlags.None;
+            if (entity.IsSelected) flags |= VertexFlags.SelectiveTransformed;
 
             builder.Append(
-                new [] { new VertexStandard { Position = entity.Origin, Normal = new Vector3(width, height, 0), Colour = Vector4.One, Tint = tint } },
+                new [] { new VertexStandard { Position = entity.Origin, Normal = new Vector3(width, height, 0), Colour = Vector4.One, Tint = tint, Flags = flags } },
                 new [] { 0u },
-                new [] { new BufferGroup(PipelineType.TexturedBillboard, CameraType.Perspective, false, Vector3.Zero, texture, 0, 1) }
+                new [] { new BufferGroup(PipelineType.TexturedBillboard, CameraType.Perspective, true, entity.BoundingBox.Center, texture, 0, 1) }
             );
 
         }

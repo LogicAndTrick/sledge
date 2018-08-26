@@ -69,6 +69,10 @@ namespace Sledge.BspEditor.Environment
             return hs;
         }
 
+        public abstract IEnumerable<string> GetBrowsableTextures();
+        public abstract IEnumerable<string> GetDecalTextures();
+        public abstract IEnumerable<string> GetSpriteTextures();
+
         public async Task<TextureItem> GetTextureItem(string name)
         {
             name = name.ToLower();
