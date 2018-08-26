@@ -59,6 +59,11 @@ namespace Sledge.Rendering.Pipelines
             );
         }
 
+        public void SetupFrame(RenderContext context, IViewport target)
+        {
+            // 
+        }
+
         public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
         {
             cl.SetPipeline(_pipeline);

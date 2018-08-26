@@ -51,7 +51,7 @@ namespace Sledge.Rendering.Pipelines
             );
         }
 
-        public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
+        public void SetupFrame(RenderContext context, IViewport target)
         {
             context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
             {
@@ -60,7 +60,10 @@ namespace Sledge.Rendering.Pipelines
                 View = target.Camera.View,
                 Projection = target.Camera.Projection,
             });
+        }
 
+        public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
+        {
             cl.SetPipeline(_pipeline);
             cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 
@@ -72,14 +75,6 @@ namespace Sledge.Rendering.Pipelines
 
         public void RenderTransparent(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
         {
-            context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
-            {
-                Selective = context.SelectiveTransform,
-                Model = Matrix4x4.Identity,
-                View = target.Camera.View,
-                Projection = target.Camera.Projection,
-            });
-
             cl.SetPipeline(_pipeline);
             cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 

@@ -205,6 +205,11 @@ namespace Sledge.Rendering.Engine
 
             foreach (var pipeline in _pipelines.OrderBy(x => x.Order))
             {
+                pipeline.SetupFrame(Context, renderTarget);
+            }
+
+            foreach (var pipeline in _pipelines.OrderBy(x => x.Order))
+            {
                 if (!renderables.ContainsKey(pipeline)) continue;
                 pipeline.Render(Context, renderTarget, _commandList, renderables[pipeline]);
             }
