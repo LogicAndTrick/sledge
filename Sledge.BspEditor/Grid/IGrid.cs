@@ -13,6 +13,11 @@ namespace Sledge.BspEditor.Grid
         int Spacing { get; set; }
 
         /// <summary>
+        /// A description of the current grid's status
+        /// </summary>
+        string Description { get; }
+
+        /// <summary>
         /// Snaps the given vector to the closest grid point
         /// </summary>
         /// <param name="vector">The vector to snap</param>

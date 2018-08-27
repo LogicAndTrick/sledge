@@ -13,7 +13,7 @@ namespace Sledge.BspEditor.Editing.Commands
 {
     [AutoTranslate]
     [Export(typeof(ICommand))]
-    [MenuItem("Map", "", "Properties", "D")]
+    [MenuItem("Map", "", "Properties", "B")]
     [CommandID("BspEditor:Map:MapInformation")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_ShowInformation))]
     public class OpenMapInformation : BaseCommand

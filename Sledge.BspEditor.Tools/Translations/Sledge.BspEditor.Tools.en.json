@@ -102,6 +102,13 @@
             "CreateObject": "Create {0}"
         }
     },
+    "Grid": {
+        "GridStatusItem": {
+            "Snap": "Snap",
+            "NoSnap": "No snap",
+            "Grid": "Grid"
+        }
+    }, 
     "Texture": {
         "BrowseActiveTexture": {
             "Name": "Browse textures",

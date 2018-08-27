@@ -23,6 +23,7 @@ namespace Sledge.BspEditor.Modification
         {
             var ch = new Change(doc);
             ch.AddRange(doc.Map.Root.FindAll());
+            foreach (var d in doc.Map.Data) ch.Update(d);
             return Changed(ch);
         }
 

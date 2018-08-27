@@ -8,12 +8,12 @@ using Sledge.Common.Shell.Context;
 namespace Sledge.Shell.Components
 {
     [Export(typeof(IStatusItem))]
+    [OrderHint("B")]
     public class InformationStatusItem : IStatusItem
     {
         public string ID => "Sledge.Shell.InformationStatusItem";
         public int Width => -1;
         public bool HasBorder => false;
-        public string OrderHint => "B";
         public string Text { get; set; } = "";
 
         public event EventHandler<string> TextChanged;

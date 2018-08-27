@@ -12,6 +12,7 @@ using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
+using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Resources;
@@ -42,7 +43,7 @@ namespace Sledge.BspEditor.Tools
             var gridData = Document.Map.Data.GetOne<GridData>();
             var snap = !KeyboardState.Alt && gridData?.SnapToGrid == true;
             var grid = gridData?.Grid;
-            return snap && grid != null ? grid.Snap(c) : c;
+            return snap && grid != null ? grid.Snap(c) : c.Snap(1);
         }
 
         public Vector3 SnapIfNeeded(Vector3 c)

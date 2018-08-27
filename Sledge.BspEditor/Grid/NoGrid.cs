@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Grid
 {
@@ -11,9 +12,11 @@ namespace Sledge.BspEditor.Grid
             set { }
         }
 
+        public string Description => "\u2013";
+
         public Vector3 Snap(Vector3 vector)
         {
-            return vector;
+            return vector.Snap(1);
         }
 
         public Vector3 AddStep(Vector3 vector, Vector3 add)

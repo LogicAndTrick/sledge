@@ -15,7 +15,7 @@ namespace Sledge.BspEditor.Editing.Commands
 {
     [AutoTranslate]
     [Export(typeof(ICommand))]
-    [MenuItem("Map", "", "Properties", "B")]
+    [MenuItem("Map", "", "Properties", "A")]
     [CommandID("BspEditor:Map:RootProperties")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_MapProperties))]
     public class OpenRootProperties : BaseCommand

@@ -517,7 +517,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
                     var label = "";
                     if (box != null && !box.IsEmpty()) label = box.Width.ToString("0") + " x " + box.Length.ToString("0") + " x " + box.Height.ToString("0");
-                    Oy.Publish("MapDocument:Status:UpdateText", label);
+                    Oy.Publish("MapDocument:ToolStatus:UpdateText", label);
                 }
             }
         }

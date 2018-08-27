@@ -9,6 +9,7 @@ using Sledge.Common.Shell.Context;
 namespace Sledge.BspEditor.Tools
 {
     [Export(typeof(IStatusItem))]
+    [OrderHint("H")]
     public class ToolStatusItem : IStatusItem
     {
         public event EventHandler<string> TextChanged;
@@ -16,12 +17,11 @@ namespace Sledge.BspEditor.Tools
         public string ID => "Sledge.BspEditor.Tools.ToolStatusItem";
         public int Width => 130;
         public bool HasBorder => true;
-        public string OrderHint => "H";
         public string Text { get; set; }
 
         public ToolStatusItem()
         {
-            Oy.Subscribe<string>("MapDocument:Status:UpdateText", UpdateText);
+            Oy.Subscribe<string>("MapDocument:ToolStatus:UpdateText", UpdateText);
         }
 
         private async Task UpdateText(string text)

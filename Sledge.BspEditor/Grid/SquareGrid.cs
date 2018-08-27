@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Numerics;
 using Sledge.DataStructures.Geometric;
 
@@ -14,7 +15,7 @@ namespace Sledge.BspEditor.Grid
         public int Spacing
         {
             get => (int) Math.Log(Step, 2);
-            set => Step = (float) Math.Pow(2, value);
+            set => Step = (float) Math.Pow(2, Math.Max(Math.Min(value, 10), -2));
         }
 
         public int HideSmallerThan { get; } = 4;
@@ -28,6 +29,8 @@ namespace Sledge.BspEditor.Grid
             Low = low;
             Step = step;
         }
+
+        public string Description => Step.ToString(CultureInfo.InvariantCulture);
 
         public Vector3 Snap(Vector3 vector)
         {

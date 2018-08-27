@@ -57,7 +57,9 @@ namespace Sledge.Rendering.Engine
             _pipelines = new List<IPipeline>();
             Context = new RenderContext(Device);
             Scene.Add(Context);
+#if DEBUG
             Scene.Add(new FpsMonitor());
+#endif
 
             RenderThread = new Thread(Loop);
 

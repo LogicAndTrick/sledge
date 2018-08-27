@@ -30,6 +30,7 @@ namespace Sledge.BspEditor.Rendering.Scene
         /// <inheritdoc />
         public Task OnStartup()
         {
+            Oy.Subscribe<object>("SettingsChanged", SettingsChanged);
             Oy.Subscribe<IDocument>("Document:Activated", DocumentActivated);
             Oy.Subscribe<IDocument>("Document:Closed", DocumentClosed);
             Oy.Subscribe<Change>("MapDocument:Changed", DocumentChanged);
@@ -54,6 +55,12 @@ namespace Sledge.BspEditor.Rendering.Scene
                     await UpdateScene(change.Document, change.Added.Union(change.Updated).Union(change.Removed));
                 }
             }
+        }
+
+        private async Task SettingsChanged(object o)
+        {
+            var doc = _activeDocument.TryGetTarget(out var md) ? md : null;
+            await UpdateScene(doc, null);
         }
 
         private async Task DocumentActivated(IDocument doc)

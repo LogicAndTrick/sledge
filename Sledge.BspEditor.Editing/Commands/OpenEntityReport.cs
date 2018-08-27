@@ -13,7 +13,7 @@ namespace Sledge.BspEditor.Editing.Commands
 {
     [AutoTranslate]
     [Export(typeof(ICommand))]
-    [MenuItem("Map", "", "Properties", "B")]
+    [MenuItem("Map", "", "Properties", "F")]
     [CommandID("BspEditor:Map:EntityReport")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_EntityReport))]
     public class OpenEntityReport : BaseCommand

@@ -120,6 +120,7 @@
     <Compile Include="Entity\EntityTool.cs" />
     <Compile Include="Grid\DecreaseGrid.cs" />
     <Compile Include="Grid\GridListMenuItemProvider.cs" />
+    <Compile Include="Grid\GridStatusItem.cs" />
     <Compile Include="Grid\IncreaseGrid.cs" />
     <Compile Include="Grid\ToggleSnapToGrid.cs" />
     <Compile Include="MenuDataProvider.cs" />
