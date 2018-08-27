@@ -20,6 +20,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public int Height => Control.Height;
         public int Width => Control.Width;
 
+        public bool Is2D => Viewport.Camera.Type == CameraType.Orthographic;
+        public bool Is3D => Viewport.Camera.Type == CameraType.Perspective;
+
         #region Input Locking
 
         private object _inputLock;
@@ -255,134 +258,5 @@ namespace Sledge.BspEditor.Rendering.Viewport
         }
 
         #endregion
-        
-
-        #region 2D/3D methods
-
-        public bool Is2D => Viewport.Camera.Type == CameraType.Orthographic;
-        public bool Is3D => Viewport.Camera.Type == CameraType.Perspective;
-        public Vector3 CenterScreen => new Vector3(Control.Width / 2f, Control.Height / 2f, 0);
-        public float Zoom => Viewport.Camera.Zoom;
-        public OrthographicCamera.OrthographicType Direction => Is2D ? ((OrthographicCamera) Viewport.Camera).ViewType : OrthographicCamera.OrthographicType.Top;
-        
-        public Vector3 Flatten(Vector3 c) => Viewport.Camera.Flatten(c);
-        public Vector3 Expand(float x, float y) => Expand(new Vector3(x, y, 0));
-        public Vector3 Expand(Vector3 c) => Viewport.Camera.Expand(c);
-
-        public Vector3 GetUnusedCoordinate(Vector3 c)
-        {
-            if (!Is2D) return c;
-            var dir = ((OrthographicCamera)Viewport.Camera).ViewType;
-            switch (dir)
-            {
-                case OrthographicCamera.OrthographicType.Top:
-                    return new Vector3(0, 0, c.Z);
-                case OrthographicCamera.OrthographicType.Front:
-                    return new Vector3(c.X, 0, 0);
-                case OrthographicCamera.OrthographicType.Side:
-                    return new Vector3(0, c.Y, 0);
-                default:
-                    throw new ArgumentOutOfRangeException("Type");
-            }
-        }
-
-        public Vector3 ZeroUnusedCoordinate(Vector3 c)
-        {
-            if (!Is2D) return c;
-            var dir = ((OrthographicCamera)Viewport.Camera).ViewType;
-            switch (dir)
-            {
-                case OrthographicCamera.OrthographicType.Top:
-                    return new Vector3(c.X, c.Y, 0);
-                case OrthographicCamera.OrthographicType.Front:
-                    return new Vector3(0, c.Y, c.Z);
-                case OrthographicCamera.OrthographicType.Side:
-                    return new Vector3(c.X, 0, c.Z);
-                default:
-                    throw new ArgumentOutOfRangeException("Type");
-            }
-        }
-
-        public float UnitsToPixels(float units) => Viewport.Camera.UnitsToPixels(units);
-        public float PixelsToUnits(float pixels) => Viewport.Camera.PixelsToUnits(pixels);
-
-        public Vector3 ScreenToWorld(float x, float y) => Viewport.Camera.ScreenToWorld(new Vector3(x, y, 0));
-        public Vector3 ScreenToWorld(Vector3 screen) => Viewport.Camera.ScreenToWorld(screen);
-        public Vector3 WorldToScreen(Vector3 world) => Viewport.Camera.WorldToScreen(world);
-
-        /*
-
-        /// <summary>
-        /// Project the 2D coordinates from the screen coordinates outwards
-        /// from the camera along the lookat vector, taking the frustrum
-        /// into account. The resulting line will be run from the camera
-        /// position along the view axis and end at the back clipping pane.
-        /// </summary>
-        /// <param name="x">The X coordinate on screen</param>
-        /// <param name="y">The Y coordinate on screen</param>
-        /// <returns>A line beginning at the camera location and tracing
-        /// along the 3D projection for at least 1,000,000 units.</returns>
-        public Line CastRayFromScreen(int x, int y)
-        {
-            var l = Viewport.Camera.CastRayFromScreen(new Vector3(x, y, 0), Width, Height);
-            return new Line(l.Start.ToCoordinate(), l.End.ToCoordinate());
-        }
-        
-        */
-
-        #endregion
-
-        /*
-        #region Camera Manipulation
-        
-        public void FocusOn(Box box)
-        {
-            if (Is2D)
-            {
-                var cam = (OrthographicCamera)Viewport.Camera;
-                cam.Position = Flatten(box.Center).ToVector3();
-            }
-            else
-            {
-                var cam = (PerspectiveCamera)Viewport.Camera;
-                var dist = Math.Max(Math.Max(box.Width, box.Length), box.Height);
-                var normal = cam.Position - cam.LookAt;
-                var v = new Vector(normal.ToCoordinate(), dist);
-                FocusOn(box.Center, new Coordinate(v.X, v.Y, v.Z));
-            }
-        }
-
-        public void FocusOn(Coordinate coordinate)
-        {
-            if (Is2D)
-            {
-                var cam = (OrthographicCamera) Viewport.Camera;
-                cam.Position = Flatten(coordinate).ToVector3();
-            }
-            else
-            {
-                FocusOn(coordinate, Coordinate.UnitY * -100);
-            }
-        }
-
-        public void FocusOn(Coordinate coordinate, Coordinate distance)
-        {
-            if (Is2D)
-            {
-                var cam = (OrthographicCamera)Viewport.Camera;
-                cam.Position = Flatten(coordinate).ToVector3();
-            }
-            else
-            {
-                var cam = (PerspectiveCamera)Viewport.Camera;
-                var pos = coordinate + distance;
-                cam.Position = pos.ToVector3();
-                cam.LookAt = coordinate.ToVector3();
-            }
-        }
-
-        #endregion
-
-        */
     }
 }

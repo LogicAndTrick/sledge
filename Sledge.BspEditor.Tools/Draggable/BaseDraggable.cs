@@ -29,34 +29,37 @@ namespace Sledge.BspEditor.Tools.Draggable
             DragEnded?.Invoke(this, EventArgs.Empty);
         }
 
-        public virtual void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public virtual void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+            Vector3 position)
         {
             OnDragStarted();
         }
 
-        public virtual void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+        public virtual void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition,
+            Vector3 position)
         {
             OnDragMoved();
         }
 
-        public virtual void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public virtual void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             OnDragEnded();
         }
 
 
-        public virtual void MouseDown(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public virtual void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+            Vector3 position)
         {
 
         }
 
-        public virtual void MouseUp(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public virtual void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             
         }
 
-        public abstract void Click(MapViewport viewport, ViewportEvent e, Vector3 position);
-        public abstract bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position);
+        public abstract void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position);
+        public abstract bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position);
         public abstract void Highlight(MapViewport viewport);
         public abstract void Unhighlight(MapViewport viewport);
         public abstract void Render(BufferBuilder builder);

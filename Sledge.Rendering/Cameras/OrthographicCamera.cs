@@ -113,6 +113,8 @@ namespace Sledge.Rendering.Cameras
             return Matrix4x4.CreateOrthographic(Width, Height, near, far);
         }
 
+        public Vector3 ScreenToWorld(float x, float y) => ScreenToWorld(new Vector3(x, y, 0));
+
         public Vector3 ScreenToWorld(Vector3 screen)
         {
             screen = new Vector3(screen.X, Height - screen.Y, screen.Z);
@@ -171,6 +173,8 @@ namespace Sledge.Rendering.Cameras
             }
         }
 
+        public Vector3 Expand(float x, float y) => Expand(new Vector3(x, y, 0));
+
         public Vector3 Expand(Vector3 flat)
         {
             switch (ViewType)
@@ -184,6 +188,26 @@ namespace Sledge.Rendering.Cameras
                 default:
                     throw new ArgumentOutOfRangeException("Type");
             }
+        }
+
+        public Vector3 GetUnusedCoordinate(Vector3 c)
+        {
+            switch (ViewType)
+            {
+                case OrthographicType.Top:
+                    return new Vector3(0, 0, c.Z);
+                case OrthographicType.Front:
+                    return new Vector3(c.X, 0, 0);
+                case OrthographicType.Side:
+                    return new Vector3(0, c.Y, 0);
+                default:
+                    throw new ArgumentOutOfRangeException("Type");
+            }
+        }
+
+        public Vector3 ZeroUnusedCoordinate(Vector3 c)
+        {
+            return c - GetUnusedCoordinate(c);
         }
 
         internal string Serialise()

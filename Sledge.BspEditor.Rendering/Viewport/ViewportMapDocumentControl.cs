@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Primitives.MapData;
 using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
-using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Rendering.Viewport
@@ -50,60 +49,85 @@ namespace Sledge.BspEditor.Rendering.Viewport
             _subscriptions = new List<Subscription>
             {
                 Oy.Subscribe<IDocument>("Document:Activated", DocumentActivated),
-                //Oy.Subscribe<Coordinate>("MapDocument:Viewport:Focus2D", Focus2D),
-                //Oy.Subscribe<Coordinate>("MapDocument:Viewport:Focus3D", Focus3D),
-                //Oy.Subscribe<Box>("MapDocument:Viewport:Focus2D", Focus2D),
-                //Oy.Subscribe<Box>("MapDocument:Viewport:Focus3D", Focus3D),
-                //Oy.Subscribe<Tuple<Coordinate, Coordinate>>("MapDocument:Viewport:Set3D", Set3D),
-                //Oy.Subscribe<Coordinate>("MapDocument:Viewport:Set2D", Set2D),
+                Oy.Subscribe<Vector3>("MapDocument:Viewport:Focus2D", Focus2D),
+                Oy.Subscribe<Vector3>("MapDocument:Viewport:Focus3D", Focus3D),
+                Oy.Subscribe<Box>("MapDocument:Viewport:Focus2D", Focus2D),
+                Oy.Subscribe<Box>("MapDocument:Viewport:Focus3D", Focus3D),
+                Oy.Subscribe<Tuple<Vector3, Vector3>>("MapDocument:Viewport:Set3D", Set3D),
+                Oy.Subscribe<Vector3>("MapDocument:Viewport:Set2D", Set2D),
             };
         }
 
-        //private Task Set3D(Tuple<Coordinate, Coordinate> pair)
-        //{
-        //    if (Camera is PerspectiveCamera cam)
-        //    {
-        //        var position = pair.Item1;
-        //        var look = pair.Item2;
-        //        look = (look - position).Normalise() + position;
-        //        cam.Position = position.ToVector3();
-        //        cam.LookAt = look.ToVector3();
-        //    }
-        //    return Task.FromResult(0);
-        //}
+        #region Camera manipulation
 
-        //private Task Set2D(Coordinate center)
-        //{
-        //    if (Camera is OrthographicCamera cam)
-        //    {
-        //        cam.Position = center.ToVector3();
-        //    }
-        //    return Task.FromResult(0);
-        //}
+        private Task Set3D(Tuple<Vector3, Vector3> pair)
+        {
+            if (Camera is PerspectiveCamera cam)
+            {
+                var position = pair.Item1;
+                var look = pair.Item2;
+                look = (look - position).Normalise() + position;
+                cam.Position = position;
+                cam.Direction = look - position;
+            }
+            return Task.FromResult(0);
+        }
 
-        //private Task Focus2D(Coordinate c)
-        //{
-        //    if (Camera is OrthographicCamera) _mapViewport.FocusOn(c);
-        //    return Task.FromResult(0);
-        //}
+        private Task Set2D(Vector3 center)
+        {
+            if (Camera is OrthographicCamera cam)
+            {
+                cam.Position = center;
+            }
+            return Task.FromResult(0);
+        }
 
-        //private Task Focus3D(Coordinate c)
-        //{
-        //    if (Camera is PerspectiveCamera) _mapViewport.FocusOn(c);
-        //    return Task.FromResult(0);
-        //}
+        private Task Focus2D(Vector3 c)
+        {
+            if (Camera is OrthographicCamera cam)
+            {
+                cam.Position = cam.Flatten(c);
+            }
+            return Task.FromResult(0);
+        }
 
-        //private Task Focus2D(Box c)
-        //{
-        //    if (Camera is OrthographicCamera) _mapViewport.FocusOn(c);
-        //    return Task.FromResult(0);
-        //}
+        private Task Focus3D(Vector3 c)
+        {
+            if (Camera is PerspectiveCamera cam)
+            {
+                FocusOn(cam, c, Vector3.UnitY * -100);
+            }
+            return Task.FromResult(0);
+        }
 
-        //private Task Focus3D(Box c)
-        //{
-        //    if (Camera is PerspectiveCamera) _mapViewport.FocusOn(c);
-        //    return Task.FromResult(0);
-        //}
+        private Task Focus2D(Box c)
+        {
+            if (Camera is OrthographicCamera cam)
+            {
+                cam.Position = cam.Flatten(c.Center);
+            }
+            return Task.FromResult(0);
+        }
+
+        private Task Focus3D(Box c)
+        {
+            if (Camera is PerspectiveCamera cam)
+            {
+                var dist = Math.Max(Math.Max(c.Width, c.Length), c.Height);
+                var normal = cam.Direction;
+                FocusOn(cam, c.Center, normal * -dist * 1.2f);
+            }
+            return Task.FromResult(0);
+        }
+
+        private void FocusOn(PerspectiveCamera cam, Vector3 coordinate, Vector3 distance)
+        {
+            var pos = coordinate + distance;
+            cam.Position = pos;
+            cam.Direction = coordinate - pos;
+        }
+        
+        #endregion
 
         private async Task DocumentActivated(IDocument doc)
         {
@@ -118,8 +142,14 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 _panel.Controls.Add(_viewport.Control);
                 _mapViewport = new MapViewport(_viewport);
                 _mapViewport.Listeners.AddRange(_listeners.SelectMany(x => x.Create(_mapViewport)));
+                _mapViewport.ListenerException += ListenerException;
                 await Oy.Publish("MapViewport:Created", _mapViewport);
             }
+        }
+
+        private void ListenerException(object sender, Exception exception)
+        {
+            Oy.Publish("Shell:UnhandledException", exception);
         }
 
         public string GetSerialisedSettings()
@@ -135,7 +165,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             }
             catch
             {
-                
+                //
             }
         }
 

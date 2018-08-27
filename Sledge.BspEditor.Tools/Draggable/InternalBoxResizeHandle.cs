@@ -48,7 +48,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             }
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             const int padding = 2;
             var box = GetRectangle(viewport.Viewport.Camera);
@@ -58,10 +58,10 @@ namespace Sledge.BspEditor.Tools.Draggable
         
         }
 
-        protected override Vector3 GetResizeOrigin(MapViewport viewport, Vector3 position)
+        protected override Vector3 GetResizeOrigin(MapViewport viewport, OrthographicCamera camera, Vector3 position)
         {
-            var st = viewport.Flatten(BoxState.Start);
-            var ed = viewport.Flatten(BoxState.End);
+            var st = camera.Flatten(BoxState.Start);
+            var ed = camera.Flatten(BoxState.End);
             var points = new[] { st, ed, new Vector3(st.X, ed.Y, 0), new Vector3(ed.X, st.Y, 0) };
             return points.OrderBy(x => (position - x).LengthSquared()).First();
         }

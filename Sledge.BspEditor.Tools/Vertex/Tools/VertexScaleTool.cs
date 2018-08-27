@@ -358,17 +358,20 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 return _selfArray ?? (_selfArray = new[] {this});
             }
 
-            public override void MouseDown(MapViewport viewport, ViewportEvent e, Vector3 position)
+            public override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+                Vector3 position)
             {
                 e.Handled = true;
             }
 
-            public override void Click(MapViewport viewport, ViewportEvent e, Vector3 position)
+            public override void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+                Vector3 position)
             {
                 // 
             }
 
-            public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+            public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+                Vector3 position)
             {
                 return false;
             }
@@ -429,9 +432,10 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 Width = 10;
             }
 
-            public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+            public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+                Vector3 lastPosition, Vector3 position)
             {
-                Position = _vmScaleTool.SnapIfNeeded(viewport.Expand(position) + viewport.GetUnusedCoordinate(Position));
+                Position = _vmScaleTool.SnapIfNeeded(camera.Expand(position) + camera.GetUnusedCoordinate(Position));
                 OnDragMoved();
             }
 

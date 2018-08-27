@@ -2,6 +2,7 @@
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
+using Sledge.Rendering.Cameras;
 
 namespace Sledge.BspEditor.Tools.Cordon
 {
@@ -28,12 +29,12 @@ namespace Sledge.BspEditor.Tools.Cordon
             }
         }
 
-        public override void Click(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             //
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             return false;
         }

@@ -236,14 +236,14 @@ namespace Sledge.BspEditor.Tools.Vertex
             );
         }
 
-        private IMapObject SelectionTest(MapViewport viewport, ViewportEvent e)
+        private IMapObject SelectionTest(OrthographicCamera camera, ViewportEvent e)
         {
             // Create a box to represent the click, with a tolerance level
-            var unused = viewport.GetUnusedCoordinate(new Vector3(100000, 100000, 100000));
-            var tolerance = 4 / viewport.Zoom; // Selection tolerance of four pixels
-            var used = viewport.Expand(new Vector3(tolerance, tolerance, 0));
+            var unused = camera.GetUnusedCoordinate(new Vector3(100000, 100000, 100000));
+            var tolerance = 4 / camera.Zoom; // Selection tolerance of four pixels
+            var used = camera.Expand(new Vector3(tolerance, tolerance, 0));
             var add = used + unused;
-            var click = viewport.ScreenToWorld(e.X, e.Y);
+            var click = camera.ScreenToWorld(e.X, e.Y);
             var box = new Box(click - add, click + add);
             return GetLineIntersections(box).FirstOrDefault();
         }
@@ -251,7 +251,7 @@ namespace Sledge.BspEditor.Tools.Vertex
         protected override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             // Get the first element that intersects with the box, selecting or deselecting as needed
-            var closestObject = SelectionTest(viewport, e) as Solid;
+            var closestObject = SelectionTest(camera, e) as Solid;
             SelectObject(closestObject);
         }
 

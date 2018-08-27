@@ -169,7 +169,7 @@ namespace Sledge.BspEditor.Tools.Selection
             return _handles[(int)CurrentTransformationMode];
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             return false;
         }

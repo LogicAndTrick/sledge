@@ -191,8 +191,8 @@ namespace Sledge.BspEditor.Tools.Entity
             if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
 
             _state = EntityState.Moving;
-            var loc = SnapIfNeeded(viewport.ScreenToWorld(e.X, e.Y));
-            _location = viewport.GetUnusedCoordinate(_location) + loc;
+            var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
+            _location = camera.GetUnusedCoordinate(_location) + loc;
             Invalidate();
         }
 
@@ -200,8 +200,8 @@ namespace Sledge.BspEditor.Tools.Entity
         {
             if (e.Button != MouseButtons.Left) return;
             _state = EntityState.Drawn;
-            var loc = SnapIfNeeded(viewport.ScreenToWorld(e.X, e.Y));
-            _location = viewport.GetUnusedCoordinate(_location) + loc;
+            var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
+            _location = camera.GetUnusedCoordinate(_location) + loc;
             Invalidate();
         }
 
@@ -209,8 +209,8 @@ namespace Sledge.BspEditor.Tools.Entity
         {
             if (!Control.MouseButtons.HasFlag(MouseButtons.Left)) return;
             if (_state != EntityState.Moving) return;
-            var loc = SnapIfNeeded(viewport.ScreenToWorld(e.X, e.Y));
-            _location = viewport.GetUnusedCoordinate(_location) + loc;
+            var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
+            _location = camera.GetUnusedCoordinate(_location) + loc;
             Invalidate();
         }
 

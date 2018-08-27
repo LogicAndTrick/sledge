@@ -24,15 +24,16 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         public event EventHandler DragStarted;
         public event EventHandler DragMoved;
         public event EventHandler DragEnded;
-        public void MouseDown(MapViewport viewport, ViewportEvent e, Vector3 position) { }
-        public void MouseUp(MapViewport viewport, ViewportEvent e, Vector3 position) { }
-        public void Click(MapViewport viewport, ViewportEvent e, Vector3 position) { }
-        public bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position) => false;
+        public void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
+        public void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
+        public void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
+        public bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) => false;
         public void Highlight(MapViewport viewport) { }
         public void Unhighlight(MapViewport viewport) { }
-        public void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position) { }
-        public void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position) { }
-        public void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position) { }
+        public void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
+        public void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition,
+            Vector3 position) { }
+        public void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
         public void Render(BufferBuilder builder) { }
         public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics) { }
         public void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics) { }

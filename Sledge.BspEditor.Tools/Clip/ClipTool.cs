@@ -96,16 +96,16 @@ namespace Sledge.BspEditor.Tools.Clip
             Invalidate();
         }
 
-        private ClipState GetStateAtPoint(int x, int y, MapViewport viewport)
+        private ClipState GetStateAtPoint(int x, int y, OrthographicCamera camera)
         {
             if (_clipPlanePoint1 == null || _clipPlanePoint2 == null || _clipPlanePoint3 == null) return ClipState.None;
 
-            var p = viewport.Flatten(viewport.ScreenToWorld(x, y));
-            var p1 = viewport.Flatten(_clipPlanePoint1.Value);
-            var p2 = viewport.Flatten(_clipPlanePoint2.Value);
-            var p3 = viewport.Flatten(_clipPlanePoint3.Value);
+            var p = camera.Flatten(camera.ScreenToWorld(new Vector3(x, y, 0)));
+            var p1 = camera.Flatten(_clipPlanePoint1.Value);
+            var p2 = camera.Flatten(_clipPlanePoint2.Value);
+            var p3 = camera.Flatten(_clipPlanePoint3.Value);
 
-            var d = 5 / viewport.Zoom;
+            var d = 5 / camera.Zoom;
 
             if (p.X >= p1.X - d && p.X <= p1.X + d && p.Y >= p1.Y - d && p.Y <= p1.Y + d) return ClipState.MovingPoint1;
             if (p.X >= p2.X - d && p.X <= p2.X + d && p.Y >= p2.Y - d && p.Y <= p2.Y + d) return ClipState.MovingPoint2;
@@ -119,8 +119,8 @@ namespace Sledge.BspEditor.Tools.Clip
             var viewport = vp;
             _prevState = _state;
 
-            var point = SnapIfNeeded(viewport.ScreenToWorld(e.X, e.Y));
-            var st = GetStateAtPoint(e.X, e.Y, viewport);
+            var point = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
+            var st = GetStateAtPoint(e.X, e.Y, camera);
             if (_state == ClipState.None || st == ClipState.None)
             {
                 _state = ClipState.Drawing;
@@ -137,7 +137,7 @@ namespace Sledge.BspEditor.Tools.Clip
         {
             var viewport = vp;
 
-            var point = SnapIfNeeded(viewport.ScreenToWorld(e.X, e.Y));
+            var point = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
             if (_state == ClipState.Drawing)
             {
                 // Do nothing
@@ -158,19 +158,19 @@ namespace Sledge.BspEditor.Tools.Clip
         {
             var viewport = vp;
 
-            var point = SnapIfNeeded(viewport.ScreenToWorld(e.X, e.Y));
-            var st = GetStateAtPoint(e.X, e.Y, viewport);
+            var point = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
+            var st = GetStateAtPoint(e.X, e.Y, camera);
             if (_state == ClipState.Drawing)
             {
                 _state = ClipState.MovingPoint2;
                 _clipPlanePoint1 = _drawingPoint;
                 _clipPlanePoint2 = point;
-                _clipPlanePoint3 = _clipPlanePoint1 + SnapIfNeeded(viewport.GetUnusedCoordinate(new Vector3(128, 128, 128)));
+                _clipPlanePoint3 = _clipPlanePoint1 + SnapIfNeeded(camera.GetUnusedCoordinate(new Vector3(128, 128, 128)));
             }
             else if (_state == ClipState.MovingPoint1)
             {
                 // Move point 1
-                var cp1 = viewport.GetUnusedCoordinate(_clipPlanePoint1.Value) + point;
+                var cp1 = camera.GetUnusedCoordinate(_clipPlanePoint1.Value) + point;
                 if (KeyboardState.Ctrl)
                 {
                     var diff = _clipPlanePoint1 - cp1;
@@ -182,7 +182,7 @@ namespace Sledge.BspEditor.Tools.Clip
             else if (_state == ClipState.MovingPoint2)
             {
                 // Move point 2
-                var cp2 = viewport.GetUnusedCoordinate(_clipPlanePoint2.Value) + point;
+                var cp2 = camera.GetUnusedCoordinate(_clipPlanePoint2.Value) + point;
                 if (KeyboardState.Ctrl)
                 {
                     var diff = _clipPlanePoint2 - cp2;
@@ -194,7 +194,7 @@ namespace Sledge.BspEditor.Tools.Clip
             else if (_state == ClipState.MovingPoint3)
             {
                 // Move point 3
-                var cp3 = viewport.GetUnusedCoordinate(_clipPlanePoint3.Value) + point;
+                var cp3 = camera.GetUnusedCoordinate(_clipPlanePoint3.Value) + point;
                 if (KeyboardState.Ctrl)
                 {
                     var diff = _clipPlanePoint3 - cp3;

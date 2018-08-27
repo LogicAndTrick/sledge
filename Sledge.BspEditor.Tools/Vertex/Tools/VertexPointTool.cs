@@ -424,16 +424,16 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             }
         }
 
-        private List<VertexPoint> GetPoints(MapViewport viewport, Vector3 position, bool allowMixed, bool topmostOnly, bool oneSolidOnly)
+        private List<VertexPoint> GetPoints(OrthographicCamera camera, Vector3 position, bool allowMixed, bool topmostOnly, bool oneSolidOnly)
         {
-            var p = viewport.Flatten(position);
-            var d = 5 / viewport.Zoom; // Tolerance value = 5 pixels
+            var p = camera.Flatten(position);
+            var d = 5 / camera.Zoom; // Tolerance value = 5 pixels
 
             // Order by the unused Vector3 in the view (which is the up axis) descending to get the "closest" point
             var points = (from pp in GetVisiblePoints()
-                let c = viewport.Flatten(pp.Position)
+                let c = camera.Flatten(pp.Position)
                 where p.X >= c.X - d && p.X <= c.X + d && p.Y >= c.Y - d && p.Y <= c.Y + d
-                let unused = viewport.GetUnusedCoordinate(pp.Position)
+                let unused = camera.GetUnusedCoordinate(pp.Position)
                 orderby unused.X + unused.Y + unused.Z descending
                 select pp).ToList();
 
@@ -506,7 +506,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         private bool _selectOnClick;
 
-        private void PointMouseDown(MapViewport viewport, VertexPoint point)
+        private void PointMouseDown(OrthographicCamera camera, VertexPoint point)
         {
             if (_boxState.State.Action != BoxAction.Idle)
             {
@@ -514,7 +514,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 _boxState.State.Action = BoxAction.Idle;
             }
 
-            var vtxs = GetPoints(viewport, point.Position, false, KeyboardState.Shift, true);
+            var vtxs = GetPoints(camera, point.Position, false, KeyboardState.Shift, true);
             if (!vtxs.Any()) return;
 
             _selectOnClick = true;
@@ -525,12 +525,12 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             }
         }
 
-        private void PointClick(MapViewport viewport, VertexPoint point)
+        private void PointClick(OrthographicCamera camera, VertexPoint point)
         {
             if (!_selectOnClick) return;
             _selectOnClick = false;
 
-            var vtxs = GetPoints(viewport, point.Position, false, KeyboardState.Shift, true);
+            var vtxs = GetPoints(camera, point.Position, false, KeyboardState.Shift, true);
             if (!vtxs.Any()) return;
             Select(vtxs, KeyboardState.Ctrl);
         }
@@ -538,21 +538,21 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         private Vector3 _pointDragStart;
         private Vector3 _pointDragGridOffset;
 
-        private void StartPointDrag(MapViewport viewport, ViewportEvent viewportEvent, Vector3 startLocation)
+        private void StartPointDrag(OrthographicCamera camera, ViewportEvent viewportEvent, Vector3 startLocation)
         {
             foreach (var p in GetVisiblePoints().Where(x => x.IsSelected))
             {
                 p.IsDragging = true;
             }
-            _pointDragStart = viewport.ZeroUnusedCoordinate(startLocation);
-            _pointDragGridOffset = SnapIfNeeded(viewport.ZeroUnusedCoordinate(startLocation)) - viewport.ZeroUnusedCoordinate(startLocation);
+            _pointDragStart = camera.ZeroUnusedCoordinate(startLocation);
+            _pointDragGridOffset = SnapIfNeeded(camera.ZeroUnusedCoordinate(startLocation)) - camera.ZeroUnusedCoordinate(startLocation);
 
             Invalidate();
         }
 
-        private void PointDrag(MapViewport viewport, ViewportEvent viewportEvent, Vector3 lastPosition, Vector3 position)
+        private void PointDrag(OrthographicCamera camera, ViewportEvent viewportEvent, Vector3 lastPosition, Vector3 position)
         {
-            var delta = viewport.ZeroUnusedCoordinate(position) - _pointDragStart;
+            var delta = camera.ZeroUnusedCoordinate(position) - _pointDragStart;
             if (KeyboardState.Shift && !KeyboardState.Alt) delta -= _pointDragGridOffset;
 
             var selected = GetVisiblePoints().Where(x => x.IsSelected).Distinct().SelectMany(x => x.GetStandardPointList()).ToList();
@@ -569,9 +569,9 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             Invalidate();
         }
 
-        private void EndPointDrag(MapViewport viewport, ViewportEvent viewportEvent, Vector3 endLocation)
+        private void EndPointDrag(OrthographicCamera camera, ViewportEvent viewportEvent, Vector3 endLocation)
         {
-            var delta = viewport.ZeroUnusedCoordinate(endLocation) - _pointDragStart;
+            var delta = camera.ZeroUnusedCoordinate(endLocation) - _pointDragStart;
             if (KeyboardState.Shift && !KeyboardState.Alt) delta -= _pointDragGridOffset;
 
             var selected = GetVisiblePoints().Where(x => x.IsSelected).ToList();
@@ -737,21 +737,21 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 return _selfArray ?? (_selfArray = IsMidpoint ? new[] {MidpointStart, MidpointEnd} : new[] {this});
             }
 
-            public override void MouseDown(MapViewport viewport, ViewportEvent e, Vector3 position)
+            public override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
             {
                 e.Handled = true;
-                Tool.PointMouseDown(viewport, this);
+                Tool.PointMouseDown(camera, this);
             }
 
-            public override void Click(MapViewport viewport, ViewportEvent e, Vector3 position)
+            public override void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
             {
-                Tool.PointClick(viewport, this);
+                Tool.PointClick(camera, this);
             }
 
-            public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+            public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
             {
                 const int width = 5;
-                var screenPosition = viewport.WorldToScreen(Position);
+                var screenPosition = camera.WorldToScreen(Position);
                 var diff = (e.Location - screenPosition).Absolute();
                 return diff.X < width && diff.Y < width;
             }
@@ -773,24 +773,24 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 viewport.Control.Cursor = Cursors.Default;
             }
 
-            public override void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+            public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
             {
-                Tool.StartPointDrag(viewport, e, Position);
-                base.StartDrag(viewport, e, position);
+                Tool.StartPointDrag(camera, e, Position);
+                base.StartDrag(viewport, camera, e, position);
             }
 
-            public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+            public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
             {
-                position = Tool.SnapIfNeeded(viewport.Expand(position));
-                Tool.PointDrag(viewport, e, lastPosition, position);
-                base.Drag(viewport, e, lastPosition, position);
+                position = Tool.SnapIfNeeded(camera.Expand(position));
+                Tool.PointDrag(camera, e, lastPosition, position);
+                base.Drag(viewport, camera, e, lastPosition, position);
             }
 
-            public override void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+            public override void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
             {
-                position = Tool.SnapIfNeeded(viewport.Expand(position));
-                Tool.EndPointDrag(viewport, e, position);
-                base.EndDrag(viewport, e, position);
+                position = Tool.SnapIfNeeded(camera.Expand(position));
+                Tool.EndPointDrag(camera, e, position);
+                base.EndDrag(viewport, camera, e, position);
             }
 
             public override void Render(BufferBuilder builder)

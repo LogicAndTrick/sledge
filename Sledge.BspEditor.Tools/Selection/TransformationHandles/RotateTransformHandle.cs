@@ -31,21 +31,23 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             viewport.Control.Cursor = ct;
         }
 
-        public override void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+            Vector3 position)
         {
             _rotateStart = _rotateEnd = position;
-            base.StartDrag(viewport, e, position);
+            base.StartDrag(viewport, camera, e, position);
         }
 
-        public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+            Vector3 lastPosition, Vector3 position)
         {
             _rotateEnd = position;
         }
 
-        public override void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             _rotateStart = _rotateEnd = null;
-            base.EndDrag(viewport, e, position);
+            base.EndDrag(viewport, camera, e, position);
         }
 
         public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
@@ -62,12 +64,12 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
         public Matrix4x4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)
         {
-            var origin = viewport.ZeroUnusedCoordinate((state.OrigStart + state.OrigEnd) / 2);
+            var origin = camera.ZeroUnusedCoordinate((state.OrigStart + state.OrigEnd) / 2);
             if (_origin != null) origin = _origin.Position;
 
             if (!_rotateStart.HasValue || !_rotateEnd.HasValue) return null;
 
-            var forigin = viewport.Flatten(origin);
+            var forigin = camera.Flatten(origin);
 
             var origv = Vector3.Normalize(_rotateStart.Value - forigin);
             var newv =  Vector3.Normalize(_rotateEnd.Value - forigin);
@@ -87,8 +89,8 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             }
 
             Matrix4x4 rotm;
-            if (viewport.Direction == OrthographicCamera.OrthographicType.Top) rotm = Matrix4x4.CreateRotationZ((float)angle);
-            else if (viewport.Direction == OrthographicCamera.OrthographicType.Front) rotm = Matrix4x4.CreateRotationX((float)angle);
+            if (camera.ViewType == OrthographicCamera.OrthographicType.Top) rotm = Matrix4x4.CreateRotationZ((float)angle);
+            else if (camera.ViewType == OrthographicCamera.OrthographicType.Front) rotm = Matrix4x4.CreateRotationX((float)angle);
             else rotm = Matrix4x4.CreateRotationY((float)-angle); // The Y axis rotation goes in the reverse direction for whatever reason
 
             var mov = Matrix4x4.CreateTranslation(-origin.X, -origin.Y, -origin.Z);

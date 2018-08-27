@@ -20,29 +20,29 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
         {
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             if (Handle == ResizeHandle.Center)
             {
                 const int padding = 2;
-                var box = new Box(viewport.Flatten(BoxState.Start), viewport.Flatten(BoxState.End));
+                var box = new Box(camera.Flatten(BoxState.Start), camera.Flatten(BoxState.End));
                 var c = position;
                 return c.X >= box.Start.X - padding && c.Y >= box.Start.Y - padding && c.Z >= box.Start.Z - padding
                        && c.X <= box.End.X + padding && c.Y <= box.End.Y + padding && c.Z <= box.End.Z + padding;
             }
-            return base.CanDrag(viewport, e, position);
+            return base.CanDrag(viewport, camera, e, position);
         }
 
-        protected override Vector3 GetResizeOrigin(MapViewport viewport, Vector3 position)
+        protected override Vector3 GetResizeOrigin(MapViewport viewport, OrthographicCamera camera, Vector3 position)
         {
             if (Handle == ResizeHandle.Center)
             {
-                var st = viewport.Flatten(BoxState.Start);
-                var ed = viewport.Flatten(BoxState.End);
+                var st = camera.Flatten(BoxState.Start);
+                var ed = camera.Flatten(BoxState.End);
                 var points = new[] {st, ed, new Vector3(st.X, ed.Y, 0), new Vector3(ed.X, st.Y, 0)};
                 return points.OrderBy(x => (position - x).LengthSquared()).First();
             }
-            return base.GetResizeOrigin(viewport, position);
+            return base.GetResizeOrigin(viewport, camera, position);
         }
 
         public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)

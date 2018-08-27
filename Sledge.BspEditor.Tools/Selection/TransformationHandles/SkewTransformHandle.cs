@@ -37,21 +37,23 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             viewport.Control.Cursor = ct;
         }
 
-        public override void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+            Vector3 position)
         {
             _skewStart = _skewEnd = position;
-            base.StartDrag(viewport, e, position);
+            base.StartDrag(viewport, camera, e, position);
         }
 
-        public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+            Vector3 lastPosition, Vector3 position)
         {
             _skewEnd = position;
         }
 
-        public override void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             _skewStart = _skewEnd = null;
-            base.EndDrag(viewport, e, position);
+            base.EndDrag(viewport, camera, e, position);
         }
 
         public Matrix4x4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)
@@ -69,7 +71,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
                 // mouseDiff = doc.Snap(nsmd, doc.Map.GridSpacing / 2);
             }
 
-            var relative = viewport.Flatten(state.OrigEnd - state.OrigStart);
+            var relative = camera.Flatten(state.OrigEnd - state.OrigStart);
             var shearOrigin = (shearTopRight) ? state.OrigStart : state.OrigEnd;
 
             var shearAmount = new Vector3(mouseDiff.X / relative.Y, mouseDiff.Y / relative.X, 0);
@@ -79,7 +81,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             var sax = shearAmount.X;
             var say = shearAmount.Y;
 
-            switch (viewport.Direction)
+            switch (camera.ViewType)
             {
                 case OrthographicCamera.OrthographicType.Top:
                     if (shearUpDown) shearMatrix.M12 = say;

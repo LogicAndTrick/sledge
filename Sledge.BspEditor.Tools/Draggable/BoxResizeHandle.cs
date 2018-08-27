@@ -94,65 +94,66 @@ namespace Sledge.BspEditor.Tools.Draggable
             viewport.Control.Cursor = Cursors.Default;
         }
 
-        protected virtual Vector3 GetResizeOrigin(MapViewport viewport, Vector3 position)
+        protected virtual Vector3 GetResizeOrigin(MapViewport viewport, OrthographicCamera camera, Vector3 position)
         {
-            var st = viewport.Flatten(BoxState.Start);
-            var ed = viewport.Flatten(BoxState.End);
+            var st = camera.Flatten(BoxState.Start);
+            var ed = camera.Flatten(BoxState.End);
             return (st + ed) / 2;
         }
 
         protected Vector3? MoveOrigin;
         protected Vector3? SnappedMoveOrigin;
 
-        public override void Click(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
 
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             const int width = 8;
             var pos = GetWorldPositionAndScreenOffset(viewport.Viewport.Camera);
-            var screenPosition = viewport.WorldToScreen(pos.Item1) + pos.Item2;
+            var screenPosition = camera.WorldToScreen(pos.Item1) + pos.Item2;
             var diff = Vector3.Abs(e.Location - screenPosition);
             return diff.X < width && diff.Y < width;
         }
 
-        public override void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+            Vector3 position)
         {
             BoxState.OrigStart = BoxState.Start;
             BoxState.OrigEnd = BoxState.End;
-            MoveOrigin = GetResizeOrigin(viewport, position);
+            MoveOrigin = GetResizeOrigin(viewport, camera, position);
             SnappedMoveOrigin = MoveOrigin;
             BoxState.Action = BoxAction.Resizing;
-            base.StartDrag(viewport, e, position);
+            base.StartDrag(viewport, camera, e, position);
         }
 
-        public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
             if (Handle == ResizeHandle.Center)
             {
                 var delta = position - lastPosition;
                 var newOrigin = MoveOrigin + delta;
                 var snapped = State.Tool.SnapIfNeeded(newOrigin.Value);
-                BoxState.Move(viewport, snapped - SnappedMoveOrigin.Value);
+                BoxState.Move(camera, snapped - SnappedMoveOrigin.Value);
                 SnappedMoveOrigin = snapped;
                 MoveOrigin = newOrigin;
             }
             else
             {
                 var snapped = State.Tool.SnapIfNeeded(position);
-                BoxState.Resize(Handle, viewport, snapped);
+                BoxState.Resize(Handle, viewport, camera, snapped);
             }
-            base.Drag(viewport, e, lastPosition, position);
+            base.Drag(viewport, camera, e, lastPosition, position);
         }
 
-        public override void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             BoxState.FixBounds();
             BoxState.Action = BoxAction.Drawn;
             MoveOrigin = SnappedMoveOrigin = null;
-            base.EndDrag(viewport, e, position);
+            base.EndDrag(viewport, camera, e, position);
         }
 
         public override void Render(BufferBuilder builder)

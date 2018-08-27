@@ -151,10 +151,12 @@ namespace Sledge.BspEditor.Tools.Selection
             });
             yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
             {
+                if (!(b.Viewport.Viewport.Camera is OrthographicCamera camera)) return;
+
                 var selectionBoundingBox = Document.Selection.GetSelectionBoundingBox();
-                var point = b.Viewport.Flatten(b.Viewport.ScreenToWorld(b.Event.X, b.Event.Y));
-                var start = b.Viewport.Flatten(selectionBoundingBox.Start);
-                var end = b.Viewport.Flatten(selectionBoundingBox.End);
+                var point = camera.Flatten(camera.ScreenToWorld(b.Event.X, b.Event.Y));
+                var start = camera.Flatten(selectionBoundingBox.Start);
+                var end = camera.Flatten(selectionBoundingBox.End);
 
                 if (point.X < start.X || point.X > end.X || point.Y < start.Y || point.Y > end.Y) return;
 
@@ -476,7 +478,7 @@ namespace Sledge.BspEditor.Tools.Selection
             {
                 var desel = new List<IMapObject>();
                 var sel = new List<IMapObject>();
-                var seltest = SelectionTest(viewport, camera, e);
+                var seltest = SelectionTest(camera, e);
                 if (seltest != null)
                 {
                     if (!ctrl || !seltest.IsSelected) sel.Add(seltest);
@@ -576,14 +578,14 @@ namespace Sledge.BspEditor.Tools.Selection
             );
         }
 
-        private IMapObject SelectionTest(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        private IMapObject SelectionTest(OrthographicCamera camera, ViewportEvent e)
         {
             // Create a box to represent the click, with a tolerance level
-            var unused = viewport.GetUnusedCoordinate(new Vector3(100000, 100000, 100000));
-            var tolerance = 4 / viewport.Zoom; // Selection tolerance of four pixels
-            var used = viewport.Expand(new Vector3(tolerance, tolerance, 0));
+            var unused = camera.GetUnusedCoordinate(new Vector3(100000, 100000, 100000));
+            var tolerance = 4 / camera.Zoom; // Selection tolerance of four pixels
+            var used = camera.Expand(new Vector3(tolerance, tolerance, 0));
             var add = used + unused;
-            var click = viewport.ScreenToWorld(e.X, e.Y);
+            var click = camera.ScreenToWorld(e.X, e.Y);
             var box = new Box(click - add, click + add);
             
             // Get the first element that intersects with the box, selecting or deselecting as needed
@@ -601,7 +603,7 @@ namespace Sledge.BspEditor.Tools.Selection
             var nudge = GetNudgeValue(e.KeyCode);
             if (nudge != null && (_selectionBox.State.Action == BoxAction.Drawn) && !Document.Selection.IsEmpty)
             {
-                var translate = viewport.Expand(nudge.Value);
+                var translate = camera.Expand(nudge.Value);
                 var transformation = Matrix4x4.CreateTranslation((float)translate.X, (float)translate.Y, (float)translate.Z);
                 var matrix = transformation;
                 ExecuteTransform("Nudge", matrix, KeyboardState.Shift, TextureTransformationType.Uniform);

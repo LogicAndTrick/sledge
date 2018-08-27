@@ -73,12 +73,12 @@ namespace Sledge.BspEditor.Tools.Draggable
             // 
         }
 
-        public override void Click(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             State.Action = BoxAction.Idle;
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             return true;
         }
@@ -93,32 +93,32 @@ namespace Sledge.BspEditor.Tools.Draggable
             //
         }
 
-        public override void StartDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             State.Viewport = viewport;
             State.Action = BoxAction.Drawing;
             State.OrigStart = State.Start;
             State.OrigEnd = State.End;
-            var st = RememberedDimensions == null ? Vector3.Zero : viewport.GetUnusedCoordinate(RememberedDimensions.Start);
-            var wid = RememberedDimensions == null ? Vector3.Zero : viewport.GetUnusedCoordinate(RememberedDimensions.End - RememberedDimensions.Start);
-            State.Start = Tool.SnapIfNeeded(viewport.Expand(position) + st);
+            var st = RememberedDimensions == null ? Vector3.Zero : camera.GetUnusedCoordinate(RememberedDimensions.Start);
+            var wid = RememberedDimensions == null ? Vector3.Zero : camera.GetUnusedCoordinate(RememberedDimensions.End - RememberedDimensions.Start);
+            State.Start = Tool.SnapIfNeeded(camera.Expand(position) + st);
             State.End = State.Start + wid;
-            base.StartDrag(viewport, e, position);
+            base.StartDrag(viewport, camera, e, position);
         }
 
-        public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
-            State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedCoordinate(State.End);
-            base.Drag(viewport, e, lastPosition, position);
+            State.End = Tool.SnapIfNeeded(camera.Expand(position)) + camera.GetUnusedCoordinate(State.End);
+            base.Drag(viewport, camera, e, lastPosition, position);
         }
 
-        public override void EndDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             State.Viewport = null;
             State.Action = BoxAction.Drawn;
-            State.End = Tool.SnapIfNeeded(viewport.Expand(position)) + viewport.GetUnusedCoordinate(State.End);
+            State.End = Tool.SnapIfNeeded(camera.Expand(position)) + camera.GetUnusedCoordinate(State.End);
             State.FixBounds();
-            base.EndDrag(viewport, e, position);
+            base.EndDrag(viewport, camera, e, position);
         }
 
         public override void Render(BufferBuilder builder)

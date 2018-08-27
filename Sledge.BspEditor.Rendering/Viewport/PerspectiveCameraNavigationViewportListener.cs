@@ -87,7 +87,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             var tilt = 2f;
 
             // These keys are used for hotkeys, don't want the 3D view to move about when trying to use hotkeys.
-            var ignore = KeyboardState.IsAnyKeyDown(Keys.ShiftKey, Keys.ControlKey, Keys.Alt);
+            var ignore = !FreeLook && KeyboardState.IsAnyKeyDown(Keys.ShiftKey, Keys.ControlKey, Keys.Alt);
             IfKey(Keys.W, () => Camera.Advance(move), ignore);
             IfKey(Keys.S, () => Camera.Advance(-move), ignore);
             IfKey(Keys.A, () => Camera.Strafe(-move), ignore);

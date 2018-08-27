@@ -121,15 +121,15 @@ namespace Sledge.BspEditor.Tools
             cam.Direction = look - position;
         }
 
-        private State GetStateAtPoint(int x, int y, MapViewport viewport, out Camera activeCamera)
+        private State GetStateAtPoint(int x, int y, OrthographicCamera camera, out Camera activeCamera)
         {
-            var d = 5 / viewport.Zoom;
+            var d = 5 / camera.Zoom;
 
             foreach (var cam in GetCameraList())
             {
-                var p = viewport.Flatten(viewport.ScreenToWorld(x, y));
-                var pos = viewport.Flatten(cam.EyePosition);
-                var look = viewport.Flatten(cam.LookPosition);
+                var p = camera.Flatten(camera.ScreenToWorld(new Vector3(x, y, 0)));
+                var pos = camera.Flatten(cam.EyePosition);
+                var look = camera.Flatten(cam.LookPosition);
                 activeCamera = cam;
                 if (p.X >= pos.X - d && p.X <= pos.X + d && p.Y >= pos.Y - d && p.Y <= pos.Y + d) return State.MovingPosition;
                 if (p.X >= look.X - d && p.X <= look.X + d && p.Y >= look.Y - d && p.Y <= look.Y + d) return State.MovingLook;
@@ -179,10 +179,10 @@ namespace Sledge.BspEditor.Tools
 
             var gs = Document.Map.Data.GetOne<GridData>()?.Grid?.Spacing ?? 64;
 
-            _state = GetStateAtPoint(e.X, e.Y, vp, out _stateCamera);
+            _state = GetStateAtPoint(e.X, e.Y, camera, out _stateCamera);
             if (_state == State.None && KeyboardState.Shift)
             {
-                var p = SnapIfNeeded(vp.ScreenToWorld(e.X, e.Y));
+                var p = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
                 _stateCamera = new Camera { EyePosition = p, LookPosition = p + Vector3.UnitX * 1.5f * gs };
                 Document.Map.Data.Add(_stateCamera);
                 _state = State.MovingLook;
@@ -205,25 +205,25 @@ namespace Sledge.BspEditor.Tools
             var vp = viewport;
             if (vp == null) return;
 
-            var p = SnapIfNeeded(vp.ScreenToWorld(e.X, e.Y));
+            var p = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
             var cursor = Cursors.Default;
 
             switch (_state)
             {
                 case State.None:
-                    var st = GetStateAtPoint(e.X, e.Y, vp, out _stateCamera);
+                    var st = GetStateAtPoint(e.X, e.Y, camera, out _stateCamera);
                     if (st != State.None) cursor = Cursors.SizeAll;
                     break;
                 case State.MovingPosition:
                     if (_stateCamera == null) break;
-                    var newEye = vp.GetUnusedCoordinate(_stateCamera.EyePosition) + p;
+                    var newEye = camera.GetUnusedCoordinate(_stateCamera.EyePosition) + p;
                     if (KeyboardState.Ctrl) _stateCamera.LookPosition += (newEye - _stateCamera.EyePosition);
                     _stateCamera.EyePosition = newEye;
                     SetViewportCamera(_stateCamera.EyePosition, _stateCamera.LookPosition);
                     break;
                 case State.MovingLook:
                     if (_stateCamera == null) break;
-                    var newLook = vp.GetUnusedCoordinate(_stateCamera.LookPosition) + p;
+                    var newLook = camera.GetUnusedCoordinate(_stateCamera.LookPosition) + p;
                     if (KeyboardState.Ctrl) _stateCamera.EyePosition += (newLook - _stateCamera.LookPosition);
                     _stateCamera.LookPosition = newLook;
                     SetViewportCamera(_stateCamera.EyePosition, _stateCamera.LookPosition);

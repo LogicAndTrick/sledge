@@ -189,7 +189,7 @@ namespace Sledge.BspEditor.Tools.Widgets
         {
             if (_mouseMovePoint == null || _mouseDownPoint == null) return null;
 
-            var originPoint = viewport.WorldToScreen(_pivotPoint);
+            var originPoint = viewport.Viewport.Camera.WorldToScreen(_pivotPoint);
             var origv = Vector3.Normalize(_mouseDownPoint.Value - originPoint);
             var newv = Vector3.Normalize(_mouseMovePoint.Value - originPoint);
             var angle = Math.Acos(Math.Max(-1, Math.Min(1, origv.Dot(newv))));

@@ -16,6 +16,7 @@ namespace Sledge.Shell.Registers
     /// Collects all exported commands and runs then when requested.
     /// This class should be the only thing to ever run commands in the application.
     /// </summary>
+    [Export]
     [Export(typeof(IStartupHook))]
     [Export(typeof(IActivatorProvider))]
     public class CommandRegister : IStartupHook, IActivatorProvider

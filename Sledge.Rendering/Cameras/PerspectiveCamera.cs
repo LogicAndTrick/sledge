@@ -38,8 +38,9 @@ namespace Sledge.Rendering.Cameras
             }
             set
             {
-                _angles.Y = (float) (Math.Asin(value.Z) + Math.PI / 2);
-                _angles.X = (float) (Math.Atan2(-value.Y, -value.X) + Math.PI / 2);
+                var norm = Vector3.Normalize(value);
+                _angles.Y = (float) (Math.Asin(norm.Z) + Math.PI / 2);
+                _angles.X = (float) (Math.Atan2(-norm.Y, -norm.X) + Math.PI / 2);
             }
         }
 

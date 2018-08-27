@@ -21,15 +21,15 @@ namespace Sledge.BspEditor.Tools.Draggable
             Position = Vector3.Zero;
         }
 
-        public override void Click(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             
         }
 
-        public override bool CanDrag(MapViewport viewport, ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             var width = Width;
-            var screenPosition = viewport.WorldToScreen(Position);
+            var screenPosition = camera.WorldToScreen(Position);
             var diff = Vector3.Abs(e.Location - screenPosition);
             return diff.X < width && diff.Y < width;
         }
@@ -51,10 +51,10 @@ namespace Sledge.BspEditor.Tools.Draggable
             viewport.Control.Cursor = Cursors.Default;
         }
 
-        public override void Drag(MapViewport viewport, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
-            Position = viewport.Expand(position) + viewport.GetUnusedCoordinate(Position);
-            base.Drag(viewport, e, lastPosition, position);
+            Position = camera.Expand(position) + camera.GetUnusedCoordinate(Position);
+            base.Drag(viewport, camera, e, lastPosition, position);
         }
 
         public override void Render(BufferBuilder builder)
