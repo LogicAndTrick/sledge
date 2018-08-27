@@ -45,10 +45,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
             _engine = engine;
             _listeners = listeners;
             _camera = new PerspectiveCamera();
-            _panel = new Panel {Dock = DockStyle.Fill, BackColor = Color.LightCyan};
+            _panel = new Panel {Dock = DockStyle.Fill, BackColor = Color.Black};
             _subscriptions = new List<Subscription>
             {
-                Oy.Subscribe<IDocument>("Document:Activated", DocumentActivated),
                 Oy.Subscribe<Vector3>("MapDocument:Viewport:Focus2D", Focus2D),
                 Oy.Subscribe<Vector3>("MapDocument:Viewport:Focus3D", Focus3D),
                 Oy.Subscribe<Box>("MapDocument:Viewport:Focus2D", Focus2D),
@@ -56,6 +55,36 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 Oy.Subscribe<Tuple<Vector3, Vector3>>("MapDocument:Viewport:Set3D", Set3D),
                 Oy.Subscribe<Vector3>("MapDocument:Viewport:Set2D", Set2D),
             };
+            _viewport = _engine.CreateViewport();
+            _viewport.Camera = _camera;
+            _viewport.Control.Dock = DockStyle.Fill;
+            _panel.Controls.Add(_viewport.Control);
+            _mapViewport = new MapViewport(_viewport);
+            _mapViewport.Listeners.AddRange(_listeners.SelectMany(x => x.Create(_mapViewport)));
+            _mapViewport.ListenerException += ListenerException;
+            Oy.Publish("MapViewport:Created", _mapViewport);
+        }
+
+        private void ListenerException(object sender, Exception exception)
+        {
+            Oy.Publish("Shell:UnhandledException", exception);
+        }
+
+        public string GetSerialisedSettings()
+        {
+            return Sledge.Rendering.Cameras.Camera.Serialise(Camera);
+        }
+
+        public void SetSerialisedSettings(string settings)
+        {
+            try
+            {
+                Camera = Sledge.Rendering.Cameras.Camera.Deserialise(settings);
+            }
+            catch
+            {
+                //
+            }
         }
 
         #region Camera manipulation
@@ -128,46 +157,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
         }
         
         #endregion
-
-        private async Task DocumentActivated(IDocument doc)
-        {
-            var mapDoc = doc as MapDocument;
-
-            if (mapDoc == null) return;
-            if (_viewport == null)
-            {
-                _viewport = _engine.CreateViewport();
-                _viewport.Camera = _camera;
-                _viewport.Control.Dock = DockStyle.Fill;
-                _panel.Controls.Add(_viewport.Control);
-                _mapViewport = new MapViewport(_viewport);
-                _mapViewport.Listeners.AddRange(_listeners.SelectMany(x => x.Create(_mapViewport)));
-                _mapViewport.ListenerException += ListenerException;
-                await Oy.Publish("MapViewport:Created", _mapViewport);
-            }
-        }
-
-        private void ListenerException(object sender, Exception exception)
-        {
-            Oy.Publish("Shell:UnhandledException", exception);
-        }
-
-        public string GetSerialisedSettings()
-        {
-            return Sledge.Rendering.Cameras.Camera.Serialise(Camera);
-        }
-
-        public void SetSerialisedSettings(string settings)
-        {
-            try
-            {
-                Camera = Sledge.Rendering.Cameras.Camera.Deserialise(settings);
-            }
-            catch
-            {
-                //
-            }
-        }
 
         public void Dispose()
         {

@@ -15,9 +15,20 @@ namespace Sledge.Shell
     internal class Bootstrapper
     {
         [ImportMany] private IEnumerable<Lazy<IStartupHook>> _startupHooks;
+        [ImportMany] private IEnumerable<Lazy<IUIStartupHook>> _uiStartupHooks;
         [ImportMany] private IEnumerable<Lazy<IInitialiseHook>> _initialiseHooks;
         [ImportMany] private IEnumerable<Lazy<IShuttingDownHook>> _shuttingDownHooks;
+        [ImportMany] private IEnumerable<Lazy<IUIShutdownHook>> _uiShutdownHooks;
         [ImportMany] private IEnumerable<Lazy<IShutdownHook>> _shutdownHooks;
+
+        public void UIStartup()
+        {
+            foreach (var hook in _uiStartupHooks.Select(x => x.Value).OrderBy(x => x.GetType().Name))
+            {
+                Log.Debug("Bootstrapper", "UI Startup hook: " + hook.GetType().FullName);
+                hook.OnUIStartup();
+            }
+        }
 
         /// <summary>
         /// Run all shell-startup and startup hooks
@@ -57,6 +68,15 @@ namespace Sledge.Shell
                 if (!await export.OnShuttingDown()) return false;
             }
             return true;
+        }
+
+        public void UIShutdown()
+        {
+            foreach (var hook in _uiShutdownHooks.Select(x => x.Value).OrderBy(x => x.GetType().Name))
+            {
+                Log.Debug("Bootstrapper", "UI Shutdown hook: " + hook.GetType().FullName);
+                hook.OnUIShutdown();
+            }
         }
 
         /// <summary>

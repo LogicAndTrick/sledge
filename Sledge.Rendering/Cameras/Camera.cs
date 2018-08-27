@@ -21,9 +21,9 @@ namespace Sledge.Rendering.Cameras
 
         public static string Serialise(ICamera camera)
         {
-            if (camera is PerspectiveCamera pc) return pc.Serialise();
-            if (camera is OrthographicCamera oc) return oc.Serialise();
-            return "";
+            if (camera is PerspectiveCamera pc) return camera.GetType().Name + "/" + pc.Serialise();
+            if (camera is OrthographicCamera oc) return camera.GetType().Name + "/" + oc.Serialise();
+            return camera?.GetType().Name;
         }
     }
 }

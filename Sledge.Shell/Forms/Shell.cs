@@ -97,6 +97,7 @@ namespace Sledge.Shell.Forms
         protected override void OnLoad(EventArgs e)
         {
             // Bootstrap the shell
+            _bootstrapper.UIStartup();
             _bootstrapper.Startup()
                 .ContinueWith(_ => _bootstrapper.Initialise())
                 .ContinueWith(_ => PostLoad());
@@ -170,6 +171,9 @@ namespace Sledge.Shell.Forms
             // Unsubscribe the event (no infinite loops!) and close for good
             Closing -= CancelClose;
             Enabled = false;
+            this.InvokeSync(() => { 
+                _bootstrapper.UIShutdown();
+            });
             await _bootstrapper.Shutdown();
             Close();
         }

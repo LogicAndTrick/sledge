@@ -4,5 +4,6 @@
     {
         string Type { get; }
         IMapDocumentControl Create();
+        bool IsType(IMapDocumentControl control);
     }
 }

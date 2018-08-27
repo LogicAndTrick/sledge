@@ -19,5 +19,10 @@ namespace Sledge.BspEditor.Rendering.Viewport
         {
             return new ViewportMapDocumentControl(_engine.Value, _viewportEventListenerFactories.Select(x => x.Value));
         }
+
+        public bool IsType(IMapDocumentControl control)
+        {
+            return control is ViewportMapDocumentControl;
+        }
     }
 }
