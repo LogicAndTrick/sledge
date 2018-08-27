@@ -37,7 +37,9 @@
             "PointSize": "Point size in 2D views" 
         }
     },
-    "Commands": {
-
+    "Components": {
+        "ViewportZoomStatusItem": {
+            "Zoom": "Zoom"
+        }
     } 
 }

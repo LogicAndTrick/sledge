@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering;
@@ -131,6 +132,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
                         var pow = (float) Math.Pow(2, num);
                         var zoom = press < 6 ? 1 / pow : pow;
                         Camera.Zoom = zoom;
+                        Oy.Publish("MapDocument:ViewportZoomStatus:UpdateValue", Camera.Zoom);
                         // Mediator.Publish(EditorMediator.ViewZoomChanged, Camera.Zoom);
                     }
                 }
@@ -160,6 +162,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
             //var pt = Viewport.ProperScreenToWorld(new Vector3(e.X, e.Y, 0));
             //Mediator.Publish(EditorMediator.MouseVector3sChanged, pt);
+
+            Oy.Publish<Vector3?>("MapDocument:ViewportMouseLocationStatus:UpdateValue", Camera.ScreenToWorld(e.X, e.Y));
         }
 
         public void MouseWheel(ViewportEvent e)
@@ -170,6 +174,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             Camera.Position -= (after - before);
 
             //Mediator.Publish(EditorMediator.ViewZoomChanged, Camera.Zoom);
+            Oy.Publish("MapDocument:ViewportZoomStatus:UpdateValue", Camera.Zoom);
             if (KeyboardState.IsKeyDown(Keys.ControlKey))
             {
                 //Mediator.Publish(EditorMediator.SetZoomValue, Camera.Zoom);
@@ -242,12 +247,17 @@ namespace Sledge.BspEditor.Rendering.Viewport
             }
             //Mediator.Publish(EditorMediator.ViewFocused);
             //Mediator.Publish(EditorMediator.ViewZoomChanged, Camera.Zoom);
+
+            Oy.Publish("MapDocument:ViewportZoomStatus:UpdateValue", Camera.Zoom);
         }
 
         public void MouseLeave(ViewportEvent e)
         {
             Viewport.Control.Cursor = Cursors.Default;
             //Mediator.Publish(EditorMediator.ViewUnfocused);
+
+            Oy.Publish("MapDocument:ViewportZoomStatus:UpdateValue", 0f);
+            Oy.Publish<Vector3?>("MapDocument:ViewportMouseLocationStatus:UpdateValue", null);
         }
 
         public void ZoomChanged(ViewportEvent e)

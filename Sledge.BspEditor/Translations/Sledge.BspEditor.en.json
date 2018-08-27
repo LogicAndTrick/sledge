@@ -92,5 +92,11 @@
             "Name": "Standard grid",
             "Details": "A normal square grid based on powers of two."
         }
-    }
+    },
+    "Modification": {
+        "SelectionHandler": {
+            "NoObjectsSelected": "No objects selected",
+            "NumObjectsSelected": "{0} objects selected"
+        }
+    } 
 }

@@ -21,7 +21,7 @@ namespace Sledge.BspEditor.Tools.Grid
         public event EventHandler<string> TextChanged;
 
         public string ID => "Sledge.BspEditor.Tools.Grid.GridStatusItem";
-        public int Width => 150;
+        public int Width => 120;
         public bool HasBorder => true;
         public string Text { get; set; }
 

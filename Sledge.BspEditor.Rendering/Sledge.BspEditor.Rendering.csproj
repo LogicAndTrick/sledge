@@ -45,6 +45,8 @@
     <Compile Include="ChangeHandlers\EntitySprite.cs" />
     <Compile Include="ChangeHandlers\EntitySpriteChangeHandler.cs" />
     <Compile Include="ChangeHandlers\IContentsReplaced.cs" />
+    <Compile Include="Components\ViewportMouseLocationStatusItem.cs" />
+    <Compile Include="Components\ViewportZoomStatusItem.cs" />
     <Compile Include="Converters\AxisLinesConverter.cs" />
     <Compile Include="Converters\CenterHandlesConverter.cs" />
     <Compile Include="Converters\CordonBoundsConverter.cs" />
