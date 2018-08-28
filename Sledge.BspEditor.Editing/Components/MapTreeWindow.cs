@@ -1,46 +1,118 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Sledge.Common.Mediator;
-using Sledge.DataStructures.MapObjects;
+using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Context;
+using Sledge.Common.Translations;
+using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components
 {
-    public partial class MapTreeWindow : HotkeyForm, IMediatorListener
+    [Export(typeof(IDialog))]
+    [AutoTranslate]
+    public partial class MapTreeWindow : Form, IDialog, IManualTranslate
     {
-        public Document Document { get; set; }
+        [Import("Shell", typeof(Form))] private Lazy<Form> _parent;
+        [Import] private IContext _context;
 
-        public MapTreeWindow(Document document)
+        private List<Subscription> _subscriptions;
+
+        public MapTreeWindow()
         {
             InitializeComponent();
-            Document = document;
         }
 
-        protected override void OnLoad(EventArgs e)
+        protected override void OnClosing(CancelEventArgs e)
         {
-            Mediator.Subscribe(EditorMediator.DocumentActivated, this);
-            Mediator.Subscribe(EditorMediator.SelectionChanged, this);
-            RefreshNodes();
+            e.Cancel = true;
+            Oy.Publish("Context:Remove", new ContextInfo("BspEditor:MapTree"));
         }
 
-        protected override void OnClosed(EventArgs e)
+        public bool IsInContext(IContext context)
         {
-            Mediator.UnsubscribeAll(this);
+            return context.HasAny("BspEditor:MapTree");
         }
 
-        private void DocumentActivated(Document document)
+        public void SetVisible(IContext context, bool visible)
         {
-            Document = document;
-            RefreshNodes();
+            this.InvokeLater(() =>
+            {
+                if (visible)
+                {
+                    if (!Visible) Show(_parent.Value);
+                    Subscribe();
+                    RefreshNodes();
+                }
+                else
+                {
+                    Hide();
+                    Unsubscribe();
+                }
+            });
         }
 
-        private void SelectionChanged()
+        public void Translate(TranslationStringsCollection strings)
         {
-            if (Document == null || Document.Selection.InFaceSelection || Document.Selection.IsEmpty()) return;
-            var first = Document.Selection.GetSelectedParents().First();
-            var node = FindNodeWithTag(MapTree.Nodes.OfType<TreeNode>(), first);
-            if (node != null) MapTree.SelectedNode = node;
+            CreateHandle();
+            var prefix = GetType().FullName;
+            this.InvokeLater(() =>
+            {
+                Text = strings.GetString(prefix, "Title");
+            });
+        }
+
+        private void Subscribe()
+        {
+            if (_subscriptions != null) return;
+            _subscriptions = new List<Subscription>
+            {
+                Oy.Subscribe<Change>("MapDocument:Changed", DocumentChanged),
+                Oy.Subscribe<MapDocument>("Document:Activated", DocumentActivated),
+                Oy.Subscribe<MapDocument>("MapDocument:SelectionChanged", SelectionChanged)
+            };
+        }
+
+        private void Unsubscribe()
+        {
+            if (_subscriptions == null) return;
+            _subscriptions.ForEach(x => x.Dispose());
+            _subscriptions = null;
+        }
+
+        private async Task SelectionChanged(MapDocument doc)
+        {
+            this.InvokeLater(() =>
+            {
+                if (doc == null || doc.Selection.IsEmpty) return;
+                var first = doc.Selection.GetSelectedParents().First();
+                var node = FindNodeWithTag(MapTree.Nodes.OfType<TreeNode>(), first);
+                if (node != null) MapTree.SelectedNode = node;
+            });
+        }
+
+        public async Task DocumentActivated(MapDocument document)
+        {
+            this.InvokeLater(() =>
+            {
+                RefreshNodes(document);
+            });
+        }
+
+        private async Task DocumentChanged(Change change)
+        {
+            this.InvokeLater(() =>
+            {
+                RefreshNodes(change.Document);
+            });
         }
 
         private TreeNode FindNodeWithTag(IEnumerable<TreeNode> nodes, object tag)
@@ -56,35 +128,38 @@ namespace Sledge.BspEditor.Editing.Components
 
         private void RefreshNodes()
         {
+            var doc = _context.Get<MapDocument>("ActiveDocument");
+            RefreshNodes(doc);
+        }
+
+        private void RefreshNodes(MapDocument doc)
+        {
             MapTree.BeginUpdate();
             MapTree.Nodes.Clear();
-            if (Document != null)
+            if (doc != null)
             {
-                LoadMapNode(null, Document.Map.WorldSpawn);
+                LoadMapNode(null, doc.Map.Root);
             }
             MapTree.EndUpdate();
         }
 
-        private void LoadMapNode(TreeNode parent, MapObject obj)
+        private void LoadMapNode(TreeNode parent, IMapObject obj)
         {
             var text = GetNodeText(obj);
             var node = new TreeNode(obj.GetType().Name + text) { Tag = obj };
-            if (obj is World)
+            if (obj is Root w)
             {
-                var w = (World)obj;
-                node.Nodes.AddRange(GetEntityNodes(w.EntityData).ToArray());
+                node.Nodes.AddRange(GetEntityNodes(w.Data.GetOne<EntityData>()).ToArray());
             }
-            else if (obj is Entity)
+            else if (obj is Entity e)
             {
-                var e = (Entity)obj;
                 node.Nodes.AddRange(GetEntityNodes(e.EntityData).ToArray());
             }
-            else if (obj is Solid)
+            else if (obj is Solid s)
             {
-                var s = (Solid)obj;
                 node.Nodes.AddRange(GetFaceNodes(s.Faces).ToArray());
             }
-            foreach (var mo in obj.GetChildren())
+            foreach (var mo in obj.Hierarchy)
             {
                 LoadMapNode(node, mo);
             }
@@ -92,20 +167,20 @@ namespace Sledge.BspEditor.Editing.Components
             else parent.Nodes.Add(node);
         }
 
-        private string GetNodeText(MapObject mo)
+        private string GetNodeText(IMapObject mo)
         {
-            if (mo is Solid)
+            if (mo is Solid solid)
             {
-                return " (" + ((Solid)mo).Faces.Count + " faces)";
+                return " (" + solid.Faces.Count() + " faces)";
             }
             if (mo is Group)
             {
-                return " (" + mo.ChildCount + " children)";
+                return " (" + mo.Hierarchy.HasChildren + " children)";
             }
-            var ed = mo.GetEntityData();
+            var ed = mo.Data.GetOne<EntityData>();
             if (ed != null)
             {
-                var targetName = ed.GetPropertyValue("targetname");
+                var targetName = ed.Get("targetname", "");
                 return ": " + ed.Name + (String.IsNullOrWhiteSpace(targetName) ? "" : " (" + targetName + ")");
             }
             return "";
@@ -123,42 +198,37 @@ namespace Sledge.BspEditor.Editing.Components
             {
                 var fnode = new TreeNode("Face " + c);
                 c++;
-                var pnode = fnode.Nodes.Add("Plane: " + face.Plane.Normal + " * " + face.Plane.DistanceFromOrigin);
-                pnode.Nodes.Add("Normal: " + face.Plane.Normal);
-                pnode.Nodes.Add("Distance: " + face.Plane.DistanceFromOrigin);
-                pnode.Nodes.Add("A: " + face.Plane.A);
-                pnode.Nodes.Add("B: " + face.Plane.B);
-                pnode.Nodes.Add("C: " + face.Plane.C);
-                pnode.Nodes.Add("D: " + face.Plane.D);
+                var pnode = fnode.Nodes.Add($"Plane: {face.Plane.Normal} * {face.Plane.DistanceFromOrigin}");
+                pnode.Nodes.Add($"Normal: {face.Plane.Normal}");
+                pnode.Nodes.Add($"Distance: {face.Plane.DistanceFromOrigin}");
+                pnode.Nodes.Add($"A: {face.Plane.A}");
+                pnode.Nodes.Add($"B: {face.Plane.B}");
+                pnode.Nodes.Add($"C: {face.Plane.C}");
+                pnode.Nodes.Add($"D: {face.Plane.D}");
                 var tnode = fnode.Nodes.Add("Texture: " + face.Texture.Name);
-                tnode.Nodes.Add("U Axis: " + face.Texture.UAxis);
-                tnode.Nodes.Add("V Axis: " + face.Texture.VAxis);
-                tnode.Nodes.Add(String.Format("Scale: X = {0}, Y = {1}", face.Texture.XScale, face.Texture.YScale));
-                tnode.Nodes.Add(String.Format("Offset: X = {0}, Y = {1}", face.Texture.XShift, face.Texture.YShift));
+                tnode.Nodes.Add($"U Axis: {face.Texture.UAxis}");
+                tnode.Nodes.Add($"V Axis: {face.Texture.VAxis}");
+                tnode.Nodes.Add($"Scale: X = {face.Texture.XScale}, Y = {face.Texture.YScale}");
+                tnode.Nodes.Add($"Offset: X = {face.Texture.XShift}, Y = {face.Texture.YShift}");
                 tnode.Nodes.Add("Rotation: " + face.Texture.Rotation);
-                var vnode = fnode.Nodes.Add("Vertices: " + face.Vertices.Count);
+                var vnode = fnode.Nodes.Add($"Vertices: {face.Vertices.Count}");
                 var d = 0;
                 foreach (var vertex in face.Vertices)
                 {
-                    var cnode = vnode.Nodes.Add("Vertex " + d + ": " + vertex.Location);
+                    var cnode = vnode.Nodes.Add("Vertex " + d + ": " + vertex);
                     d++;
                 }
                 yield return fnode;
             }
         }
 
-        public void Notify(string message, object data)
-        {
-            Mediator.ExecuteDefault(this, message, data);
-        }
-
         private void TreeSelectionChanged(object sender, TreeViewEventArgs e)
         {
             RefreshSelectionProperties();
-            if (MapTree.SelectedNode != null && MapTree.SelectedNode.Tag is MapObject && !(MapTree.SelectedNode.Tag is World) && Document != null && !Document.Selection.InFaceSelection)
-            {
-                Document.PerformAction("Select object", new ChangeSelection(((MapObject)MapTree.SelectedNode.Tag).FindAll(), Document.Selection.GetSelectedObjects()));
-            }
+            // if (MapTree.SelectedNode != null && MapTree.SelectedNode.Tag is MapObject && !(MapTree.SelectedNode.Tag is World) && MapDocument != null && !MapDocument.Selection.InFaceSelection)
+            // {
+            //     MapDocument.PerformAction("Select object", new ChangeSelection(((MapObject)MapTree.SelectedNode.Tag).FindAll(), MapDocument.Selection.GetSelectedObjects()));
+            // }
         }
 
         private void RefreshSelectionProperties()
@@ -178,20 +248,25 @@ namespace Sledge.BspEditor.Editing.Components
         private IEnumerable<Tuple<string, string>> GetTagProperties(object tag)
         {
             var list = new List<Tuple<string, string>>();
-            if (tag is MapObject)
+            if (!(tag is long id)) return list;
+
+            var doc = _context.Get<MapDocument>("ActiveDocument");
+            if (doc == null) return list;
+
+            var mo = doc.Map.Root.FindByID(id);
+            if (mo == null) return list;
+
+            var ed = mo.Data.GetOne<EntityData>();
+            if (ed == null) return list;
+
+            var gameData = doc.Environment.GetGameData().Result;
+
+            var gd = gameData.GetClass(ed.Name);
+            foreach (var prop in ed.Properties)
             {
-                var mo = (MapObject) tag;
-                var ed = mo.GetEntityData();
-                if (ed != null)
-                {
-                    var gd = Document.GameData.Classes.FirstOrDefault(x => String.Equals(x.Name, ed.Name, StringComparison.InvariantCultureIgnoreCase));
-                    foreach (var prop in ed.Properties)
-                    {
-                        var gdp = gd != null ? gd.Properties.FirstOrDefault(x => String.Equals(x.Name, prop.Key, StringComparison.InvariantCultureIgnoreCase)) : null;
-                        var key = gdp != null && !String.IsNullOrWhiteSpace(gdp.ShortDescription) ? gdp.ShortDescription : prop.Key;
-                        list.Add(Tuple.Create(key, prop.Value));
-                    }
-                }
+                var gdp = gd?.Properties.FirstOrDefault(x => String.Equals(x.Name, prop.Key, StringComparison.InvariantCultureIgnoreCase));
+                var key = gdp != null && !String.IsNullOrWhiteSpace(gdp.ShortDescription) ? gdp.ShortDescription : prop.Key;
+                list.Add(Tuple.Create(key, prop.Value));
             }
             return list;
         }

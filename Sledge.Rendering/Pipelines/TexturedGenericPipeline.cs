@@ -12,6 +12,7 @@ namespace Sledge.Rendering.Pipelines
     public class TexturedGenericPipeline : IPipeline
     {
         public PipelineType Type => PipelineType.TexturedGeneric;
+        public int Group => 1;
         public float Order => 5;
 
         private Shader _vertex;

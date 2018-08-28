@@ -13,6 +13,7 @@ namespace Sledge.Rendering.Pipelines
     public interface IPipeline : IDisposable
     {
         PipelineType Type { get; }
+        int Group { get; }
         float Order { get; }
 
         void Create(RenderContext context);

@@ -203,23 +203,26 @@ namespace Sledge.Rendering.Engine
                 : _clearColourOrthographic;
             _commandList.ClearColorTarget(0, cc);
 
-            var renderables = _pipelines.ToDictionary(x => x, x => Scene.GetRenderables(x, renderTarget).OrderBy(r => r.Order).ToList());
-
             foreach (var pipeline in _pipelines.OrderBy(x => x.Order))
             {
                 pipeline.SetupFrame(Context, renderTarget);
             }
 
-            foreach (var pipeline in _pipelines.OrderBy(x => x.Order))
-            {
-                if (!renderables.ContainsKey(pipeline)) continue;
-                pipeline.Render(Context, renderTarget, _commandList, renderables[pipeline]);
-            }
+            var renderables = _pipelines.ToDictionary(x => x, x => Scene.GetRenderables(x, renderTarget).OrderBy(r => r.Order).ToList());
 
-            foreach (var pipeline in _pipelines.OrderBy(x => x.Order))
+            foreach (var pg in _pipelines.GroupBy(x => x.Group).OrderBy(x => x.Key))
             {
-                if (!renderables.ContainsKey(pipeline)) continue;
-                pipeline.RenderTransparent(Context, renderTarget, _commandList, renderables[pipeline]);
+                foreach (var pipeline in pg.OrderBy(x => x.Order))
+                {
+                    if (!renderables.ContainsKey(pipeline)) continue;
+                    pipeline.Render(Context, renderTarget, _commandList, renderables[pipeline]);
+                }
+
+                foreach (var pipeline in pg.OrderBy(x => x.Order))
+                {
+                    if (!renderables.ContainsKey(pipeline)) continue;
+                    pipeline.RenderTransparent(Context, renderTarget, _commandList, renderables[pipeline]);
+                }
             }
             
             _commandList.End();

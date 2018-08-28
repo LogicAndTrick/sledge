@@ -53,6 +53,7 @@ namespace Sledge.BspEditor.Editing.Components
                 {
                     if (!Visible) Show(_parent.Value);
                     Subscribe();
+                    UpdateTree();
                 }
                 else
                 {

@@ -13,6 +13,7 @@ namespace Sledge.Rendering.Pipelines
     public class TexturedBillboardPipeline : IPipeline
     {
         public PipelineType Type => PipelineType.TexturedBillboard;
+        public int Group => 1;
         public float Order => 6;
 
         private Shader _vertex;

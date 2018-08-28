@@ -21,6 +21,10 @@ namespace Sledge.Shell.Settings.Editors
             {
                 return true;
             }
+            else if (key.EditorType == "Dropdown")
+            {
+                return true;
+            }
             else if (key.Type == typeof(string))
             {
                 return true;
@@ -57,6 +61,10 @@ namespace Sledge.Shell.Settings.Editors
             if (key.EditorType == "LanguageSelectionEditor")
             {
                 return new LanguageSelectionEditor(_catalog.Value);
+            }
+            else if (key.EditorType == "Dropdown")
+            {
+                return new DropdownEditor();
             }
             else if (key.Type == typeof(string))
             {

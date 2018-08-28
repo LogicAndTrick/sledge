@@ -5,6 +5,7 @@
     /// </summary>
     public enum GridLineType
     {
+        Fractional = -1,
         Standard = 0,
         Primary = 1,
         Secondary = 2,

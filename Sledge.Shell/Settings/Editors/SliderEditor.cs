@@ -21,9 +21,9 @@ namespace Sledge.Shell.Settings.Editors
             get => Slider.Value / _multiplier;
             set
             {
-                var v = Convert.ToDecimal(value);
-                Slider.Value = (int) (v * _multiplier);
-                NumericBox.Value = v;
+                var d = Convert.ToDecimal(value);
+                Slider.Value = Math.Min(Slider.Maximum, Math.Max(Slider.Minimum, (int) (d / _multiplier)));
+                NumericBox.Value = Math.Min(NumericBox.Maximum, Math.Max(NumericBox.Minimum, (int) d));
             }
         }
 
@@ -53,31 +53,33 @@ namespace Sledge.Shell.Settings.Editors
 
         private void SetHint(string hint)
         {
-            var spl = (hint ?? "").Split();
+            var spl = (hint ?? "").Split(',');
+
+            if (spl.Length > 4 && int.TryParse(spl[4], out int mul)) _multiplier = mul;
+
             if (spl.Length > 0 && int.TryParse(spl[0], out int min))
             {
-                Slider.Minimum = min;
-                NumericBox.Minimum = min / _multiplier;
+                Slider.Minimum = (int) (min / _multiplier);
+                NumericBox.Minimum = min;
             }
             if (spl.Length > 1 && int.TryParse(spl[1], out int max))
             {
-                Slider.Maximum = max;
-                NumericBox.Minimum = max / _multiplier;
+                Slider.Maximum = (int) (max / _multiplier);
+                NumericBox.Maximum = max;
             }
             if (spl.Length > 2 && int.TryParse(spl[2], out int step)) Slider.SmallChange = step;
             if (spl.Length > 3 && int.TryParse(spl[3], out int step2)) Slider.LargeChange = step2;
-            if (spl.Length > 4 && int.TryParse(spl[3], out int mul)) _multiplier = mul;
         }
 
         private void NumberChanged(object sender, EventArgs e)
         {
-            Slider.Value = (int) (NumericBox.Value * _multiplier);
+            Slider.Value = Math.Min(Slider.Maximum, Math.Max(Slider.Minimum, (int)(NumericBox.Value / _multiplier)));
             OnValueChanged?.Invoke(this, Key);
         }
 
         private void SliderChanged(object sender, EventArgs e)
         {
-            NumericBox.Value = Slider.Value / _multiplier;
+            NumericBox.Value = Math.Min(NumericBox.Maximum, Math.Max(NumericBox.Minimum, (int)(Slider.Value * _multiplier)));
             OnValueChanged?.Invoke(this, Key);
         }
     }

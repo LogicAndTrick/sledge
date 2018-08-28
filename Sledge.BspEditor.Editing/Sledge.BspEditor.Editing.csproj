@@ -53,6 +53,7 @@
     <Compile Include="Commands\EditVisgroups.cs" />
     <Compile Include="Commands\Modification\SnapToGridIndividually.cs" />
     <Compile Include="Commands\MoveToWorld.cs" />
+    <Compile Include="Commands\OpenMapTreeWindow.cs" />
     <Compile Include="Commands\OpenSelectionDetails.cs" />
     <Compile Include="Commands\OpenMapInformation.cs" />
     <Compile Include="Commands\OpenEntityReport.cs" />
@@ -137,6 +138,12 @@
     </Compile>
     <Compile Include="Components\MapInformationDialog.Designer.cs">
       <DependentUpon>MapInformationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\MapTreeWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\MapTreeWindow.Designer.cs">
+      <DependentUpon>MapTreeWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\PasteSpecialDialog.cs">
       <SubType>Form</SubType>
@@ -343,6 +350,9 @@
     <EmbeddedResource Include="Components\MapInformationDialog.resx">
       <DependentUpon>MapInformationDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Components\MapTreeWindow.resx">
+      <DependentUpon>MapTreeWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Components\PasteSpecialDialog.resx">
       <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -412,6 +422,7 @@
     <Content Include="Resources\Menu_ShowBrushID.png" />
     <Content Include="Resources\Menu_ShowHidden.png" />
     <Content Include="Resources\Menu_ShowInformation.png" />
+    <Content Include="Resources\Menu_ShowLogicalTree.png" />
     <Content Include="Resources\Menu_SnapSelection.png" />
     <Content Include="Resources\Menu_SnapSelectionIndividual.png" />
     <Content Include="Resources\Menu_TextureLock.png" />

@@ -18,7 +18,7 @@ namespace Sledge.Shell.Settings.Editors
         public object Value
         {
             get => Numericbox.Value;
-            set => Numericbox.Value = Convert.ToDecimal(value);
+            set => Numericbox.Value = Math.Min(Numericbox.Maximum, Math.Max(Numericbox.Minimum, Convert.ToDecimal(value)));
         }
 
         public object Control => this;
@@ -48,7 +48,7 @@ namespace Sledge.Shell.Settings.Editors
 
         private void SetHint(string hint)
         {
-            var spl = (hint ?? "").Split();
+            var spl = (hint ?? "").Split(',');
             if (spl.Length > 0 && decimal.TryParse(spl[0], out decimal min)) Numericbox.Minimum = min;
             if (spl.Length > 1 && decimal.TryParse(spl[1], out decimal max)) Numericbox.Maximum = max;
             if (spl.Length > 2 && decimal.TryParse(spl[2], out decimal step)) Numericbox.Increment = step;

@@ -18,10 +18,10 @@ namespace Sledge.BspEditor.Grid
             set => Step = (float) Math.Pow(2, Math.Max(Math.Min(value, 10), -2));
         }
 
-        public int HideSmallerThan { get; } = 4;
-        public int HideFactor { get; } = 8;
-        public int Highlight1LineNum { get; } = 8;
-        public int Highlight2UnitNum { get; } = 1024;
+        public int HideSmallerThan => SquareGridFactory.GridHideSmallerThan;
+        public int HideFactor => SquareGridFactory.GridHideFactor;
+        public int Highlight1LineNum => SquareGridFactory.GridPrimaryHighlight;
+        public int Highlight2UnitNum => SquareGridFactory.GridSecondaryHighlight;
 
         public SquareGrid(float high, float low, float step)
         {
@@ -45,7 +45,7 @@ namespace Sledge.BspEditor.Grid
         private float GetActualStep(float step, float scale)
         {
             var actualDist = step * scale;
-            while (actualDist < HideSmallerThan)
+            while (actualDist < HideSmallerThan && HideFactor > 0)
             {
                 step *= HideFactor;
                 actualDist *= HideFactor;
@@ -91,10 +91,11 @@ namespace Sledge.BspEditor.Grid
                 var i = (int) f;
 
                 var type = GridLineType.Standard;
-                if (i == 0) type = GridLineType.Axis;
+                if (f != i) type = GridLineType.Fractional;
+                else if (i == 0) type = GridLineType.Axis;
                 else if (Math.Abs(i - Low) < 0.01f || Math.Abs(i - High) < 0.01f) type = GridLineType.Boundary;
-                else if (i % Highlight2UnitNum == 0) type = GridLineType.Secondary;
-                else if (i % (int) (step * Highlight1LineNum) == 0) type = GridLineType.Primary;
+                else if (Highlight2UnitNum > 0 && i % Highlight2UnitNum == 0) type = GridLineType.Secondary;
+                else if (Highlight1LineNum > 0 && i % (int) (step * Highlight1LineNum) == 0) type = GridLineType.Primary;
 
                 yield return new GridLine(type, tform(new Vector3(lower, f, 0)), tform(new Vector3(upper, f, 0)));
                 yield return new GridLine(type, tform(new Vector3(f, lower, 0)), tform(new Vector3(f, upper, 0)));

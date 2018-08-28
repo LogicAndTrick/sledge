@@ -12,6 +12,7 @@ namespace Sledge.Rendering.Pipelines
     public class OverlayPipeline : IPipeline
     {
         public PipelineType Type => PipelineType.Overlay;
+        public int Group => 2;
         public float Order => 9999;
 
         private Shader _vertex;

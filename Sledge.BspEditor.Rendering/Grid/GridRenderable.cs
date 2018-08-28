@@ -95,7 +95,7 @@ namespace Sledge.BspEditor.Rendering.Grid
             if (!(_viewport.Camera is OrthographicCamera oc)) return;
             if (_grid == null) return;
 
-            var newBounds = GetValidatedBounds(oc, 50);
+            var newBounds = GetValidatedBounds(oc, 500);
             var min = oc.Expand(new Vector3(newBounds.Left, newBounds.Top, 0));
             var max = oc.Expand(new Vector3(newBounds.Right, newBounds.Bottom, 0));
 
@@ -149,28 +149,23 @@ namespace Sledge.BspEditor.Rendering.Grid
         {
             _buffer?.Dispose();
         }
-
-        // todo !settings move grid colours to settings
-        private static Color GridLines { get; set; } = Color.FromArgb(75, 75, 75);
-        private static Color ZeroLines { get; set; } = Color.FromArgb(0, 100, 100);
-        private static Color BoundaryLines { get; set; } = Color.Red;
-        private static Color Highlight1 { get; set; } = Color.FromArgb(115, 115, 115);
-        private static Color Highlight2 { get; set; } = Color.FromArgb(100, 46, 0);
-
+        
         private Color GetColorForGridLineType(GridLineType type)
         {
             switch (type)
             {
+                case GridLineType.Fractional:
+                    return Renderer.FractionalGridLineColour;
                 case GridLineType.Standard:
-                    return GridLines;
+                    return Renderer.StandardGridLineColour;
                 case GridLineType.Axis:
-                    return ZeroLines;
+                    return Renderer.AxisGridLineColour;
                 case GridLineType.Primary:
-                    return Highlight1;
+                    return Renderer.PrimaryGridLineColour;
                 case GridLineType.Secondary:
-                    return Highlight2;
+                    return Renderer.SecondaryGridLineColour;
                 case GridLineType.Boundary:
-                    return BoundaryLines;
+                    return Renderer.BoundaryGridLineColour;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }

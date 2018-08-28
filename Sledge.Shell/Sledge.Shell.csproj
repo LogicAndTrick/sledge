@@ -152,6 +152,12 @@
     <Compile Include="Settings\Editors\BooleanEditor.Designer.cs">
       <DependentUpon>BooleanEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings\Editors\DropdownEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings\Editors\DropdownEditor.Designer.cs">
+      <DependentUpon>DropdownEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings\Editors\LanguageSelectionEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -245,6 +251,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Settings\Editors\BooleanEditor.resx">
       <DependentUpon>BooleanEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\Editors\DropdownEditor.resx">
+      <DependentUpon>DropdownEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Settings\Editors\LanguageSelectionEditor.resx">
       <DependentUpon>LanguageSelectionEditor.cs</DependentUpon>

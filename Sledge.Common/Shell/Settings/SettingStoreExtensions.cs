@@ -7,7 +7,7 @@ namespace Sledge.Common.Shell.Settings
         public static void StoreInstance(this ISettingsStore store, object instance)
         {
             if (instance == null) return;
-            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
             foreach (var mem in instance.GetType().GetMembers(flags))
             {
                 var sa = mem.GetCustomAttribute<SettingAttribute>();
@@ -26,7 +26,7 @@ namespace Sledge.Common.Shell.Settings
         public static void LoadInstance(this ISettingsStore store, object instance)
         {
             if (instance == null) return;
-            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
             foreach (var mem in instance.GetType().GetMembers(flags))
             {
                 var sa = mem.GetCustomAttribute<SettingAttribute>();

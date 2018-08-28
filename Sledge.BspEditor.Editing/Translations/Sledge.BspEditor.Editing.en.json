@@ -24,6 +24,10 @@
             "Name": "Entity report",
             "Details": "Open the entity report window."
         },
+        "OpenMapTreeWindow": {
+            "Name": "Show logical tree",
+            "Details": "Show the logical tree of the current document."
+        },
         "OpenSelectionDetails": {
             "Name": "Show selected brush information",
             "Details": "Show details of the currently selected objects."
@@ -344,6 +348,9 @@
         },
         "SelectionDetailsDialog": {
             "Title": "Selection Details"
+        },
+        "MapTreeWindow": {
+            "Title": "Map Logical Tree"
         }
     } 
 }

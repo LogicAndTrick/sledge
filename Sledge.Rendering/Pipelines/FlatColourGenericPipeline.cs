@@ -12,6 +12,7 @@ namespace Sledge.Rendering.Pipelines
     public class FlatColourGenericPipeline : IPipeline
     {
         public PipelineType Type => PipelineType.FlatColourGeneric;
+        public int Group => 1;
         public float Order => 1;
 
         private Shader _vertex;

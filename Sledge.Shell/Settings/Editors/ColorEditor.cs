@@ -21,7 +21,8 @@ namespace Sledge.Shell.Settings.Editors
             get => ColorPanel.BackColor;
             set
             {
-                ColorPanel.BackColor = (Color) value;
+                var v = value ?? Color.Black;
+                ColorPanel.BackColor = (Color) v;
                 var c = ColorPanel.BackColor;
                 HexBox.Text = $@"{c.R:X2}{c.G:X2}{c.B:X2}";
             }
