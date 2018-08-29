@@ -33,6 +33,11 @@ namespace Sledge.BspEditor.Grid
             return new SquareGrid(gd.MapSizeHigh, gd.MapSizeLow, 16);
         }
 
+        public bool IsInstance(IGrid grid)
+        {
+            return grid is SquareGrid;
+        }
+
         string ISettingsContainer.Name => "Sledge.BspEditor.Grid.SquareGridFactory";
 
         public IEnumerable<SettingKey> GetKeys()

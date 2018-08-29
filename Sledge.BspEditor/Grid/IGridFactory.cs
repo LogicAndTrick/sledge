@@ -25,5 +25,12 @@ namespace Sledge.BspEditor.Grid
         /// <param name="environment"></param>
         /// <returns></returns>
         Task<IGrid> Create(IEnvironment environment);
+
+        /// <summary>
+        /// Test if a grid is an instance of this factory class
+        /// </summary>
+        /// <param name="grid"></param>
+        /// <returns></returns>
+        bool IsInstance(IGrid grid);
     }
 }

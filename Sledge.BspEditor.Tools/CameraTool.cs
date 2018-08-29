@@ -13,6 +13,7 @@ using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Viewports;
@@ -23,6 +24,7 @@ namespace Sledge.BspEditor.Tools
 {
     [Export(typeof(ITool))]
     [OrderHint("D")]
+    [DefaultHotkey("Shift+C")]
     public class CameraTool : BaseTool
     {
         private enum State

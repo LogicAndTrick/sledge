@@ -22,7 +22,9 @@ using Sledge.BspEditor.Tools.Widgets;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Settings;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
@@ -39,6 +41,8 @@ namespace Sledge.BspEditor.Tools.Selection
     [Export(typeof(ITool))]
     [Export(typeof(ISettingsContainer))]
     [OrderHint("A")]
+    [DefaultHotkey("Shift+S")]
+    [AutoTranslate]
     public class SelectTool : BaseDraggableTool, ISettingsContainer
     {
         private readonly BoxDraggableState _emptyBox;
@@ -78,6 +82,12 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             store.StoreInstance(this);
         }
+
+        public string Align { get; set; }
+        public string Left { get; set; }
+        public string Right { get; set; }
+        public string Top { get; set; }
+        public string Bottom { get; set; }
 
         public SelectTool()
         {
@@ -170,44 +180,55 @@ namespace Sledge.BspEditor.Tools.Selection
                 b.AddCommand("BspEditor:Edit:PasteSpecial");
                 b.AddSeparator();
 
-                b.AddCommand("BspEditor:Edit:OpenTransformDialog");
+                b.AddCommand("BspEditor:Tools:Transform");
                 b.AddSeparator();
 
                 b.AddCommand("BspEditor:Edit:Undo");
                 b.AddCommand("BspEditor:Edit:Redo");
                 b.AddSeparator();
 
-                b.AddCommand("BspEditor:Edit:Carve");
-                b.AddCommand("BspEditor:Edit:Hollow");
+                b.AddCommand("BspEditor:Tools:Carve");
+                b.AddCommand("BspEditor:Tools:Hollow");
                 b.AddSeparator();
 
                 b.AddCommand("BspEditor:Edit:Group");
                 b.AddCommand("BspEditor:Edit:Ungroup");
                 b.AddSeparator();
 
-                b.AddCommand("BspEditor:Edit:MoveToEntity");
-                b.AddCommand("BspEditor:Edit:MoveToWorld");
+                b.AddCommand("BspEditor:Tools:TieToEntity");
+                b.AddCommand("BspEditor:Tools:MoveToWorld");
                 b.AddSeparator();
 
                 if (b.Viewport.Is2D)
                 {
-                    // todo: align
-                    b.AddCallback("TODO: Align", () => { });
-                    /*
-                    var flat = b.Viewport.Flatten(new Vector3(1, 2, 3));
-                    var left = flat.X == 1 ? HotkeysMediator.AlignXMin : (flat.X == 2 ? HotkeysMediator.AlignYMin : HotkeysMediator.AlignZMin);
-                    var right = flat.X == 1 ? HotkeysMediator.AlignXMax : (flat.X == 2 ? HotkeysMediator.AlignYMax : HotkeysMediator.AlignZMax);
-                    var bottom = flat.Y == 1 ? HotkeysMediator.AlignXMin : (flat.Y == 2 ? HotkeysMediator.AlignYMin : HotkeysMediator.AlignZMin);
-                    var top = flat.Y == 1 ? HotkeysMediator.AlignXMax : (flat.Y == 2 ? HotkeysMediator.AlignYMax : HotkeysMediator.AlignZMax);
-                    Items.Add(new ToolStripMenuItem("Align", null,
-                        CreateMenuItem("Top", top),
-                        CreateMenuItem("Left", left),
-                        CreateMenuItem("Right", right),
-                        CreateMenuItem("Bottom", bottom)));
-                     */
+                    var f = camera.Flatten(new Vector3(1, 2, 3));
+                    var flat = new {X = (int) f.X, Y = (int) f.Y, Z = (int) f.Z};
+                    
+                    var left = flat.X == 1 ? "AlignXMin" : (flat.X == 2 ? "AlignYMin" : "AlignZMin");
+                    var right = flat.X == 1 ? "AlignXMax" : (flat.X == 2 ? "AlignYMax" : "AlignZMax");
+                    var bottom = flat.Y == 1 ? "AlignXMin" : (flat.Y == 2 ? "AlignYMin" : "AlignZMin");
+                    var top = flat.Y == 1 ? "AlignXMax" : (flat.Y == 2 ? "AlignYMax" : "AlignZMax");
+
+                    var group = b.AddGroup(Align);
+
+                    var l = b.CreateCommandItem($"BspEditor:Tools:{left}");
+                    l.Text = Left;
+                    group.DropDownItems.Add(l);
+
+                    var r = b.CreateCommandItem($"BspEditor:Tools:{right}");
+                    r.Text = Right;
+                    group.DropDownItems.Add(r);
+
+                    var u = b.CreateCommandItem($"BspEditor:Tools:{top}");
+                    u.Text = Top;
+                    group.DropDownItems.Add(u);
+
+                    var d = b.CreateCommandItem($"BspEditor:Tools:{bottom}");
+                    d.Text = Bottom;
+                    group.DropDownItems.Add(d);
                 }
 
-                b.AddCommand("BspEditor:Edit:OpenPropertiesDialog");
+                b.AddCommand("BspEditor:Map:Properties");
             });
         }
 

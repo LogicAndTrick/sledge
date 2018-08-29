@@ -8,12 +8,14 @@ using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Tools.Cordon
 {
     [Export(typeof(ITool))]
     [OrderHint("R")]
+    [DefaultHotkey("Shift+K")]
     public class CordonTool : BaseDraggableTool
     {
         private readonly CordonBoxDraggableState _cordonBox;

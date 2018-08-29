@@ -25,6 +25,7 @@ namespace Sledge.Shell.Registers
         // Store the context (the hotkey register is one of the few things that should need static access to the context)
         [Import] private IContext _context;
         [ImportMany] private IEnumerable<Lazy<ICommand>> _commands;
+        [ImportMany] private IEnumerable<Lazy<IHotkeyProvider>> _hotkeyProviders;
 
         public async Task OnStartup()
         {
@@ -34,6 +35,11 @@ namespace Sledge.Shell.Registers
                 var ty = export.Value.GetType();
                 var dha = ty.GetCustomAttributes(typeof(DefaultHotkeyAttribute), false).OfType<DefaultHotkeyAttribute>().FirstOrDefault();
                 Add(new CommandHotkey(export.Value, defaultHotkey: dha?.Hotkey));
+            }
+
+            foreach (var hotkey in _hotkeyProviders.SelectMany(x => x.Value.GetHotkeys()))
+            {
+                Add(hotkey);
             }
 
             // Register this as the hotkey register for all base forms

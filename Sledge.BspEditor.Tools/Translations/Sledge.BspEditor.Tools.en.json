@@ -107,8 +107,29 @@
             "Snap": "Snap",
             "NoSnap": "No snap",
             "Grid": "Grid"
+        },
+        "IncreaseGrid": {
+            "Name": "Bigger grid",
+            "Details": "Increase the grid size"
+        },
+        "DecreaseGrid": {
+            "Name": "Smaller grid",
+            "Details": "Decrease the grid size"
+        },
+        "SwitchGrid": {
+            "Name": "Cycle through grids",
+            "Details": "Cycle through grid types"
         }
     }, 
+    "Selection": {
+        "SelectTool": {
+            "Align": "Align to...",
+            "Left": "Left",
+            "Right": "Right",
+            "Top": "Top",
+            "Bottom": "Bottom"
+        }
+    },
     "Texture": {
         "BrowseActiveTexture": {
             "Name": "Browse textures",

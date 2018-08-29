@@ -122,6 +122,7 @@
     <Compile Include="Grid\GridListMenuItemProvider.cs" />
     <Compile Include="Grid\GridStatusItem.cs" />
     <Compile Include="Grid\IncreaseGrid.cs" />
+    <Compile Include="Grid\SwitchGrid.cs" />
     <Compile Include="Grid\ToggleSnapToGrid.cs" />
     <Compile Include="MenuDataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

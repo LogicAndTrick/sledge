@@ -14,6 +14,7 @@ using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 
@@ -25,6 +26,7 @@ namespace Sledge.BspEditor.Tools.Decal
     /// </summary>
     [Export(typeof(ITool))]
     [OrderHint("L")]
+    [DefaultHotkey("Shift+D")]
     class DecalTool : BaseTool
     {
         public DecalTool()

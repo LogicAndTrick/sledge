@@ -141,7 +141,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         public IEnumerable<IDraggable> GetDraggables()
         {
-            return GetVisiblePoints().OrderBy(x => x.IsSelected ? 1 : 0).Union(new IDraggable[] { _origin });
+            return GetVisiblePoints().OrderBy(x => x.IsSelected ? 1 : 0).Union(new IDraggable[] { _origin }).ToList();
         }
 
         private void MovePoints(float value)

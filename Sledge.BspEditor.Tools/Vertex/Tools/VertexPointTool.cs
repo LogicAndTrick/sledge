@@ -150,7 +150,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         public IEnumerable<IDraggable> GetDraggables()
         {
-            return GetVisiblePoints().OrderBy(x => x.IsSelected ? 1 : 0);
+            return GetVisiblePoints().OrderBy(x => x.IsSelected ? 1 : 0).ToList();
         }
 
         public override async Task ToolSelected()

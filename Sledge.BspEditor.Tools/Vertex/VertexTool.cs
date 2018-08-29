@@ -23,6 +23,7 @@ using Sledge.Common;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Providers.Texture;
@@ -41,6 +42,7 @@ namespace Sledge.BspEditor.Tools.Vertex
     [Export]
     [OrderHint("P")]
     [AutoTranslate]
+    [DefaultHotkey("Shift+V")]
     public class VertexTool : BaseDraggableTool, IInitialiseHook
     {
         [Import] private EngineInterface _engine;

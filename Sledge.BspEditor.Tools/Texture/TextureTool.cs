@@ -17,12 +17,12 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
-using Buffer = System.Buffer;
 using Face = Sledge.BspEditor.Primitives.MapObjectData.Face;
 using KeyboardState = Sledge.Shell.Input.KeyboardState;
 
@@ -31,6 +31,7 @@ namespace Sledge.BspEditor.Tools.Texture
     [Export(typeof(ITool))]
     [Export]
     [OrderHint("J")]
+    [DefaultHotkey("Shift+A")]
     public class TextureTool : BaseTool
     {
         public TextureTool()

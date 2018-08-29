@@ -28,9 +28,14 @@ namespace Sledge.BspEditor.Rendering.Viewport
             };
         }
 
+        public ToolStripMenuItem CreateCommandItem(string commandId, object parameters = null)
+        {
+            return new CommandItem(commandId, parameters);
+        }
+
         public ToolStripMenuItem AddCommand(string commandId, object parameters = null)
         {
-            var mi = new CommandItem(commandId, parameters);
+            var mi = CreateCommandItem(commandId, parameters);
             Items.Add(mi);
             return mi;
         }

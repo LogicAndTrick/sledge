@@ -13,6 +13,7 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.Rendering.Cameras;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Pipelines;
@@ -26,6 +27,7 @@ namespace Sledge.BspEditor.Tools.Clip
 {
     [Export(typeof(ITool))]
     [OrderHint("N")]
+    [DefaultHotkey("Shift+X")]
     public class ClipTool : BaseTool
     {
         public enum ClipState

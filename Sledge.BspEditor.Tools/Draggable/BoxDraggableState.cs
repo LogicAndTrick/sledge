@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Rendering.Viewport;
@@ -66,7 +67,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         public virtual IEnumerable<IDraggable> GetDraggables()
         {
             if (State.Action == BoxAction.Idle || State.Action == BoxAction.Drawing) yield break;
-            foreach (var draggable in BoxHandles)
+            foreach (var draggable in BoxHandles.ToList())
             {
                 yield return draggable;
             }

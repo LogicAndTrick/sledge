@@ -21,6 +21,7 @@ using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
@@ -37,6 +38,7 @@ namespace Sledge.BspEditor.Tools.Brush
     [Export(typeof(ISettingsContainer))]
     [OrderHint("H")]
     [AutoTranslate]
+    [DefaultHotkey("Shift+B")]
     public class BrushTool : BaseDraggableTool, ISettingsContainer
     {
         [Import] private EngineInterface _engine;

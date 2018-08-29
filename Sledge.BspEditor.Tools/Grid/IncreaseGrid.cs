@@ -10,6 +10,7 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Tools.Grid
 {
@@ -18,6 +19,7 @@ namespace Sledge.BspEditor.Tools.Grid
     [DefaultHotkey("]")]
     [MenuItem("Map", "", "Grid", "H")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_LargerGrid))]
+    [AutoTranslate]
     public class IncreaseGrid : ICommand
     {
         public string Name => "Bigger Grid";

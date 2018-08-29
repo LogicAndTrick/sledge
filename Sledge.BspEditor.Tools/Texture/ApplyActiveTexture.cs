@@ -10,6 +10,7 @@ using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Tools.Texture
@@ -17,6 +18,7 @@ namespace Sledge.BspEditor.Tools.Texture
     [AutoTranslate]
     [Export(typeof(ICommand))]
     [CommandID("BspEditor:ApplyActiveTexture")]
+    [DefaultHotkey("Shift+T")]
     public class ApplyActiveTexture : ICommand
     {
         public string Name { get; set; } = "Apply active texture";

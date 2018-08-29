@@ -17,6 +17,7 @@ using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
@@ -31,6 +32,7 @@ namespace Sledge.BspEditor.Tools.Entity
     [Export(typeof(ITool))]
     [OrderHint("F")]
     [AutoTranslate]
+    [DefaultHotkey("Shift+E")]
     public class EntityTool : BaseTool
     {
         private enum EntityState

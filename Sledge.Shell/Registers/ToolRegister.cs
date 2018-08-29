@@ -9,6 +9,7 @@ using Sledge.Common.Logging;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hooks;
+using Sledge.Common.Shell.Hotkeys;
 
 namespace Sledge.Shell.Registers
 {
@@ -16,7 +17,8 @@ namespace Sledge.Shell.Registers
     /// The tool register controls tools
     /// </summary>
     [Export(typeof(IStartupHook))]
-    public class ToolRegister : IStartupHook
+    [Export(typeof(IHotkeyProvider))]
+    public class ToolRegister : IStartupHook, IHotkeyProvider
     {
         // The tool register needs direct access to the shell
         [Import] private Forms.Shell _shell;
@@ -46,6 +48,11 @@ namespace Sledge.Shell.Registers
         public ToolRegister()
         {
             _components = new List<ITool>();
+        }
+
+        public IEnumerable<IHotkey> GetHotkeys()
+        {
+            return _tools.Select(x => x.Value).Select(x => new SwitchToolHotkey(x));
         }
 
         private async Task ContextChanged(IContext context)
@@ -92,6 +99,32 @@ namespace Sledge.Shell.Registers
                 Oy.Publish("Tool:Activated", tool),
                 Oy.Publish(tool == null ? "Context:Remove" : "Context:Add", new ContextInfo("ActiveTool", tool))
             );
+        }
+
+        public class SwitchToolHotkey : IHotkey
+        {
+            public ITool Tool { get; set; }
+            public string ID => Tool.Name;
+            public string Name => Tool.Name;
+            public string Description => Tool.Name;
+            public string DefaultHotkey { get; }
+
+            public SwitchToolHotkey(ITool tool)
+            {
+                Tool = tool;
+                var dha = tool.GetType().GetCustomAttributes(typeof(DefaultHotkeyAttribute), false).OfType<DefaultHotkeyAttribute>().FirstOrDefault();
+                DefaultHotkey = dha?.Hotkey;
+            }
+
+            public Task Invoke()
+            {
+                return Oy.Publish("ActivateTool", Tool);
+            }
+
+            public bool IsInContext(IContext context)
+            {
+                return Tool.IsInContext(context);
+            }
         }
     }
 }

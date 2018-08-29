@@ -9,6 +9,7 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Tools.Grid
 {
@@ -17,6 +18,7 @@ namespace Sledge.BspEditor.Tools.Grid
     [DefaultHotkey("[")]
     [MenuItem("Map", "", "Grid", "G")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_SmallerGrid))]
+    [AutoTranslate]
     public class DecreaseGrid : ICommand
     {
         public string Name => "Smaller Grid";

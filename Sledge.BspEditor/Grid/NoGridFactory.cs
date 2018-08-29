@@ -21,5 +21,10 @@ namespace Sledge.BspEditor.Grid
         {
             return new NoGrid();
         }
+
+        public bool IsInstance(IGrid grid)
+        {
+            return grid is NoGrid;
+        }
     }
 }
