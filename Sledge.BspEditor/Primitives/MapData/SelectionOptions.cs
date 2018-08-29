@@ -14,6 +14,11 @@ namespace Sledge.BspEditor.Primitives.MapData
         {
         }
 
+        public SelectionOptions(SerialisedObject obj)
+        {
+            IgnoreGrouping = obj.Get<bool>("IgnoreGrouping");
+        }
+
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("IgnoreGrouping", IgnoreGrouping);

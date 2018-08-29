@@ -248,10 +248,14 @@ namespace Sledge.BspEditor.Tools.Brush
         {
             if (box.State.Action != BoxAction.Idle)
             {
-                foreach (var obj in GetPreview().OfType<Solid>())
+                // Force this work to happen on a new thread so waiting on it won't block the context
+                Task.Run(async () =>
                 {
-                    Convert(builder, Document, obj).Wait();
-                }
+                    foreach (var obj in GetPreview().OfType<Solid>())
+                    {
+                        await Convert(builder, Document, obj);
+                    }
+                }).Wait();
             }
 
             base.Render(builder);

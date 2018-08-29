@@ -82,6 +82,7 @@ namespace Sledge.BspEditor.Rendering.Scene
 
         private Task UpdateScene(MapDocument md, IEnumerable<IMapObject> affected)
         {
+            var waitTask = Task.CompletedTask;
             lock (_lock)
             {
                 if (_sceneBuilder == null)
@@ -100,12 +101,12 @@ namespace Sledge.BspEditor.Rendering.Scene
 
                     if (md != null)
                     {
-                        _converter.Value.Convert(md, _sceneBuilder, affected).Wait();
+                        waitTask = _converter.Value.Convert(md, _sceneBuilder, affected);
                     }
                 }
             }
 
-            return Task.CompletedTask;
+            return waitTask;
         }
     }
 }

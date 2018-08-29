@@ -261,10 +261,14 @@ namespace Sledge.BspEditor.Tools.Vertex
         {
             base.Render(builder);
 
-            foreach (var x in _selection)
+            // Force this work to happen on a new thread so waiting on it won't block the context
+            Task.Run(async () =>
             {
-                Convert(builder, Document, x.Copy).Wait();
-            }
+                foreach (var obj in _selection)
+                {
+                    await Convert(builder, Document, obj.Copy);
+                }
+            }).Wait();
         }
 
         public new void Invalidate()

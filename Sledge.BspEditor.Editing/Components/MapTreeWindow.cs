@@ -222,21 +222,21 @@ namespace Sledge.BspEditor.Editing.Components
             }
         }
 
-        private void TreeSelectionChanged(object sender, TreeViewEventArgs e)
+        private async void TreeSelectionChanged(object sender, TreeViewEventArgs e)
         {
-            RefreshSelectionProperties();
+            await RefreshSelectionProperties();
             // if (MapTree.SelectedNode != null && MapTree.SelectedNode.Tag is MapObject && !(MapTree.SelectedNode.Tag is World) && MapDocument != null && !MapDocument.Selection.InFaceSelection)
             // {
             //     MapDocument.PerformAction("Select object", new ChangeSelection(((MapObject)MapTree.SelectedNode.Tag).FindAll(), MapDocument.Selection.GetSelectedObjects()));
             // }
         }
 
-        private void RefreshSelectionProperties()
+        private async Task RefreshSelectionProperties()
         {
             Properties.Items.Clear();
             if (MapTree.SelectedNode != null && MapTree.SelectedNode.Tag != null)
             {
-                var list = GetTagProperties(MapTree.SelectedNode.Tag);
+                var list = await GetTagProperties(MapTree.SelectedNode.Tag);
                 foreach (var kv in list)
                 {
                     Properties.Items.Add(new ListViewItem(new[] {kv.Item1, kv.Item2}));
@@ -245,7 +245,7 @@ namespace Sledge.BspEditor.Editing.Components
             }
         }
 
-        private IEnumerable<Tuple<string, string>> GetTagProperties(object tag)
+        private async Task<IEnumerable<Tuple<string, string>>> GetTagProperties(object tag)
         {
             var list = new List<Tuple<string, string>>();
             if (!(tag is long id)) return list;
@@ -259,7 +259,7 @@ namespace Sledge.BspEditor.Editing.Components
             var ed = mo.Data.GetOne<EntityData>();
             if (ed == null) return list;
 
-            var gameData = doc.Environment.GetGameData().Result;
+            var gameData = await doc.Environment.GetGameData();
 
             var gd = gameData.GetClass(ed.Name);
             foreach (var prop in ed.Properties)

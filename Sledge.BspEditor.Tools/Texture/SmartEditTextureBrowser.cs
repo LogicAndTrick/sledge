@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Editing.Components.Properties;
@@ -30,7 +31,7 @@ namespace Sledge.BspEditor.Tools.Texture
             Controls.Add(_textBox);
 
             _browseButton = new Button { Text = "Browse...", Margin = new Padding(1), UseVisualStyleBackColor = true };
-            _browseButton.Click += OpenModelBrowser;
+            _browseButton.Click += OpenTextureBrowser;
             Controls.Add(_browseButton);
 
             _document = new WeakReference<MapDocument>(null);
@@ -48,14 +49,19 @@ namespace Sledge.BspEditor.Tools.Texture
             return type == VariableType.Decal || type == VariableType.Material || type == VariableType.Sprite;
         }
 
-        private void OpenModelBrowser(object sender, EventArgs e)
+        private async void OpenTextureBrowser(object sender, EventArgs e)
+        {
+            await OpenTextureBrowser();
+        }
+
+        private async Task OpenTextureBrowser()
         {
             if (!_document.TryGetTarget(out var doc)) return;
 
             using (var tb = new TextureBrowser(doc))
             {
-                tb.Initialise(_translation.Value).Wait();
-                tb.SetTextureList(GetTextureList(doc));
+                await tb.Initialise(_translation.Value);
+                tb.SetTextureList(await GetTextureList(doc));
                 tb.SetSelectedTextures(GetSelectedTextures());
                 tb.ShowDialog();
                 if (tb.SelectedTexture != null)
@@ -70,9 +76,9 @@ namespace Sledge.BspEditor.Tools.Texture
             yield return _textBox.Text;
         }
 
-        private IEnumerable<string> GetTextureList(MapDocument doc)
+        private async Task<IEnumerable<string>> GetTextureList(MapDocument doc)
         {
-            var tc = doc.Environment.GetTextureCollection().Result;
+            var tc = await doc.Environment.GetTextureCollection();
             switch (Property.VariableType)
             {
                 case VariableType.Decal:

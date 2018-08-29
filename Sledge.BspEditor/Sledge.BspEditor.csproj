@@ -222,6 +222,7 @@
     <Compile Include="Providers\NativeBspSourceProvider.cs" />
     <Compile Include="Providers\MapBspSourceProvider.cs" />
     <Compile Include="Providers\RmfBspSourceProvider.cs" />
+    <Compile Include="Providers\VmfBspSourceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">

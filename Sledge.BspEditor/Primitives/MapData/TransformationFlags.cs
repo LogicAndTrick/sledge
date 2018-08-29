@@ -14,6 +14,16 @@ namespace Sledge.BspEditor.Primitives.MapData
         public bool TextureLock { get; set; } = true;
         public bool TextureScaleLock { get; set; }
 
+        public TransformationFlags()
+        {
+        }
+
+        public TransformationFlags(SerialisedObject obj)
+        {
+            TextureLock = obj.Get<bool>("TextureLock");
+            TextureScaleLock = obj.Get<bool>("TextureScaleLock");
+        }
+
         [Export(typeof(IMapElementFormatter))]
         public class HideFaceMaskFormatter : StandardMapElementFormatter<TransformationFlags> { }
         

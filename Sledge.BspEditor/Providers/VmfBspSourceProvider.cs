@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Grid;
@@ -17,6 +18,7 @@ using Sledge.Common;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
+using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.BspEditor.Providers
 {
@@ -184,8 +186,8 @@ namespace Sledge.BspEditor.Providers
                 var cm = cams[i];
                 map.Data.Add(new Camera
                 {
-                    EyePosition = cm.Get("position", Coordinate.Zero),
-                    LookPosition = cm.Get("look", Coordinate.UnitX),
+                    EyePosition = cm.Get("position", Vector3.Zero),
+                    LookPosition = cm.Get("look", Vector3.UnitX),
                     IsActive = activeCam == i
                 });
             }
@@ -195,8 +197,8 @@ namespace Sledge.BspEditor.Providers
         {
             if (cordon == null) return;
 
-            var start = cordon.Get("mins", Coordinate.One * -1024);
-            var end = cordon.Get("maxs", Coordinate.One * 1024);
+            var start = cordon.Get("mins", Vector3.One * -1024);
+            var end = cordon.Get("maxs", Vector3.One * 1024);
             map.Data.Add(new CordonBounds
             {
                 Box = new Box(start, end),
@@ -334,8 +336,8 @@ namespace Sledge.BspEditor.Providers
                 if (camera.IsActive) so.Set("activecamera", i);
 
                 var vgo = new SerialisedObject("camera");
-                vgo.Set("position", $"[{FormatCoordinate(camera.EyePosition)}]");
-                vgo.Set("look", $"[{FormatCoordinate(camera.LookPosition)}]");
+                vgo.Set("position", $"[{FormatVector3(camera.EyePosition)}]");
+                vgo.Set("look", $"[{FormatVector3(camera.LookPosition)}]");
                 so.Children.Add(vgo);
             }
 
@@ -349,8 +351,8 @@ namespace Sledge.BspEditor.Providers
 
             var so = new SerialisedObject("cordon");
 
-            so.Set("mins", $"({FormatCoordinate(cordon.Box.Start)})");
-            so.Set("maxs", $"({FormatCoordinate(cordon.Box.End)})");
+            so.Set("mins", $"({FormatVector3(cordon.Box.Start)})");
+            so.Set("maxs", $"({FormatVector3(cordon.Box.End)})");
             so.Set("active", cordon.Enabled ? 1 : 0);
 
             list.Add(so);
@@ -400,22 +402,22 @@ namespace Sledge.BspEditor.Providers
         
         #endregion
         
-        private static string FormatCoordinate(Coordinate c)
+        private static string FormatVector3(Vector3 c)
         {
             return $"{FormatDecimal(c.X)} {FormatDecimal(c.Y)} {FormatDecimal(c.Z)}";
         }
 
-        private static string FormatDecimal(decimal d)
+        private static string FormatDecimal(float d)
         {
             return d.ToString("0.00####", CultureInfo.InvariantCulture);
         }
 
-        private static bool ParseDecimalArray(string input, char[] splitChars, int expected, out decimal[] array)
+        private static bool ParseDecimalArray(string input, char[] splitChars, int expected, out float[] array)
         {
             var spl = input.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
             if (spl.Length == expected)
             {
-                var parsed = spl.Select(x => decimal.TryParse(x, NumberStyles.Float, CultureInfo.InvariantCulture, out decimal o) ? (decimal?)o : null).ToList();
+                var parsed = spl.Select(x => float.TryParse(x, NumberStyles.Float, CultureInfo.InvariantCulture, out float o) ? (float?)o : null).ToList();
                 if (parsed.All(x => x.HasValue))
                 {
                     // ReSharper disable once PossibleInvalidOperationException
@@ -423,7 +425,7 @@ namespace Sledge.BspEditor.Providers
                     return true;
                 }
             }
-            array = new decimal[expected];
+            array = new float[expected];
             return false;
         }
 
@@ -480,7 +482,7 @@ namespace Sledge.BspEditor.Providers
         {
             public List<VmfObject> Objects { get; set; }
             public EntityData EntityData { get; set; }
-            public Coordinate Origin { get; set; }
+            public Vector3 Origin { get; set; }
 
             private static readonly string[] ExcludedKeys = { "id", "spawnflags", "classname", "origin", "wad", "mapversion" };
 
@@ -505,7 +507,7 @@ namespace Sledge.BspEditor.Providers
 
                 if (obj.Properties.Any(x => x.Key == "origin"))
                 {
-                    Origin = obj.Get("origin", Coordinate.Zero);
+                    Origin = obj.Get("origin", Vector3.Zero);
                 }
             }
 
@@ -517,7 +519,7 @@ namespace Sledge.BspEditor.Providers
             protected VmfEntity(IMapObject obj) : base(obj)
             {
                 EntityData = obj.Data.GetOne<EntityData>() ?? new EntityData();
-                Origin = obj.Data.GetOne<Origin>()?.Location;
+                Origin = obj.Data.GetOne<Origin>()?.Location ?? Vector3.Zero;
             }
 
             public override IEnumerable<VmfObject> Flatten()
@@ -661,7 +663,7 @@ namespace Sledge.BspEditor.Providers
                     foreach (var side in sides)
                     {
                         side.Vertices.Clear();
-                        var pg = poly.Polygons.FirstOrDefault(x => x.GetPlane().Normal.EquivalentTo(side.Plane.Normal));
+                        var pg = poly.Polygons.FirstOrDefault(x => x.Plane.Normal.EquivalentTo(side.Plane.Normal));
                         if (pg == null)
                         {
                             continue;
@@ -721,9 +723,9 @@ namespace Sledge.BspEditor.Providers
             public long ID { get; set; }
             public Plane Plane { get; set; }
             public Texture Texture { get; set; }
-            public decimal LightmapScale { get; set; }
+            public float LightmapScale { get; set; }
             public string SmoothingGroups { get; set; } // ?
-            public List<Coordinate> Vertices { get; set; }
+            public List<Vector3> Vertices { get; set; }
 
             public VmfSide(SerialisedObject obj)
             {
@@ -731,45 +733,45 @@ namespace Sledge.BspEditor.Providers
                 LightmapScale = obj.Get("lightmapscale", 0);
                 SmoothingGroups = obj.Get("smoothing_groups", "");
 
-                if (ParseDecimalArray(obj.Get("plane", ""), new[] {' ', '(', ')'}, 9, out decimal[] pl))
+                if (ParseDecimalArray(obj.Get("plane", ""), new[] {' ', '(', ')'}, 9, out float[] pl))
                 {
                     Plane = new Plane(
-                        new Coordinate(pl[0], pl[1], pl[2]).Round(),
-                        new Coordinate(pl[3], pl[4], pl[5]).Round(),
-                        new Coordinate(pl[6], pl[7], pl[8]).Round());
+                        new Vector3(pl[0], pl[1], pl[2]).Round(),
+                        new Vector3(pl[3], pl[4], pl[5]).Round(),
+                        new Vector3(pl[6], pl[7], pl[8]).Round());
                 }
                 else
                 {
-                    Plane = new Plane(Coordinate.UnitZ, 0);
+                    Plane = new Plane(Vector3.UnitZ, 0);
                 }
 
                 Texture = new Texture
                 {
                     Name = obj.Get("material", ""),
-                    Rotation = obj.Get("rotation", 0m)
+                    Rotation = obj.Get("rotation", 0f)
                 };
-                if (ParseDecimalArray(obj.Get("uaxis", ""), new[] {' ', '[', ']'}, 5, out decimal[] ua))
+                if (ParseDecimalArray(obj.Get("uaxis", ""), new[] {' ', '[', ']'}, 5, out float[] ua))
                 {
-                    Texture.UAxis = new Coordinate(ua[0], ua[1], ua[2]);
+                    Texture.UAxis = new Vector3(ua[0], ua[1], ua[2]);
                     Texture.XShift = ua[3];
                     Texture.XScale = ua[4];
                 }
-                if (ParseDecimalArray(obj.Get("vaxis", ""), new[] {' ', '[', ']'}, 5, out decimal[] va))
+                if (ParseDecimalArray(obj.Get("vaxis", ""), new[] {' ', '[', ']'}, 5, out float[] va))
                 {
-                    Texture.VAxis = new Coordinate(va[0], va[1], va[2]);
+                    Texture.VAxis = new Vector3(va[0], va[1], va[2]);
                     Texture.YShift = va[3];
                     Texture.YScale = va[4];
                 }
 
                 // Older versions of sledge save vertices, this is entirely optional but why not.
-                Vertices = new List<Coordinate>();
+                Vertices = new List<Vector3>();
                 var verts = obj.Children.FirstOrDefault(x => x.Name == "vertex");
                 if (verts == null) return;
 
                 var count = obj.Get("count", 0);
                 for (var i = 0; i < count; i++)
                 {
-                    var pt = obj.Get<Coordinate>("vertex" + i);
+                    var pt = obj.Get<Vector3>("vertex" + i);
                     if (pt == null)
                     {
                         Vertices.Clear();
@@ -791,10 +793,10 @@ namespace Sledge.BspEditor.Providers
             {
                 var so = new SerialisedObject("side");
                 so.Set("id", ID);
-                so.Set("plane", $"({FormatCoordinate(Vertices[0])}) ({FormatCoordinate(Vertices[1])}) ({FormatCoordinate(Vertices[2])})");
+                so.Set("plane", $"({FormatVector3(Vertices[0])}) ({FormatVector3(Vertices[1])}) ({FormatVector3(Vertices[2])})");
                 so.Set("material", Texture.Name);
-                so.Set("uaxis", $"[{FormatCoordinate(Texture.UAxis)} {FormatDecimal(Texture.XShift)}] {FormatDecimal(Texture.XScale)}");
-                so.Set("vaxis", $"[{FormatCoordinate(Texture.VAxis)} {FormatDecimal(Texture.YShift)}] {FormatDecimal(Texture.YScale)}");
+                so.Set("uaxis", $"[{FormatVector3(Texture.UAxis)} {FormatDecimal(Texture.XShift)}] {FormatDecimal(Texture.XScale)}");
+                so.Set("vaxis", $"[{FormatVector3(Texture.VAxis)} {FormatDecimal(Texture.YShift)}] {FormatDecimal(Texture.YScale)}");
                 so.Set("rotation", Texture.Rotation);
                 so.Set("lightmapscale", LightmapScale);
                 so.Set("smoothing_groups", SmoothingGroups);
@@ -803,7 +805,7 @@ namespace Sledge.BspEditor.Providers
                 verts.Set("count", Vertices.Count);
                 for (var i = 0; i < Vertices.Count; i++)
                 {
-                    verts.Set("vertex" + i, FormatCoordinate(Vertices[i]));
+                    verts.Set("vertex" + i, FormatVector3(Vertices[i]));
                 }
                 so.Children.Add(verts);
 
@@ -865,7 +867,7 @@ namespace Sledge.BspEditor.Providers
                 so.Set("groupid", GroupID);
                 so.Set("visgroupshown", VisgroupShown ? "1" : "0");
                 so.Set("visgroupautoshown", VisgroupAutoShown ? "1" : "0");
-                foreach (var id in VisgroupIDs)
+                foreach (var id in VisgroupIDs.Distinct())
                 {
                     so.Properties.Add(new KeyValuePair<string, string>("visgroupid", Convert.ToString(id, CultureInfo.InvariantCulture)));
                 }

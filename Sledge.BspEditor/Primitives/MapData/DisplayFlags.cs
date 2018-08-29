@@ -15,6 +15,16 @@ namespace Sledge.BspEditor.Primitives.MapData
         public bool HideNullTextures { get; set; } = false;
         public bool HideDisplacementSolids { get; set; } = false;
 
+        public DisplayFlags()
+        {
+        }
+
+        public DisplayFlags(SerialisedObject obj)
+        {
+            HideNullTextures = obj.Get<bool>("HideNullTextures");
+            HideDisplacementSolids = obj.Get<bool>("HideDisplacementSolids");
+        }
+
         [Export(typeof(IMapElementFormatter))]
         public class DisplayFlagsFormatter : StandardMapElementFormatter<DisplayFlags> { }
         

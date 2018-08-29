@@ -13,6 +13,16 @@ namespace Sledge.BspEditor.Primitives.MapData
 
         public bool Hidden { get; set; }
 
+        public HideFaceMask()
+        {
+
+        }
+
+        public HideFaceMask(SerialisedObject obj)
+        {
+            Hidden = obj.Get<bool>("Hidden");
+        }
+
         [Export(typeof(IMapElementFormatter))]
         public class HideFaceMaskFormatter : StandardMapElementFormatter<HideFaceMask> { }
         
