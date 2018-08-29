@@ -1,12 +1,17 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Editing
 {
+    [AutoTranslate]
     [Export(typeof(IMenuMetadataProvider))]
     public class MenuDataProvider : IMenuMetadataProvider
     {
+        public string Flip { get; set; } = "Flip";
+        public string Align { get; set; } = "Align";
+
         public IEnumerable<MenuSection> GetMenuSections()
         {
             yield break;
@@ -30,8 +35,10 @@ namespace Sledge.BspEditor.Editing
             yield return new MenuGroup("Tools", "", "Entity", "H");
             yield return new MenuGroup("Tools", "", "Transform", "L");
             yield return new MenuGroup("Tools", "", "Snap", "N");
-            yield return new MenuGroup("Tools", "", "Align", "P");
-            yield return new MenuGroup("Tools", "", "Flip", "R");
+            yield return new MenuGroup("Tools", "", "FlipAlign", "P");
+
+            yield return new MenuGroup("Tools", "Flip", "Flip", "P1") { Description = Flip };
+            yield return new MenuGroup("Tools", "Align", "Align", "P2") { Description = Align };
         }
     }
 }

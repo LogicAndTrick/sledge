@@ -60,7 +60,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
 
     [AutoTranslate]
     [Export(typeof(ICommand))]
-    [MenuItem("Tools", "", "Align", "A")]
+    [MenuItem("Tools", "Align", "FlipAlign", "A")]
     [CommandID("BspEditor:Tools:AlignXMin")]
     public class AlignObjectsXMin : AlignObjects
     {
@@ -72,7 +72,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
 
     [AutoTranslate]
     [Export(typeof(ICommand))]
-    [MenuItem("Tools", "", "Align", "C")]
+    [MenuItem("Tools", "Align", "FlipAlign", "C")]
     [CommandID("BspEditor:Tools:AlignYMin")]
     public class AlignObjectsYMin : AlignObjects
     {
@@ -84,7 +84,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
 
     [AutoTranslate]
     [Export(typeof(ICommand))]
-    [MenuItem("Tools", "", "Align", "E")]
+    [MenuItem("Tools", "Align", "FlipAlign", "E")]
     [CommandID("BspEditor:Tools:AlignZMin")]
     public class AlignObjectsZMin : AlignObjects
     {
@@ -96,7 +96,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
 
     [AutoTranslate]
     [Export(typeof(ICommand))]
-    [MenuItem("Tools", "", "Align", "B")]
+    [MenuItem("Tools", "Align", "FlipAlign", "B")]
     [CommandID("BspEditor:Tools:AlignXMax")]
     public class AlignObjectsXMax : AlignObjects
     {
@@ -108,7 +108,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
 
     [AutoTranslate]
     [Export(typeof(ICommand))]
-    [MenuItem("Tools", "", "Align", "D")]
+    [MenuItem("Tools", "Align", "FlipAlign", "D")]
     [CommandID("BspEditor:Tools:AlignYMax")]
     public class AlignObjectsYMax : AlignObjects
     {
@@ -120,7 +120,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
 
     [AutoTranslate]
     [Export(typeof(ICommand))]
-    [MenuItem("Tools", "", "Align", "F")]
+    [MenuItem("Tools", "Align", "FlipAlign", "F")]
     [CommandID("BspEditor:Tools:AlignZMax")]
     public class AlignObjectsZMax : AlignObjects
     {

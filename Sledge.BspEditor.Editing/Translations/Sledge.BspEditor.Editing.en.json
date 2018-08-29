@@ -352,5 +352,9 @@
         "MapTreeWindow": {
             "Title": "Map Logical Tree"
         }
-    } 
+    },
+    "MenuDataProvider": {
+        "Flip": "Flip",
+        "Align": "Align" 
+    }
 }

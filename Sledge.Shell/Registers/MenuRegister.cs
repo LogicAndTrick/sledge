@@ -38,19 +38,19 @@ namespace Sledge.Shell.Registers
                     Add(menuItem);
                 }
             }
-
-            // Register metadata providers
-            foreach (var md in _metaDataProviders)
-            {
-                _declaredGroups.AddRange(md.Value.GetMenuGroups());
-                _declaredSections.AddRange(md.Value.GetMenuSections());
-            }
             
             return Task.FromResult(0);
         }
 
         public async Task OnInitialise()
         {
+            // Register metadata providers
+            foreach (var md in _metaDataProviders)
+            {
+                _declaredGroups.AddRange(md.Value.GetMenuGroups());
+                _declaredSections.AddRange(md.Value.GetMenuSections());
+            }
+
             _shell.InvokeSync(() =>
             {
                 _tree = new VirtualMenuTree(_context, _shell.MenuStrip, _shell.ToolStrip, _declaredSections, _declaredGroups);
@@ -278,7 +278,7 @@ namespace Sledge.Shell.Registers
                     if (!node.Children.ContainsKey(p))
                     {
                         var gr = declaredGroups.FirstOrDefault(x => x.Name == p && x.Path == String.Join("/", currentPath) && x.Section == item.Section);
-                        node.AddChild(p, new MenuTreeTextNode(Context, p, gr));
+                        node.AddChild(p, new MenuTreeTextNode(Context, gr?.Description ?? p, gr));
                     }
 
                     node = node.Children[p];

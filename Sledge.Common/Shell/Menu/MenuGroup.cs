@@ -6,6 +6,7 @@
         public string Path { get; set; }
         public string Name { get; set; }
         public string OrderHint { get; set; }
+        public string Description { get; set; }
 
         public MenuGroup(string section, string path, string name, string orderHint)
         {

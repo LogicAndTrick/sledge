@@ -47,7 +47,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
 
     [AutoTranslate]
     [Export(typeof(ICommand))]
-    [MenuItem("Tools", "", "Flip", "B")]
+    [MenuItem("Tools", "Flip", "FlipAlign", "B")]
     [CommandID("BspEditor:Tools:FlipX")]
     public class FlipSelectionX : FlipSelection
     {
@@ -59,7 +59,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
 
     [AutoTranslate]
     [Export(typeof(ICommand))]
-    [MenuItem("Tools", "", "Flip", "D")]
+    [MenuItem("Tools", "Flip", "FlipAlign", "D")]
     [CommandID("BspEditor:Tools:FlipY")]
     public class FlipSelectionY : FlipSelection
     {
@@ -71,7 +71,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
 
     [AutoTranslate]
     [Export(typeof(ICommand))]
-    [MenuItem("Tools", "", "Flip", "F")]
+    [MenuItem("Tools", "Flip", "FlipAlign", "F")]
     [CommandID("BspEditor:Tools:FlipZ")]
     public class FlipSelectionZ : FlipSelection
     {

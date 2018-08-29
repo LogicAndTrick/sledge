@@ -78,12 +78,27 @@ namespace Sledge.Shell.Forms
         {
             GroupList.BeginUpdate();
 
-            GroupList.Items.Clear();
-            foreach (var k in _keys.SelectMany(x => x.Value).GroupBy(x => x.Group))
+            var nodes = new Dictionary<string, TreeNode>();
+
+            GroupList.Nodes.Clear();
+            foreach (var k in _keys.SelectMany(x => x.Value).GroupBy(x => x.Group).OrderBy(x => x.Key))
             {
                 var gh = new GroupHolder(k.Key, _translations.Value.GetSetting("@Group." + k.Key) ?? k.Key);
-                GroupList.Items.Add(gh);
+
+                TreeNode parentNode = null;
+                var par = k.Key.LastIndexOf('/');
+                if (par > 0)
+                {
+                    var sub = k.Key.Substring(0, par);
+                    if (nodes.ContainsKey(sub)) parentNode = nodes[sub];
+                }
+                var node = new TreeNode(gh.Label) { Tag = gh };
+                if (parentNode != null) parentNode.Nodes.Add(node);
+                else GroupList.Nodes.Add(node);
+                nodes.Add(k.Key, node);
             }
+
+            GroupList.ExpandAll();
 
             GroupList.EndUpdate();
         }
@@ -100,7 +115,7 @@ namespace Sledge.Shell.Forms
             
             SettingsPanel.RowStyles.Clear();
 
-            if (GroupList.SelectedItem is GroupHolder gh)
+            if (GroupList?.SelectedNode?.Tag is GroupHolder gh)
             {
                 var group = gh.Key;
                 foreach (var kv in _keys)
@@ -185,7 +200,7 @@ namespace Sledge.Shell.Forms
             });
         }
 
-        private void GroupListSelectionChanged(object sender, EventArgs e)
+        private void GroupListSelectionChanged(object sender, TreeViewEventArgs e)
         {
             LoadEditorList();
         }
