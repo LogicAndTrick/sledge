@@ -5,9 +5,11 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.ChangeHandlers;
 using Sledge.BspEditor.Rendering.Scene;
+using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
@@ -33,8 +35,11 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
         {
-            var entity = (Entity) obj;
+            return ConvertBox(builder, document, obj, obj.BoundingBox);
+        }
 
+        internal static Task ConvertBox(BufferBuilder builder, MapDocument document, IMapObject obj, Box box)
+        {
             // It's always a box, these numbers are known
             const uint numVertices = 4 * 6;
 
@@ -45,19 +50,19 @@ namespace Sledge.BspEditor.Rendering.Converters
             var points = new VertexStandard[numVertices];
             var indices = new uint[numSolidIndices + numWireframeIndices];
 
-            var c = entity.IsSelected ? Color.Red : entity.Color?.Color ?? Color.Magenta;
+            var c = obj.IsSelected ? Color.Red : obj.Data.GetOne<ObjectColor>()?.Color ?? Color.Magenta;
             var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
 
             //c = entity.IsSelected ? Color.FromArgb(255, 128, 128) : Color.White;
             c = Color.White;
             var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
             
-            var flags = entity.IsSelected ? VertexFlags.SelectiveTransformed : VertexFlags.None;
+            var flags = obj.IsSelected ? VertexFlags.SelectiveTransformed : VertexFlags.None;
 
             var vi = 0u;
             var si = 0u;
             var wi = numSolidIndices;
-            foreach (var face in entity.BoundingBox.GetBoxFaces())
+            foreach (var face in box.GetBoxFaces())
             {
                 var offs = vi;
 
@@ -91,14 +96,16 @@ namespace Sledge.BspEditor.Rendering.Converters
                 }
             }
 
+            var origin = obj.Data.GetOne<Origin>()?.Location ?? box.Center;
+
             var groups = new List<BufferGroup>();
 
-            if (!entity.Data.OfType<IContentsReplaced>().Any(x => x.ContentsReplaced))
+            if (!obj.Data.OfType<IContentsReplaced>().Any(x => x.ContentsReplaced))
             {
-                groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, false, entity.Origin, 0, numSolidIndices));
+                groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, false, origin, 0, numSolidIndices));
             }
             
-            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, entity.IsSelected ? CameraType.Both : CameraType.Orthographic, false, entity.Origin, numSolidIndices, numWireframeIndices));
+            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, obj.IsSelected ? CameraType.Both : CameraType.Orthographic, false, origin, numSolidIndices, numWireframeIndices));
 
             builder.Append(points, indices, groups);
 

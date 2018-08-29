@@ -42,7 +42,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChangeHandlers\EntityDecal.cs" />
     <Compile Include="ChangeHandlers\EntitySprite.cs" />
+    <Compile Include="ChangeHandlers\EntityDecalChangeHandler.cs" />
     <Compile Include="ChangeHandlers\EntitySpriteChangeHandler.cs" />
     <Compile Include="ChangeHandlers\IContentsReplaced.cs" />
     <Compile Include="Components\ViewportMouseLocationStatusItem.cs" />
@@ -53,6 +55,7 @@
     <Compile Include="Converters\CordonClippingConverter.cs" />
     <Compile Include="Converters\DefaultEntityConverter.cs" />
     <Compile Include="Converters\DefaultSolidConverter.cs" />
+    <Compile Include="Converters\EntityDecalConverter.cs" />
     <Compile Include="Converters\EntitySpriteConverter.cs" />
     <Compile Include="Converters\HiddenConverter.cs" />
     <Compile Include="Dynamic\DynamicRenderManager.cs" />

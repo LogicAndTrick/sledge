@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Providers.Texture;
@@ -31,40 +32,43 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         public bool Supports(IMapObject obj)
         {
-            return obj is Solid;
+            return obj.Data.OfType<Face>().Any();
         }
 
-        public async Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
+        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
+        {
+            return ConvertFaces(builder, document, obj, obj.Data.Get<Face>().ToList(), _engine);
+        }
+
+        internal static async Task ConvertFaces(BufferBuilder builder, MapDocument document, IMapObject obj, List<Face> faces, EngineInterface engine)
         {
             var displayFlags = document.Map.Data.GetOne<DisplayFlags>();
             var hideNull = displayFlags?.HideNullTextures == true;
 
-            var solid = (Solid) obj;
-
             // Pack the vertices like this [ f1v1 ... f1vn ] ... [ fnv1 ... fnvn ]
-            var numVertices = (uint)solid.Faces.Sum(x => x.Vertices.Count);
+            var numVertices = (uint) faces.Sum(x => x.Vertices.Count);
 
             // Pack the indices like this [ solid1 ... solidn ] [ wireframe1 ... wireframe n ]
-            var numSolidIndices = (uint)solid.Faces.Sum(x => (x.Vertices.Count - 2) * 3);
+            var numSolidIndices = (uint) faces.Sum(x => (x.Vertices.Count - 2) * 3);
             var numWireframeIndices = numVertices * 2;
 
             var points = new VertexStandard[numVertices];
             var indices = new uint[numSolidIndices + numWireframeIndices];
 
-            var c = solid.IsSelected ? Color.Red : solid.Color.Color;
+            var c = obj.IsSelected ? Color.Red : obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White;
             var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
 
-            c = solid.IsSelected ? Color.FromArgb(255, 128, 128) : Color.White;
+            c = obj.IsSelected ? Color.FromArgb(255, 128, 128) : Color.White;
             var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
 
             var tc = await document.Environment.GetTextureCollection();
 
-            var flags = solid.IsSelected ? VertexFlags.SelectiveTransformed : VertexFlags.None;
+            var flags = obj.IsSelected ? VertexFlags.SelectiveTransformed : VertexFlags.None;
 
             var vi = 0u;
             var si = 0u;
             var wi = numSolidIndices;
-            foreach (var face in solid.Faces)
+            foreach (var face in faces)
             {
                 var opacity = tc.GetOpacity(face.Texture.Name);
                 var t = await tc.GetTextureItem(face.Texture.Name);
@@ -112,7 +116,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             var groups = new List<BufferGroup>();
 
             uint texOffset = 0;
-            foreach (var f in solid.Faces)
+            foreach (var f in faces)
             {
                 var texInd = (uint)(f.Vertices.Count - 2) * 3;
 
@@ -132,12 +136,12 @@ namespace Sledge.BspEditor.Rendering.Converters
 
                 if (t != null)
                 {
-                    _engine.UploadTexture(texture, () => new EnvironmentTextureSource(document.Environment, t));
+                    engine.UploadTexture(texture, () => new EnvironmentTextureSource(document.Environment, t));
                 }
             }
 
             // groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));
-            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, solid.IsSelected ? CameraType.Both : CameraType.Orthographic, false, solid.BoundingBox.Center, numSolidIndices, numWireframeIndices));
+            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, obj.IsSelected ? CameraType.Both : CameraType.Orthographic, false, obj.BoundingBox.Center, numSolidIndices, numWireframeIndices));
             
             builder.Append(points, indices, groups);
         }

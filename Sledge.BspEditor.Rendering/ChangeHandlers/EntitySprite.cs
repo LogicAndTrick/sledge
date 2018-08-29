@@ -36,7 +36,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
         }
 
         [Export(typeof(IMapElementFormatter))]
-        public class ActiveTextureFormatter : StandardMapElementFormatter<Origin> { }
+        public class ActiveTextureFormatter : StandardMapElementFormatter<EntitySprite> { }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
