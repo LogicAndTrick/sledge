@@ -336,7 +336,7 @@ namespace Sledge.BspEditor.Providers
             {
                 bw.WriteFixedLengthString(Encoding.ASCII, 128, visgroup.Name);
                 bw.WriteRGBAColour(visgroup.Colour);
-                bw.Write(visgroup.ID);
+                bw.Write((int) visgroup.ID);
                 bw.Write(visgroup.Visible);
                 bw.Write(new byte[3]); // Unused
             }
