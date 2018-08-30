@@ -108,8 +108,8 @@ namespace Sledge.Rendering.Cameras
 
         private Matrix4x4 GetViewportMatrix()
         {
-            const float near = -1000000;
-            const float far = 1000000;
+            const float near = float.MinValue;
+            const float far = float.MaxValue;
             return Matrix4x4.CreateOrthographic(Width, Height, near, far);
         }
 

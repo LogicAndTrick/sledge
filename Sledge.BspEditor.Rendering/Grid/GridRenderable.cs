@@ -95,7 +95,7 @@ namespace Sledge.BspEditor.Rendering.Grid
             if (!(_viewport.Camera is OrthographicCamera oc)) return;
             if (_grid == null) return;
 
-            var newBounds = GetValidatedBounds(oc, 500);
+            var newBounds = GetValidatedBounds(oc, 50);
             var min = oc.Expand(new Vector3(newBounds.Left, newBounds.Top, 0));
             var max = oc.Expand(new Vector3(newBounds.Right, newBounds.Bottom, 0));
 
