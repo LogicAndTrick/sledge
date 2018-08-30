@@ -151,6 +151,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         private void FocusOn(PerspectiveCamera cam, Vector3 coordinate, Vector3 distance)
         {
+            Console.WriteLine(coordinate);
+            Console.WriteLine(distance);
             var pos = coordinate + distance;
             cam.Position = pos;
             cam.Direction = coordinate - pos;

@@ -36,7 +36,9 @@
             this.btnFixAll = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.grpDetails = new System.Windows.Forms.GroupBox();
+            this.lnkExtraDetails = new System.Windows.Forms.LinkLabel();
             this.chkVisibleOnly = new System.Windows.Forms.CheckBox();
+            this.chkSelectedOnly = new System.Windows.Forms.CheckBox();
             this.grpDetails.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,6 +53,7 @@
             this.ProblemsList.Size = new System.Drawing.Size(388, 147);
             this.ProblemsList.TabIndex = 0;
             this.ProblemsList.SelectedIndexChanged += new System.EventHandler(this.UpdateSelectedProblem);
+            this.ProblemsList.DoubleClick += new System.EventHandler(this.GoToError);
             // 
             // DescriptionTextBox
             // 
@@ -61,7 +64,7 @@
             this.DescriptionTextBox.Multiline = true;
             this.DescriptionTextBox.Name = "DescriptionTextBox";
             this.DescriptionTextBox.ReadOnly = true;
-            this.DescriptionTextBox.Size = new System.Drawing.Size(272, 110);
+            this.DescriptionTextBox.Size = new System.Drawing.Size(272, 94);
             this.DescriptionTextBox.TabIndex = 1;
             // 
             // btnGoToError
@@ -118,11 +121,13 @@
             this.btnClose.TabIndex = 2;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.CloseWindow);
             // 
             // grpDetails
             // 
             this.grpDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpDetails.Controls.Add(this.lnkExtraDetails);
             this.grpDetails.Controls.Add(this.DescriptionTextBox);
             this.grpDetails.Controls.Add(this.btnGoToError);
             this.grpDetails.Controls.Add(this.btnFixAll);
@@ -134,6 +139,17 @@
             this.grpDetails.TabIndex = 3;
             this.grpDetails.TabStop = false;
             this.grpDetails.Text = "Details";
+            // 
+            // lnkExtraDetails
+            // 
+            this.lnkExtraDetails.AutoSize = true;
+            this.lnkExtraDetails.Location = new System.Drawing.Point(6, 116);
+            this.lnkExtraDetails.Name = "lnkExtraDetails";
+            this.lnkExtraDetails.Size = new System.Drawing.Size(171, 13);
+            this.lnkExtraDetails.TabIndex = 3;
+            this.lnkExtraDetails.TabStop = true;
+            this.lnkExtraDetails.Text = "Click here for additional information";
+            this.lnkExtraDetails.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OpenUrl);
             // 
             // chkVisibleOnly
             // 
@@ -148,11 +164,23 @@
             this.chkVisibleOnly.UseVisualStyleBackColor = true;
             this.chkVisibleOnly.CheckedChanged += new System.EventHandler(this.VisibleOnlyCheckboxChanged);
             // 
+            // chkSelectedOnly
+            // 
+            this.chkSelectedOnly.AutoSize = true;
+            this.chkSelectedOnly.Location = new System.Drawing.Point(152, 317);
+            this.chkSelectedOnly.Name = "chkSelectedOnly";
+            this.chkSelectedOnly.Size = new System.Drawing.Size(127, 17);
+            this.chkSelectedOnly.TabIndex = 4;
+            this.chkSelectedOnly.Text = "Selected objects only";
+            this.chkSelectedOnly.UseVisualStyleBackColor = true;
+            this.chkSelectedOnly.CheckedChanged += new System.EventHandler(this.VisibleOnlyCheckboxChanged);
+            // 
             // CheckForProblemsDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(412, 345);
+            this.Controls.Add(this.chkSelectedOnly);
             this.Controls.Add(this.chkVisibleOnly);
             this.Controls.Add(this.grpDetails);
             this.Controls.Add(this.btnClose);
@@ -181,5 +209,7 @@
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.GroupBox grpDetails;
         private System.Windows.Forms.CheckBox chkVisibleOnly;
+        private System.Windows.Forms.CheckBox chkSelectedOnly;
+        private System.Windows.Forms.LinkLabel lnkExtraDetails;
     }
 }

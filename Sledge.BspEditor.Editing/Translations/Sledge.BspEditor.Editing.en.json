@@ -276,6 +276,8 @@
             "FixAllOfType": "Fix all of type",
             "FixAll": "Fix all problems",
             "VisibleObjectsOnly": "Visible objects only",
+            "SelectedObjectsOnly": "Selected objects only",
+            "ClickForAdditionalDetails" : "Click here for additional information", 
             "CloseButton": "Close"
         },
         "PasteSpecialDialog": {
@@ -356,5 +358,15 @@
     "MenuDataProvider": {
         "Flip": "Flip",
         "Align": "Align" 
+    },
+    "Problems": {
+        "NoPlayerStart": {
+            "Name": "This document has no player start",
+            "Details": "There is no info_player_start entity in this document. The player will spawn at the origin instead. This may place the player inside geometry or in the void. Fixing the issue will place a player start entity at the document origin. It is recommended that you fix this problem manually." 
+        },
+        "TextureAxisPerpendicularToFace": {
+            "Name": "Texture axis perpendicular to face",
+            "Details": "The texture axis of this face is perpendicular to the face plane. This occurs when manipulating objects with texture lock off, as well as various other operations. Re-align the texture to the face to repair. Fixing the problem will reset the textures to the face plane."
+        }
     }
 }

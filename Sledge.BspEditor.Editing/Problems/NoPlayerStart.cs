@@ -1,32 +1,56 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
+using System.Numerics;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Editing.Problems
 {
+    [Export(typeof(IProblemCheck))]
+    [AutoTranslate]
     public class NoPlayerStart : IProblemCheck
     {
-        public IEnumerable<Problem> Check(MapDocument document, bool visibleOnly)
+        public string Name { get; set; }
+        public string Details { get; set; }
+
+        public Uri Url => null;
+        public bool CanFix => true;
+
+        public Task<List<Problem>> Check(MapDocument document, Predicate<IMapObject> filter)
         {
-            if (document.Map.Root.Find(x => x is Entity && string.Equals(x.Data.GetOne<EntityData>()?.Name, "info_player_start", StringComparison.InvariantCultureIgnoreCase)).Any()) yield break;
-            yield return new Problem(GetType(), document, Fix, "This document has no player start", "There is no info_player_start entity in this document. The player will spawn at the origin instead. This may place the player inside geometry or in the void. Fixing the issue will place a player start entity at the document origin. It is recommended that you fix this problem manually.");
+            var list = new List<Problem>();
+
+            if (filter(document.Map.Root) && !document.Map.Root.Find(x => x is Entity && string.Equals(x.Data.GetOne<EntityData>()?.Name, "info_player_start", StringComparison.InvariantCultureIgnoreCase)).Any())
+            {
+                list.Add(new Problem());
+            }
+
+            return Task.FromResult(list);
         }
 
-        public IOperation Fix(Problem problem)
+        public async Task Fix(MapDocument document, Problem problem)
         {
-            // todo
-            throw new NotImplementedException();
-            // return new Create(problem.Map.Root.ID, new Entity(problem.Map.IDGenerator.GetNextObjectID())
-            //{
-            //    EntityData = new EntityData { Name = "info_player_start" },
-            //                          ClassName = "info_player_start",
-            //                          Colour = Colour.GetDefaultEntityColour(),
-            //                          Origin = Vector3.Zero
-            //                      });
+            var entity = new Entity(document.Map.NumberGenerator.Next("MapObject"))
+            {
+                Data =
+                {
+                    new EntityData { Name = "info_player_start" },
+                    new ObjectColor(Colour.GetDefaultEntityColour()),
+                    new Origin(Vector3.Zero),
+                },
+                IsSelected = false
+            };
+
+            var action = new Attach(document.Map.Root.ID, entity);
+            await MapDocumentOperation.Perform(document, action);
         }
     }
 }

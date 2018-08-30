@@ -54,6 +54,7 @@
     <Compile Include="Commands\Modification\SnapToGridIndividually.cs" />
     <Compile Include="Commands\MoveToWorld.cs" />
     <Compile Include="Commands\OpenMapTreeWindow.cs" />
+    <Compile Include="Commands\OpenCheckForProblemsDialog.cs" />
     <Compile Include="Commands\OpenSelectionDetails.cs" />
     <Compile Include="Commands\OpenMapInformation.cs" />
     <Compile Include="Commands\OpenEntityReport.cs" />
@@ -270,7 +271,6 @@
     <Compile Include="Problems\IProblemCheck.cs" />
     <Compile Include="Problems\NoPlayerStart.cs" />
     <Compile Include="Problems\Problem.cs" />
-    <Compile Include="Problems\ProblemChecker.cs" />
     <Compile Include="Problems\TextureAxisPerpendicularToFace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -405,6 +405,7 @@
     <Content Include="Resources\Menu_CenterSelection2D.png" />
     <Content Include="Resources\Menu_CenterSelection3D.png" />
     <Content Include="Resources\Menu_CenterSelectionAll.png" />
+    <Content Include="Resources\Menu_CheckForProblems.png" />
     <Content Include="Resources\Menu_EntityReport.png" />
     <Content Include="Resources\Menu_GoToBrushID.png" />
     <Content Include="Resources\Menu_GoToCoordinates.png" />

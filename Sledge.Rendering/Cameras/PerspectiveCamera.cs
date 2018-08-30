@@ -38,7 +38,7 @@ namespace Sledge.Rendering.Cameras
             }
             set
             {
-                var norm = Vector3.Normalize(value);
+                var norm = value.LengthSquared() <= 0.01f ? Vector3.UnitY : Vector3.Normalize(value);
                 _angles.Y = (float) (Math.Asin(norm.Z) + Math.PI / 2);
                 _angles.X = (float) (Math.Atan2(-norm.Y, -norm.X) + Math.PI / 2);
             }
