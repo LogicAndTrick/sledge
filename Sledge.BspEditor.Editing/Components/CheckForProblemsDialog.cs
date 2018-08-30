@@ -278,7 +278,9 @@ namespace Sledge.BspEditor.Editing.Components
 
             public override string ToString()
             {
-                return Index + ": " + (Name ?? Checker.GetType().Name);
+                return Index + ": " +
+                       (Name ?? Checker.GetType().Name) +
+                       (String.IsNullOrWhiteSpace(Problem.Text) ? "" : " - " + Problem.Text);
             }
         }
     }

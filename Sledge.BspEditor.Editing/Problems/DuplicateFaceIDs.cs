@@ -1,34 +1,55 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
-using Sledge.DataStructures.MapObjects;
+using Sledge.BspEditor.Modification.Operations.Data;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Editing.Problems
 {
+    [Export(typeof(IProblemCheck))]
+    [AutoTranslate]
     public class DuplicateFaceIDs : IProblemCheck
     {
-        public IEnumerable<Problem> Check(MapDocument document, bool visibleOnly)
+        public string Name { get; set; }
+        public string Details { get; set; }
+        public Uri Url => null;
+        public bool CanFix => true;
+
+        public Task<List<Problem>> Check(MapDocument document, Predicate<IMapObject> filter)
         {
-            var dupes = from o in document.WorldSpawn.Find(x => x is Solid && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
-                            .OfType<Solid>()
-                            .SelectMany(x => x.Faces)
-                        group o by o.ID
-                        into g
-                        where g.Count() > 1
-                        select g;
-            foreach (var dupe in dupes)
-            {
-                yield return new Problem(GetType(), document, dupe, Fix, "Multiple faces have the same ID", "More than one face was found with the same ID. Each face ID should be unique. Fixing this problem will assign the duplicated faces a new ID.");
-            }
+            var dupes = document.Map.Root.FindAll()
+                .Where(x => filter(x))
+                .SelectMany(x => x.Data.OfType<Face>().Select(f => new { Object = x, Face = f }))
+                .GroupBy(x => x.Face.ID)
+                .Where(x => x.Count() > 1)
+                .Select(x => new Problem().Add(x.Select(o => o.Object)).Add(x.Select(o => o.Face)))
+                .ToList();
+
+            return Task.FromResult(dupes);
         }
 
-        public IOperation Fix(Problem problem)
+        public Task Fix(MapDocument document, Problem problem)
         {
-            // todo
-            throw new NotImplementedException();
-            // return new EditFace(problem.Faces, (d, x) => x.ID = d.Map.IDGenerator.GetNextFaceID(), true);
+            var edit = new Transaction();
+
+            foreach (var obj in problem.Objects)
+            {
+                foreach (var face in obj.Data.Intersect(problem.ObjectData).OfType<Face>())
+                {
+                    var copy = (Face) face.Copy(document.Map.NumberGenerator);
+
+                    edit.Add(new RemoveMapObjectData(obj.ID, face));
+                    edit.Add(new AddMapObjectData(obj.ID, copy));
+                }
+            }
+
+            return MapDocumentOperation.Perform(document, edit);
         }
     }
 }

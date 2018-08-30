@@ -268,6 +268,10 @@
     <Compile Include="History\RedoCommand.cs" />
     <Compile Include="History\UndoCommand.cs" />
     <Compile Include="MenuDataProvider.cs" />
+    <Compile Include="Problems\DuplicateFaceIDs.cs" />
+    <Compile Include="Problems\DuplicateObjectIDs.cs" />
+    <Compile Include="Problems\GameDataNotFound.cs" />
+    <Compile Include="Problems\GroupWithoutChildren.cs" />
     <Compile Include="Problems\IProblemCheck.cs" />
     <Compile Include="Problems\NoPlayerStart.cs" />
     <Compile Include="Problems\Problem.cs" />

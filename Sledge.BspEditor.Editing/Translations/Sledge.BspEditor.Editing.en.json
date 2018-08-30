@@ -360,6 +360,22 @@
         "Align": "Align" 
     },
     "Problems": {
+        "DuplicateFaceIDs": {
+            "Name": "Multiple faces have the same ID",
+            "Details": "More than one face was found with the same ID. Each face ID should be unique. Fixing this problem will assign the duplicated faces a new ID."
+        },
+        "DuplicateObjectIDs": {
+            "Name": "Multiple objects have the same ID",
+            "Details": "More than one object has the same ID. Each object ID should be unique. Fixing the problem will assign the duplicates new IDs."
+        },
+        "GameDataNotFound": {
+            "Name": "Entity class not found",
+            "Details": "This entity class was not found in the current game data. Ensure that the correct FGDs are loaded."
+        },
+        "GroupWithoutChildren": {
+            "Name": "Group has no children",
+            "Details": "This group is empty. A group must have contents. Fixing the problem will delete the group."
+        },
         "NoPlayerStart": {
             "Name": "This document has no player start",
             "Details": "There is no info_player_start entity in this document. The player will spawn at the origin instead. This may place the player inside geometry or in the void. Fixing the issue will place a player start entity at the document origin. It is recommended that you fix this problem manually." 

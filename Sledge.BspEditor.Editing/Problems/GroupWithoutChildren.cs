@@ -1,30 +1,46 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
-using Sledge.DataStructures.MapObjects;
+using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Editing.Problems
 {
+    [Export(typeof(IProblemCheck))]
+    [AutoTranslate]
     public class GroupWithoutChildren : IProblemCheck
     {
-        public IEnumerable<Problem> Check(MapDocument document, bool visibleOnly)
+        public string Name { get; set; }
+        public string Details { get; set; }
+        public Uri Url => null;
+        public bool CanFix => true;
+
+        public Task<List<Problem>> Check(MapDocument document, Predicate<IMapObject> filter)
         {
-            foreach (var group in document.WorldSpawn
-                .Find(x => x is Group && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
+            var empty = document.Map.Root.FindAll()
                 .OfType<Group>()
-                .Where(x => !x.GetChildren().Any()))
-            {
-                yield return new Problem(GetType(), document, new[] { @group }, Fix, "Group has no children", "This group is empty. A group must have contents. Fixing the problem will delete the group.");
-            }
+                .Where(x => filter(x))
+                .Where(x => !x.Hierarchy.HasChildren)
+                .Select(x => new Problem().Add(x))
+                .ToList();
+            return Task.FromResult(empty);
         }
 
-        public IOperation Fix(Problem problem)
+        public Task Fix(MapDocument document, Problem problem)
         {
-            // todo
-            throw new NotImplementedException();
-            // return new Delete(problem.Objects.Select(x => x.ID));
+            var edit = new Transaction();
+
+            foreach (var obj in problem.Objects)
+            {
+                edit.Add(new Detatch(obj.Hierarchy.Parent.ID, obj));
+            }
+
+            return MapDocumentOperation.Perform(document, edit);
         }
     }
 }

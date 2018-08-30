@@ -1,30 +1,40 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Modification;
-using Sledge.DataStructures.MapObjects;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Editing.Problems
 {
+    [Export(typeof(IProblemCheck))]
+    [AutoTranslate]
     public class GameDataNotFound : IProblemCheck
     {
-        public IEnumerable<Problem> Check(MapDocument document, bool visibleOnly)
+        public string Name { get; set; }
+        public string Details { get; set; }
+        public Uri Url => null;
+        public bool CanFix => false;
+
+        public async Task<List<Problem>> Check(MapDocument document, Predicate<IMapObject> filter)
         {
-            foreach (var entity in document.WorldSpawn
-                .Find(x => x is Entity && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
-                .OfType<Entity>()
-                .Where(x => x.GameData == null))
-            {
-                yield return new Problem(GetType(), document, new[] { entity }, Fix, "Entity class not found: " + entity.EntityData.Name, "This entity class was not found in the current game data. Ensure that the correct FGDs are loaded. Fixing the problem will delete the entities.");
-            }
+            var gd = await document.Environment.GetGameData();
+            var missing = document.Map.Root.FindAll()
+                .Where(x => filter(x))
+                .SelectMany(x => x.Data.OfType<EntityData>()
+                    .Where(ed => gd.GetClass(ed.Name) == null)
+                    .Select(ed => new {Object = x, Data = ed}))
+                .Select(x => new Problem {Text = x.Data.Name}.Add(x.Object).Add(x.Data))
+                .ToList();
+            return missing;
         }
 
-        public IOperation Fix(Problem problem)
+        public Task Fix(MapDocument document, Problem problem)
         {
-            // todo
             throw new NotImplementedException();
-            // return new Delete(problem.Objects.Select(x => x.ID));
         }
     }
 }

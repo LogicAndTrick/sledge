@@ -6,6 +6,7 @@ namespace Sledge.BspEditor.Editing.Problems
 {
     public class Problem
     {
+        public string Text { get; set; }
         public List<IMapObject> Objects { get; set; }
         public List<IMapObjectData> ObjectData { get; set; }
 
