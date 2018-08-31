@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Engine;
 using Sledge.Rendering.Overlay;
 using Veldrid;
 
@@ -18,6 +19,7 @@ namespace Sledge.Rendering.Viewports
         public Swapchain Swapchain { get; }
         public ICamera Camera { get; set; }
         public Control Control => this;
+
         public ViewportOverlay Overlay { get; }
         public bool IsFocused => _isFocused;
 
@@ -25,6 +27,11 @@ namespace Sledge.Rendering.Viewports
         private int _unfocusedCounter = 0;
 
         public event EventHandler<long> OnUpdate;
+
+        public Framebuffer Framebuffer { get; private set; }
+        public Texture ColourTexture { get; set; }
+        public Texture DepthTexture { get; set; }
+        public ScreenPresenter ScreenPresenter { get; private set; }
 
         public Viewport(GraphicsDevice graphics, GraphicsDeviceOptions options)
         {
@@ -47,6 +54,25 @@ namespace Sledge.Rendering.Viewports
             var desc = new SwapchainDescription(source, w, h, options.SwapchainDepthFormat, options.SyncToVerticalBlank);
             Swapchain = graphics.ResourceFactory.CreateSwapchain(desc);
 
+            var limit = graphics.GetSampleCountLimit(PixelFormat.B8_G8_R8_A8_UNorm, false);
+
+            ColourTexture = graphics.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
+                w, h, 1, 1,
+                PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.RenderTarget | TextureUsage.Sampled,
+                TextureSampleCount.Count4
+            ));
+            DepthTexture = graphics.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
+                w, h, 1, 1,
+                PixelFormat.R32_Float, TextureUsage.DepthStencil,
+                TextureSampleCount.Count4
+            ));
+            Framebuffer = graphics.ResourceFactory.CreateFramebuffer(new FramebufferDescription
+            {
+                ColorTargets = new[] { new FramebufferAttachmentDescription(ColourTexture, 0, 0),  },
+                DepthTarget = new FramebufferAttachmentDescription(DepthTexture, 0, 0)
+            });
+            ScreenPresenter = new ScreenPresenter(this);
+
             Overlay = new ViewportOverlay(this);
         }
 
@@ -56,16 +82,41 @@ namespace Sledge.Rendering.Viewports
             return true;
         }
 
-        public void Update(long frame)
+        public void ResizeIfRequired(RenderContext context)
         {
             if (_resizeRequired)
             {
-                var w = Math.Max(Width, 1);
-                var h = Math.Max(Height, 1);
-                Swapchain.Resize((uint) w, (uint) h);
+                Framebuffer.Dispose();
+                ColourTexture.Dispose();
+                DepthTexture.Dispose();
+
+                var w = (uint) Math.Max(Width, 1);
+                var h = (uint) Math.Max(Height, 1);
+                Swapchain.Resize(w, h);
+
+                ColourTexture = context.Device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
+                    w, h, 1, 1,
+                    PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.RenderTarget | TextureUsage.Sampled,
+                    TextureSampleCount.Count4
+                ));
+                DepthTexture = context.Device.ResourceFactory.CreateTexture(TextureDescription.Texture2D(
+                    w, h, 1, 1,
+                    PixelFormat.R32_Float, TextureUsage.DepthStencil,
+                    TextureSampleCount.Count4
+                ));
+                Framebuffer = context.Device.ResourceFactory.CreateFramebuffer(new FramebufferDescription
+                {
+                    ColorTargets = new[] { new FramebufferAttachmentDescription(ColourTexture, 0, 0), },
+                    DepthTarget = new FramebufferAttachmentDescription(DepthTexture, 0, 0)
+                });
+                ScreenPresenter.Resize(context);
+
                 _resizeRequired = false;
             }
+        }
 
+        public void Update(long frame)
+        {
             OnUpdate?.Invoke(this, frame);
         }
 

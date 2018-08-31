@@ -9,6 +9,7 @@ using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
 using Veldrid;
+using Viewport = Sledge.Rendering.Viewports.Viewport;
 
 namespace Sledge.Rendering.Engine
 {
@@ -40,7 +41,7 @@ namespace Sledge.Rendering.Engine
             {
                 HasMainSwapchain = false,
                 ResourceBindingModel = ResourceBindingModel.Improved,
-                SwapchainDepthFormat = PixelFormat.R32_Float,
+                SwapchainDepthFormat = PixelFormat.R32_Float
             };
 
             Device = GraphicsDevice.CreateD3D11(_options);
@@ -66,8 +67,8 @@ namespace Sledge.Rendering.Engine
             AddPipeline(new WireframeGenericPipeline());
             AddPipeline(new FlatColourGenericPipeline());
             AddPipeline(new TexturedGenericPipeline());
-            AddPipeline(new TexturedBillboardPipeline());
-            AddPipeline(new OverlayPipeline());
+            //AddPipeline(new TexturedBillboardPipeline());
+            //AddPipeline(new OverlayPipeline());
 
             Application.ApplicationExit += Shutdown;
         }
@@ -182,6 +183,7 @@ namespace Sledge.Rendering.Engine
 
                 foreach (var rt in _renderTargets)
                 {
+                    ((Viewport)rt).ResizeIfRequired(Context);
                     rt.Update(frame);
                     rt.Overlay.Build(Context, overlays);
                     if (rt.ShouldRender(frame))
@@ -194,8 +196,13 @@ namespace Sledge.Rendering.Engine
 
         private void Render(IViewport renderTarget)
         {
+            var vp = (Viewport) renderTarget;
+
             _commandList.Begin();
-            _commandList.SetFramebuffer(renderTarget.Swapchain.Framebuffer);
+            //_commandList.SetFramebuffer(renderTarget.Swapchain.Framebuffer);
+            _commandList.SetFramebuffer(vp.Framebuffer);
+            _commandList.SetFullViewports();
+            _commandList.SetFullScissorRects();
             _commandList.ClearDepthStencil(1);
 
             var cc = renderTarget.Camera.Type == CameraType.Perspective
@@ -225,6 +232,8 @@ namespace Sledge.Rendering.Engine
                 }
             }
             
+            vp.ScreenPresenter.Present(_commandList);
+
             _commandList.End();
 
             Device.SubmitCommands(_commandList);

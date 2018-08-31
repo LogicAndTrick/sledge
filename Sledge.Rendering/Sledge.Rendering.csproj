@@ -64,6 +64,7 @@
     <Compile Include="Engine\RenderContext.cs" />
     <Compile Include="Engine\ResourceLoader.cs" />
     <Compile Include="Engine\Scene.cs" />
+    <Compile Include="Engine\ScreenPresenter.cs" />
     <Compile Include="Overlay\IOverlayRenderable.cs" />
     <Compile Include="Overlay\OverlayBuilder.cs" />
     <Compile Include="Pipelines\OverlayPipeline.cs" />

@@ -37,7 +37,7 @@ namespace Sledge.Rendering.Pipelines
                 {
                     ColorAttachments = new[] { new OutputAttachmentDescription(PixelFormat.B8_G8_R8_A8_UNorm) },
                     DepthAttachment = new OutputAttachmentDescription(PixelFormat.R32_Float),
-                    SampleCount = TextureSampleCount.Count1
+                    SampleCount = TextureSampleCount.Count4
                 }
             };
 
