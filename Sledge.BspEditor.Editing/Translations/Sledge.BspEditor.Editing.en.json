@@ -364,6 +364,10 @@
             "Name": "Multiple faces have the same ID",
             "Details": "More than one face was found with the same ID. Each face ID should be unique. Fixing this problem will assign the duplicated faces a new ID."
         },
+        "DuplicateKeyValues": {
+            "Name": "Entity has duplicate keys",
+            "Details": "This entity has the same key specified multiple times. Fixing the problem will delete the duplicate keys."
+        },
         "DuplicateObjectIDs": {
             "Name": "Multiple objects have the same ID",
             "Details": "More than one object has the same ID. Each object ID should be unique. Fixing the problem will assign the duplicates new IDs."
@@ -375,6 +379,10 @@
         "GroupWithoutChildren": {
             "Name": "Group has no children",
             "Details": "This group is empty. A group must have contents. Fixing the problem will delete the group."
+        },
+        "InvalidSolid": {
+            "Name": "Invalid solid",
+            "Details": "This solid is invalid. It is either not convex, has coplanar faces, or has off-plane vertices. Fixing the issue will delete the solid."
         },
         "NoPlayerStart": {
             "Name": "This document has no player start",

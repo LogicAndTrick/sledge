@@ -1,27 +1,46 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
-using Sledge.DataStructures.MapObjects;
+using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Editing.Problems
 {
+    [Export(typeof(IProblemCheck))]
+    [AutoTranslate]
     public class InvalidSolids : IProblemCheck
     {
-        public IEnumerable<Problem> Check(MapDocument document, bool visibleOnly)
+        public string Name { get; set; }
+        public string Details { get; set; }
+        public Uri Url => null;
+        public bool CanFix => true;
+
+        public Task<List<Problem>> Check(MapDocument document, Predicate<IMapObject> filter)
         {
-            foreach (var invalid in document.WorldSpawn.Find(x => x is Solid && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)) && !((Solid)x).IsValid()))
-            {
-                yield return new Problem(GetType(), document, new[] { invalid }, Fix, "Invalid solid", "This solid is invalid. It is either not convex, has coplanar faces, or has off-plane vertices. Fixing the issue will delete the solid.");
-            }
+            var solids = document.Map.Root.FindAll()
+                .Where(x => filter(x))
+                .OfType<Solid>()
+                .Where(x => !x.IsValid())
+                .Select(x => new Problem().Add(x))
+                .ToList();
+
+            return Task.FromResult(solids);
         }
 
-        public IOperation Fix(Problem problem)
+        public Task Fix(MapDocument document, Problem problem)
         {
-            // todo
-            throw new NotImplementedException();
-            // return new Delete(problem.Objects.Select(x => x.ID));
+            var delete = new Transaction();
+            foreach (var g in problem.Objects.GroupBy(x => x.Hierarchy.Parent.ID))
+            {
+                delete.Add(new Detatch(g.Key, g));
+            }
+            return MapDocumentOperation.Perform(document, delete);
         }
     }
 }

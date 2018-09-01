@@ -1,51 +1,68 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
-using Sledge.DataStructures.MapObjects;
+using Sledge.BspEditor.Modification.Operations.Data;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Editing.Problems
 {
+    [Export(typeof(IProblemCheck))]
+    [AutoTranslate]
     public class DuplicateKeyValues : IProblemCheck
     {
-        public IEnumerable<Problem> Check(MapDocument document, bool visibleOnly)
+        public string Name { get; set; }
+        public string Details { get; set; }
+        public Uri Url => null;
+        public bool CanFix => true;
+
+        public Task<List<Problem>> Check(MapDocument document, Predicate<IMapObject> filter)
         {
-            var entities = document.WorldSpawn.Find(x => x is Entity && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden))).OfType<Entity>().ToList();
-            foreach (var entity in entities)
-            {
-                var dupes = from p in entity.EntityData.Properties
-                            group p by p.Key.ToLowerInvariant()
-                            into g
-                            where g.Count() > 1
-                            select g;
-                if (dupes.Any())
-                {
-                    yield return new Problem(GetType(), document, new[] { entity }, Fix, "Entity has duplicate keys", "This entity has the same key specified multiple times. Entity keys should be unique. Fixing the problem will remove the duplicate key.");
-                }
-            }
+            var entities = document.Map.Root.FindAll()
+                .Where(x => filter(x))
+                .Select(x => new { Object = x, EntityData = x.Data.GetOne<EntityData>() })
+                .Where(x => x.EntityData != null && HasDuplicateKeyValues(x.EntityData))
+                .Select(x => new Problem().Add(x.Object).Add(x.EntityData))
+                .ToList();
+
+            return Task.FromResult(entities);
         }
 
-        public IOperation Fix(Problem problem)
+        private bool HasDuplicateKeyValues(EntityData data)
         {
-            // todo
-            throw new NotImplementedException();
-            // var edit = new EditEntityData();
-            //foreach (var mo in problem.Objects)
-            //{
-            //    var ed = mo.GetEntityData().Clone();
-            //    var dupes = from p in ed.Properties
-            //                group p by p.Key.ToLowerInvariant()
-            //                into g
-            //                where g.Count() > 1
-            //                select g;
-            //    foreach (var prop in dupes.SelectMany(dupe => dupe.Skip(1)))
-            //    {
-            //        ed.Properties.Remove(prop);
-            //    }
-            //    edit.AddEntity(mo, ed);
-            //}
-            //return edit;
+            return data.Properties.GroupBy(x => x.Key.ToLowerInvariant()).Any(x => x.Count() > 1);
+        }
+
+        public Task Fix(MapDocument document, Problem problem)
+        {
+            // This error should only come from external sources (map loading, etc) as the EditEntityDataProperties
+            // simply doesn't allow adding duplicate keys at all.
+
+            var transaction = new Transaction();
+
+            foreach (var obj in problem.Objects)
+            {
+                var data = obj.Data.GetOne<EntityData>();
+                if (data == null) continue;
+
+                var vals = new Dictionary<string, string>();
+
+                // Set the key to the first found value
+                var groups = data.Properties.GroupBy(x => x.Key.ToLowerInvariant()).Where(x => x.Count() > 1);
+                foreach (var g in groups)
+                {
+                    vals[g.Key] = g.First().Value;
+                }
+
+                transaction.Add(new EditEntityDataProperties(obj.ID, vals));
+            }
+
+            return MapDocumentOperation.Perform(document, transaction);
         }
     }
 }
