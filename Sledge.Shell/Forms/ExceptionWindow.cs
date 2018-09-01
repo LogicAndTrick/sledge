@@ -98,7 +98,7 @@ namespace Sledge.Shell.Forms
                 RuntimeVersion = System.Environment.Version.ToString();
                 Date = DateTime.Now;
                 InformationMessage = info;
-                ApplicationVersion = FileVersionInfo.GetVersionInfo(exception.TargetSite.DeclaringType?.Assembly.Location ?? typeof(ExceptionWindow).Assembly.Location).FileVersion;
+                ApplicationVersion = FileVersionInfo.GetVersionInfo(exception.TargetSite?.DeclaringType?.Assembly.Location ?? typeof(ExceptionWindow).Assembly.Location).FileVersion;
                 OperatingSystem = System.Environment.OSVersion.VersionString;
 
                 var list = new List<Exception>();

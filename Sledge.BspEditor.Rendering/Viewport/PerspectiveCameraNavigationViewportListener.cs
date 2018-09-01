@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Sledge.Common.Easings;
 using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
+using Sledge.Shell;
 using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Rendering.Viewport
@@ -181,9 +182,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             {
                 CursorClip = Cursor.Clip;
                 Cursor.Clip = Viewport.Control.RectangleToScreen(new Rectangle(0, 0, Viewport.Width, Viewport.Height));
-                Viewport.Control.Capture = true;
-                CursorVisible = false;
-                Cursor.Hide();
+                SetCapture(true);
                 Viewport.AquireInputLock(this);
                 AddSceneObjects();
             }
@@ -191,12 +190,28 @@ namespace Sledge.BspEditor.Rendering.Viewport
             {
                 Cursor.Clip = CursorClip;
                 CursorClip = Rectangle.Empty;
-                Viewport.Control.Capture = false;
-                CursorVisible = true;
-                Cursor.Show();
+                SetCapture(false);
                 Viewport.ReleaseInputLock(this);
                 ClearSceneObjects();
             }
+        }
+
+        private void SetCapture(bool capture)
+        {
+            Viewport.Control.InvokeSync(() =>
+            {
+                Viewport.Control.Capture = capture;
+                if (capture && CursorVisible)
+                {
+                    CursorVisible = false;
+                    Cursor.Hide();
+                }
+                else if (!capture && !CursorVisible)
+                {
+                    CursorVisible = true;
+                    Cursor.Show();
+                }
+            });
         }
 
         public void KeyPress(ViewportEvent e)
@@ -322,9 +337,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 {
                     Cursor.Clip = CursorClip;
                     CursorClip = Rectangle.Empty;
-                    Viewport.Control.Capture = false;
-                    CursorVisible = true;
-                    Cursor.Show();
+                    SetCapture(false);
                     Viewport.ReleaseInputLock(this);
                     ClearSceneObjects();
                 }

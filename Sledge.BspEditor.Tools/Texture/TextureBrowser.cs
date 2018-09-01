@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Translations;
@@ -510,9 +512,15 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void SelectButtonClicked(object sender, EventArgs e)
         {
-            var sel = _textureList.GetSelectedTextures().ToList();
-            if (!sel.Any()) return;
-            // todo Mediator.Publish(EditorMediator.SelectMatchingTextures, sel.Select(x => x).ToList());
+            var textures = _textureList.GetSelectedTextures().ToHashSet(StringComparer.InvariantCultureIgnoreCase);
+            if (!textures.Any()) return;
+
+            var sel = _document.Map.Root.Find(x => x.Data.OfType<ITextured>().Any(t => textures.Contains(t.Texture.Name))).ToList();
+            var des = _document.Selection.Except(sel).ToList();
+
+            var transaction = new Transaction(new Select(sel), new Deselect(des));
+            MapDocumentOperation.Perform(_document, transaction);
+
             Close();
         }
     }
