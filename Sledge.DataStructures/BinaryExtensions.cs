@@ -1,7 +1,5 @@
 using System.IO;
 using System.Numerics;
-using Sledge.Common.Extensions;
-using Sledge.DataStructures.Geometric;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 
 namespace Sledge.DataStructures
@@ -21,7 +19,7 @@ namespace Sledge.DataStructures
                 br.ReadSingle(),
                 br.ReadSingle(),
                 br.ReadSingle()
-                );
+            );
         }
 
         public static void WriteVector3(this BinaryWriter bw, Vector3 c)
@@ -37,7 +35,7 @@ namespace Sledge.DataStructures
                 ReadVector3(br),
                 ReadVector3(br),
                 ReadVector3(br)
-                );
+            );
         }
 
         public static void WritePlane(this BinaryWriter bw, Vector3[] coords)

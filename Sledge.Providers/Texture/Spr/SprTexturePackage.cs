@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sledge.Common.Extensions;
 using Sledge.FileSystem;
 
 namespace Sledge.Providers.Texture.Spr

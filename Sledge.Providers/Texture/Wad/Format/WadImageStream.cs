@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Sledge.Common.Extensions;
 
 namespace Sledge.Providers.Texture.Wad.Format
 {
@@ -46,7 +47,7 @@ namespace Sledge.Providers.Texture.Wad.Format
             using (var bw = new BinaryWriter(new MemoryStream(_data, true)))
             {
                 // BITMAPFILEHEADER
-                Packages.BinaryExtensions.WriteFixedLengthString(bw, Encoding.ASCII, 2, "BM"); // Type
+                bw.WriteFixedLengthString(Encoding.ASCII, 2, "BM"); // Type
                 bw.Write(_length); // Size
                 bw.Write((short)0); // Reserved 1
                 bw.Write((short)0); // Reserved 2

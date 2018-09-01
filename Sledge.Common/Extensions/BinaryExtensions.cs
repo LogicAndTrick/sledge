@@ -7,6 +7,8 @@ namespace Sledge.Common.Extensions
 {
     public static class BinaryExtensions
     {
+        // Strings
+
         public static string ReadFixedLengthString(this BinaryReader br, Encoding encoding, int length)
         {
             var bstr = br.ReadBytes(length).TakeWhile(b => b != 0).ToArray();
@@ -36,6 +38,29 @@ namespace Sledge.Common.Extensions
             bw.Write(str.ToCharArray());
             bw.Write((char) 0);
         }
+
+        public static string ReadCString(this BinaryReader br)
+        {
+            // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
+            // Read the byte length and then read that number of characters.
+            var len = br.ReadByte();
+            var chars = br.ReadChars(len);
+            return new string(chars).Trim('\0');
+        }
+
+        public static void WriteCString(this BinaryWriter bw, string str, int maximumLength)
+        {
+            // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
+            // Write the byte length (+1) and then write that number of characters plus the null terminator.
+            // Hammer doesn't like RMF strings longer than 128 bytes...
+            if (str == null) str = "";
+            if (str.Length > maximumLength) str = str.Substring(0, maximumLength);
+            bw.Write((byte)(str.Length + 1));
+            bw.Write(str.ToCharArray());
+            bw.Write('\0');
+        }
+
+        // Arrays
 
         public static byte[] ReadByteArray(this BinaryReader br, int num)
         {
@@ -72,30 +97,8 @@ namespace Sledge.Common.Extensions
             return arr;
         }
 
-        public static string ReadCString(this BinaryReader br)
-        {
-            // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
-            // Read the byte length and then read that number of characters.
-            var len = br.ReadByte();
-            var chars = br.ReadChars(len);
-            return new string(chars).Trim('\0');
-        }
-
-        const int MaxVariableStringLength = 127;
-
-        public static void WriteCString(this BinaryWriter bw, string str)
-        {
-            // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
-            // Write the byte length (+1) and then write that number of characters plus the null terminator.
-            // Hammer doesn't like RMF strings longer than 128 bytes...
-            if (str == null) str = "";
-            if (str.Length > MaxVariableStringLength) str = str.Substring(0, MaxVariableStringLength);
-            bw.Write((byte) (str.Length + 1));
-            bw.Write(str.ToCharArray());
-            bw.Write('\0');
-        }
-
-
+        // Decimal <-> Single
+        
         public static decimal ReadSingleAsDecimal(this BinaryReader br)
         {
             return (decimal) br.ReadSingle();
@@ -105,6 +108,8 @@ namespace Sledge.Common.Extensions
         {
             bw.Write((float) dec);
         }
+
+        // Colours
 
         public static Color ReadRGBColour(this BinaryReader br)
         {

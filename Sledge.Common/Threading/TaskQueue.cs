@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Sledge.Common.Tasks
+namespace Sledge.Common.Threading
 {
     // Borrowed from: https://github.com/Gentlee/SerialQueue
     // MIT license

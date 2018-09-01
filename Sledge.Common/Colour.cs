@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 
 namespace Sledge.Common
 {
@@ -74,7 +71,7 @@ namespace Sledge.Common
                 (byte) ((color.R) / 255f * (other.R / 255f) * 255),
                 (byte) ((color.G) / 255f * (other.G / 255f) * 255),
                 (byte) ((color.B) / 255f * (other.B / 255f) * 255)
-                );
+            );
         }
     }
 }

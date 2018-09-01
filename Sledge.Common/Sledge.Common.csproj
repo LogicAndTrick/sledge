@@ -104,7 +104,7 @@
     <Compile Include="Shell\Settings\SettingStoreExtensions.cs" />
     <Compile Include="Shell\Settings\SettingValue.cs" />
     <Compile Include="SubStream.cs" />
-    <Compile Include="Tasks\TaskQueue.cs" />
+    <Compile Include="Threading\TaskQueue.cs" />
     <Compile Include="Threading\ThreadSafeList.cs" />
     <Compile Include="Threading\ThreadSafeSet.cs" />
     <Compile Include="Translations\AutoTranslateAttribute.cs" />
@@ -125,6 +125,7 @@
       <Version>11.0.2</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

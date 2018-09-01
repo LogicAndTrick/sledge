@@ -21,6 +21,8 @@ namespace Sledge.BspEditor.Providers
     [Export(typeof(IBspSourceProvider))]
     public class RmfBspSourceProvider : IBspSourceProvider
     {
+        const int MaxVariableStringLength = 127;
+
         private static readonly IEnumerable<Type> SupportedTypes = new List<Type>
         {
             // Map Object types
@@ -372,7 +374,7 @@ namespace Sledge.BspEditor.Providers
 
         private void WriteRoot(Root root, BinaryWriter bw)
         {
-            bw.WriteCString("CMapWorld");
+            bw.WriteCString("CMapWorld", MaxVariableStringLength);
             WriteMapBase(root, bw);
             WriteEntityData(root.Data.GetOne<EntityData>(), bw);
             var paths = root.Data.OfType<Path>().ToList();
@@ -397,21 +399,21 @@ namespace Sledge.BspEditor.Providers
                 bw.Write(node.Properties.Count);
                 foreach (var property in node.Properties)
                 {
-                    bw.WriteCString(property.Key);
-                    bw.WriteCString(property.Value);
+                    bw.WriteCString(property.Key, MaxVariableStringLength);
+                    bw.WriteCString(property.Value, MaxVariableStringLength);
                 }
             }
         }
 
         private void WriteGroup(Group group, BinaryWriter bw)
         {
-            bw.WriteCString("CMapGroup");
+            bw.WriteCString("CMapGroup", MaxVariableStringLength);
             WriteMapBase(group, bw);
         }
 
         private void WriteSolid(Solid solid, BinaryWriter bw)
         {
-            bw.WriteCString("CMapSolid");
+            bw.WriteCString("CMapSolid", MaxVariableStringLength);
             WriteMapBase(solid, bw);
             var faces = solid.Faces.ToList();
             bw.Write(faces.Count);
@@ -423,7 +425,7 @@ namespace Sledge.BspEditor.Providers
 
         private void WriteEntity(Entity entity, BinaryWriter bw)
         {
-            bw.WriteCString("CMapEntity");
+            bw.WriteCString("CMapEntity", MaxVariableStringLength);
             WriteMapBase(entity, bw);
             WriteEntityData(entity.EntityData, bw);
             bw.Write(new byte[2]); // Unused
@@ -434,7 +436,7 @@ namespace Sledge.BspEditor.Providers
         private void WriteEntityData(EntityData data, BinaryWriter bw)
         {
             if (data == null) data = new EntityData();
-            bw.WriteCString(data.Name);
+            bw.WriteCString(data.Name, MaxVariableStringLength);
             bw.Write(new byte[4]); // Unused
             bw.Write(data.Flags);
 
@@ -442,8 +444,8 @@ namespace Sledge.BspEditor.Providers
             bw.Write(props.Count);
             foreach (var p in props)
             {
-                bw.WriteCString(p.Key);
-                bw.WriteCString(p.Value);
+                bw.WriteCString(p.Key, MaxVariableStringLength);
+                bw.WriteCString(p.Value, MaxVariableStringLength);
             }
             bw.Write(new byte[12]); // Unused
         }

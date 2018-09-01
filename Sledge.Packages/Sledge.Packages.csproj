@@ -39,7 +39,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinaryExtensions.cs" />
     <Compile Include="IPackage.cs" />
     <Compile Include="IPackageEntry.cs" />
     <Compile Include="IPackageStreamSource.cs" />

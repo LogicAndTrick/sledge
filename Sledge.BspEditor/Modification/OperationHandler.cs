@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Hooks;
-using Sledge.Common.Tasks;
+using Sledge.Common.Threading;
 
 namespace Sledge.BspEditor.Modification
 {

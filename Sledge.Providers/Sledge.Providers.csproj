@@ -47,7 +47,6 @@
     <Compile Include="GameData\FgdProvider.cs" />
     <Compile Include="GameData\IGameDataProvider.cs" />
     <Compile Include="GenericStructure.cs" />
-    <Compile Include="BinaryExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderException.cs" />
     <Compile Include="ProviderNotFoundException.cs" />

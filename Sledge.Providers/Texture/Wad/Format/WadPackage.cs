@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Sledge.Common.Extensions;
 using Sledge.FileSystem;
 using Sledge.Packages;
 
@@ -28,7 +29,7 @@ namespace Sledge.Providers.Texture.Wad.Format
             // Read the data from the wad
             using (var br = new BinaryReader(file.Open()))
             {
-                var sig = Packages.BinaryExtensions.ReadFixedLengthString(br, Encoding.ASCII, 4);
+                var sig = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (sig != Signature) throw new PackageException("Unknown package signature: Expected '" + Signature + "', got '" + sig + "'.");
                 
                 _numTextures = br.ReadUInt32();
@@ -55,7 +56,7 @@ namespace Sledge.Providers.Texture.Wad.Format
         {
             using (var br = new BinaryReader(stream, Encoding.ASCII, true))
             {
-                var sig = Packages.BinaryExtensions.ReadFixedLengthString(br, Encoding.ASCII, 4);
+                var sig = br.ReadFixedLengthString(Encoding.ASCII, 4);
                 if (sig != Signature) throw new PackageException("Unknown package signature: Expected '" + Signature + "', got '" + sig + "'.");
 
                 var numTextures = br.ReadUInt32();
@@ -77,7 +78,7 @@ namespace Sledge.Providers.Texture.Wad.Format
                     else
                     {
                         br.BaseStream.Seek(3, SeekOrigin.Current);
-                        yield return Packages.BinaryExtensions.ReadFixedLengthString(br, Encoding.ASCII, 16).ToLowerInvariant();
+                        yield return br.ReadFixedLengthString(Encoding.ASCII, 16).ToLowerInvariant();
                     }
                 }
             }
@@ -99,7 +100,7 @@ namespace Sledge.Providers.Texture.Wad.Format
                 var type =  br.ReadByte();
                 var compressionType = br.ReadByte();
                 br.ReadBytes(2); // struct padding
-                var name = Packages.BinaryExtensions.ReadFixedLengthString(br, Encoding.ASCII, 16).ToLowerInvariant();
+                var name = br.ReadFixedLengthString(Encoding.ASCII, 16).ToLowerInvariant();
 
                 if (!validTypes.Contains(type)) continue; // Skip unsupported types
                 if (_entries.ContainsKey(name)) continue; // Don't add duplicates
