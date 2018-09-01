@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
-using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Properties;

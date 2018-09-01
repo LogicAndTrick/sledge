@@ -4,8 +4,6 @@ using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
 using Sledge.Common.Translations;
-using Sledge.Providers.GameData;
-using Sledge.Providers.Texture;
 
 namespace Sledge.BspEditor.Environment.Goldsource
 {

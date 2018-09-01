@@ -17,7 +17,7 @@ namespace Sledge.BspEditor.Components
         public string Type => "TreeView";
         public Control Control => _view;
 
-        private List<Subscription> _subscriptions;
+        private readonly List<Subscription> _subscriptions;
 
         public TreeViewMapDocumentControl()
         {
@@ -28,22 +28,25 @@ namespace Sledge.BspEditor.Components
             };
         }
 
-        private async Task DocumentActivated(IDocument doc)
+        private Task DocumentActivated(IDocument doc)
         {
-            var mapDoc = doc as MapDocument;
             _view.Nodes.Clear();
-            if (mapDoc == null) return;
 
-            _view.Invoke((MethodInvoker) delegate
+            if (doc is MapDocument mapDoc)
             {
-                _view.BeginUpdate();
-                var root = new TreeNode("Root");
-                AddData(root, mapDoc.Map.Root);
-                AddChildren(root, mapDoc.Map.Root);
-                _view.Nodes.Add(root);
-                _view.ExpandAll();
-                _view.EndUpdate();
-            });
+                _view.Invoke((MethodInvoker)delegate
+               {
+                   _view.BeginUpdate();
+                   var root = new TreeNode("Root");
+                   AddData(root, mapDoc.Map.Root);
+                   AddChildren(root, mapDoc.Map.Root);
+                   _view.Nodes.Add(root);
+                   _view.ExpandAll();
+                   _view.EndUpdate();
+               });
+            }
+
+            return Task.CompletedTask;
         }
 
         public string GetSerialisedSettings()

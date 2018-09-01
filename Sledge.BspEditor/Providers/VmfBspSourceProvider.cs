@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -482,7 +481,7 @@ namespace Sledge.BspEditor.Providers
         {
             public List<VmfObject> Objects { get; set; }
             public EntityData EntityData { get; set; }
-            public Vector3 Origin { get; set; }
+            public Vector3? Origin { get; set; }
 
             private static readonly string[] ExcludedKeys = { "id", "spawnflags", "classname", "origin", "wad", "mapversion" };
 
@@ -491,7 +490,7 @@ namespace Sledge.BspEditor.Providers
                 Objects = new List<VmfObject>();
                 foreach (var so in obj.Children)
                 {
-                    var o = VmfObject.Deserialise(so);
+                    var o = Deserialise(so);
                     if (o != null) Objects.Add(o);
                 }
 
@@ -532,7 +531,7 @@ namespace Sledge.BspEditor.Providers
                 var ent = new Entity(generator.Next("MapObject"));
 
                 ent.Data.Add(EntityData);
-                if (Origin != null) ent.Data.Add(new Origin(Origin));
+                if (Origin != null) ent.Data.Add(new Origin(Origin.Value));
 
                 Editor.Apply(ent);
 

@@ -28,9 +28,10 @@ namespace Sledge.BspEditor.Components
             Oy.Subscribe<ClipboardManager>("BspEditor:ClipboardChanged", ClipboardChanged);
         }
 
-        private async Task ClipboardChanged(ClipboardManager arg)
+        private Task ClipboardChanged(ClipboardManager arg)
         {
             UpdateList();
+            return Task.CompletedTask;
         }
 
         private void UpdateList()

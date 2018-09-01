@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.Composition;
 using System.Runtime.Serialization;
-using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Transport;
 

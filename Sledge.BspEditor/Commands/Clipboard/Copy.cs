@@ -24,10 +24,11 @@ namespace Sledge.BspEditor.Commands.Clipboard
 
         public override string Name { get; set; } = "Copy";
         public override string Details { get; set; } = "Copy the current selection";
-        protected override async Task Invoke(MapDocument document, CommandParameters parameters)
+        protected override Task Invoke(MapDocument document, CommandParameters parameters)
         {
             var sel = document.Selection.GetSelectedParents().ToList();
             if (sel.Any()) _clipboard.Value.Push(sel);
+            return Task.CompletedTask;
         }
     }
 }
