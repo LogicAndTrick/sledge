@@ -146,7 +146,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            var val = _easing.Evaluate((_remaining * 1m) / FadeTime);
+            var val = _easing.Evaluate((_remaining * 1d) / FadeTime);
             val = Math.Min(1, Math.Max(0, val));
             var a = (int) (val * 255);
             var c = Color.FromArgb(a, ForeColor);

@@ -134,10 +134,10 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             var majorSecondaryInner = (crossWidth - crossWallWidth) / 2; // Inner = inner ring (hollow only)
             var minorSecondaryInner = (height - crossWallWidth) / 2;
 
-            var ringStart = (float) DMath.DegreesToRadians(ringStartAngle);
-            var ringAngle = (float) DMath.DegreesToRadians(ringArc) / ringSides;
-            var crossStart = (float) DMath.DegreesToRadians(crossStartAngle);
-            var crossAngle = (float) DMath.DegreesToRadians(crossArc) / crossSides;
+            var ringStart = (float) MathHelper.DegreesToRadians(ringStartAngle);
+            var ringAngle = (float) MathHelper.DegreesToRadians(ringArc) / ringSides;
+            var crossStart = (float) MathHelper.DegreesToRadians(crossStartAngle);
+            var crossAngle = (float) MathHelper.DegreesToRadians(crossArc) / crossSides;
             var heightAdd = rotationHeight / ringSides;
 
             // Rotate around the ring, generating each cross section

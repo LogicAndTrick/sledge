@@ -156,7 +156,7 @@ namespace Sledge.BspEditor.Primitives
         
         public static void SetRotation(this Texture tex, float rotate)
         {
-            var rads = (float) DMath.DegreesToRadians(tex.Rotation - rotate);
+            var rads = (float) MathHelper.DegreesToRadians(tex.Rotation - rotate);
 
             // Rotate around the texture normal
             var texNorm = tex.VAxis.Cross(tex.UAxis).Normalise();

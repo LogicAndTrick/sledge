@@ -30,7 +30,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
 
             var axis = parameters.Get<Vector3>("Axis");
             var amount = parameters.Get<float>("Angle");
-            var radians = (float) DMath.DegreesToRadians(amount);
+            var radians = (float) MathHelper.DegreesToRadians(amount);
 
             var tl = document.Map.Data.GetOne<TransformationFlags>() ?? new TransformationFlags();
 

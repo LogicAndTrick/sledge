@@ -100,14 +100,14 @@ namespace Sledge.Rendering.Cameras
             const float near = 1.0f;
             var ratio = width / (float)height;
             if (ratio <= 0) ratio = 1;
-            return Matrix4x4.CreatePerspectiveFieldOfView((float) DMath.DegreesToRadians(FOV), ratio, near, ClipDistance);
+            return Matrix4x4.CreatePerspectiveFieldOfView((float) MathHelper.DegreesToRadians(FOV), ratio, near, ClipDistance);
         }
 
         public Vector3 ScreenToWorld(Vector3 screen)
         {
             screen = new Vector3(screen.X, screen.Y, 1);
             var viewport = new[] { 0, 0, Width, Height };
-            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
+            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)MathHelper.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
             var vm = GetCameraMatrix();
             return MathFunctions.Unproject(screen, viewport, pm, vm);
         }
@@ -115,7 +115,7 @@ namespace Sledge.Rendering.Cameras
         public Vector3 WorldToScreen(Vector3 world)
         {
             var viewport = new[] { 0, 0, Width, Height };
-            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
+            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)MathHelper.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
             var vm = GetCameraMatrix();
 
             var proj = MathFunctions.Project(world, viewport, pm, vm);
@@ -127,7 +127,7 @@ namespace Sledge.Rendering.Cameras
         {
             var near = new Vector3(screen.X, Height - screen.Y, 0);
             var far = new Vector3(screen.X, Height - screen.Y, 1);
-            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
+            var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)MathHelper.DegreesToRadians(FOV), Width / (float)Height, 1.0f, 50000);
             var vm = GetCameraMatrix();
             var viewport = new[] { 0, 0, Width, Height };
             var un = MathFunctions.Unproject(near, viewport, pm, vm);
@@ -137,7 +137,7 @@ namespace Sledge.Rendering.Cameras
 
         //public IEnumerable<Plane> GetClippingPlanes(int width, int height)
         //{
-        //    var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)DMath.DegreesToRadians(FOV), width / (float)height, 1.0f, ClipDistance);
+        //    var pm = Matrix4x4.CreatePerspectiveFieldOfView((float)MathHelper.DegreesToRadians(FOV), width / (float)height, 1.0f, ClipDistance);
         //    var vm = GetCameraMatrix();
         //    var viewport = new[] { 0, 0, width, height };
         //

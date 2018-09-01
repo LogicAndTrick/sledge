@@ -175,7 +175,7 @@ namespace Sledge.BspEditor.Editing.Components.Compile
                             Value = Parameter.DecimalValue,
                             DecimalPlaces = Parameter.Precision,
                             Margin = new Padding(0),
-                            Increment = DMath.Pow(10, -Parameter.Precision)
+                            Increment = (decimal) Math.Pow(10, -Parameter.Precision)
                         };
                         nud.ValueChanged += (s, e) => OnValueChanged();
                         controls.Add(nud);

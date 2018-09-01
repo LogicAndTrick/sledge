@@ -78,7 +78,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             if (CameraNavigationViewportSettings.TimeToTopSpeed > 0)
             {
                 var downFor = (frame - _downMillis) / CameraNavigationViewportSettings.TimeToTopSpeed;
-                if (downFor >= 0 && downFor < 1) units *= (float) _easing.Evaluate(downFor);
+                if (downFor >= 0 && downFor < 1) units *= (float) _easing.Evaluate((double) downFor);
             }
 
             if (KeyboardState.Shift) units *= 2;

@@ -64,7 +64,7 @@
     <Compile Include="Shell\Components\OrderHintAttribute.cs" />
     <Compile Include="Shell\Context\ContextInfo.cs" />
     <Compile Include="Shell\Context\IContext.cs" />
-    <Compile Include="DMath.cs" />
+    <Compile Include="MathHelper.cs" />
     <Compile Include="Shell\Context\IContextAware.cs" />
     <Compile Include="Shell\Documents\FileExtensionInfo.cs" />
     <Compile Include="Shell\Documents\IDocument.cs" />

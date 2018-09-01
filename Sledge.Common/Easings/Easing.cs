@@ -4,16 +4,16 @@ namespace Sledge.Common.Easings
 {
     public class Easing
     {
-        private Func<decimal, decimal> Function { get; set; }
+        private Func<double, double> Function { get; set; }
         private EasingDirection Direction { get; set; }
 
-        public Easing(Func<decimal, decimal> function, EasingDirection direction)
+        public Easing(Func<double, double> function, EasingDirection direction)
         {
             Function = function;
             Direction = direction;
         }
 
-        public decimal Evaluate(decimal input)
+        public double Evaluate(double input)
         {
             switch (Direction)
             {
@@ -22,7 +22,7 @@ namespace Sledge.Common.Easings
                 case EasingDirection.Out:
                     return 1 - Function(1 - input);
                 case EasingDirection.InOut:
-                    return input < 0.5m
+                    return input < 0.5d
                         ? Function(input * 2) / 2
                         : 1 - Function(input * -2 + 2) / 2;
                 default:
@@ -35,7 +35,7 @@ namespace Sledge.Common.Easings
             return new Easing(FunctionFromType(type), direction);
         }
 
-        private static Func<decimal, decimal> FunctionFromType(EasingType easing)
+        private static Func<double, double> FunctionFromType(EasingType easing)
         {
             switch (easing)
             {
@@ -44,19 +44,19 @@ namespace Sledge.Common.Easings
                 case EasingType.Linear:
                     return x => x;
                 case EasingType.Quadratic:
-                    return x => DMath.Pow(x, 2);
+                    return x => Math.Pow(x, 2);
                 case EasingType.Cubic:
-                    return x => DMath.Pow(x, 3);
+                    return x => Math.Pow(x, 3);
                 case EasingType.Quartic:
-                    return x => DMath.Pow(x, 4);
+                    return x => Math.Pow(x, 4);
                 case EasingType.Quintic:
-                    return x => DMath.Pow(x, 5);
+                    return x => Math.Pow(x, 5);
                 case EasingType.Sinusoidal:
-                    return x => 1 - DMath.Cos(x * DMath.PI / 2); // Wait... That's not Sine!
+                    return x => 1 - Math.Cos(x * Math.PI / 2); // Wait... That's not Sine!
                 case EasingType.Exponential:
-                    return x => DMath.Pow(x, 5);
+                    return x => Math.Pow(x, 5);
                 case EasingType.Circular:
-                    return x => 1 - DMath.Sqrt(1 - x * x);
+                    return x => 1 - Math.Sqrt(1 - x * x);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -117,9 +117,9 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             var minorOut = length / 2;
             var minorIn = minorOut - wallWidth;
 
-            var start = (float) DMath.DegreesToRadians(startAngle);
-            var tilt = (float) DMath.DegreesToRadians(tiltAngle);
-            var angle = (float) DMath.DegreesToRadians(arc) / numSides;
+            var start = (float) MathHelper.DegreesToRadians(startAngle);
+            var tilt = (float) MathHelper.DegreesToRadians(tiltAngle);
+            var angle = (float) MathHelper.DegreesToRadians(arc) / numSides;
 
             // Calculate the coordinates of the inner and outer ellipses' points
             var outer = new Vector3[numSides + 1];

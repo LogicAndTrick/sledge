@@ -75,8 +75,8 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
             var minor = length / 2;
             var heightRadius = height / 2;
 
-            var angleV = (float) DMath.DegreesToRadians(180f) / numSides;
-            var angleH = (float) DMath.DegreesToRadians(360f) / numSides;
+            var angleV = (float) MathHelper.DegreesToRadians(180f) / numSides;
+            var angleH = (float) MathHelper.DegreesToRadians(360f) / numSides;
             
             var faces = new List<Vector3[]>();
             var bottom = new Vector3(box.Center.X, box.Center.Y, box.Start.Z).Round(roundDecimals);
