@@ -12,6 +12,7 @@ using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
@@ -34,6 +35,7 @@ namespace Sledge.BspEditor.Tools.Brush
 {
     [Export(typeof(ITool))]
     [Export(typeof(ISettingsContainer))]
+    [Export]
     [OrderHint("H")]
     [AutoTranslate]
     [DefaultHotkey("Shift+B")]
@@ -45,6 +47,8 @@ namespace Sledge.BspEditor.Tools.Brush
         private List<IMapObject> _preview;
         private BoxDraggableState box;
         private IBrush _activeBrush;
+
+        public bool RoundVertices { get; set; } = true;
 
         public string CreateObject { get; set; } = "Create Object";
         
@@ -192,7 +196,15 @@ namespace Sledge.BspEditor.Tools.Brush
             if (brush == null) return null;
 
             var ti = Document.Map.Data.GetOne<ActiveTexture>()?.Name ?? "aaatrigger";
-            var created = brush.Create(idg, bounds, ti, /*BrushManager.RoundCreatedVertices*/ false ? 0 : 2).ToList();
+            var created = brush.Create(idg, bounds, ti, RoundVertices ? 0 : 2).ToList();
+
+            // Align all textures to the face
+            foreach (var f in created.SelectMany(x => x.Data.OfType<Face>()))
+            {
+                f.Texture.AlignToNormal(f.Plane.Normal);
+            }
+
+            // If there's more than one object in the result, group them up
             if (created.Count > 1)
             {
                 var g = new Group(idg.Next("MapObject"));
@@ -200,6 +212,7 @@ namespace Sledge.BspEditor.Tools.Brush
                 g.DescendantsChanged();
                 return g;
             }
+
             return created.FirstOrDefault();
         }
 

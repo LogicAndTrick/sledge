@@ -21,6 +21,7 @@ namespace Sledge.BspEditor.Tools.Brush
     public partial class BrushSidebarPanel : UserControl, ISidebarComponent, IInitialiseHook
     {
         [ImportMany] private IEnumerable<Lazy<IBrush>> _brushes;
+        [Import] private BrushTool _tool;
 
         private IBrush _selectedBrush;
         private readonly List<BrushControl> _currentControls;
@@ -122,6 +123,7 @@ namespace Sledge.BspEditor.Tools.Brush
 
         private void RoundCreatedVerticesChanged(object sender, EventArgs e)
         {
+            _tool.RoundVertices = RoundCreatedVerticesCheckbox.Checked;
             OnValuesChange();
         }
 

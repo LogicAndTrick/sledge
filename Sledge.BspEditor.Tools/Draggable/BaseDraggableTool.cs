@@ -214,7 +214,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            foreach (var obj in CollectObjects(x => new[] {x}))
+            foreach (var obj in CollectObjects(x => new[] { x }).OrderByDescending(x => camera.GetUnusedValue(x.Origin)))
             {
                 obj.Render(viewport, camera, worldMin, worldMax, graphics);
             }
@@ -223,7 +223,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public override void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
         {
-            foreach (var obj in CollectObjects(x => new[] { x }))
+            foreach (var obj in CollectObjects(x => new[] { x }).OrderByDescending(x => (x.Origin - camera.Position).LengthSquared()))
             {
                 obj.Render(viewport, camera, graphics);
             }

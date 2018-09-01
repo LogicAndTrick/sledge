@@ -210,6 +210,21 @@ namespace Sledge.Rendering.Cameras
             return c - GetUnusedCoordinate(c);
         }
 
+        public float GetUnusedValue(Vector3 c)
+        {
+            switch (ViewType)
+            {
+                case OrthographicType.Top:
+                    return c.Z;
+                case OrthographicType.Front:
+                    return c.X;
+                case OrthographicType.Side:
+                    return c.Y;
+                default:
+                    throw new ArgumentOutOfRangeException("Type");
+            }
+        }
+
         internal string Serialise()
         {
             return String.Format(CultureInfo.InvariantCulture, "{0}/{1},{2},{3}/{4}",

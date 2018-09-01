@@ -14,6 +14,8 @@ namespace Sledge.BspEditor.Tools.Draggable
         public Vector3 Position { get; set; }
         public int Width { get; protected set; }
 
+        public override Vector3 Origin => Position;
+
         public DraggableVector3()
         {
             Width = 5;

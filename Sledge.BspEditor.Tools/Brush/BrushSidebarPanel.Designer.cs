@@ -71,6 +71,8 @@
             // RoundCreatedVerticesCheckbox
             // 
             this.RoundCreatedVerticesCheckbox.AutoSize = true;
+            this.RoundCreatedVerticesCheckbox.Checked = true;
+            this.RoundCreatedVerticesCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.RoundCreatedVerticesCheckbox.Location = new System.Drawing.Point(73, 33);
             this.RoundCreatedVerticesCheckbox.Name = "RoundCreatedVerticesCheckbox";
             this.RoundCreatedVerticesCheckbox.Size = new System.Drawing.Size(137, 17);

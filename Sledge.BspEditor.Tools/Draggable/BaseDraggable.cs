@@ -10,6 +10,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 {
     public abstract class BaseDraggable : IDraggable
     {
+        public abstract Vector3 Origin { get; }
         public event EventHandler DragStarted;
         public event EventHandler DragMoved;
         public event EventHandler DragEnded;

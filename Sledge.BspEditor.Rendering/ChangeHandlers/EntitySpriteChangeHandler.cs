@@ -22,7 +22,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
                 var sn = GetSpriteName(entity, gd);
                 if (sn == null) entity.Data.Remove(x => x is EntitySprite);
                 else entity.Data.Replace(await CreateSpriteData(entity, change.Document, gd, sn));
-                entity.Invalidate();
+                entity.DescendantsChanged();
             }
         }
 

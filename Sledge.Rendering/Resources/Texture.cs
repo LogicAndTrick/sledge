@@ -40,7 +40,7 @@ namespace Sledge.Rendering.Resources
                 }
                 catch
                 {
-                    // Error udating texture, the texture may have been disposed
+                    // Error updating texture, the texture may have been disposed
                 }
                 _mipsGenerated = false;
             });

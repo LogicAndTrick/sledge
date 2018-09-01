@@ -323,6 +323,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             public Vector3 Position { get; set; }
             public Vector3 DraggingPosition { get; set; }
 
+            public override Vector3 Origin => Position;
+
             public bool IsHighlighted { get; set; }
             public bool IsSelected { get; set; }
 

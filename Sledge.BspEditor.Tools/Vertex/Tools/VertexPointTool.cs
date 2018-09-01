@@ -678,6 +678,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             public VertexPoint MidpointStart { get; set; }
             public VertexPoint MidpointEnd { get; set; }
 
+            public override Vector3 Origin => IsDragging ? DraggingPosition : Position;
+
             public VertexPoint(VertexPointTool tool, VertexSolid solid)
             {
                 Tool = tool;

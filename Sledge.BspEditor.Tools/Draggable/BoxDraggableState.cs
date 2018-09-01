@@ -26,6 +26,8 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         protected IDraggable[] BoxHandles { get; set; }
 
+        public override Vector3 Origin => (State.Start + State.End) / 2;
+
         public BoxDraggableState(BaseDraggableTool tool)
         {
             Tool = tool;

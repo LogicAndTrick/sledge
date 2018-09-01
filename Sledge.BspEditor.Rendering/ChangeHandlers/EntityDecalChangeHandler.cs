@@ -27,7 +27,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
                 var dd = sn == null ? null : await CreateDecalData(entity, change.Document, tc, sn);
                 if (dd == null) entity.Data.Remove(x => x is EntityDecal);
                 else entity.Data.Replace(dd);
-                entity.Invalidate();
+                entity.DescendantsChanged();
             }
         }
 

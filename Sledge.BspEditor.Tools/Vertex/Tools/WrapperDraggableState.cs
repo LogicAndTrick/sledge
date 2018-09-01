@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
@@ -20,6 +21,15 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         }
 
         public IEnumerable<IDraggable> GetDraggables() => _getDraggablesFunc();
+
+        public Vector3 Origin
+        {
+            get
+            {
+                var list = GetDraggables().ToList();
+                return list.Aggregate(Vector3.Zero, (a, b) => a + b.Origin) / list.Count();
+            }
+        }
 
         public event EventHandler DragStarted;
         public event EventHandler DragMoved;

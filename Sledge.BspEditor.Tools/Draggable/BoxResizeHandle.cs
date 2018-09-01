@@ -17,6 +17,8 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         protected BoxState BoxState { get { return State.State; } }
 
+        public override Vector3 Origin => (BoxState.Start + BoxState.End) / 2;
+
         public BoxResizeHandle(BoxDraggableState state, ResizeHandle handle)
         {
             State = state;
