@@ -1,0 +1,11 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.Editor",
+        "Language": "jp",
+        "LanguageDescription": "日本語 / Japanese",
+        "Inherit": "en"
+    },
+    "ShellSetup": {
+        "Title": "「SLEDGE」編者"
+    }
+}

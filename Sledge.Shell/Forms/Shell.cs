@@ -28,7 +28,6 @@ namespace Sledge.Shell.Forms
     [AutoTranslate]
     internal partial class Shell : BaseForm, ISettingsContainer
     {
-
         private readonly List<IDocument> _documents;
         private readonly object _lock = new object();
 
@@ -356,11 +355,14 @@ namespace Sledge.Shell.Forms
                     }
                     Oy.Publish("Document:Activated", doc);
                     Oy.Publish("Context:Add", new ContextInfo("ActiveDocument", doc));
+
+                    Text = Title + @" - " + doc.Name;
                 }
                 else
                 {
                     Oy.Publish<IDocument>("Document:Activated", null);
                     Oy.Publish("Context:Remove", new ContextInfo("ActiveDocument"));
+                    Text = Title;
                 }
             }
             else
@@ -368,6 +370,7 @@ namespace Sledge.Shell.Forms
                 DocumentContainer.Controls.Clear();
                 Oy.Publish<IDocument>("Document:Activated", null);
                 Oy.Publish("Context:Remove", new ContextInfo("ActiveDocument"));
+                Text = Title;
             }
         }
 

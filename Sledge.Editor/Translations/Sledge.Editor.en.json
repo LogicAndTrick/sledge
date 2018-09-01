@@ -1,0 +1,11 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.Editor", 
+        "Language": "en",
+        "LanguageDescription":  "English",
+        "Inherit": ""
+    },
+    "ShellSetup": {
+        "Title": "Sledge Editor"
+    }
+}

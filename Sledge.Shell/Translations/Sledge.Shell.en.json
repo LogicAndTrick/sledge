@@ -78,7 +78,6 @@
     },
     "Forms": {
         "Shell": {
-            "Title": "Sledge Editor",
             "UnsavedChanges": "Document has unsaved changes",
             "SaveChangesToFile": "Save changes to {0}?"
         },

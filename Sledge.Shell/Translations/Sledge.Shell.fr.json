@@ -2,7 +2,7 @@
     "@Meta": {
         "Base": "Sledge.Shell",
         "Language": "fr",
-        "LanguageDescription": "Français",
+        "LanguageDescription": "Français / French",
         "Inherit": ""
     },
     "@Settings": {
@@ -68,7 +68,6 @@
     },
     "Forms": {
         "Shell": {
-            "Title": "Editeur Sledge",
             "UnsavedChanges": "Le document a des changements non enregistrés",
             "SaveChangesToFile": "Enregistrer les changements vers {0} ?"
         },
