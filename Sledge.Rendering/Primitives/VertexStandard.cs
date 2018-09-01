@@ -1,5 +1,4 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Sledge.Rendering.Primitives
@@ -26,13 +25,6 @@ namespace Sledge.Rendering.Primitives
         public VertexFlags Flags;
 
         /// <summary>The size of this structure in bytes</summary>
-        public const int SizeInBytes = (3 + 3 + 4 + 2 + 1 * 4) * 4;
-    }
-
-    [Flags]
-    public enum VertexFlags : uint
-    {
-        None = 0,
-        SelectiveTransformed = 1 << 0,
+        public const int SizeInBytes = (3 + 3 + 4 + 2 + 4 + 1 * 4) * 4;
     }
 }

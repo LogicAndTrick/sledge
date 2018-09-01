@@ -5,7 +5,6 @@ using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
-using Veldrid;
 
 namespace Sledge.Rendering.Engine
 {

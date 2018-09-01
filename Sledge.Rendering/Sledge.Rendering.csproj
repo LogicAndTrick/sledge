@@ -68,9 +68,9 @@
     <Compile Include="Overlay\OverlayBuilder.cs" />
     <Compile Include="Pipelines\OverlayPipeline.cs" />
     <Compile Include="Pipelines\TexturedBillboardPipeline.cs" />
+    <Compile Include="Primitives\VertexFlags.cs" />
     <Compile Include="Resources\BufferSize.cs" />
     <Compile Include="Resources\WhiteTextureSource.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="Renderables\FpsMonitor.cs" />
     <Compile Include="Interfaces\ITextureDataSource.cs" />
     <Compile Include="MathFunctions.cs" />

@@ -16,7 +16,7 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace Sledge.Rendering.Overlay
 {
-    public class ViewportOverlay : IRenderable, IDisposable
+    public class ViewportOverlay : IRenderable
     {
         private readonly IViewport _viewport;
 
