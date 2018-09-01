@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Editor", "Sledge.Editor\Sledge.Editor.csproj", "{DFF00869-B064-483D-95C0-A88039C471C7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Providers", "Sledge.Providers\Sledge.Providers.csproj", "{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.DataStructures", "Sledge.DataStructures\Sledge.DataStructures.csproj", "{26A974C9-E495-4FA3-8E87-1E00019D04F5}"
@@ -28,7 +26,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Rendering", "Sledge.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Shell", "Sledge.Shell\Sledge.Shell.csproj", "{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.MinimalEditor", "Sledge.MinimalEditor\Sledge.MinimalEditor.csproj", "{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.Editor", "Sledge.Editor\Sledge.Editor.csproj", "{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sledge.BspEditor", "Sledge.BspEditor\Sledge.BspEditor.csproj", "{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}"
 EndProject
@@ -50,16 +48,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DFF00869-B064-483D-95C0-A88039C471C7}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{DFF00869-B064-483D-95C0-A88039C471C7}.Debug|Any CPU.Build.0 = Debug|x86
-		{DFF00869-B064-483D-95C0-A88039C471C7}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{DFF00869-B064-483D-95C0-A88039C471C7}.Debug|x86.ActiveCfg = Debug|x86
-		{DFF00869-B064-483D-95C0-A88039C471C7}.Debug|x86.Build.0 = Debug|x86
-		{DFF00869-B064-483D-95C0-A88039C471C7}.Release|Any CPU.ActiveCfg = Release|x86
-		{DFF00869-B064-483D-95C0-A88039C471C7}.Release|Any CPU.Build.0 = Release|x86
-		{DFF00869-B064-483D-95C0-A88039C471C7}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{DFF00869-B064-483D-95C0-A88039C471C7}.Release|x86.ActiveCfg = Release|x86
-		{DFF00869-B064-483D-95C0-A88039C471C7}.Release|x86.Build.0 = Release|x86
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

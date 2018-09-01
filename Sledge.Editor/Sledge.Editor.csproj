@@ -1,37 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DFF00869-B064-483D-95C0-A88039C471C7}</ProjectGuid>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0F7EBC7C-8FF3-484C-ACD2-6682450A91DB}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.Editor</RootNamespace>
     <AssemblyName>Sledge.Editor</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -40,80 +24,36 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>true</UseVSHostingProcess>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup />
-  <PropertyGroup>
-    <ApplicationIcon Condition="'$(BuildingForLiveUnitTesting)' != 'true'">Resources\Sledge.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationManifest Condition="'$(BuildingForLiveUnitTesting)' != 'true'">app.manifest</ApplicationManifest>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LogicAndTrick.Gimme, Version=1.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LogicAndTrick.Gimme.1.3.2\lib\net45\LogicAndTrick.Gimme.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.WindowsAPICodePack">
-      <HintPath>..\Microsoft.WindowsAPICodePack.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
-      <HintPath>..\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Poly2Tri, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Poly2Tri.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Reactive.Core, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.Core.3.1.1\lib\net45\System.Reactive.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reactive.Interfaces, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.Interfaces.3.1.1\lib\net45\System.Reactive.Interfaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reactive.Linq, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.Linq.3.1.1\lib\net45\System.Reactive.Linq.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reactive.PlatformServices, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.PlatformServices.3.1.1\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reactive.Windows.Threading, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.Windows.Threading.3.1.1\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Windows" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Documents\DocumentMemory.cs" />
-    <Compile Include="Documents\DocumentSubscriptions.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -125,10 +65,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="App.config" />
     <None Include="app.manifest" />
-    <None Include="OpenTK.dll.config" />
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -138,177 +75,46 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Sprites\lightbulb.spr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Sprites\speaker.spr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sledge.BspEditor.Editing\Sledge.BspEditor.Editing.csproj">
+      <Project>{d33e1027-1956-44c4-b920-85281f703704}</Project>
+      <Name>Sledge.BspEditor.Editing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj">
+      <Project>{d27bb6a7-fe81-45b5-9b68-b23e4169f16d}</Project>
+      <Name>Sledge.BspEditor.Rendering</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.BspEditor.Tools\Sledge.BspEditor.Tools.csproj">
+      <Project>{f5715cfa-8f04-4892-a1ef-c3e2c3017750}</Project>
+      <Name>Sledge.BspEditor.Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj">
+      <Project>{37c3fe6b-16f4-431f-ab67-fba7c681ccee}</Project>
+      <Name>Sledge.BspEditor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
-      <Project>{5D414AC8-8B93-489F-9960-877923400FED}</Project>
+      <Project>{5d414ac8-8b93-489f-9960-877923400fed}</Project>
       <Name>Sledge.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
-      <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
-      <Name>Sledge.DataStructures</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sledge.FileSystem\Sledge.FileSystem.csproj">
-      <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>
-      <Name>Sledge.FileSystem</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
-      <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>
-      <Name>Sledge.Providers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sledge.QuickForms\Sledge.QuickForms.csproj">
-      <Project>{7FED88F3-717C-408A-85D9-28DD125DB61A}</Project>
-      <Name>Sledge.QuickForms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sledge.Rendering\Sledge.Rendering.csproj">
-      <Project>{4DA7F88D-64FF-4036-8A11-6175169DA851}</Project>
-      <Name>Sledge.Rendering</Name>
+    <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
+      <Project>{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}</Project>
+      <Name>Sledge.Shell</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\MAPFiles.pdf" />
-    <None Include="Resources\Tool_Test.png" />
+    <PackageReference Include="LogicAndTrick.Oy">
+      <Version>1.2.0</Version>
+    </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Tool_Camera.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Tool_Select.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Tool_Zoom.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Cursor_Rotate.cur" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Tool_Texture.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\Arrow_Down.png" />
-    <Content Include="Resources\Arrow_Up.png" />
-    <None Include="Resources\Logo\Logo.svg" />
-    <None Include="Resources\Logo\Sledge Render 128.png" />
-    <None Include="Resources\Logo\Sledge Render 16.png" />
-    <None Include="Resources\Logo\Sledge Render 256.png" />
-    <None Include="Resources\Logo\Sledge Render 32.png" />
-    <None Include="Resources\Logo\Sledge Render 48.png" />
-    <None Include="Resources\Logo\Sledge Render 64.png" />
-    <None Include="Resources\Logo\Sledge Render.png" />
-    <None Include="Resources\Logo\Sledge Trace Deus.png" />
-    <None Include="Resources\Logo\Sledge Trace.png" />
-    <None Include="Resources\Logo\Sledge.ico" />
-    <None Include="Resources\Button_ColourPicker.png" />
-    <Content Include="Resources\embedded_icons.txt" />
-    <Content Include="Resources\Menu_Align.png" />
-    <Content Include="Resources\Menu_AutosizeViews.png" />
-    <Content Include="Resources\Menu_Carve.png" />
-    <Content Include="Resources\Menu_CenterSelection2D.png" />
-    <Content Include="Resources\Menu_CenterSelection3D.png" />
-    <Content Include="Resources\Menu_CenterSelectionAll.png" />
-    <Content Include="Resources\Menu_CheckForProblems.png" />
-    <Content Include="Resources\Menu_ClearSelection.png" />
-    <Content Include="Resources\Menu_Close.png" />
-    <Content Include="Resources\Menu_Community.png" />
-    <Content Include="Resources\Menu_Copy.png" />
-    <Content Include="Resources\Menu_Cordon.png" />
-    <Content Include="Resources\Menu_Cut.png" />
-    <Content Include="Resources\Menu_Delete.png" />
-    <Content Include="Resources\Menu_EntityReport.png" />
-    <Content Include="Resources\Menu_Export.png" />
-    <Content Include="Resources\Menu_Flip.png" />
-    <Content Include="Resources\Menu_GoToBrushID.png" />
-    <Content Include="Resources\Menu_GoToCoordinates.png" />
-    <Content Include="Resources\Menu_Group.png" />
-    <Content Include="Resources\Menu_Help.png" />
-    <Content Include="Resources\Menu_HideSelected.png" />
-    <Content Include="Resources\Menu_HideUnselected.png" />
-    <Content Include="Resources\Menu_Hollow.png" />
-    <Content Include="Resources\Menu_IgnoreGrouping.png" />
-    <Content Include="Resources\Menu_LargerGrid.png" />
-    <Content Include="Resources\Menu_LoadPointfile.png" />
-    <Content Include="Resources\Menu_MapProperties.png" />
-    <Content Include="Resources\Menu_New.png" />
-    <Content Include="Resources\Menu_NewWindow.png" />
-    <Content Include="Resources\Menu_ObjectProperties.png" />
-    <Content Include="Resources\Menu_Open.png" />
-    <Content Include="Resources\Menu_Options.png" />
-    <Content Include="Resources\Menu_Paste.png" />
-    <Content Include="Resources\Menu_PasteSpecial.png" />
-    <Content Include="Resources\Menu_QuickLoadPointfile.png" />
-    <Content Include="Resources\Menu_Redo.png" />
-    <Content Include="Resources\Menu_ReplaceTextures.png" />
-    <Content Include="Resources\Menu_Run.png" />
-    <Content Include="Resources\Menu_Save.png" />
-    <Content Include="Resources\Menu_SaveAs.png" />
-    <Content Include="Resources\Menu_SelectAll.png" />
-    <Content Include="Resources\Menu_Show2DGrid.png" />
-    <Content Include="Resources\Menu_Show3DGrid.png" />
-    <Content Include="Resources\Menu_ShowBrushID.png" />
-    <Content Include="Resources\Menu_ShowHidden.png" />
-    <Content Include="Resources\Menu_ShowInformation.png" />
-    <Content Include="Resources\Menu_ShowLogicalTree.png" />
-    <Content Include="Resources\Menu_SmallerGrid.png" />
-    <Content Include="Resources\Menu_SnapSelection.png" />
-    <Content Include="Resources\Menu_SnapSelectionIndividual.png" />
-    <Content Include="Resources\Menu_SnapToGrid.png" />
-    <Content Include="Resources\Menu_TextureLock.png" />
-    <Content Include="Resources\Menu_TextureScalingLock.png" />
-    <Content Include="Resources\Menu_TieToEntity.png" />
-    <Content Include="Resources\Menu_TieToWorld.png" />
-    <Content Include="Resources\Menu_HideNullTextures.png" />
-    <Content Include="Resources\Menu_Transform.png" />
-    <Content Include="Resources\Menu_Undo.png" />
-    <Content Include="Resources\Menu_Ungroup.png" />
-    <Content Include="Resources\Menu_UnloadPointfile.png" />
-    <Content Include="Resources\Menu_Update.png" />
-    <Content Include="Resources\Menu_Website.png" />
-    <None Include="Resources\Sledge.ico" />
-    <None Include="Resources\Sledge_Large.png" />
-    <Content Include="Resources\Menu_WindowSettings.png" />
-    <Content Include="Resources\Tool_Brush.png" />
-    <Content Include="Resources\Tool_Clip.png" />
-    <Content Include="Resources\Tool_Cordon.png" />
-    <Content Include="Resources\Tool_Decal.png" />
-    <Content Include="Resources\Tool_Entity.png" />
-    <Content Include="Resources\Tool_Rotate.png" />
-    <Content Include="Resources\Tool_Skew.png" />
-    <Content Include="Resources\Tool_Transform.png" />
-    <Content Include="Resources\Tool_Translate.png" />
-    <Content Include="Resources\Tool_VM.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 4.5</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)Build\InsertIcons.exe" "$(TargetPath)" "$(ProjectDir)Resources\embedded_icons.txt"</PostBuildEvent>
+    <PostBuildEvent>"$(SolutionDir)Build\InsertIcons.exe" "$(TargetPath)" "$(SolutionDir)Resources\embedded_icons.txt"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

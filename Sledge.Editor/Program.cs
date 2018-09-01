@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.Shell;
 
-namespace Sledge.MinimalEditor
+namespace Sledge.Editor
 {
     static class Program
     {
