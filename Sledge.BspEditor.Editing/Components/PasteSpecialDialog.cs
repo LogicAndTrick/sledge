@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Numerics;
 using System.Windows.Forms;
 using Sledge.Common.Translations;

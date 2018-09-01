@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit

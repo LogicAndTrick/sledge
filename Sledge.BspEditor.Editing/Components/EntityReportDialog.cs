@@ -17,7 +17,6 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Translations;
-using Sledge.DataStructures.Geometric;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components

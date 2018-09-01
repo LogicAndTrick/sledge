@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Editing.Components.Compile.Profiles;
 using Sledge.BspEditor.Editing.Components.Compile.Specification;
-using Sledge.Common.Shell.Components;
-using Sledge.Common.Translations;
 using Sledge.QuickForms;
 
 namespace Sledge.BspEditor.Editing.Components.Compile
