@@ -1,0 +1,87 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.Shell",
+        "Language": "fr",
+        "LanguageDescription": "Français / French",
+        "Inherit": ""
+    },
+    "@Settings": {
+        "@Group.FileAssociations": "Associations des fichiers",
+        "@Group.Hotkeys": "Raccourcis clavier",
+        "@Group.Interface": "Interface",
+        "Translations": {
+            "Language": "Langue de l'interface (nécessite un redémarrage)"
+        }
+    },
+    "Commands": {
+        "NewFile": {
+            "Name": "Nouveau",
+            "Details": "Crée un nouveau document."
+        },
+        "OpenFile": {
+            "Name": "Ouvrir...",
+            "Details": "Ouvre un document."
+        },
+        "SaveFile": {
+            "Name": "Enregistrer",
+            "Details": "Enregistre le document actuel."
+        },
+        "SaveFileAs": {
+            "Name": "Enregistrer sous...",
+            "Details": "Enregistre le document actuel sous un nouveau/autre fichier."
+        },
+        "Export": {
+            "Name": "Exporter...",
+            "Details": "Enregistre une copie du document actuel."
+        },
+        "CloseFile": {
+            "Name": "Fermer",
+            "Details": "Ferme le document actuel."
+        },
+        "Exit": {
+            "Name": "Quitter",
+            "Details": "Quitte l'application."
+        },
+        "OpenCommandBox": {
+            "Name": "Fenêtre des commandes",
+            "Details": "Ouvre la fenêtre des commandes."
+        },
+        "OpenSettingsForm": {
+            "Name": "Paramètres",
+            "Details": "Ouvre la fenêtre des paramètres."
+        }
+    },
+    "Components": {
+        "ContextExplorerComponent": {
+            "Title": "Explorateur de contexte"
+        },
+        "LogComponent": {
+            "Title": "Journal"
+        },
+        "DefaultMenuMetadataProvider": {
+            "File": "Fichier",
+            "Edit": "Edition",
+            "View": "Affichage",
+            "Help": "Aide",
+            "Tools": "Outils"
+        }
+    },
+    "Forms": {
+        "Shell": {
+            "UnsavedChanges": "Le document a des changements non enregistrés",
+            "SaveChangesToFile": "Enregistrer les changements vers {0} ?"
+        },
+        "SettingsForm": {
+            "Title": "Paramètres",
+            "OK": "OK",
+            "Cancel": "Annuler"
+        },
+        "SaveChangesForm": {
+            "SaveAll": "Tout enregistrer",
+            "DiscardAll": "Tout abandonner",
+            "Cancel": "Annuler",
+            "UnsavedChangesMessage": "Certains documents ont des changements non enregistrés. Voulez-vous les sauvegarder ou les abandonner ?",
+            "Title": "Changements non sauvegardés dans des documents ouverts"
+        }
+    }
+}

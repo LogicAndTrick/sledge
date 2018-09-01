@@ -1,0 +1,113 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.BspEditor", 
+        "Language": "en",
+        "Inherit": ""
+    },
+    "@Settings": {
+        "Grid": {
+            "SquareGridFactory": {
+                "GridHideSmallerThan": "Hide grid lines when they are closer than this many pixels together",
+                "GridHideFactor": "Factor to skip by when hiding close grid lines",
+                "GridSecondaryHighlight": "Highlight grid lines every X units (0 disables)", 
+                "GridPrimaryHighlight": "Highlight every Xth grid line (0 disables)"
+            }
+        } 
+    },
+    "Commands": {
+        "Modification": {
+            "SelectNone": {
+                "Name": "Select None",
+                "Details": "Clear the current selection."
+            },
+            "SelectAll": {
+                "Name": "Select All",
+                "Details": "Select all objects in the document."
+            }
+        },
+        "Clipboard": {
+            "Paste": {
+                "Name": "Paste",
+                "Details": "Paste the current clipboard contents."
+            },
+            "Cut": {
+                "Name": "Cut",
+                "Details": "Copy the current selection and remove it."
+            },
+            "Copy": {
+                "Name": "Copy",
+                "Details": "Copy the current selection."
+            }
+        },
+        "Grouping": {
+            "Group": {
+                "Name": "Group",
+                "Details": "Group selected objects."
+            },
+            "Ungroup": {
+                "Name": "Ungroup",
+                "Details": "Ungroup selected groups"
+            }
+        }
+    },
+    "Components": {
+        "ClipboardManager": {
+            "NothingSelected": "Nothing",
+            "NumSelected": "{0} objects"
+        },
+        "ClipboardSidebarPanel": {
+            "Title": "Clipboard"
+        }
+    },
+    "Documents": {
+        "BspSourceDocumentLoader": {
+            "FileTypeDescription": "BSP Source File",
+            "UntitledDocumentName": "Untitled {0}" 
+        }
+    },
+    "Environment": {
+        "Goldsource": {
+            "AutomaticVisgroups": {
+                "Entities": "Entities",
+                "ToolBrushes": "Tool brushes",
+                "WorldGeometry": "World geometry",
+
+                "BrushEntities": "Brush entities",
+                "PointEntities": "Point entities",
+                "Lights": "Lights",
+                "Triggers": "Triggers",
+                "Nodes": "Nodes",
+
+                "Bevel": "Bevel",
+                "Hint": "Hint",
+                "Origin": "Origin",
+                "Skip": "Skip",
+                "Trigger": "Trigger",
+
+                "Brushes": "Brushes",
+                "Null": "Null",
+                "Sky": "Sky",
+                "Water": "Water"
+            },
+            "GoldsourceEnvironmentFactory": {
+                "Description": "Goldsource (HL1)"
+            }
+        }
+    },
+    "Grid": {
+        "NoGridFactory": {
+            "Name": "No grid",
+            "Details": "Do not show any grid."
+        },
+        "SquareGridFactory": {
+            "Name": "Standard grid",
+            "Details": "A normal square grid based on powers of two."
+        }
+    },
+    "Modification": {
+        "SelectionHandler": {
+            "NoObjectsSelected": "No objects selected",
+            "NumObjectsSelected": "{0} objects selected"
+        }
+    } 
+}

@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Sledge.Common;
+using Sledge.Common.Extensions;
 
 namespace Sledge.Packages.Pak
 {

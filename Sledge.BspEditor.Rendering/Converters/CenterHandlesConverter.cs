@@ -1,0 +1,116 @@
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Shell.Settings;
+using Sledge.DataStructures.Geometric;
+using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Engine;
+using Sledge.Rendering.Interfaces;
+using Sledge.Rendering.Pipelines;
+using Sledge.Rendering.Primitives;
+using Sledge.Rendering.Resources;
+
+namespace Sledge.BspEditor.Rendering.Converters
+{
+    [Export(typeof(IMapObjectGroupSceneConverter))]
+    [Export(typeof(ISettingsContainer))]
+    public class CenterHandlesConverter : IMapObjectGroupSceneConverter, ISettingsContainer
+    {
+        [Import] private EngineInterface _engine;
+
+        // Settings
+
+        [Setting("DrawCenterHandles")] private bool _drawCenterHandles = true;
+        // [Setting("CenterHandlesActiveViewportOnly")] private bool _centerHandlesActiveViewportOnly = false;
+
+        string ISettingsContainer.Name => "Sledge.BspEditor.Rendering.Converters.CenterHandlesConverter";
+
+        IEnumerable<SettingKey> ISettingsContainer.GetKeys()
+        {
+            yield return new SettingKey("Rendering", "DrawCenterHandles", typeof(bool));
+            //yield return new SettingKey("Rendering", "CenterHandlesActiveViewportOnly", typeof(bool));
+        }
+
+        void ISettingsContainer.LoadValues(ISettingsStore store)
+        {
+            store.LoadInstance(this);
+        }
+
+        void ISettingsContainer.StoreValues(ISettingsStore store)
+        {
+            store.StoreInstance(this);
+        }
+
+        // Converter
+
+        public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.DefaultMedium;
+
+        public Task Convert(BufferBuilder builder, MapDocument document, IEnumerable<IMapObject> objects)
+        {
+            if (!_drawCenterHandles) return Task.CompletedTask;
+            
+            _engine.UploadTexture(CenterHandleTextureDataSource.Name, () => HandleDataSource);
+
+            var verts = (
+                from mo in objects
+                where mo is Solid || (mo is Entity && !mo.Hierarchy.HasChildren)
+                let color = mo.IsSelected ? Color.Red : mo.Data.GetOne<ObjectColor>()?.Color ?? Color.White
+                select new VertexStandard
+                {
+                    Position = mo.BoundingBox.Center,
+                    Normal = new Vector3(9, 9, 0),
+                    Colour = color.ToVector4(),
+                    Tint = Vector4.One
+                }
+            ).ToList();
+
+            builder.Append(verts, Enumerable.Range(0, verts.Count).Select(x => (uint) x), new[]
+            {
+                new BufferGroup(PipelineType.TexturedBillboard, CameraType.Orthographic, false, Vector3.Zero, CenterHandleTextureDataSource.Name, 0, (uint) verts.Count)
+            });
+
+            return Task.CompletedTask;
+        }
+
+        private static readonly CenterHandleTextureDataSource HandleDataSource = new CenterHandleTextureDataSource();
+        private class CenterHandleTextureDataSource : ITextureDataSource
+        {
+            public const string Name = "DefaultSolidConverter::CenterHandle::X";
+            private readonly byte[] _data;
+
+            public TextureSampleType SampleType => TextureSampleType.Point;
+            public int Width => 9;
+            public int Height => 9;
+
+            public CenterHandleTextureDataSource()
+            {
+                using (var img = new Bitmap(Width, Height))
+                {
+                    using (var g = Graphics.FromImage(img))
+                    {
+                        g.FillRectangle(Brushes.Transparent, 0, 0, img.Width, img.Height);
+                        g.DrawLine(Pens.White, 1, 1, img.Width - 2, img.Height - 2);
+                        g.DrawLine(Pens.White, img.Width - 2, 1, 1, img.Height - 2);
+                    }
+                    var lb = img.LockBits(new Rectangle(0, 0, img.Width, img.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                    _data = new byte[lb.Stride * lb.Height];
+                    Marshal.Copy(lb.Scan0, _data, 0, _data.Length);
+                    img.UnlockBits(lb);
+                }
+            }
+
+            public Task<byte[]> GetData()
+            {
+                return Task.FromResult(_data);
+            }
+        }
+    }
+}

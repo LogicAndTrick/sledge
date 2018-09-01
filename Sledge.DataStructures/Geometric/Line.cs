@@ -1,20 +1,20 @@
 ﻿using System;
+using System.Numerics;
 using System.Runtime.Serialization;
-using Sledge.DataStructures.Transformations;
 
 namespace Sledge.DataStructures.Geometric
 {
     [Serializable]
     public class Line : ISerializable
     {
-        public Coordinate Start { get; set; }
-        public Coordinate End { get; set; }
+        public Vector3 Start { get; }
+        public Vector3 End { get; }
 
-        public readonly static Line AxisX = new Line(Coordinate.Zero, Coordinate.UnitX);
-        public readonly static Line AxisY = new Line(Coordinate.Zero, Coordinate.UnitY);
-        public static readonly Line AxisZ = new Line(Coordinate.Zero, Coordinate.UnitZ);
+        public static readonly Line AxisX = new Line(Vector3.Zero, Vector3.UnitX);
+        public static readonly Line AxisY = new Line(Vector3.Zero, Vector3.UnitY);
+        public static readonly Line AxisZ = new Line(Vector3.Zero, Vector3.UnitZ);
 
-        public Line(Coordinate start, Coordinate end)
+        public Line(Vector3 start, Vector3 end)
         {
             Start = start;
             End = end;
@@ -22,8 +22,8 @@ namespace Sledge.DataStructures.Geometric
 
         protected Line(SerializationInfo info, StreamingContext context)
         {
-            Start = (Coordinate) info.GetValue("Start", typeof (Coordinate));
-            End = (Coordinate) info.GetValue("End", typeof (Coordinate));
+            Start = (Vector3) info.GetValue("Start", typeof (Vector3));
+            End = (Vector3) info.GetValue("End", typeof (Vector3));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -37,15 +37,15 @@ namespace Sledge.DataStructures.Geometric
             return new Line(End, Start);
         }
 
-        public Coordinate ClosestPoint(Coordinate point)
+        public Vector3 ClosestPoint(Vector3 point)
         {
             // http://paulbourke.net/geometry/pointline/
 
             var delta = End - Start;
             var den = delta.LengthSquared();
-            if (den == 0) return Start; // Start and End are the same
+            if (Math.Abs(den) < 0.0001f) return Start; // Start and End are the same
 
-            var numPoint = (point - Start).ComponentMultiply(delta);
+            var numPoint = Vector3.Multiply(point - Start, delta);
             var num = numPoint.X + numPoint.Y + numPoint.Z;
             var u = num / den;
 
@@ -70,23 +70,18 @@ namespace Sledge.DataStructures.Geometric
             return PlaneClassification.Spanning;
         }
 
-        public Line Transform(IUnitTransformation transform)
+        public bool EquivalentTo(Line other, float delta = 0.0001f)
         {
-            return new Line(transform.Transform(Start), transform.Transform(End));
-        }
-
-        public bool EquivalentTo(Line other, decimal delta = 0.0001m)
-        {
-            return (Start.EquivalentTo(other.Start, delta) && End.EquivalentTo(other.End, delta))
-                || (End.EquivalentTo(other.Start, delta) && Start.EquivalentTo(other.End, delta));
+            return Start.EquivalentTo(other.Start, delta) && End.EquivalentTo(other.End, delta)
+                || End.EquivalentTo(other.Start, delta) && Start.EquivalentTo(other.End, delta);
         }
 
         public bool Equals(Line other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return (Equals(other.Start, Start) && Equals(other.End, End))
-                || (Equals(other.End, Start) && Equals(other.Start, End));
+            return Equals(other.Start, Start) && Equals(other.End, End)
+                || Equals(other.End, Start) && Equals(other.Start, End);
         }
 
         public override bool Equals(object obj)
@@ -101,7 +96,7 @@ namespace Sledge.DataStructures.Geometric
         {
             unchecked
             {
-                return ((Start != null ? Start.GetHashCode() : 0) * 397) ^ (End != null ? End.GetHashCode() : 0);
+                return (Start.GetHashCode() * 397) ^ End.GetHashCode();
             }
         }
 

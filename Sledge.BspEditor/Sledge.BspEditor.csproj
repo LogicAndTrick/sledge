@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{37C3FE6B-16F4-431F-AB67-FBA7C681CCEE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sledge.BspEditor</RootNamespace>
+    <AssemblyName>Sledge.BspEditor</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>CS4014</NoWarn>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Compile\Batch.cs" />
+    <Compile Include="Commands\Clipboard\Delete.cs" />
+    <Compile Include="Commands\Grouping\Group.cs" />
+    <Compile Include="Commands\Grouping\Ungroup.cs" />
+    <Compile Include="Compile\BatchArgument.cs" />
+    <Compile Include="Compile\BatchCallback.cs" />
+    <Compile Include="Compile\BatchProcess.cs" />
+    <Compile Include="Compile\BatchStep.cs" />
+    <Compile Include="Controls\FileSystem\FileSystemBrowserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FileSystem\FileSystemBrowserControl.Designer.cs">
+      <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FileSystem\FileSystemBrowserDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\FileSystem\FileSystemBrowserDialog.Designer.cs">
+      <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FileSystem\FileSystemIcons.cs" />
+    <Compile Include="Documents\BspSourceDocumentLoader.cs" />
+    <Compile Include="Commands\Clipboard\Copy.cs" />
+    <Compile Include="Commands\Clipboard\Cut.cs" />
+    <Compile Include="Commands\Clipboard\Paste.cs" />
+    <Compile Include="Commands\MenuDataProvider.cs" />
+    <Compile Include="Components\ClipboardManager.cs" />
+    <Compile Include="Commands\BaseCommand.cs" />
+    <Compile Include="Commands\Modification\SelectAll.cs" />
+    <Compile Include="Commands\Modification\SelectNone.cs" />
+    <Compile Include="Components\ClipboardSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\ClipboardSidebarPanel.Designer.cs">
+      <DependentUpon>ClipboardSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\IMapDocumentControl.cs" />
+    <Compile Include="Components\IMapDocumentControlFactory.cs" />
+    <Compile Include="Components\MapDocumentControlHost.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\TreeViewMapDocumentControl.cs" />
+    <Compile Include="Controls\TableSplitConfiguration.cs" />
+    <Compile Include="Controls\TableSplitControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Environment\Controls\EnvironmentCollectionEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Environment\Controls\EnvironmentCollectionEditor.Designer.cs">
+      <DependentUpon>EnvironmentCollectionEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Environment\Controls\EnvironmentSelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Environment\Controls\EnvironmentSelectionForm.Designer.cs">
+      <DependentUpon>EnvironmentSelectionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Environment\Empty\EmptyEnvironment.cs" />
+    <Compile Include="Environment\Empty\EmptyTextureCollection.cs" />
+    <Compile Include="Environment\Goldsource\GoldsourceEnvironmentEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Environment\Goldsource\GoldsourceEnvironmentEditor.Designer.cs">
+      <DependentUpon>GoldsourceEnvironmentEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Environment\EnvironmentCollection.cs" />
+    <Compile Include="Environment\EnvironmentRegister.cs" />
+    <Compile Include="Environment\Goldsource\GoldsourceEnvironment.cs" />
+    <Compile Include="Environment\Goldsource\GoldsourceEnvironmentFactory.cs" />
+    <Compile Include="Environment\Goldsource\GoldsourceTextureCollection.cs" />
+    <Compile Include="Environment\IEnvironment.cs" />
+    <Compile Include="Environment\IEnvironmentData.cs" />
+    <Compile Include="Environment\IEnvironmentEditor.cs" />
+    <Compile Include="Environment\IEnvironmentFactory.cs" />
+    <Compile Include="Environment\SerialisedEnvironment.cs" />
+    <Compile Include="Environment\TextureCollection.cs" />
+    <Compile Include="Grid\GridLine.cs" />
+    <Compile Include="Grid\GridLineType.cs" />
+    <Compile Include="Grid\IGrid.cs" />
+    <Compile Include="Grid\IGridFactory.cs" />
+    <Compile Include="Grid\NoGrid.cs" />
+    <Compile Include="Grid\NoGridFactory.cs" />
+    <Compile Include="Grid\SquareGrid.cs" />
+    <Compile Include="Grid\SquareGridFactory.cs" />
+    <Compile Include="Modification\ChangeHandler.cs" />
+    <Compile Include="Modification\IMapDocumentChangeHandler.cs" />
+    <Compile Include="Modification\MapDocumentOperation.cs" />
+    <Compile Include="Modification\OperationHandler.cs" />
+    <Compile Include="Modification\Operations\Data\AddMapData.cs" />
+    <Compile Include="Modification\Operations\Data\AddMapObjectData.cs" />
+    <Compile Include="Modification\Operations\Data\EditEntityDataFlags.cs" />
+    <Compile Include="Modification\Operations\Data\EditEntityDataName.cs" />
+    <Compile Include="Modification\Operations\Data\EditEntityDataProperties.cs" />
+    <Compile Include="Modification\Operations\Data\RemoveMapData.cs" />
+    <Compile Include="Modification\Operations\Data\RemoveMapObjectData.cs" />
+    <Compile Include="Modification\Operations\Mutation\TransformTexturesUniform.cs" />
+    <Compile Include="Modification\Operations\Mutation\Transform.cs" />
+    <Compile Include="Modification\Operations\Mutation\TransformTexturesScale.cs" />
+    <Compile Include="Modification\Operations\Tree\Attach.cs" />
+    <Compile Include="Modification\Change.cs" />
+    <Compile Include="Modification\IOperation.cs" />
+    <Compile Include="Modification\Operations\Selection\Deselect.cs" />
+    <Compile Include="Modification\Operations\Selection\Select.cs" />
+    <Compile Include="Modification\Operations\Tree\Detatch.cs" />
+    <Compile Include="Modification\Operations\TrivialOperation.cs" />
+    <Compile Include="Modification\SelectionHandler.cs" />
+    <Compile Include="Modification\Transaction.cs" />
+    <Compile Include="Modification\TransactionBuilderExtensions.cs" />
+    <Compile Include="Modification\VisgroupHandler.cs" />
+    <Compile Include="Primitives\BoxAlignMode.cs" />
+    <Compile Include="Primitives\IMapElementFactory.cs" />
+    <Compile Include="Primitives\IMapObjectProvider.cs" />
+    <Compile Include="Primitives\ITextured.cs" />
+    <Compile Include="Primitives\ITransformable.cs" />
+    <Compile Include="Primitives\MapData\HideFaceMask.cs" />
+    <Compile Include="Primitives\MapData\SelectionOptions.cs" />
+    <Compile Include="Primitives\MapData\AutomaticVisgroup.cs" />
+    <Compile Include="Primitives\MapObjectData\Path.cs" />
+    <Compile Include="Primitives\MapData\CordonBounds.cs" />
+    <Compile Include="Primitives\MapData\FaceSelection.cs" />
+    <Compile Include="Primitives\MapData\DisplayFlags.cs" />
+    <Compile Include="Primitives\MapData\TransformationFlags.cs" />
+    <Compile Include="Primitives\MapObjectData\IBoundingBoxProvider.cs" />
+    <Compile Include="Primitives\MapData\ActiveTexture.cs" />
+    <Compile Include="Primitives\MapObjectData\IObjectVisibility.cs" />
+    <Compile Include="Primitives\MapObjectData\PointEntityGameDataBoundingBoxProvider.cs" />
+    <Compile Include="Primitives\MapData\GridData.cs" />
+    <Compile Include="Primitives\MapData\Selection.cs" />
+    <Compile Include="Primitives\MapObjectData\Origin.cs" />
+    <Compile Include="Primitives\MapObjectData\QuickHidden.cs" />
+    <Compile Include="Primitives\MapObjectData\VisgroupHidden.cs" />
+    <Compile Include="Primitives\MapObjects\BaseMapObject.cs" />
+    <Compile Include="Primitives\MapObjects\Entity.cs" />
+    <Compile Include="Primitives\MapObjectData\Face.cs" />
+    <Compile Include="Primitives\MapObjects\Group.cs" />
+    <Compile Include="Primitives\MapData\Camera.cs" />
+    <Compile Include="Primitives\MapData\IMapData.cs" />
+    <Compile Include="Primitives\MapObjectData\EntityData.cs" />
+    <Compile Include="Primitives\MapObjectData\IMapObjectData.cs" />
+    <Compile Include="Primitives\MapObjects\IMapElement.cs" />
+    <Compile Include="Primitives\MapObjects\IMapObject.cs" />
+    <Compile Include="Primitives\Map.cs" />
+    <Compile Include="Primitives\MapData\MapDataCollection.cs" />
+    <Compile Include="Primitives\MapObjectData\MapObjectDataCollection.cs" />
+    <Compile Include="Primitives\MapObjectData\ObjectColor.cs" />
+    <Compile Include="Primitives\MapObjects\MapObjectExtensions.cs" />
+    <Compile Include="Primitives\MapObjects\MapObjectHierarchy.cs" />
+    <Compile Include="Primitives\MapObjects\MapObjectQuery.cs" />
+    <Compile Include="Primitives\MapObjects\Root.cs" />
+    <Compile Include="Primitives\MapObjects\Solid.cs" />
+    <Compile Include="Primitives\SolidExtensions.cs" />
+    <Compile Include="Primitives\StandardMapElementFormatter.cs" />
+    <Compile Include="Primitives\Texture.cs" />
+    <Compile Include="Primitives\TextureExtensions.cs" />
+    <Compile Include="Primitives\UniqueNumberGenerator.cs" />
+    <Compile Include="Primitives\MapData\Visgroup.cs" />
+    <Compile Include="Primitives\MapObjectData\VisgroupID.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Providers\Processors\AddDefaults.cs" />
+    <Compile Include="Providers\Processors\HandleSelection.cs" />
+    <Compile Include="Providers\Processors\HandleVisgroups.cs" />
+    <Compile Include="Providers\Processors\IBspSourceProcessor.cs" />
+    <Compile Include="Providers\IBspSourceProvider.cs" />
+    <Compile Include="Documents\MapDocument.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\Processors\RemoveInvalidObjects.cs" />
+    <Compile Include="Providers\Processors\SeedIds.cs" />
+    <Compile Include="Providers\NativeBspSourceProvider.cs" />
+    <Compile Include="Providers\MapBspSourceProvider.cs" />
+    <Compile Include="Providers\RmfBspSourceProvider.cs" />
+    <Compile Include="Providers\VmfBspSourceProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
+      <Project>{5d414ac8-8b93-489f-9960-877923400fed}</Project>
+      <Name>Sledge.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
+      <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
+      <Name>Sledge.DataStructures</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.FileSystem\Sledge.FileSystem.csproj">
+      <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>
+      <Name>Sledge.FileSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
+      <Project>{c7bd4ac8-1f8d-4520-af2d-d279c0601ab4}</Project>
+      <Name>Sledge.Providers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
+      <Project>{1E0BEB41-CF2E-4F48-838E-452C1DCF575F}</Project>
+      <Name>Sledge.Shell</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Components\ClipboardSidebarPanel.resx">
+      <DependentUpon>ClipboardSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FileSystem\FileSystemBrowserControl.resx">
+      <DependentUpon>FileSystemBrowserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FileSystem\FileSystemBrowserDialog.resx">
+      <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Environment\Controls\EnvironmentCollectionEditor.resx">
+      <DependentUpon>EnvironmentCollectionEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Environment\Controls\EnvironmentSelectionForm.resx">
+      <DependentUpon>EnvironmentSelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Environment\Goldsource\GoldsourceEnvironmentEditor.resx">
+      <DependentUpon>GoldsourceEnvironmentEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Resources\SquareGrid.png" />
+    <Content Include="Resources\DottedGrid.png" />
+    <Content Include="Resources\Menu_Delete.png" />
+    <Content Include="Resources\Menu_Group.png" />
+    <Content Include="Resources\Menu_SelectNone.png" />
+    <Content Include="Resources\Menu_Copy.png" />
+    <Content Include="Resources\Menu_Cut.png" />
+    <Content Include="Resources\Menu_Paste.png" />
+    <Content Include="Resources\Menu_SelectAll.png" />
+    <Content Include="Resources\Menu_Ungroup.png" />
+    <Content Include="Translations\Sledge.BspEditor.en.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Translations\Sledge.BspEditor.fr.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="LogicAndTrick.Oy">
+      <Version>1.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>11.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="System.Numerics.Vectors">
+      <Version>4.5.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,17 +1,19 @@
 Sledge
 ======
 
-**Pull requests are welcome!** Also, please submit an issue if you encounter a prolem, you can also contact me via email (see GitHub profile).
+**Pull requests are welcome!** Also, please submit an issue if you encounter a problem, you can also contact me via email (see GitHub profile).
 
-*[Sledge alpha has been released! It's ready!][2]*
+*[Sledge alpha has been released! It's ready!][1]*
 
-Sledge is an open-source alternative to Valve's Hammer Editor for the Goldsource and Source engines. It is written in .NET and uses OpenGL as a rendering platform.
+Sledge is an open-source alternative to Valve's Hammer Editor for the Goldsource engine (and hopefully soon for Source too).
+It is written in .NET and uses [Veldrid][2] for rendering, with DirectX 11.
 
-Currently, Sledge supports Goldsource mapping in a limited capacity - features will be added during the alpha. A number of file format parsers are currently available, including FGD, RMF, VMF, MDL (limited support), and WAD (via [HLLib][1]).
+Currently, Sledge supports Goldsource mapping and will be extended to support other BSP-based engines such as Source and Quake.
 
-While progress is slow, I have every intention of continuing work on this project. The current focus is on Goldsource support. After that, Source will be added, followed by a plugin system and more features.
+While progress is slow, I have every intention of continuing work on this project.
+The current focus is on Goldsource support. After that, Source will be added, followed by a plugin system and more features.
 
-The Sledge Editor is GPL. All other components are LGPL.
+The Sledge Editor is licensed under BSD-3.
 
-[1]: http://nemesis.thewavelength.net/index.php?p=35
-[2]: http://sledge-editor.com/
+[1]: http://sledge-editor.com/
+[2]: https://github.com/mellinoe/veldrid/

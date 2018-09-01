@@ -9,6 +9,7 @@ namespace Sledge.DataStructures.GameData
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string AdditionalInformation { get; set; }
         public ClassType ClassType { get; set; }
         public List<string> BaseClasses { get; private set; }
         public List<Behaviour> Behaviours { get; private set; }

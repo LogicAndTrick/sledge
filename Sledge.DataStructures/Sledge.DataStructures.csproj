@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.DataStructures</RootNamespace>
     <AssemblyName>Sledge.DataStructures</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +23,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,36 +33,29 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK">
-      <HintPath>..\OpenTK.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinaryExtensions.cs" />
     <Compile Include="GameData\AutoVisgroup.cs" />
     <Compile Include="GameData\AutoVisgroupSection.cs" />
     <Compile Include="Geometric\Box.cs" />
+    <Compile Include="Geometric\Vector3TypeConverter.cs" />
     <Compile Include="Geometric\Cloud.cs" />
-    <Compile Include="Geometric\CoordinateF.cs" />
     <Compile Include="Geometric\CsgNode.cs" />
     <Compile Include="Geometric\CsgSolid.cs" />
+    <Compile Include="Geometric\Precision\Polyhedron.cs" />
+    <Compile Include="Geometric\Precision\Vector3.cs" />
     <Compile Include="Geometric\Polygon.cs" />
-    <Compile Include="Geometric\QuaternionF.cs" />
-    <Compile Include="Geometric\MatrixF.cs" />
-    <Compile Include="Geometric\MathFunctions.cs" />
-    <Compile Include="Geometric\Matrix.cs" />
     <Compile Include="Geometric\Plane.cs" />
-    <Compile Include="Geometric\Quaternion.cs" />
-    <Compile Include="Geometric\Vector.cs" />
+    <Compile Include="Geometric\Polyhedron.cs" />
     <Compile Include="GameData\Behaviour.cs" />
     <Compile Include="GameData\ClassType.cs" />
     <Compile Include="GameData\GameData.cs" />
@@ -70,56 +66,22 @@
     <Compile Include="GameData\Property.cs" />
     <Compile Include="GameData\VariableType.cs" />
     <Compile Include="Geometric\Line.cs" />
-    <Compile Include="MapObjects\AutoVisgroup.cs" />
-    <Compile Include="MapObjects\MapFeature.cs" />
-    <Compile Include="MapObjects\TransformFlags.cs" />
-    <Compile Include="MapObjects\VisgroupFilters\IAutoVisgroup.cs" />
-    <Compile Include="MapObjects\DisplacementPoint.cs" />
-    <Compile Include="Geometric\Coordinate.cs" />
-    <Compile Include="MapObjects\Camera.cs" />
-    <Compile Include="MapObjects\Displacement.cs" />
-    <Compile Include="MapObjects\Entity.cs" />
-    <Compile Include="MapObjects\EntityData.cs" />
-    <Compile Include="MapObjects\Face.cs" />
-    <Compile Include="Meta\MetaData.cs" />
-    <Compile Include="Models\BodyPart.cs" />
-    <Compile Include="Models\Texture.cs" />
-    <Compile Include="PlaneClassification.cs" />
-    <Compile Include="MapObjects\Group.cs" />
-    <Compile Include="MapObjects\IDGenerator.cs" />
-    <Compile Include="MapObjects\Map.cs" />
-    <Compile Include="MapObjects\MapObject.cs" />
-    <Compile Include="MapObjects\Output.cs" />
-    <Compile Include="MapObjects\Path.cs" />
-    <Compile Include="MapObjects\PathDirection.cs" />
-    <Compile Include="MapObjects\PathNode.cs" />
-    <Compile Include="MapObjects\Pointfile.cs" />
-    <Compile Include="MapObjects\Property.cs" />
-    <Compile Include="MapObjects\Solid.cs" />
-    <Compile Include="MapObjects\TextureReference.cs" />
-    <Compile Include="MapObjects\Vertex.cs" />
-    <Compile Include="MapObjects\Visgroup.cs" />
-    <Compile Include="MapObjects\World.cs" />
-    <Compile Include="Models\Animation.cs" />
-    <Compile Include="Models\AnimationFrame.cs" />
-    <Compile Include="Models\Bone.cs" />
-    <Compile Include="Models\BoneAnimationFrame.cs" />
-    <Compile Include="Models\BoneWeighting.cs" />
-    <Compile Include="Models\Mesh.cs" />
-    <Compile Include="Models\MeshVertex.cs" />
-    <Compile Include="Models\Model.cs" />
+    <Compile Include="Geometric\NumericsExtensions.cs" />
+    <Compile Include="Geometric\PlaneClassification.cs" />
+    <Compile Include="Geometric\Precision\Plane.cs" />
+    <Compile Include="Geometric\Precision\Polygon.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Transformations\UnitMatrixMult.cs" />
-    <Compile Include="Transformations\UnitRotate.cs" />
-    <Compile Include="Transformations\UnitScale.cs" />
-    <Compile Include="Transformations\IUnitTransformation.cs" />
-    <Compile Include="Transformations\UnitTranslate.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
       <Project>{5D414AC8-8B93-489F-9960-877923400FED}</Project>
       <Name>Sledge.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Numerics.Vectors">
+      <Version>4.5.0</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

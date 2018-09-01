@@ -1,0 +1,173 @@
+﻿Key: Item - percentage complete, uncompleted tasks
+
+Before next release!
+  Complete rendering stuff
+  Go through all actions and make sure they're using the correct mediator messages
+    Operations
+      ReplaceObjects
+      Reparent
+    EditFace
+    EditEntityData
+    Grouping
+    Selection
+    Visgroups
+  Fix the 'combine entities' function
+  Fix VMF visgroups
+  Get rid of document tree/objects/faces messages
+  Make sure decals, sprites, and models load and update correctly
+  Get rid of the old decal/sprite stuff because it's the renderer's job now
+  Investigate and fix decal_bug
+  Decals are being clipped oddly and they're not selectable
+  Pasting should apply materials/decal/sprite stuff instantly
+  Render models! (MapObjectConverter)
+  Review the PartialPostLoadProcess
+  Grids
+  When dragging, show a copy of the original selection in wireframe
+  Show the correct rotate cursor in the selection tool
+  Show the selection tool UI
+  (maybe?) Fix the transformation bbox so it's not silly? (e.g. rotate a cube to 45 degrees, then start rotating it again and see the outline bbox)
+  "Hide mask" in the texture window isn't working
+  Cameras and cordon don't seem to be saving to RMF anymore...
+  Using validation in the base box tool doesn't work too well. Need to cascade the invalidation?
+  Internal resize handles are difficult to grab when zoomed out
+  Box tool doesn't invalidate when the selected texture is changed
+  No crosshair when free-looking in the 3d view
+  Clip tool (and probably others) - escape is clearing the selection as well as cancelling the clip, which is probably not the desired outcome
+  Rewrite the VM tool
+
+Post-release?
+  Animate models?
+  Threaded VTF loading
+
+Priorities
+  Bugs
+    Clip tool is laggy
+  UI
+    Game config detection
+    Object properties dialog data types
+    Auto Update
+      Option to disable
+
+Post-Alpha
+  Prefabs / Instancing
+  UI
+    Find/replace dialogs
+    History sidebar
+    Map diff
+    History stacks (for VM tool)
+  Rendering
+    Models
+      Attachment chooser
+      Sequence chooser
+      Animation?
+      Fix rotations
+      Set angles value on rotate/transform
+    Tools
+      Select tool
+        Advanced manipulator (3D)
+
+
+1. Goldsource Support
+  Formats
+    RMF - 100%
+    MAP - 100%
+    FGD - 100%, (saving not needed for this milestone)
+    MDL - 90%, source textures, animations [post-alpha]
+    WAD - 100%
+    GCF - REMOVED - SteamPipe doesn't use GCF
+    VPK - 100%
+    PAK - 100%
+    SPR - 100%
+    VMF - 90%, fully test against VHE4 format, additional map properties
+  Rendering
+    Solids - 100%
+    Entities - 80%, path connections
+    Sprites - 100%, FGD entities
+    Models - 90%
+    VBO - 100%
+  File System
+    FileSource and mounting - 100%
+    Custom file dialog - 50%, events, options [post-alpha]
+    Native - 100%
+    WAD - 100%
+    GCF - 100%
+    PAK - 100%
+  Main Tools
+    Selection - 100%
+    Entity - 100%
+    Brush - 100%
+    Texture - 100%
+    Decal - 100%
+    Clip - 100%
+    VM - 90%, create vertices?
+  Secondary Tools
+    Carve - 80%, groups
+    Hollow - 80%, groups
+    Groups - 100%
+    Visgroups - 100%
+    Cordon - 80%, render
+    Texture Lock - 100%
+    Entity/World - 100%
+    Texture Replace - 100%
+    Undo/Redo - 70%, history UI [post-alpha]
+    Manual Transform - 100%
+  Forms
+    Editor - 80%, ?
+    Options - 100%
+    Texture Browser - 100%
+    Object Properties - 80%, data types (inputs/outputs not needed for milestone)
+  UI
+    Menu Builder - 100%
+    New/Open/Save/Close - 100%
+    Recent Files - 90%, save game profile
+    Cut/Copy/Paste/Paste Special - 100%
+    Select All/None - 100%
+    Grid Show/Snap Toggles - 100%
+    Hotkeys - 100%
+    Map Info/Entity Report - 100%
+    Check For Problems - 100%
+    Pointfiles/Leak Detection? - 100%
+    Go to coordinates/brush number - 100%
+    Options - 80%, hotkeys, general
+    Right Toolbar Textures - 100%
+    Right Toolbar Visgroups - 100%
+    Right Toolbar Brush Type - 100%
+    Right Toolbar Entity/World - 100%
+    Right Toolbar History - 10% [post-alpha]
+  Compiling
+    Compile flags / UI - 100%
+    Build map - 100%
+    Clean up after compile - 100%
+    Run game - 100%
+
+2. Source support
+3. Plugins support
+
+Feature Ideas
+  VM prevent illegal brushes
+  VM move in 3D
+  VM create verts
+  Filesystem preview (textures, models, etc)
+  Leak detection
+
+---
+
+Secondary Milestones (i.e. potential side-projects)
+
+FGD Editor
+  FGD - 50%, saving
+  UI - 0%
+Map File Debugger/Low-level editor
+  MAP - 100%
+  RMF - 100%
+  VMF - 80%
+  UI - 20%, editing, visgroups, searching, etc
+Model Viewer
+  Goldsource MDL - 60%, textures
+  Source MDL - 30%, animation, texture, physbox, etc
+  UI - 0%
+Twister
+Batch Compiler
+Sprite Maker
+WAD Editor
+Map Viewer (ala Crafty)

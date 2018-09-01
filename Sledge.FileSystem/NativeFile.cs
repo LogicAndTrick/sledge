@@ -90,7 +90,7 @@ namespace Sledge.FileSystem
         public Stream Open()
         {
             if (IsContainer) throw new FileNotFoundException("Unable to open a container.");
-            return FileInfo.Open(FileMode.Open, FileAccess.Read);
+            return FileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
         public byte[] ReadAll()
@@ -122,8 +122,9 @@ namespace Sledge.FileSystem
         {
             if (_packages != null) return;
             var paks = DirectoryInfo.GetFiles("*.pak").Select(x => new InlinePackageFile(x.FullName)).ToList();
+            var pk3s = DirectoryInfo.GetFiles("*.pk3").Select(x => new InlinePackageFile(x.FullName)).ToList();
             var vpks = DirectoryInfo.GetFiles("*_dir.vpk").Select(x => new InlinePackageFile(x.FullName)).ToList();
-            _packages = paks.Union(vpks).ToList();
+            _packages = paks.Union(pk3s).Union(vpks).ToList();
         }
 
         public IFile GetChild(string name)

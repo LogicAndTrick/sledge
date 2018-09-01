@@ -5,9 +5,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Sledge.Common;
-using Sledge.Graphics.Helpers;
 using Sledge.Packages;
 using Sledge.Packages.Vpk;
+using Sledge.Rendering.Materials;
 
 namespace Sledge.Providers.Texture
 {
@@ -104,23 +104,6 @@ namespace Sledge.Providers.Texture
             foreach (var root in roots.Where(x => !_roots.ContainsValue(x)))
             {
                 root.Dispose();
-            }
-        }
-
-        public override void LoadTextures(IEnumerable<TextureItem> items)
-        {
-            var groups = items.GroupBy(x => x.Package).ToList();
-            foreach (var group in groups)
-            {
-                var root = _roots[group.Key];
-                var files = group.Where(ti => root.HasFile(ti.PrimarySubItem.Name)).ToList();
-                foreach (var ti in files)
-                {
-                    using (var bmp = Vtf.VtfProvider.GetImage(root.OpenFile(ti.PrimarySubItem.Name)))
-                    {
-                        TextureHelper.Create(ti.Name.ToLowerInvariant(), bmp, ti.Width, ti.Height, ti.Flags);
-                    }
-                }
             }
         }
 

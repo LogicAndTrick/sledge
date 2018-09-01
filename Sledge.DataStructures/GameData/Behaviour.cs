@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Sledge.DataStructures.Geometric;
 using System.Drawing;
+using System.Numerics;
 
 namespace Sledge.DataStructures.GameData
 {
@@ -18,17 +19,18 @@ namespace Sledge.DataStructures.GameData
             Values = new List<string>(values);
         }
 
-        public Coordinate GetCoordinate(int index)
+        public Vector3? GetVector3(int index)
         {
             var first = index * 3;
-            return Values.Count < first + 3 ?
-                null : Coordinate.Parse(Values[first], Values[first + 1], Values[first + 2]);
+            return Values.Count < first + 3
+                ? (Vector3?) null
+                : NumericsExtensions.Parse(Values[first], Values[first + 1], Values[first + 2]);
         }
 
         public Color GetColour(int index)
         {
-            var coord = GetCoordinate(index);
-            return coord == null ? Color.White : Color.FromArgb((int) coord.X, (int) coord.Y, (int) coord.Z);
+            var coord = GetVector3(index);
+            return coord == null ? Color.White : Color.FromArgb((int) coord.Value.X, (int) coord.Value.Y, (int) coord.Value.Z);
         }
     }
 }

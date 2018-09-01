@@ -6,11 +6,15 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using Sledge.DataStructures.Geometric;
-using Sledge.DataStructures.MapObjects;
 using Sledge.DataStructures.Models;
 using Sledge.FileSystem;
+using OpenTK;
+using Sledge.DataStructures;
+using Quaternion = OpenTK.Quaternion;
 
+// ReSharper disable NotAccessedVariable
+// ReSharper disable UnusedVariable
+// ReSharper disable RedundantAssignment
 namespace Sledge.Providers.Model
 {
     [Flags]
@@ -36,7 +40,7 @@ namespace Sledge.Providers.Model
     {
         protected override bool IsValidForFile(IFile file)
         {
-            return file.Extension.ToLowerInvariant() == "mdl";
+            return file != null && file.Extension != null && file.Extension.ToLowerInvariant() == "mdl";
         }
 
         protected override DataStructures.Models.Model LoadFromFile(IFile file)
@@ -56,10 +60,13 @@ namespace Sledge.Providers.Model
             }
         }
 
+        // ReSharper disable InconsistentNaming
         private const string MagicStringIDST = "IDST";
         private const string MagicStringIDSQ = "IDSQ";
         private const string MagicStringIDSV = "IDSV";
+        private const string MagicStringIDPO = "IDPO";
 
+        private const int MDLVersionQuake = 6; // Q1
         private const int MDLVersionGoldsource = 10; // All GS games
         private const int MDLVersionSource2006 = 44; // HL2, CSS, EP1, LC
         private const int MDLVersionSourceEpisode2 = 45; // EP2
@@ -72,19 +79,21 @@ namespace Sledge.Providers.Model
 
         private const byte VTXStripGroupTriListFlag = 0x01;
         private const byte VTXStripGroupTriStripFlag = 0x02;
+        // ReSharper enable InconsistentNaming
 
         private static DataStructures.Models.Model ReadModel(BinaryReader br, IFile file, ModelLoadItems loadItems)
         {
             // int id - Not really an int. This is a magic string, either "IDST" or "IDSQ".
             var magicString = br.ReadFixedLengthString(Encoding.UTF8, 4);
-            if (magicString != MagicStringIDST && magicString != MagicStringIDSQ)
+            if (magicString != MagicStringIDST && magicString != MagicStringIDSQ && magicString != MagicStringIDPO)
             {
-                throw new ProviderException("Bad magic number for model. Expected [IDST,IDSQ], got: " + magicString);
+                throw new ProviderException("Bad magic number for model. Expected [IDST,IDSQ,IDPO], got: " + magicString);
             }
 
             // int version - Half-life 1 models are version 10.
             var version = br.ReadInt32();
-            if (version != MDLVersionGoldsource
+            if (version !=  MDLVersionQuake
+                && version != MDLVersionGoldsource
                 && version != MDLVersionSource2006
                 && version != MDLVersionSourceEpisode2
                 && version != MDLVersionSourcePortal
@@ -95,6 +104,11 @@ namespace Sledge.Providers.Model
             }
 
             var modelData = new ModelData {Version = version};
+
+            if (version == MDLVersionQuake)
+            {
+                return ReadQuakeModel(br, file, loadItems);
+            }
 
             if (version >= MDLVersionSource2006)
             {
@@ -108,7 +122,7 @@ namespace Sledge.Providers.Model
             long checksum = 0;
             if (version >= MDLVersionSource2006)
             {
-                checksum = br.ReadInt32(); // This is a long in the headers but is only written to the file in 4 bytes. Why? I don't know.
+                checksum = br.ReadInt32(); // sizeof(long) == sizeof(int) in MSVC++
             }
 
             // char name[64] - The name of the model (file path)
@@ -117,19 +131,19 @@ namespace Sledge.Providers.Model
             // int length - The size of the model file in bytes
             var fileSize = br.ReadInt32();
 
-            var eyePosition = br.ReadCoordinateF();
+            var eyePosition = br.ReadVector3();
 
-            var illumPosition = CoordinateF.Zero;
+            var illumPosition = Vector3.Zero;
             if (version >= MDLVersionSource2006)
             {
-                illumPosition = br.ReadCoordinateF();
+                illumPosition = br.ReadVector3();
             }
 
-            var hullMin = br.ReadCoordinateF();
-            var hullMax = br.ReadCoordinateF();
+            var hullMin = br.ReadVector3();
+            var hullMax = br.ReadVector3();
 
-            var bbMin = br.ReadCoordinateF();
-            var bbMax = br.ReadCoordinateF();
+            var bbMin = br.ReadVector3();
+            var bbMax = br.ReadVector3();
 
             // int flags - Unknown.
             var flags = br.ReadInt32();
@@ -444,13 +458,13 @@ namespace Sledge.Providers.Model
                 var pivotindex = br.ReadInt32();
                 var motiontype = br.ReadInt32();
                 var motionbone = br.ReadInt32();
-                var linearmovement = br.ReadCoordinateF();
+                var linearmovement = br.ReadVector3();
                 var automoveposindex = br.ReadInt32();
                 var automoveangleindex = br.ReadInt32();
             }
 
-            var bbmin = br.ReadCoordinateF();
-            var bbmax = br.ReadCoordinateF();
+            var bbmin = br.ReadVector3();
+            var bbmax = br.ReadVector3();
 
             var numblends = br.ReadInt32();
 
@@ -570,8 +584,8 @@ namespace Sledge.Providers.Model
                 
                 for (var f = 0; f < numframes; f++)
                 {
-                    var fpos = CoordinateF.Zero;
-                    var fang = CoordinateF.Zero;
+                    var fpos = Vector3.Zero;
+                    var fang = Vector3.Zero;
 
                     if (animBone != null)
                     {
@@ -580,11 +594,10 @@ namespace Sledge.Providers.Model
 
                         if (animBone.FixedQuaternion == null) fang = animBone.FrameAngles[f];
                     }
-
-                    fpos = fpos.ComponentMultiply(bone.DefaultPositionScale);// +bone.DefaultPosition;
+                    fpos = Vector3.Multiply(fpos, bone.DefaultPositionScale);// +bone.DefaultPosition;
                     var fangq = animBone != null && animBone.FixedQuaternion != null
                                 ? animBone.FixedQuaternion
-                                : QuaternionF.EulerAngles(fang.ComponentMultiply(bone.DefaultAnglesScale));// + bone.DefaultAngles);
+                                : OpenTkExtensions.QuaternionFromEulerRotation(Vector3.Multiply(fang, bone.DefaultAnglesScale));// + bone.DefaultAngles);
                     anim.Frames[f].Bones.Add(new BoneAnimationFrame(bone, fpos, fangq));
                 }
             }
@@ -614,7 +627,7 @@ namespace Sledge.Providers.Model
                 var numMovements = br.ReadInt32();
                 var movementIndex = br.ReadInt32();
 
-                br.ReadCoordinateFArray(2); // bounding box; unused
+                br.ReadVector3Array(2); // bounding box; unused
 
                 var ablock = br.ReadInt32();
                 var aindex = br.ReadInt32();
@@ -689,9 +702,11 @@ namespace Sledge.Providers.Model
                 for (var f = 0; f < numframes; f++)
                 {
                     var frame = boneFrames[f];
-                    var fpos = new CoordinateF(frame[0], frame[1], frame[2]).ComponentMultiply(bone.DefaultPositionScale) + bone.DefaultPosition;
-                    var fang = new CoordinateF(frame[3], frame[4], frame[5]).ComponentMultiply(bone.DefaultAnglesScale) + bone.DefaultAngles;
-                    anim.Frames[f].Bones.Add(new BoneAnimationFrame(bone, fpos, QuaternionF.EulerAngles(fang)));
+                    var dps = bone.DefaultPositionScale;
+                    var das = bone.DefaultAnglesScale;
+                    var fpos = new Vector3(frame[0] * dps.X, frame[1] * dps.Y, frame[2] * dps.Z) + bone.DefaultPosition;
+                    var fang = new Vector3(frame[3] * das.X, frame[4] * das.Y, frame[5] * das.Z) + bone.DefaultAngles;
+                    anim.Frames[f].Bones.Add(new BoneAnimationFrame(bone, fpos, OpenTkExtensions.QuaternionFromEulerRotation(fang)));
                 }
 
                 br.BaseStream.Position = restorePoint;
@@ -764,21 +779,21 @@ namespace Sledge.Providers.Model
                 flags = br.ReadInt32();
             }
             var boneController = br.ReadIntArray(6);        // 3 pos, 3 rot
-            var defPos = br.ReadCoordinateF();
-            QuaternionF quat = null;
+            var defPos = br.ReadVector3();
+            Quaternion quat = Quaternion.Identity;
             if (data.Version >= MDLVersionSource2006)
             {
                 // quaternion
-                quat = new QuaternionF(br.ReadCoordinateF(), br.ReadSingle());
+                quat = new Quaternion(br.ReadVector3(), br.ReadSingle());
             }
-            var defAng = br.ReadCoordinateF();
-            var defPosScale = br.ReadCoordinateF();
-            var defAngScale = br.ReadCoordinateF();
+            var defAng = br.ReadVector3();
+            var defPosScale = br.ReadVector3();
+            var defAngScale = br.ReadVector3();
 
             if (data.Version >= MDLVersionSource2006)
             {
                 var poseToBone = br.ReadIntArray(12); // 3x4 matrix
-                var qAlignment = new QuaternionF(br.ReadCoordinateF(), br.ReadSingle());
+                var qAlignment = new Quaternion(br.ReadVector3(), br.ReadSingle());
                 flags = br.ReadInt32();
                 var proctype = br.ReadInt32();
                 var procindex = br.ReadInt32();
@@ -890,9 +905,9 @@ namespace Sledge.Providers.Model
             br.BaseStream.Position = normInfoIndex;
             var normInfoData = br.ReadByteArray(numNorms);
             br.BaseStream.Position = vertIndex;
-            var vertices = br.ReadCoordinateFArray(numVerts);
+            var vertices = br.ReadVector3Array(numVerts);
             br.BaseStream.Position = normIndex;
-            var normals = br.ReadCoordinateFArray(numNorms);
+            var normals = br.ReadVector3Array(numNorms);
 
             br.BaseStream.Position = meshIndex;
             for (var i = 0; i < numMesh; i++)
@@ -962,7 +977,7 @@ namespace Sledge.Providers.Model
                 var materialType = br.ReadInt32();
                 var materialParam = br.ReadInt32();
                 var meshId = br.ReadInt32();
-                var center = br.ReadCoordinateF();
+                var center = br.ReadVector3();
                 var modelVertexDataPointer = br.ReadInt32();
                 var numLODVertices = br.ReadIntArray(8);
                 br.ReadIntArray(8); // Unused
@@ -1036,8 +1051,8 @@ namespace Sledge.Providers.Model
                         var boneWeights = vbr.ReadSingleArray(3);
                         var bones = vbr.ReadBytes(3);
                         var numBones = vbr.ReadByte();
-                        var position = vbr.ReadCoordinateF();
-                        var normal = vbr.ReadCoordinateF();
+                        var position = vbr.ReadVector3();
+                        var normal = vbr.ReadVector3();
                         var textureS = vbr.ReadSingle();
                         var textureT = vbr.ReadSingle();
                         vertices.Add(new VVDPoint(boneWeights, bones, numBones, position, normal, textureS, textureT));
@@ -1268,13 +1283,13 @@ namespace Sledge.Providers.Model
             public float[] BoneWeights { get; private set; }
             public byte[] Bones { get; private set; }
             public int NumBones { get; private set; }
-            public CoordinateF Position { get; private set; }
-            public CoordinateF Normal { get; private set; }
+            public Vector3 Position { get; private set; }
+            public Vector3 Normal { get; private set; }
             public float TextureS { get; private set; }
             public float TextureT { get; private set; }
 
             public VVDPoint(float[] boneWeights, byte[] bones, int numBones,
-                CoordinateF position, CoordinateF normal,
+                Vector3 position, Vector3 normal,
                 float textureS, float textureT)
             {
                 BoneWeights = boneWeights;
@@ -1333,20 +1348,20 @@ namespace Sledge.Providers.Model
             public byte Bone { get; private set; }
             public byte Flags { get; private set; }
             public int NumFrames { get; private set; }
-            public QuaternionF FixedQuaternion { get; set; }
-            public CoordinateF FixedPosition { get; private set; }
-            public List<CoordinateF> FrameAngles { get; private set; }
-            public List<CoordinateF> FramePositions { get; private set; }
+            public Quaternion FixedQuaternion { get; set; }
+            public Vector3 FixedPosition { get; private set; }
+            public List<Vector3> FrameAngles { get; private set; }
+            public List<Vector3> FramePositions { get; private set; }
 
             public SourceAnimationBone(byte bone, byte flags, int numFrames)
             {
                 Bone = bone;
                 Flags = flags;
                 NumFrames = numFrames;
-                FixedPosition = null;
-                FixedQuaternion = null;
-                FramePositions = new List<CoordinateF>();
-                FrameAngles = new List<CoordinateF>();
+                FixedPosition = Vector3.Zero;
+                FixedQuaternion = Quaternion.Identity;
+                FramePositions = new List<Vector3>();
+                FrameAngles = new List<Vector3>();
             }
 
             public void ReadData(BinaryReader br)
@@ -1363,7 +1378,7 @@ namespace Sledge.Providers.Model
                     var z = temp & 0x7FFF; // Get the last 15 bits from the short
                     var isWneg = (temp & 0x8000) > 0; // The first bit is the boolean value
                     var w = (isWneg ? -1 : 1) * (float) Math.Sqrt(1 - x * x - y * y - z * z);
-                    FixedQuaternion = new QuaternionF((x - Half) / Half, (y - Half) / Half, (z - Quarter) / Quarter, w);
+                    FixedQuaternion = new Quaternion((x - Half) / Half, (y - Half) / Half, (z - Quarter) / Quarter, w);
                 }
                 if ((Flags & StudioAnimRawpos) > 0)
                 {
@@ -1374,7 +1389,7 @@ namespace Sledge.Providers.Model
                     var y = OpenTK.Half.FromBytes(bytes, 2).ToSingle();
                     var z = OpenTK.Half.FromBytes(bytes, 4).ToSingle();
                     // Ha ha, screw you, custom floating-point implementation! Thanks, OpenTK!
-                    FixedPosition = new CoordinateF(x, y, z);
+                    FixedPosition = new Vector3(x, y, z);
                 }
                 if ((Flags & StudioAnimAnimrot) > 0)
                 {
@@ -1396,7 +1411,7 @@ namespace Sledge.Providers.Model
                             if (f > 0 && delta) rotFrames[f][i] += values[f - 1];
                         }
                     }
-                    FrameAngles.AddRange(rotFrames.Select(x => new CoordinateF(x[0], x[1], x[2])));
+                    FrameAngles.AddRange(rotFrames.Select(x => new Vector3(x[0], x[1], x[2])));
                     br.BaseStream.Position = endPos;
                 }
                 if ((Flags & StudioAnimAnimpos) > 0)
@@ -1418,7 +1433,7 @@ namespace Sledge.Providers.Model
                             if (f > 0 && delta) posFrames[f][i] += values[f - 1];
                         }
                     }
-                    FramePositions.AddRange(posFrames.Select(x => new CoordinateF(x[0], x[1], x[2])));
+                    FramePositions.AddRange(posFrames.Select(x => new Vector3(x[0], x[1], x[2])));
                     br.BaseStream.Position = endPos;
                 }
             }
@@ -1438,6 +1453,235 @@ namespace Sledge.Providers.Model
             public string FileName { get; set; }
             public int CachePointer { get; set; }
             public int GroupZeroDataIndex { get; set; }
+        }
+        #endregion
+
+        #region Quake MDL support
+        private struct QuakeVert
+        {
+            public byte x, y, z, normalindex;
+        };
+
+        private struct QuakeTexCoord
+        {
+            public bool onseam;
+            public int s;
+            public int t;
+        };
+
+        private struct QuakeTri
+        {
+            public bool facesfront;
+            public int[] vertindices; // array of 3 indices
+        };
+
+        private static byte[] _quakePalette = new byte[] { 0, 0, 0, 15, 15, 15, 31, 31, 31, 47, 47, 47, 63, 63, 63, 75, 75, 75, 91, 91, 91, 107, 107, 107, 123, 123, 123, 139, 139, 139, 155, 155, 155, 171, 171, 171, 187, 187, 187, 203, 203, 203, 219, 219, 219, 235, 235, 235, 15, 11, 7, 23, 15, 11, 31, 23, 11, 39, 27, 15, 47, 35, 19, 55, 43, 23, 63, 47, 23, 75, 55, 27, 83, 59, 27, 91, 67, 31, 99, 75, 31, 107, 83, 31, 115, 87, 31, 123, 95, 35, 131, 103, 35, 143, 111, 35, 11, 11, 15, 19, 19, 27, 27, 27, 39, 39, 39, 51, 47, 47, 63, 55, 55, 75, 63, 63, 87, 71, 71, 103, 79, 79, 115, 91, 91, 127, 99, 99, 139, 107, 107, 151, 115, 115, 163, 123, 123, 175, 131, 131, 187, 139, 139, 203, 0, 0, 0, 7, 7, 0, 11, 11, 0, 19, 19, 0, 27, 27, 0, 35, 35, 0, 43, 43, 7, 47, 47, 7, 55, 55, 7, 63, 63, 7, 71, 71, 7, 75, 75, 11, 83, 83, 11, 91, 91, 11, 99, 99, 11, 107, 107, 15, 7, 0, 0, 15, 0, 0, 23, 0, 0, 31, 0, 0, 39, 0, 0, 47, 0, 0, 55, 0, 0, 63, 0, 0, 71, 0, 0, 79, 0, 0, 87, 0, 0, 95, 0, 0, 103, 0, 0, 111, 0, 0, 119, 0, 0, 127, 0, 0, 19, 19, 0, 27, 27, 0, 35, 35, 0, 47, 43, 0, 55, 47, 0, 67, 55, 0, 75, 59, 7, 87, 67, 7, 95, 71, 7, 107, 75, 11, 119, 83, 15, 131, 87, 19, 139, 91, 19, 151, 95, 27, 163, 99, 31, 175, 103, 35, 35, 19, 7, 47, 23, 11, 59, 31, 15, 75, 35, 19, 87, 43, 23, 99, 47, 31, 115, 55, 35, 127, 59, 43, 143, 67, 51, 159, 79, 51, 175, 99, 47, 191, 119, 47, 207, 143, 43, 223, 171, 39, 239, 203, 31, 255, 243, 27, 11, 7, 0, 27, 19, 0, 43, 35, 15, 55, 43, 19, 71, 51, 27, 83, 55, 35, 99, 63, 43, 111, 71, 51, 127, 83, 63, 139, 95, 71, 155, 107, 83, 167, 123, 95, 183, 135, 107, 195, 147, 123, 211, 163, 139, 227, 179, 151, 171, 139, 163, 159, 127, 151, 147, 115, 135, 139, 103, 123, 127, 91, 111, 119, 83, 99, 107, 75, 87, 95, 63, 75, 87, 55, 67, 75, 47, 55, 67, 39, 47, 55, 31, 35, 43, 23, 27, 35, 19, 19, 23, 11, 11, 15, 7, 7, 187, 115, 159, 175, 107, 143, 163, 95, 131, 151, 87, 119, 139, 79, 107, 127, 75, 95, 115, 67, 83, 107, 59, 75, 95, 51, 63, 83, 43, 55, 71, 35, 43, 59, 31, 35, 47, 23, 27, 35, 19, 19, 23, 11, 11, 15, 7, 7, 219, 195, 187, 203, 179, 167, 191, 163, 155, 175, 151, 139, 163, 135, 123, 151, 123, 111, 135, 111, 95, 123, 99, 83, 107, 87, 71, 95, 75, 59, 83, 63, 51, 67, 51, 39, 55, 43, 31, 39, 31, 23, 27, 19, 15, 15, 11, 7, 111, 131, 123, 103, 123, 111, 95, 115, 103, 87, 107, 95, 79, 99, 87, 71, 91, 79, 63, 83, 71, 55, 75, 63, 47, 67, 55, 43, 59, 47, 35, 51, 39, 31, 43, 31, 23, 35, 23, 15, 27, 19, 11, 19, 11, 7, 11, 7, 255, 243, 27, 239, 223, 23, 219, 203, 19, 203, 183, 15, 187, 167, 15, 171, 151, 11, 155, 131, 7, 139, 115, 7, 123, 99, 7, 107, 83, 0, 91, 71, 0, 75, 55, 0, 59, 43, 0, 43, 31, 0, 27, 15, 0, 11, 7, 0, 0, 0, 255, 11, 11, 239, 19, 19, 223, 27, 27, 207, 35, 35, 191, 43, 43, 175, 47, 47, 159, 47, 47, 143, 47, 47, 127, 47, 47, 111, 47, 47, 95, 43, 43, 79, 35, 35, 63, 27, 27, 47, 19, 19, 31, 11, 11, 15, 43, 0, 0, 59, 0, 0, 75, 7, 0, 95, 7, 0, 111, 15, 0, 127, 23, 7, 147, 31, 7, 163, 39, 11, 183, 51, 15, 195, 75, 27, 207, 99, 43, 219, 127, 59, 227, 151, 79, 231, 171, 95, 239, 191, 119, 247, 211, 139, 167, 123, 59, 183, 155, 55, 199, 195, 55, 231, 227, 87, 127, 191, 255, 171, 231, 255, 215, 255, 255, 103, 0, 0, 139, 0, 0, 179, 0, 0, 215, 0, 0, 255, 0, 0, 255, 243, 147, 255, 247, 199, 255, 255, 255, 159, 91, 83 };
+
+        private static DataStructures.Models.Texture LoadQuakeSkin(int skinindex, int width, int height, byte[] indices)
+        {
+            var palette = _quakePalette;
+            var bmp = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
+            var pal = bmp.Palette;
+            for (var j = 0; j <= byte.MaxValue; j++)
+            {
+                var k = j * 3;
+                pal.Entries[j] = Color.FromArgb(255, palette[k], palette[k + 1], palette[k + 2]);
+            }
+            bmp.Palette = pal;
+            var bmpData = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, bmp.PixelFormat);
+            Marshal.Copy(indices, 0, bmpData.Scan0, indices.Length);
+            bmp.UnlockBits(bmpData);
+
+            var tex = new DataStructures.Models.Texture
+            {
+                Name = "???",
+                Index = skinindex,
+                Width = width,
+                Height = height,
+                Flags = 0,
+                Image = bmp
+            };
+            return tex;
+        }
+
+        private static Mesh LoadQuakeMesh(BinaryReader br, DataStructures.Models.Model model, Vector3 scale, Vector3 translate, int numverts, int numtris, List<QuakeTexCoord> texcoords, List<QuakeTri> tris, int skinwidth)
+        {
+            var bboxmin = br.ReadBytes(4);
+            var bboxmax = br.ReadBytes(4);
+            var name = br.ReadBytes(16);
+
+            // Read and transform verts
+            var verts = new List<QuakeVert>();
+            for (int i = 0; i < numverts; i++)
+            {
+                var byte_coord = br.ReadByteArray(3);
+                var normal_index = br.ReadByte();
+                verts.Add(new QuakeVert
+                {
+                    x = byte_coord[0],
+                    y = byte_coord[1],
+                    z = byte_coord[2],
+                    normalindex = normal_index,
+                });
+            }
+
+            // Create sledge mesh object
+            var mesh = new Mesh(0); // Quake meshes don't have LODs
+            mesh.SkinRef = 0;
+
+            for (int i = 0; i < numtris; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    var vert = verts[tris[i].vertindices[j]];
+                    var texcoord = texcoords[tris[i].vertindices[j]];
+                    float s = texcoord.s;
+                    float t = texcoord.t;
+                    if (!tris[i].facesfront && texcoord.onseam)
+                    {
+                        s += skinwidth * 0.5f;
+                    }
+
+                    // Convert to float and transform
+                    var float_coord = new Vector3(vert.x, vert.y, vert.z);
+                    var transformed_coord = Vector3.Multiply(float_coord, scale) + translate;
+
+                    // Insert the triangles.    
+                    mesh.Vertices.Add(new MeshVertex(
+                                        transformed_coord,
+                                        new Vector3(0, 0, 1), // FIXME: Use proper normal
+                                        model.Bones[0],
+                                        s,
+                                        t));
+                }
+            }
+
+            return mesh;
+        }
+
+        private static DataStructures.Models.Model ReadQuakeModel(BinaryReader br, IFile file, ModelLoadItems loadItems)
+        {
+            // Quake MDL format, using reference: http://tfc.duke.free.fr/coding/mdl-specs-en.html
+
+            // Read header
+            var scale = br.ReadVector3();
+            var translate = br.ReadVector3(); // vertices should be scaled by 'scale', then translated by 'translate'
+            var boundingradius = br.ReadSingle();
+            var eyepos = br.ReadVector3();
+            var numskins = br.ReadInt32();
+            var skinwidth = br.ReadInt32();
+            var skinheight = br.ReadInt32();
+            var numverts = br.ReadInt32();
+            var numtris = br.ReadInt32();
+            var numframes = br.ReadInt32();
+            var synctype = br.ReadInt32();
+            var mdlflags = br.ReadInt32();
+            var mdlsize = br.ReadSingle();
+
+            // Create output object
+            var qmodel = new DataStructures.Models.Model();
+            qmodel.Name = file.NameWithoutExtension;
+            qmodel.BonesTransformMesh = true;
+
+            var bone = new Bone(0, -1, null, "", Vector3.Zero, Vector3.Zero, Vector3.One, Vector3.One);
+            qmodel.Bones.Add(bone);
+
+            // Read Skins
+            for (int i = 0; i < numskins; i++)
+            {
+                var skintype = br.ReadInt32();
+                if (skintype == 0)
+                {
+                    // Single skin
+                    var pixels = br.ReadByteArray(skinwidth * skinheight);
+
+                    // Save
+                    var tex = LoadQuakeSkin(i, skinwidth, skinheight, pixels);
+                    qmodel.Textures.Add(tex);
+                }
+                else if (skintype == 1)
+                {
+                    // Skingroup
+                    var numskingroupframes = br.ReadInt32();
+                    var times = br.ReadSingleArray(numskingroupframes);
+                    for (int j = 0; j < numskingroupframes; j++)
+                    {
+                        var pixels = br.ReadByteArray(skinwidth * skinheight);
+
+                        // HACK: Save first frame only
+                        if (j == 0)
+                        {
+                            var tex = LoadQuakeSkin(i, skinwidth, skinheight, pixels);
+                            qmodel.Textures.Add(tex);
+                        }
+                    }
+                }
+                else
+                {
+                    throw new ProviderException("Invalid skin type " + skintype);
+                }
+            }
+
+            // Read texture coords
+            var texcoords = new List<QuakeTexCoord>();
+            for (int i = 0; i < numverts; i++)
+            {
+                QuakeTexCoord tc;
+                tc.onseam = br.ReadInt32() == 0 ? false : true;
+                tc.s = br.ReadInt32();
+                tc.t = br.ReadInt32();
+                texcoords.Add(tc);
+            }
+
+            // Read tris
+            var tris = new List<QuakeTri>();
+            for (int i = 0; i < numtris; i++)
+            {
+                QuakeTri tri;
+                tri.facesfront = br.ReadInt32() == 0 ? false : true;
+                tri.vertindices = br.ReadIntArray(3);
+                tris.Add(tri);
+            }
+
+            // HACK: Only save the first frame we find and discard the rest.
+            bool hasframe = false;
+
+            // Read frames
+            for (int i = 0; i < numframes; i++)
+            {
+                var frametype = br.ReadInt32();
+                if (frametype == 0)
+                {
+                    // Single frame
+                    var frame = LoadQuakeMesh(br, qmodel, scale, translate, numverts, numtris, texcoords, tris, skinwidth);
+
+                    if (!hasframe)
+                    {
+                        qmodel.AddMesh("", 0, frame);
+                        hasframe = true;
+                    }
+                }
+                else if (frametype == 1)
+                {
+                    // Framegroup
+                    var groupframes = br.ReadInt32();
+                    var groupbboxmin = br.ReadBytes(4);
+                    var groupbboxmax = br.ReadBytes(4);
+                    var times = br.ReadSingleArray(groupframes);
+                    for (int j = 0; j < groupframes; j++)
+                    {
+                        var frame = LoadQuakeMesh(br, qmodel, scale, translate, numverts, numtris, texcoords, tris, skinwidth);
+
+                        if (!hasframe)
+                        {
+                            qmodel.AddMesh("", 0, frame);
+                            hasframe = true;
+                        }
+                    }
+                }
+            }
+
+            return qmodel;
         }
         #endregion
     }

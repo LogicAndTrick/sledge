@@ -1,0 +1,32 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.Shell",
+        "Language": "jp",
+        "LanguageDescription": "日本語 / Japanese",
+        "Inherit": "en"
+    },
+    "@Settings": {
+        
+    },
+    "Commands": {
+        "OpenFile": {
+            "Name": "開く..."
+        },
+        "SaveFile": {
+            "Name": "保存"
+        }
+    },
+    "Components": {
+        "ContextExplorerComponent": {
+            "Title": "コンテキスト"
+        },
+        "LogComponent": {
+            "Title": "ログ"
+        },
+        "DefaultMenuMetadataProvider": {
+            "File": "ファイル",
+            "Edit": "編集",
+            "View": "表示"
+        }
+    }
+}

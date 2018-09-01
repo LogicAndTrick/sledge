@@ -1,0 +1,455 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D33E1027-1956-44C4-B920-85281F703704}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sledge.BspEditor.Editing</RootNamespace>
+    <AssemblyName>Sledge.BspEditor.Editing</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>CS0169</NoWarn>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\Modification\AlignObjects.cs" />
+    <Compile Include="Commands\Modification\RotateSelection.cs" />
+    <Compile Include="Commands\Modification\FlipSelection.cs" />
+    <Compile Include="Commands\Modification\SnapToGrid.cs" />
+    <Compile Include="Commands\Modification\Carve.cs" />
+    <Compile Include="Commands\EditVisgroups.cs" />
+    <Compile Include="Commands\Modification\SnapToGridIndividually.cs" />
+    <Compile Include="Commands\MoveToWorld.cs" />
+    <Compile Include="Commands\OpenMapTreeWindow.cs" />
+    <Compile Include="Commands\OpenCheckForProblemsDialog.cs" />
+    <Compile Include="Commands\OpenSelectionDetails.cs" />
+    <Compile Include="Commands\OpenMapInformation.cs" />
+    <Compile Include="Commands\OpenEntityReport.cs" />
+    <Compile Include="Commands\OpenRootProperties.cs" />
+    <Compile Include="Commands\OpenSledgeWebsite.cs" />
+    <Compile Include="Commands\OpenCompileWindow.cs" />
+    <Compile Include="Commands\Pointfile\QuickLoadPointfile.cs" />
+    <Compile Include="Commands\Pointfile\UnloadPointfile.cs" />
+    <Compile Include="Commands\Pointfile\LoadPointfile.cs" />
+    <Compile Include="Commands\Pointfile\Pointfile.cs" />
+    <Compile Include="Commands\Pointfile\PointfileConverter.cs" />
+    <Compile Include="Commands\Quick\HideSelectedObjects.cs" />
+    <Compile Include="Commands\Quick\HideUnselectedObjects.cs" />
+    <Compile Include="Commands\Quick\ShowHiddenObjects.cs" />
+    <Compile Include="Commands\TieToEntity.cs" />
+    <Compile Include="Commands\Modification\Hollow.cs" />
+    <Compile Include="Commands\OpenObjectProperties.cs" />
+    <Compile Include="Commands\OpenAboutWindow.cs" />
+    <Compile Include="Commands\PasteSpecial.cs" />
+    <Compile Include="Commands\Toggles\ToggleHideNullTextures.cs" />
+    <Compile Include="Commands\Toggles\ToggleTextureLock.cs" />
+    <Compile Include="Commands\Toggles\ToggleTextureScalingLock.cs" />
+    <Compile Include="Commands\Modification\Transform.cs" />
+    <Compile Include="Commands\View\AutosizeViews.cs" />
+    <Compile Include="Commands\View\CenterSelection2D.cs" />
+    <Compile Include="Commands\View\CenterSelection3D.cs" />
+    <Compile Include="Commands\View\GoToLocation.cs" />
+    <Compile Include="Commands\View\GoToObjectID.cs" />
+    <Compile Include="Commands\View\CenterSelectionAll.cs" />
+    <Compile Include="Components\AboutDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\AboutDialog.Designer.cs">
+      <DependentUpon>AboutDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\CheckForProblemsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\CheckForProblemsDialog.Designer.cs">
+      <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Compile\BuildParametersPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Compile\BuildParametersPanel.Designer.cs">
+      <DependentUpon>BuildParametersPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Compile\CompileDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\Compile\CompileDialog.Designer.cs">
+      <DependentUpon>CompileDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Compile\CompileParameterPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Compile\CompileParameterPanel.Designer.cs">
+      <DependentUpon>CompileParameterPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Compile\HeadingButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Compile\CompileOutputComponent.cs" />
+    <Compile Include="Components\Compile\Profiles\BuildProfile.cs" />
+    <Compile Include="Components\Compile\Profiles\BuildProfileRegister.cs" />
+    <Compile Include="Components\Compile\Specification\ApplicationEnvironmentSpecificationProvider.cs" />
+    <Compile Include="Components\Compile\Specification\CompileParameter.cs" />
+    <Compile Include="Components\Compile\Specification\CompileParameterType.cs" />
+    <Compile Include="Components\Compile\Specification\CompilePreset.cs" />
+    <Compile Include="Components\Compile\Specification\CompileSpecification.cs" />
+    <Compile Include="Components\Compile\Specification\CompileSpecificationRegister.cs" />
+    <Compile Include="Components\Compile\Specification\CompileTool.cs" />
+    <Compile Include="Components\Compile\Specification\ICompileSpecificationProvider.cs" />
+    <Compile Include="Components\EntityReportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\EntityReportDialog.Designer.cs">
+      <DependentUpon>EntityReportDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\MapInformationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\MapInformationDialog.Designer.cs">
+      <DependentUpon>MapInformationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\MapTreeWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\MapTreeWindow.Designer.cs">
+      <DependentUpon>MapTreeWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\PasteSpecialDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\PasteSpecialDialog.Designer.cs">
+      <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Properties\SmartEdit\SmartEditBoolean.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\SmartEdit\SmartEditChoices.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\SmartEdit\SmartEditColor1.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\SmartEdit\SmartEditColor255.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\SmartEdit\SmartEditFileBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\SmartEdit\SmartEditInteger.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\SmartEdit\SmartEditString.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\SmartEdit\SmartEditTargetDestination.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\SmartEdit\SmartEditTargetSource.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\FlagsTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\FlagsTab.designer.cs">
+      <DependentUpon>FlagsTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Properties\IObjectPropertyEditorTab.cs" />
+    <Compile Include="Components\Properties\ObjectPropertiesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\ObjectPropertiesDialog.designer.cs">
+      <DependentUpon>ObjectPropertiesDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Properties\ObjectPropertyTable.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\IObjectPropertyEditor.cs" />
+    <Compile Include="Components\Properties\SmartEdit\DumbEditControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\SmartEdit\SmartEditControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\ClassInfoTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\ClassInfoTab.designer.cs">
+      <DependentUpon>ClassInfoTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\EmptyTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\EmptyTab.designer.cs">
+      <DependentUpon>EmptyTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\VisgroupTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Properties\Tabs\VisgroupTab.designer.cs">
+      <DependentUpon>VisgroupTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\SelectionDetailsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\SelectionDetailsDialog.Designer.cs">
+      <DependentUpon>SelectionDetailsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\TransformDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\TransformDialog.Designer.cs">
+      <DependentUpon>TransformDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Visgroup\VisgroupEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\Visgroup\VisgroupEditForm.Designer.cs">
+      <DependentUpon>VisgroupEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Visgroup\VisgroupItem.cs" />
+    <Compile Include="Components\Visgroup\VisgroupPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Visgroup\VisgroupPanel.Designer.cs">
+      <DependentUpon>VisgroupPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Visgroup\VisgroupSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Visgroup\VisgroupSidebarPanel.Designer.cs">
+      <DependentUpon>VisgroupSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AngleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\AngleControl.designer.cs">
+      <DependentUpon>AngleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="History\HistoryHandler.cs" />
+    <Compile Include="History\HistorySiderbarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="History\HistorySiderbarPanel.Designer.cs">
+      <DependentUpon>HistorySiderbarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="History\HistoryStack.cs" />
+    <Compile Include="History\RedoCommand.cs" />
+    <Compile Include="History\UndoCommand.cs" />
+    <Compile Include="MenuDataProvider.cs" />
+    <Compile Include="Problems\DuplicateFaceIDs.cs" />
+    <Compile Include="Problems\DuplicateObjectIDs.cs" />
+    <Compile Include="Problems\GameDataNotFound.cs" />
+    <Compile Include="Problems\GroupWithoutChildren.cs" />
+    <Compile Include="Problems\IProblemCheck.cs" />
+    <Compile Include="Problems\NoPlayerStart.cs" />
+    <Compile Include="Problems\Problem.cs" />
+    <Compile Include="Problems\TextureAxisPerpendicularToFace.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj">
+      <Project>{d27bb6a7-fe81-45b5-9b68-b23e4169f16d}</Project>
+      <Name>Sledge.BspEditor.Rendering</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj">
+      <Project>{37c3fe6b-16f4-431f-ab67-fba7c681ccee}</Project>
+      <Name>Sledge.BspEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
+      <Project>{5d414ac8-8b93-489f-9960-877923400fed}</Project>
+      <Name>Sledge.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
+      <Project>{26a974c9-e495-4fa3-8e87-1e00019d04f5}</Project>
+      <Name>Sledge.DataStructures</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.FileSystem\Sledge.FileSystem.csproj">
+      <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>
+      <Name>Sledge.FileSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
+      <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>
+      <Name>Sledge.Providers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.QuickForms\Sledge.QuickForms.csproj">
+      <Project>{7FED88F3-717C-408A-85D9-28DD125DB61A}</Project>
+      <Name>Sledge.QuickForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Rendering\Sledge.Rendering.csproj">
+      <Project>{4DA7F88D-64FF-4036-8A11-6175169DA851}</Project>
+      <Name>Sledge.Rendering</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
+      <Project>{1e0beb41-cf2e-4f48-838e-452c1dcf575f}</Project>
+      <Name>Sledge.Shell</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="LogicAndTrick.Oy">
+      <Version>1.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Numerics.Vectors">
+      <Version>4.5.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reactive">
+      <Version>4.1.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Components\AboutDialog.resx">
+      <DependentUpon>AboutDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\CheckForProblemsDialog.resx">
+      <DependentUpon>CheckForProblemsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Compile\BuildParametersPanel.resx">
+      <DependentUpon>BuildParametersPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Compile\CompileDialog.resx">
+      <DependentUpon>CompileDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Compile\CompileParameterPanel.resx">
+      <DependentUpon>CompileParameterPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\EntityReportDialog.resx">
+      <DependentUpon>EntityReportDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\MapInformationDialog.resx">
+      <DependentUpon>MapInformationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\MapTreeWindow.resx">
+      <DependentUpon>MapTreeWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\PasteSpecialDialog.resx">
+      <DependentUpon>PasteSpecialDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Properties\Tabs\FlagsTab.resx">
+      <DependentUpon>FlagsTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Properties\ObjectPropertiesDialog.resx">
+      <DependentUpon>ObjectPropertiesDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Properties\Tabs\ClassInfoTab.resx">
+      <DependentUpon>ClassInfoTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Properties\Tabs\EmptyTab.resx">
+      <DependentUpon>EmptyTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Properties\Tabs\VisgroupTab.resx">
+      <DependentUpon>VisgroupTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\SelectionDetailsDialog.resx">
+      <DependentUpon>SelectionDetailsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\TransformDialog.resx">
+      <DependentUpon>TransformDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Visgroup\VisgroupEditForm.resx">
+      <DependentUpon>VisgroupEditForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Visgroup\VisgroupPanel.resx">
+      <DependentUpon>VisgroupPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\Visgroup\VisgroupSidebarPanel.resx">
+      <DependentUpon>VisgroupSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\AngleControl.resx">
+      <DependentUpon>AngleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="History\HistorySiderbarPanel.resx">
+      <DependentUpon>HistorySiderbarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Resources\Button_ColourPicker.png" />
+    <Content Include="Resources\Menu_AutosizeViews.png" />
+    <Content Include="Resources\Menu_Carve.png" />
+    <Content Include="Resources\Menu_CenterSelection2D.png" />
+    <Content Include="Resources\Menu_CenterSelection3D.png" />
+    <Content Include="Resources\Menu_CenterSelectionAll.png" />
+    <Content Include="Resources\Menu_CheckForProblems.png" />
+    <Content Include="Resources\Menu_EntityReport.png" />
+    <Content Include="Resources\Menu_GoToBrushID.png" />
+    <Content Include="Resources\Menu_GoToCoordinates.png" />
+    <Content Include="Resources\Menu_HideNullTextures.png" />
+    <Content Include="Resources\Menu_HideSelected.png" />
+    <Content Include="Resources\Menu_HideUnselected.png" />
+    <Content Include="Resources\Menu_Hollow.png" />
+    <Content Include="Resources\Menu_LoadPointfile.png" />
+    <Content Include="Resources\Menu_MapProperties.png" />
+    <Content Include="Resources\Menu_ObjectProperties.png" />
+    <Content Include="Resources\Menu_PasteSpecial.png" />
+    <Content Include="Resources\Menu_QuickLoadPointfile.png" />
+    <Content Include="Resources\Menu_Redo.png" />
+    <Content Include="Resources\Menu_Run.png" />
+    <Content Include="Resources\Menu_ShowBrushID.png" />
+    <Content Include="Resources\Menu_ShowHidden.png" />
+    <Content Include="Resources\Menu_ShowInformation.png" />
+    <Content Include="Resources\Menu_ShowLogicalTree.png" />
+    <Content Include="Resources\Menu_SnapSelection.png" />
+    <Content Include="Resources\Menu_SnapSelectionIndividual.png" />
+    <Content Include="Resources\Menu_TextureLock.png" />
+    <Content Include="Resources\Menu_TextureScalingLock.png" />
+    <Content Include="Resources\Menu_TieToEntity.png" />
+    <Content Include="Resources\Menu_TieToWorld.png" />
+    <Content Include="Resources\Menu_Transform.png" />
+    <Content Include="Resources\Menu_Undo.png" />
+    <Content Include="Resources\Menu_UnloadPointfile.png" />
+    <Content Include="Translations\Sledge.BspEditor.Editing.en.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Specifications\Goldsource.vdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="Translations\Sledge.BspEditor.Editing.fr.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sledge_large.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

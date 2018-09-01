@@ -45,5 +45,12 @@ namespace Sledge.DataStructures.GameData
                 foreach (var obj in g.Skip(1)) Classes.Remove(obj);
             }
         }
+
+        public GameDataObject GetClass(string name)
+        {
+            return Classes
+                .Where(x => x.ClassType != ClassType.Base)
+                .FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
+        }
     }
 }

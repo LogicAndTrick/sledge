@@ -1,65 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.Serialization;
-using Sledge.DataStructures.Transformations;
 
 namespace Sledge.DataStructures.Geometric
 {
     [Serializable]
     public class Box : ISerializable
     {
-        public readonly static Box Empty = new Box(Coordinate.Zero, Coordinate.Zero);
+        public static readonly Box Empty = new Box(Vector3.Zero, Vector3.Zero);
 
-        public Coordinate Start { get; private set; }
-        public Coordinate End { get; private set; }
-        public Coordinate Center { get; private set; }
+        public Vector3 Start { get; }
+        public Vector3 End { get; }
+
+        public Vector3 Center => (Start + End) / 2f;
 
         /// <summary>
         /// The X value difference of this box
         /// </summary>
-        public decimal Width
-        {
-            get { return End.X - Start.X; }
-        }
+        public float Width => End.X - Start.X;
 
         /// <summary>
         /// The Y value difference of this box
         /// </summary>
-        public decimal Length
-        {
-            get { return End.Y - Start.Y; }
-        }
+        public float Length => End.Y - Start.Y;
 
         /// <summary>
         /// The Z value difference of this box
         /// </summary>
-        public decimal Height
+        public float Height => End.Z - Start.Z;
+
+        public Vector3 Dimensions => new Vector3(Width, Length, Height);
+
+        public Box(Vector3 start, Vector3 end) : this(new[] { start, end})
         {
-            get { return End.Z - Start.Z; }
         }
 
-        public Coordinate Dimensions
+        public Box(IEnumerable<Vector3> vectors)
         {
-            get { return new Coordinate(Width, Length, Height); }
-        }
-
-        public Box(Coordinate start, Coordinate end)
-        {
-            Start = start;
-            End = end;
-            Center = (Start + End) / 2;
-        }
-
-        public Box(IEnumerable<Coordinate> coordinates)
-        {
-            if (!coordinates.Any())
+            var list = vectors.ToList();
+            if (!list.Any())
             {
-                throw new Exception("Cannot create a bounding box out of zero coordinates.");
+                throw new Exception("Cannot create a bounding box out of zero Vectors.");
             }
-            var min = new Coordinate(decimal.MaxValue, decimal.MaxValue, decimal.MaxValue);
-            var max = new Coordinate(decimal.MinValue, decimal.MinValue, decimal.MinValue);
-            foreach (var vertex in coordinates)
+            var min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            var max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+            foreach (var vertex in list)
             {
                 min.X = Math.Min(vertex.X, min.X);
                 min.Y = Math.Min(vertex.Y, min.Y);
@@ -70,18 +57,18 @@ namespace Sledge.DataStructures.Geometric
             }
             Start = min;
             End = max;
-            Center = (Start + End) / 2;
         }
 
         public Box(IEnumerable<Box> boxes)
         {
-            if (!boxes.Any())
+            var list = boxes.ToList();
+            if (!list.Any())
             {
                 throw new Exception("Cannot create a bounding box out of zero other boxes.");
             }
-            var min = new Coordinate(decimal.MaxValue, decimal.MaxValue, decimal.MaxValue);
-            var max = new Coordinate(decimal.MinValue, decimal.MinValue, decimal.MinValue);
-            foreach (var box in boxes)
+            var min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            var max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+            foreach (var box in list)
             {
                 min.X = Math.Min(box.Start.X, min.X);
                 min.Y = Math.Min(box.Start.Y, min.Y);
@@ -92,14 +79,12 @@ namespace Sledge.DataStructures.Geometric
             }
             Start = min;
             End = max;
-            Center = (Start + End) / 2;
         }
 
         protected Box(SerializationInfo info, StreamingContext context)
         {
-            Start = (Coordinate) info.GetValue("Start", typeof (Coordinate));
-            End = (Coordinate) info.GetValue("End", typeof (Coordinate));
-            Center = (Start + End) / 2;
+            Start = (Vector3) info.GetValue("Start", typeof (Vector3));
+            End = (Vector3) info.GetValue("End", typeof (Vector3));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -110,19 +95,19 @@ namespace Sledge.DataStructures.Geometric
 
         public bool IsEmpty()
         {
-            return Width == 0 && Height == 0 && Length == 0;
+            return Math.Abs(Width) < 0.0001f && Math.Abs(Height) < 0.0001f && Math.Abs(Length) < 0.0001f;
         }
-        public IEnumerable<Coordinate> GetBoxPoints()
+        public IEnumerable<Vector3> GetBoxPoints()
         {
-            yield return new Coordinate(Start.X, End.Y, End.Z);
-            yield return End.Clone();
-            yield return new Coordinate(Start.X, Start.Y, End.Z);
-            yield return new Coordinate(End.X, Start.Y, End.Z);
+            yield return new Vector3(Start.X, End.Y, End.Z);
+            yield return End;
+            yield return new Vector3(Start.X, Start.Y, End.Z);
+            yield return new Vector3(End.X, Start.Y, End.Z);
 
-            yield return new Coordinate(Start.X, End.Y, Start.Z);
-            yield return new Coordinate(End.X, End.Y, Start.Z);
-            yield return Start.Clone();
-            yield return new Coordinate(End.X, Start.Y, Start.Z);
+            yield return new Vector3(Start.X, End.Y, Start.Z);
+            yield return new Vector3(End.X, End.Y, Start.Z);
+            yield return Start;
+            yield return new Vector3(End.X, Start.Y, Start.Z);
         }
 
         public Plane[] GetBoxPlanes()
@@ -136,17 +121,17 @@ namespace Sledge.DataStructures.Geometric
             return planes;
         }
 
-        public Coordinate[][] GetBoxFaces()
+        public Vector3[][] GetBoxFaces()
         {
-            var topLeftBack = new Coordinate(Start.X, End.Y, End.Z);
-            var topRightBack = End.Clone();
-            var topLeftFront = new Coordinate(Start.X, Start.Y, End.Z);
-            var topRightFront = new Coordinate(End.X, Start.Y, End.Z);
+            var topLeftBack = new Vector3(Start.X, End.Y, End.Z);
+            var topRightBack = End;
+            var topLeftFront = new Vector3(Start.X, Start.Y, End.Z);
+            var topRightFront = new Vector3(End.X, Start.Y, End.Z);
 
-            var bottomLeftBack = new Coordinate(Start.X, End.Y, Start.Z);
-            var bottomRightBack = new Coordinate(End.X, End.Y, Start.Z);
-            var bottomLeftFront = Start.Clone();
-            var bottomRightFront = new Coordinate(End.X, Start.Y, Start.Z);
+            var bottomLeftBack = new Vector3(Start.X, End.Y, Start.Z);
+            var bottomRightBack = new Vector3(End.X, End.Y, Start.Z);
+            var bottomLeftFront = Start;
+            var bottomRightFront = new Vector3(End.X, Start.Y, Start.Z);
             return new[]
                        {
                            new[] {topLeftFront, topRightFront, bottomRightFront, bottomLeftFront},
@@ -160,15 +145,15 @@ namespace Sledge.DataStructures.Geometric
 
         public IEnumerable<Line> GetBoxLines()
         {
-            var topLeftBack = new Coordinate(Start.X, End.Y, End.Z);
-            var topRightBack = End.Clone();
-            var topLeftFront = new Coordinate(Start.X, Start.Y, End.Z);
-            var topRightFront = new Coordinate(End.X, Start.Y, End.Z);
+            var topLeftBack = new Vector3(Start.X, End.Y, End.Z);
+            var topRightBack = End;
+            var topLeftFront = new Vector3(Start.X, Start.Y, End.Z);
+            var topRightFront = new Vector3(End.X, Start.Y, End.Z);
 
-            var bottomLeftBack = new Coordinate(Start.X, End.Y, Start.Z);
-            var bottomRightBack = new Coordinate(End.X, End.Y, Start.Z);
-            var bottomLeftFront = Start.Clone();
-            var bottomRightFront = new Coordinate(End.X, Start.Y, Start.Z);
+            var bottomLeftBack = new Vector3(Start.X, End.Y, Start.Z);
+            var bottomRightBack = new Vector3(End.X, End.Y, Start.Z);
+            var bottomLeftFront = Start;
+            var bottomRightFront = new Vector3(End.X, Start.Y, Start.Z);
 
             yield return new Line(topLeftBack, topRightBack);
             yield return new Line(topLeftFront, topRightFront);
@@ -256,24 +241,24 @@ namespace Sledge.DataStructures.Geometric
         }
 
         /// <summary>
-        /// Returns true if the given coordinate is inside this box.
+        /// Returns true if the given Vector3 is inside this box.
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public bool CoordinateIsInside(Coordinate c)
+        public bool Vector3IsInside(Vector3 c)
         {
             return c.X >= Start.X && c.Y >= Start.Y && c.Z >= Start.Z
                    && c.X <= End.X && c.Y <= End.Y && c.Z <= End.Z;
         }
 
-        public Box Transform(IUnitTransformation transform)
+        public Box Transform(Matrix4x4 transform)
         {
-            return new Box(GetBoxPoints().Select(transform.Transform));
+            return new Box(GetBoxPoints().Select(x => Vector3.Transform(x, transform)));
         }
 
         public Box Clone()
         {
-            return new Box(Start.Clone(), End.Clone());
+            return new Box(Start, End);
         }
     }
 }

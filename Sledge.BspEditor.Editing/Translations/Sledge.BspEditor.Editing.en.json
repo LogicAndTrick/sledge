@@ -1,0 +1,388 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.BspEditor.Editing", 
+        "Language": "en",
+        "Inherit": ""
+    },
+    "@Settings": {
+        
+    },
+    "Commands": {
+        "EditVisgroups": {
+            "Name": "Edit visgroups",
+            "Details": "View and edit map visgroups."
+        },
+        "OpenAboutWindow": {
+            "Name": "About Sledge",
+            "Details": "View information about this application."
+        },
+        "OpenSledgeWebsite": {
+            "Name": "Sledge Website",
+            "Details": "Go to the Sledge website."
+        },
+        "OpenEntityReport": {
+            "Name": "Entity report",
+            "Details": "Open the entity report window."
+        },
+        "OpenMapTreeWindow": {
+            "Name": "Show logical tree",
+            "Details": "Show the logical tree of the current document."
+        },
+        "OpenSelectionDetails": {
+            "Name": "Show selected brush information",
+            "Details": "Show details of the currently selected objects."
+        },
+        "OpenMapInformation": {
+            "Name": "Map information",
+            "Details": "Open the map information window."
+        },
+        "OpenObjectProperties": {
+            "Name": "Object properties",
+            "Details": "Open the object properties window."
+        },
+        "OpenRootProperties": {
+            "Name": "Map properties",
+            "Details": "Open the map properties window."
+        },
+        "PasteSpecial": {
+            "Name": "Paste special...",
+            "Details": "Paste multiple copies with a transformation applied."
+        },
+        "TieToEntity": {
+            "Name": "Tie to entity",
+            "Details": "Create an entity out of the currently selected objects.",
+            "EntitySelectedTitle": "Entity already selected",
+            "OneEntitySelectedMessage": "You have selected an existing entity (a '{0}'), how would you like to proceed?\n - Keep the existing entity and add the selected items to the entity\n - Create a new entity and add the selected items to the new entity",
+            "MultipleEntitiesSelectedMessage": "You have selected multiple entities, which one would you like to keep?",
+            "KeepExisting": "Keep existing",
+            "CreateNew": "Create new",
+            "OK": "OK",
+            "Cancel": "Cancel"
+        },
+        "Modification": {
+            "Carve": {
+                "Name": "Carve",
+                "Details": "Carve the selection into any brushes it overlaps. (Use with caution)"
+            },
+            "Hollow": {
+                "Name": "Make hollow...",
+                "Details": "Make the selected solids hollow. (Use with caution)",
+                "PromptTitle": "Select wall width",
+                "PromptWallWidth": "Wall width (negative to hollow outwards)",
+                "WarningMessage": "This will hollow all {0} solids that are selected.",
+                "OK": "OK",
+                "Cancel": "Cancel"
+            },
+            "Transform": {
+                "Name": "Transform...",
+                "Details": "Transform the current selection.",
+                "ErrorCannotScaleByZeroTitle": "Cannot scale by zero",
+                "ErrorCannotScaleByZeroMessage": "Please enter a non-zero value for all axes when scaling."
+            },
+            "SnapToGrid": {
+                "Name": "Snap to grid",
+                "Details": "Snap the whole selection to the grid in one piece."
+            },
+            "SnapToGridIndividually": {
+                "Name": "Snap to grid individually",
+                "Details": "Snap each selected object to grid as separate objects."
+            },
+            "AlignObjectsXMin": {
+                "Name": "Align to X axis minimum",
+                "Details": "Align selected objects to the minimum X value in the selection."
+            },
+            "AlignObjectsYMin": {
+                "Name": "Align to Y axis minimum",
+                "Details": "Align selected objects to the minimum Y value in the selection."
+            },
+            "AlignObjectsZMin": {
+                "Name": "Align to Z axis minimum",
+                "Details": "Align selected objects to the minimum Z value in the selection."
+            },
+            "AlignObjectsXMax": {
+                "Name": "Align to X axis maximum",
+                "Details": "Align selected objects to the maximum X value in the selection."
+            },
+            "AlignObjectsYMax": {
+                "Name": "Align to Y axis maximum",
+                "Details": "Align selected objects to the maximum Y value in the selection."
+            },
+            "AlignObjectsZMax": {
+                "Name": "Align to Z axis maximum",
+                "Details": "Align selected objects to the maximum Z value in the selection."
+            },
+            "FlipSelectionX": {
+                "Name": "Flip on X axis",
+                "Details": "Flip the selected objects on the X axis." 
+            },
+            "FlipSelectionY": {
+                "Name": "Flip on Y axis",
+                "Details": "Flip the selected objects on the Y axis." 
+            },
+            "FlipSelectionZ": {
+                "Name": "Flip on Z axis",
+                "Details": "Flip the selected objects on the Z axis." 
+            }
+        },
+        "Toggles": {
+            "ToggleTextureLock": {
+                "Name": "Texture Lock",
+                "Details": "Toggle texture locking for uniform operations (transform, rotate)."
+            },
+            "ToggleTextureScalingLock": {
+                "Name": "Texture Scaling Lock",
+                "Details": "Toggle texture locking for scale operations."
+            }
+        },
+        "Pointfile": {
+            "LoadPointfile": {
+                "Name": "Load pointfile...",
+                "Details": "Select a pointfile (.lin, .pts) generated by compile tools.",
+                "InvalidPointfile": "{0} is not a vaild pointfile!"
+            },
+            "QuickLoadPointfile": {
+                "Name": "Quick load pointfile...",
+                "Details": "Search for a pointfile for this map and load it if one was found.",
+                "InvalidPointfile": "{0} is not a vaild pointfile!",
+                "NoPointfileFoundTitle": "Pointfile not found",
+                "NoPointfileFoundMessage": "No pointfile found. Would you like to browse for one?"
+            },
+            "UnloadPointfile": {
+                "Name": "Unload pointfile",
+                "Details": "Clear the currently loaded pointfile."
+            }
+        },
+        "View": {
+            "CenterSelectionAll": {
+                "Name": "Center all views on selection",
+                "Details": "Move the cameras of all views to focus on the selected objects."
+            },
+            "CenterSelection3D": {
+                "Name": "Center 3D views on selection",
+                "Details": "Move the cameras of 3D views to focus on the selected objects."
+            },
+            "CenterSelection2D": {
+                "Name": "Center 2D views on selection",
+                "Details": "Move the cameras of 2D views to focus on the selected objects."
+            },
+            "GoToObjectID": {
+                "Name": "Go to object ID",
+                "Details": "Select and center views on a specific object ID.",
+                "Title": "Enter ID",
+                "ObjectID": "Object ID",
+                "OK": "OK",
+                "Cancel": "Cancel"
+            },
+            "GoToLocation": {
+                "Name": "Go to location",
+                "Details": "Center views on a specific set of coordinates.",
+                "Title": "Enter Coordinates",
+                "OK": "OK",
+                "Cancel": "Cancel"
+            },
+            "AutosizeViews": {
+                "Name": "Autosize views",
+                "Details": "Automatically resize the split views to be the same size."
+            }
+        },
+        "Quick": {
+            "HideSelectedObjects": {
+                "Name": "Hide selected objects",
+                "Details": "Hide all objects that are currently selected." 
+            },
+            "HideUnselectedObjects": {
+                "Name": "Hide unselected objects",
+                "Details": "Hide all objects that are not currently selected." 
+            },
+            "ShowHiddenObjects": {
+                "Name": "Show hidden objects",
+                "Details": "Show all objects that have been hidden." 
+            }
+        }
+    },
+    "Components": {
+        "Properties": {
+            "ObjectPropertiesDialog": {
+                "Apply": "Apply",
+                "OK": "OK",
+                "Cancel": "Cancel",
+                "ResetUnsavedChanges": "Reset unsaved changes",
+                "UnsavedChanges": "Changes have not been saved",
+                "DoYouWantToSaveFirst": "There are unsaved changes. Do you want to save them?"
+            },
+            "Tabs": {
+                "EmptyTab": {
+                    "NothingIsSelected": "Nothing is currently selected."
+                }, 
+                "VisgroupTab": {
+                    "Name": "Visgroups",
+                    "MemberOfGroup": "Member of group:",
+                    "EditVisgroups": "Edit Visgroups"
+                },
+                "ClassInfoTab": {
+                    "Name": "Class Info",
+                    "ClassLabel": "Class:",
+                    "KeyValuesLabel": "Keyvalues:",
+                    "PropertyNameLabel": "Property Name",
+                    "PropertyValueLabel": "Value",
+                    "HelpLabel": "Help:",
+                    "CommentsLabel": "Comments:",
+                    "SmartEditButton": "Smart Edit",
+                    "HelpButton": "Help",
+                    "CopyButton": "Copy",
+                    "PasteButton": "Paste",
+                    "AddButton": "Add",
+                    "DeleteButton": "Delete",
+                    "MultipleClassesText": "<multiple classes>",
+                    "MultipleValuesText": "<multiple values>"
+                },
+                "FlagsTab": {
+                    "Name": "Flags"
+                }
+            },
+            "SmartEdit": {
+                "SmartEditFileBrowser": {
+                    "Browse": "Browse...",
+                    "Preview": "Preview"
+                }
+            }
+        }, 
+        "Visgroup": {
+            "VisgroupEditForm": {
+                "Title": "Visgroup Editor",
+                "NameLabel": "Name",
+                "ColorLabel": "Colour (click to change)",
+                "AddButton": "Add group",
+                "RemoveButton": "Remove group",
+                "OkButton": "OK",
+                "CancelButton": "Cancel"
+            },
+            "VisgroupSidebarPanel": {
+                "EditButton": "Edit",
+                "SelectButton": "Select",
+                "ShowAllButton": "Show all",
+                "NewButton": "New",
+                "AutoVisgroups": "Auto" 
+            }
+        },
+        "AboutDialog": {
+
+        },
+        "CheckForProblemsDialog": {
+            "Title": "Problems in Map",
+            "Details": "Details",
+            "GoToError": "Go to error",
+            "FixError": "Fix error",
+            "FixAllOfType": "Fix all of type",
+            "FixAll": "Fix all problems",
+            "VisibleObjectsOnly": "Visible objects only",
+            "SelectedObjectsOnly": "Selected objects only",
+            "ClickForAdditionalDetails" : "Click here for additional information", 
+            "CloseButton": "Close"
+        },
+        "PasteSpecialDialog": {
+            "Title": "Paste Special",
+            "NumberOfCopies": "Number of copies to paste:",
+            "StartPoint": "Start point",
+            "StartAtOrigin": "Start at map origin",
+            "StartAtCenterOfOriginal": "Start at center of original",
+            "StartAtCenterOfSelection": "Start at center of current selection",
+            "Grouping": "Grouping",
+            "NoGrouping": "No grouping",
+            "GroupIndividual": "Group individual copies",
+            "GroupAll": "Group all copies",
+            "Offset": "Offset (accumulative)",
+            "Rotation": "Rotation (accumulative)",
+            "MakeEntityNamesUnique": "Make entity names unique",
+            "PrevixEntityNames": "Prefix named entities with:",
+            "OK": "OK",
+            "Cancel": "Cancel"
+        },
+        "TransformDialog": {
+            "Title": "Transform",
+            "Source": "Source",
+            "Rotate": "Rotate",
+            "Translate": "Translate",
+            "Scale": "Scale",
+            "OK": "OK",
+            "Cancel": "Cancel"
+        },
+        "Compile": {
+            "CompileOutputComponent": {
+                "Title": "Compile",
+                "CompileCompletedSuccessfully": "Compile was successful.",
+                "CompileFailed": "Compile failed. Check the message log for more details."
+            },
+            "CompileDialog": {
+                
+            } 
+        },
+        "EntityReportDialog": {
+            "Title": "Entity Report",
+            "ClassHeader": "Class",
+            "NameHeader": "Name",
+            "GoTo": "Go to",
+            "Delete": "Delete",
+            "Properties": "Properties",
+            "FollowSelection": "Follow selection",
+            "Filter": "Filter",
+            "ShowAll": "Show all",
+            "ShowPoint": "Point entities only",
+            "ShowBrush": "Brush entities only",
+            "IncludeHidden": "Include hidden objects",
+            "FilterByKeyValue": "Filter by key/value:",
+            "Exact": "Exact",
+            "FilterByClass": "Filter by class",
+            "ResetFilters": "Reset filters",
+            "Close": "Close"
+        },
+        "MapInformationDialog": {
+            "Title": "Map Information",
+            "Solids": "Solids",
+            "Faces": "Faces",
+            "PointEntities": "Point entities",
+            "SolidEntities": "Solid entities",
+            "UniqueTextures": "Unique textures",
+            "TextureMemory": "Texture memory",
+            "TexturePackagesUsed": "Texture packages used",
+            "CloseButton": "Close",
+            "CalculatingTextureMemoryUsage": "Calculating..." 
+        },
+        "SelectionDetailsDialog": {
+            "Title": "Selection Details"
+        },
+        "MapTreeWindow": {
+            "Title": "Map Logical Tree"
+        }
+    },
+    "MenuDataProvider": {
+        "Flip": "Flip",
+        "Align": "Align" 
+    },
+    "Problems": {
+        "DuplicateFaceIDs": {
+            "Name": "Multiple faces have the same ID",
+            "Details": "More than one face was found with the same ID. Each face ID should be unique. Fixing this problem will assign the duplicated faces a new ID."
+        },
+        "DuplicateObjectIDs": {
+            "Name": "Multiple objects have the same ID",
+            "Details": "More than one object has the same ID. Each object ID should be unique. Fixing the problem will assign the duplicates new IDs."
+        },
+        "GameDataNotFound": {
+            "Name": "Entity class not found",
+            "Details": "This entity class was not found in the current game data. Ensure that the correct FGDs are loaded."
+        },
+        "GroupWithoutChildren": {
+            "Name": "Group has no children",
+            "Details": "This group is empty. A group must have contents. Fixing the problem will delete the group."
+        },
+        "NoPlayerStart": {
+            "Name": "This document has no player start",
+            "Details": "There is no info_player_start entity in this document. The player will spawn at the origin instead. This may place the player inside geometry or in the void. Fixing the issue will place a player start entity at the document origin. It is recommended that you fix this problem manually." 
+        },
+        "TextureAxisPerpendicularToFace": {
+            "Name": "Texture axis perpendicular to face",
+            "Details": "The texture axis of this face is perpendicular to the face plane. This occurs when manipulating objects with texture lock off, as well as various other operations. Re-align the texture to the face to repair. Fixing the problem will reset the textures to the face plane."
+        }
+    }
+}

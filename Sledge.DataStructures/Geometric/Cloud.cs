@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using System.Runtime.Serialization;
 
 namespace Sledge.DataStructures.Geometric
@@ -11,33 +13,38 @@ namespace Sledge.DataStructures.Geometric
     [Serializable]
     public class Cloud : ISerializable
     {
-        public List<Coordinate> Points { get; private set; }
-        public Box BoundingBox { get; private set; }
+        public List<Vector3> Points { get; }
+        public Box BoundingBox { get; }
 
-        public Coordinate MinX { get; private set; }
-        public Coordinate MinY { get; private set; }
-        public Coordinate MinZ { get; private set; }
-        public Coordinate MaxX { get; private set; }
-        public Coordinate MaxY { get; private set; }
-        public Coordinate MaxZ { get; private set; }
+        public Vector3 MinX { get; }
+        public Vector3 MinY { get; }
+        public Vector3 MinZ { get; }
+        public Vector3 MaxX { get; }
+        public Vector3 MaxY { get; }
+        public Vector3 MaxZ { get; }
 
-        public Cloud(IEnumerable<Coordinate> points)
+        public Cloud(IEnumerable<Vector3> points)
         {
-            Points = new List<Coordinate>(points);
-            BoundingBox = new Box(points);
-            MinX = MinY = MinZ = MaxX = MaxY = MaxZ = null;
-            foreach (var p in points)
+            var list = points.ToList();
+
+            Points = new List<Vector3>(list);
+            BoundingBox = new Box(list);
+
+            MinX = MinY = MinZ = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            MaxX = MaxY = MaxZ = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+
+            foreach (var p in list)
             {
-                if (MinX == null || p.X < MinX.X) MinX = p;
-                if (MinY == null || p.Y < MinY.Y) MinY = p;
-                if (MinZ == null || p.Z < MinZ.Z) MinZ = p;
-                if (MaxX == null || p.X > MaxX.X) MaxX = p;
-                if (MaxY == null || p.Y > MaxY.Y) MaxY = p;
-                if (MaxZ == null || p.Z > MaxZ.Z) MaxZ = p; 
+                if (p.X < MinX.X) MinX = p;
+                if (p.Y < MinY.Y) MinY = p;
+                if (p.Z < MinZ.Z) MinZ = p;
+                if (p.X > MaxX.X) MaxX = p;
+                if (p.Y > MaxY.Y) MaxY = p;
+                if (p.Z > MaxZ.Z) MaxZ = p; 
             }
         }
 
-        protected Cloud(SerializationInfo info, StreamingContext context) : this((Coordinate[]) info.GetValue("Points", typeof(Coordinate[])))
+        protected Cloud(SerializationInfo info, StreamingContext context) : this((Vector3[]) info.GetValue("Points", typeof(Vector3[])))
         {
 
         }
@@ -51,7 +58,7 @@ namespace Sledge.DataStructures.Geometric
         /// Get a list of the 6 points that define the outermost extents of this cloud.
         /// </summary>
         /// <returns>A list of the 6 (Min|Max)(X|Y|Z) values of this cloud.</returns>
-        public IEnumerable<Coordinate> GetExtents()
+        public IEnumerable<Vector3> GetExtents()
         {
             return new[]
                        {

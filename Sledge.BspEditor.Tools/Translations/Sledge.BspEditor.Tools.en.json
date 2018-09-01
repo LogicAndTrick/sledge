@@ -1,0 +1,263 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.BspEditor.Tools",
+        "Language": "en",
+        "Inherit": ""
+    },
+    "@Settings": {
+        "@Group.Brush": "Brush tool",
+        "@Group.Selection": "Selection",
+        "BrushTool": {
+            "SelectionBoxBackgroundOpacity": "Selection box background opacity",
+            "SwitchToSelectAfterCreation": "Switch to select tool after brush creation",
+            "ResetBrushTypeOnCreation": "Reset to default brush type after brush creation"
+        },
+        "SelectTool": {
+            "SelectionBoxBackgroundOpacity": "Selection box background opacity",
+            "SelectionBoxStippled": "Draw selection box with a dashed outline",
+            "AutoSelectBox": "Automatically select after drawing selection box",
+            "Show3DWidgets": "Show 3D transformation widgets",
+            "SelectByCenterHandles": "Allow selection by clicking center handles",
+            "OnlySelectByCenterHandles": "Only allow selection by clicking center handles"
+        } 
+    },
+    "MenuDataProvider": {
+        "Map": "Map"
+    },
+    "Brush": {
+        // todo: translate brushes
+        "BrushTool": {
+            "CreateObject": "Create {0}"
+        },
+        "BrushSidebarPanel": {
+            "BrushType": "Brush type:",
+            "RoundVertices": "Round created vertices"
+        },
+        "Brushes": {
+            "ArchBrush": {
+                "Name": "Arch",
+                "NumberOfSides": "Number of sides",
+                "WallWidth": "Wall width",
+                "Arc": "Arc",
+                "StartAngle": "Start angle",
+                "AddHeight": "Add height",
+                "CurvedRamp": "Curved ramp",
+                "TiltAngle": "Tilt angle",
+                "TiltInterpolation": "Tilt interpolation"
+            },
+            "BlockBrush": {
+                "Name": "Block"
+            },
+            "ConeBrush": {
+                "Name": "Cone",
+                "NumberOfSides": "Number of sides"
+            },
+            "CylinderBrush": {
+                "Name": "Cylinder",
+                "NumberOfSides": "Number of sides"
+            },
+            "PipeBrush": {
+                "Name": "Pipe",
+                "NumberOfSides": "Number of sides",
+                "WallWidth": "Wall width"
+            },
+            "PyramidBrush": {
+                "Name": "Pyramid"
+            },
+            "SphereBrush": {
+                "Name": "Sphere",
+                "NumberOfSides": "Number of sides"
+            },
+            "TetrahedronBrush": {
+                "Name": "Tetrahedron",
+                "TopVertexAtCentroid": "Top vertex at centroid"
+            },
+            "TextBrush": {
+                "Name": "Text",
+                "Font": "Font",
+                "AliasingFactor": "Aliasing factor" ,
+                "EnteredText": "Enter text here",
+                "Text": "Text"
+            },
+            "TorusBrush": {
+                "Name": "Torus",
+                "CrossSectionSides": "Cross sec. sides",
+                "RingWidth": "Ring width",
+                "CrossSectionStart": "Cross sec. start",
+                "MakeHollow": "Make hollow",
+                "CrossSectionArc": "Cross sec. arc",
+                "HollowWallWidth": "Hollow wall width",
+                "RingSides": "Ring sides",
+                "RingArc": "Ring arc",
+                "RingStart": "Ring start",
+                "RotationHeight": "Rotation height"
+            },
+            "WedgeBrush": {
+                "Name": "Wedge"
+            }
+        }
+    },
+    "Entity": {
+        "EntityTool": {
+            "CreateObject": "Create {0}"
+        }
+    },
+    "Grid": {
+        "GridStatusItem": {
+            "Snap": "Snap",
+            "NoSnap": "No snap",
+            "Grid": "Grid"
+        },
+        "IncreaseGrid": {
+            "Name": "Bigger grid",
+            "Details": "Increase the grid size"
+        },
+        "DecreaseGrid": {
+            "Name": "Smaller grid",
+            "Details": "Decrease the grid size"
+        },
+        "SwitchGrid": {
+            "Name": "Cycle through grids",
+            "Details": "Cycle through grid types"
+        }
+    }, 
+    "Selection": {
+        "SelectTool": {
+            "Align": "Align to...",
+            "Flip": "Flip...",
+            "Rotate": "Rotate...",
+            "Left": "Left",
+            "Right": "Right",
+            "Top": "Top",
+            "Bottom": "Bottom",
+            "Vertically": "Vertically",
+            "Horizontally": "Horizontally",
+            "Clockwise": "90° clockwise",
+            "AntiClockwise": "90° anti-clockwise"
+        }
+    },
+    "Texture": {
+        "BrowseActiveTexture": {
+            "Name": "Browse textures",
+            "Details": "Open the texture browser"
+        },
+        "ReplaceTextures": {
+            "Name": "Replace texture...",
+            "Details": "Replace textures in map"
+        },
+        "SmartEditTextureBrowser": {
+            "Browse": "Browse..."
+        },
+        "TextureApplicationForm": {
+            "Scale": "Scale",
+            "Shift": "Shift",
+            "Browse": "Browse...",
+            "Replace": "Replace...",
+            "Apply": "Apply",
+            "Rotation": "Rotation",
+            "Lightmap": "Lightmap",
+            "SmoothingGroups": "Smoothing groups",
+            "Align": "Align",
+            "World": "World",
+            "Face": "Face",
+            "Justify": "Justify",
+            "Fit": "Fit",
+            "TreatAsOne": "Treat as one",
+            "HideMask": "Hide mask",
+            "FilterRecent:": "Filter recent"
+        },
+        "TextureBrowser": {
+            "Title": "Texture browser",
+            "FavouriteTextures": "Favourite textures (drag and drop)",
+            "AddFolder": "Add folder",
+            "DeleteFolder": "Delete folder",
+            "RemoveSelected": "Remove selected from folder",
+            "Filter": "Filter",
+            "Size": "Size",
+            "UsedTexturesOnly": "Used textures only",
+            "Select": "Select",
+            "SortBy": "Sort by",
+            "SortDescending": "Sort descending"
+        },
+        "TextureReplaceDialog": {
+            "Title": "Replace Textures",
+            "Find": "Find:",
+            "Replace": "Replace:",
+            "Browse": "Browse...",
+            "ReplaceIn": "Replace In:",
+            "ReplaceSelection": "Selection",
+            "ReplaceVisible": "All visible solids",
+            "ReplaceEverything": "Everything",
+            "RescaleTextures": "Rescale texture coordinates",
+            "Action": "Action:",
+            "ActionExact": "Replace exact matches",
+            "ActionPartial": "Replace partial matches",
+            "ActionSubstitute": "Substitute partial matches",
+            "ActionSelect": "Select matches (don't replace)",
+            "OK": "OK",
+            "Cancel": "Cancel"
+        },
+        "TextureSidebarPanel": {
+            "Apply": "Apply",
+            "Browse": "Browse...",
+            "Replace": "Replace..." 
+        },
+        "TextureToolSidebarPanel": {
+            "RandomiseShiftValues": "Randomise shift values",
+            "Min": "Min",
+            "Max": "Max",
+            "RandomiseX": "Randomise X",
+            "RandomiseY": "Randomise Y",
+            "FitToMultipleTiles": "Fit to multiple tiles",
+            "TimesToTile": "Times to tile on face:",
+            "Fit": "Fit"
+        } 
+    },
+    "Vertex": {
+        "Tools": {
+            "VertexPointTool": {
+                "Title": "Standard"
+            },
+            "VertexScaleTool": {
+                "Title": "Scale"
+            },
+            "VertexFaceEditTool": {
+                "Title": "Edit face"
+            }
+        },
+        "Controls": {
+            "VertexSidebarPanel": {
+                "DeselectAll": "Deselect all",
+                "ResetToOriginal": "Reset to original"
+            },
+            "VertexPointControl": {
+                "MergeOverlappingVertices": "Merge overlapping vertices",
+                "MergeAutomatically": "Merge automatically",
+                "SplitFace": "Split face",
+                "ShowPoints": "Show points",
+                "ShowMidpoints": "Show midpoints",
+                "MergeResults": "Removed: {0} point(s), {1} face(s)"
+            },
+            "VertexScaleControl": {
+                "ScaleDistance": "Scale distance (%)",
+                "Reset": "Reset",
+                "ResetOrigin": "Reset origin"
+            },
+            "VertexFaceEditControl": {
+                "WithSelectedFaces": "With selected faces:",
+                "Units": "units",
+                "PokeBy": "Poke by",
+                "BevelBy": "Bevel by",
+                "Poke": "Poke",
+                "Bevel": "Bevel"
+            } 
+        },
+        "Errors": {
+            "BackwardsFace": "Backwards face",
+            "ConcaveFace": "Concave face",
+            "CoplanarFaces": "Co-planar vertices",
+            "NonPlanarVertices": "Non-planar vertices",
+            "OverlappingVertices": "Overlapping vertices"
+        }
+    } 
+}

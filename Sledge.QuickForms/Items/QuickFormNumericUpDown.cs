@@ -14,9 +14,10 @@ namespace Sledge.QuickForms.Items
         private readonly int _decimals;
         private readonly decimal _defaultValue;
 
-        public QuickFormNumericUpDown(string nudname, int nudmin, int nudmax, int nuddecimals, decimal value)
+        public QuickFormNumericUpDown(string key, string label, int nudmin, int nudmax, int nuddecimals, decimal value)
         {
-            Name = nudname;
+            Name = key;
+            Label = label;
             _min = nudmin;
             _max = nudmax;
             _decimals = nuddecimals;
@@ -26,7 +27,7 @@ namespace Sledge.QuickForms.Items
         public override List<Control> GetControls(QuickForm qf)
         {
             var controls = new List<Control>();
-            var l = new Label { Text = Name };
+            var l = new Label { Text = Label };
             Location(l, qf, true);
             Size(l, qf.LabelWidth);
             TextAlign(l);

@@ -1,0 +1,890 @@
+﻿// Goldsource Compile Specification
+// Based on the advanced Zoner spec from Nem's Batch compile
+
+Specification
+{
+	ID "Goldsource VHLT"
+	Name "Modern Goldsource Compile Tools"
+    Engine "Goldsource"
+	
+	Preset
+	{
+		Name "Fast"
+		Description "Run the compile in fast mode to get a quick lower-quality preview of your work"
+        RunCsg "True"
+        RunBsp "True"
+        RunVis "True"
+        RunRad "True"
+		Csg "-wadautodetect -low -estimate -noinfo"
+		Bsp "-low -estimate -noinfo"
+		Vis "-fast -low -estimate -noinfo"
+		Rad "-fast -low -estimate -noinfo"
+	}
+
+	Preset
+	{
+		Name "Normal"
+		Description "Run the compile using the standard settings"
+        RunCsg "True"
+        RunBsp "True"
+        RunVis "True"
+        RunRad "True"
+		Csg "-wadautodetect -low -estimate -noinfo"
+		Bsp "-low -estimate -noinfo"
+		Vis "-low -estimate -noinfo"
+		Rad "-low -estimate -noinfo"
+	}
+
+	Preset
+	{
+		Name "Final"
+		Description "Runs the compile tools in full mode to get the best possible quality result"
+        RunCsg "True"
+        RunBsp "True"
+        RunVis "True"
+        RunRad "True"
+		Csg "-wadautodetect -low -estimate -noinfo"
+		Bsp "-low -estimate -noinfo"
+		Vis "-full -low -estimate -noinfo"
+		Rad "-extra -low -estimate -noinfo"
+	}
+
+	Tool
+	{
+		Name "CSG"
+		Description "Constructive Solid Geometry"
+		Order "1"
+        Enabled "True"
+
+		Parameter
+		{
+			Name "No Clip"
+			Flag "-noclip"
+			Description "Don't create the clipping hull"
+		}
+
+		Parameter
+		{
+			Name "Clip Economy"
+			Flag "-clipeconomy"
+			Description "Turn clipmost economy mode on"
+		}
+
+		Parameter
+		{
+			Name "No Null Textures"
+			Flag "-nonulltex"
+			Description "Disable NULL texture stripping"
+		}
+
+		Parameter
+		{
+			Name "Don't Nullify Trigger"
+			Flag "-nonullifytrigger"
+			Description "Disable conversion of the AAATRIGGER texture into NULL"
+		}
+
+		Parameter
+		{
+			Name "No Sky Clip"
+			Flag "-noskyclip"
+			Description "Disable automatic clipping of SKY brushes"
+		}
+
+		Parameter
+		{
+			Name "No Wad Textures"
+			Flag "-nowadtextures"
+			Description "Include all used textures (including default wads) into the BSP"
+		}
+
+		Parameter
+		{
+			Name "Entities Only"
+			Flag "-onlyents"
+			Description "Update the existing BSP with entities instead of performing a full recompile"
+		}
+
+		Parameter
+		{
+			Name "No Light Optimization"
+			Flag "-nolightopt"
+			Description "Don't optimize engine light entities"
+		}
+
+		Parameter
+		{
+			Name "No Text Conversion"
+			Flag "-notextconvert"
+			Description "Don't convert game_text messages to UTF8 format"
+		}
+
+		Parameter
+		{
+			Name "Wad Autodetect"
+			Flag "-wadautodetect"
+			Description "Remove unused wad files from the map dependency list. You want to enable this."
+			Enabled "True"
+		}
+
+		Parameter
+		{
+			Name "Brush Union"
+			Flag "-brushunion"
+			Description "Threshold to warn about overlapping brushes."
+			Type "Decimal"
+			Value "95"
+			Min "0"
+			Max "100"
+		}
+
+		Parameter
+		{
+			Name "Tiny"
+			Flag "-tiny"
+			Description "Minimum brush face surface area before it is discarded."
+			Type "Decimal"
+			Value "0.5"
+			Min "0"
+		}
+
+		Parameter
+		{
+			Name "Map Scale"
+			Flag "-scale"
+			Description "Scale the entire map. Can easily cause out of bounds errors if you are not careful."
+			Type "Decimal"
+			Value "1"
+			Min "0.1"
+		}
+
+		Parameter
+		{
+			Name "Wad Config"
+			Flag "-wadconfig"
+			Description "Use a custom wad configuration to overwrite the wad list specified in the map."
+			Type "String"
+			Value "wad.cfg"
+		}
+
+		Parameter
+		{
+			Name "Clip Type"
+			Flag "-cliptype"
+			Description "Specify the clip hull generation method. Precise is generally the best option for final compiles."
+			Type "Choice"
+			Value "Precise"
+			Options "Legacy,Normalised,Simple,Smallest,Precise"
+		}
+
+		Parameter
+		{
+			Name "Hull File"
+			Flag "-hullfile"
+			Description "Specify a custom hullfile."
+			Type "File"
+			Filter "Hull Files (*.hull)|*.hull|Text Files (*.txt)|*.txt"
+		}
+
+		Parameter
+		{
+			Name "Null File"
+			Flag "-nullfile"
+			Description "Specify a file that defines a list of textures to treat as the NULL texture."
+			Type "File"
+			Filter "Null Files (*.null)|*.null|Text Files (*.txt)|*.txt"
+		}
+
+		Parameter
+		{
+			Name "Wad Config Path"
+			Flag "-wadcfgfile"
+			Description "Manually specify the path to the directory containing the wad.cfg file instead of using the default folder."
+			Type "Folder"
+		}
+	}
+
+	Tool
+	{
+		Name "BSP"
+		Description "Binary Space Partition"
+		Order "2"
+        Enabled "True"
+
+		Parameter
+		{
+			Name "Leak Only"
+			Flag "-leakonly"
+			Description "Check for leaks only, don't do full compile."
+		}
+
+		Parameter
+		{
+			Name "No Optimization"
+			Flag "-noopt"
+			Description "Skip plane optimization for the output bsp."
+		}
+
+		Parameter
+		{
+			Name "No Fill"
+			Flag "-nofill"
+			Description "Don't fill the outside of the map. This shouldn't be used in final compiles."
+		}
+
+		Parameter
+		{
+			Name "No Inside Fill"
+			Flag "-noinsidefill"
+			Description "Don't fill empty spaces inside the map. This shouldn't be used in final compiles."
+		}
+
+		Parameter
+		{
+			Name "No Clip"
+			Flag "-noclip"
+			Description "Don't create the clipping hull"
+		}
+
+		Parameter
+		{
+			Name "No Hull 2"
+			Flag "-nohull2"
+			Description "Don't generate Hull 2 (hull for large monsters)"
+		}
+
+		Parameter
+		{
+			Name "View Portals"
+			Flag "-viewportal"
+			Description "Show portal boundaries in the generated PTS file"
+		}
+
+		Parameter
+		{
+			Name "No T-Junction"
+			Flag "-notjunc"
+			Description "Don't break edges on t-junctions. This shouldn't be used in final compiles."
+		}
+
+		Parameter
+		{
+			Name "Max Node Size"
+			Flag "-maxnodesize"
+			Description "Set the maximum portal node size."
+			Type "Decimal"
+			Value "1024"
+			Min "64"
+			Max "8192"
+		}
+
+		Parameter
+		{
+			Name "Subdivide"
+			Flag "-subdivide"
+			Description "Set the face subdivide size. This shouldn't be set below 240."
+			Type "Decimal"
+			Value "240"
+			Min "64"
+			Max "512"
+		}
+
+		Parameter
+		{
+			Name "No Null Textures"
+			Flag "-nonulltex"
+			Description "Disable NULL texture stripping"
+		}
+
+		Parameter
+		{
+			Name "Don't Smooth Brinks"
+			Flag "-nobrink"
+			Description "Disable smoothing of brinks (not for final compiles)"
+		}
+
+		Parameter
+		{
+			Name "No Clip Node Merge"
+			Flag "-noclipnodemerge"
+			Description "Don't optimize clipnodes"
+		}
+	}
+	
+	Tool
+	{
+		Name "VIS"
+		Description "Visibility Index Set"
+		Order "3"
+        Enabled "True"
+		
+		Parameter
+		{
+			Name "Max Distance"
+			Flag "-maxdistance"
+			Description "Set the maximum visibility distance."
+			Type "Decimal"
+			Precision "0"
+			Value "0"
+			Min "0"
+		}
+
+		Parameter
+		{
+			Name "Full Vis"
+			Flag "-full"
+			Description "Run a full vis pass. Good for final compiles."
+		}
+
+		Parameter
+		{
+			Name "Fast Vis"
+			Flag "-fast"
+			Description "Run a fast vis pass. Good for quickly testing changes."
+		}
+	}
+	
+	Tool
+	{
+		Name "RAD"
+		Description "Radiosity"
+		Order "4"
+        Enabled "True"
+		
+		Parameter
+		{
+			Name "Fast"
+			Flag "-fast"
+			Description "Run in fast mode (good for quick low-quality previews)"
+		}
+		
+		Parameter
+		{
+			Name "Circus"
+			Flag "-circus"
+			Description "Enable circus mode for locating unlit lightmaps."
+		}
+
+		Parameter
+		{
+			Name "Custom Shadows"
+			Flag "-customshadowwithbounce"
+			Description "Enable custom shadows for bounced light."
+		}
+
+		Parameter
+		{
+			Name "Color Custom Shadows"
+			Flag "-rgbtransfers"
+			Description "Enables RGB transfers (must enable custom shadows)."
+		}
+
+		Parameter 
+		{
+			Name "Dump Light Patches"
+			Flag "-dump"
+			Description "Dumps light patches to a file for hlrad debugging info."
+		}
+
+		Parameter
+		{
+			Name "Extra"
+			Flag "-extra"
+			Description "Improve appearance of lighting by performing extra sampling."
+		}
+
+		Parameter
+		{
+			Name "Incremental"
+			Flag "-incremental"
+			Description "Use or create an incremental transfer list file."
+		}
+
+		Parameter
+		{
+			Name "No Linear Interpolation"
+			Flag "-nolerp"
+			Description "Use nearest-point sampling instead of multi-point interpolation."
+		}
+
+		Parameter
+		{
+			Name "No Opaque Entities"
+			Flag "-nopaque"
+			Description "Disable all entities using zhlt_lightflags 2 to block light."
+		}
+
+		Parameter
+		{
+			Name "No Sky Fix"
+			Flag "-noskyfix"
+			Description "Disable light_environment being global."
+		}
+
+		Parameter
+		{
+			Name "No Texture Scale"
+			Flag "-notexscale"
+			Description "Do not scale radiosity patches with texture scale."
+		}
+
+		Parameter
+		{
+			Name "Use Sparse Vis Matrix"
+			Flag "-sparse"
+			Description "Use a sparse vismatrix, which consumes less memory."
+		}
+
+		Parameter
+		{
+			Name "Disable Vis Matrix"
+			Flag "-nomatrix"
+			Description "Disable use of the vismatrix entirely, further reducing memory requirements."
+		}
+
+		Parameter
+		{
+			Name "No Spread"
+			Flag "-nospread"
+			Description "Disable sunlight spread angles"
+		}
+
+		Parameter
+		{
+			Name "No Emitter Range"
+			Flag "-noemitterrange"
+			Description "Don't fix pointy texlights."
+		}
+
+		Parameter
+		{
+			Name "No Textures"
+			Flag "-notextures"
+			Description "Don't load textures."
+		}
+
+		Parameter
+		{
+			Name "Bounce"
+			Flag "-bounce"
+			Description "Set number of radiosity bounces."
+			Type "Decimal"
+			Precision "0"
+			Value "1"
+			Min "0"
+		}
+
+		Parameter
+		{
+			Name "Chop"
+			Flag "-chop"
+			Description "Set radiosity patch size for normal textures."
+			Type "Decimal"
+			Value "64"
+			Min "1"
+		}
+
+		Parameter
+		{
+			Name "Coring"
+			Flag "-coring"
+			Description "Set lighting threshold before blackness."
+			Type "Decimal"
+			Value "1"
+			Min "0"
+		}
+
+		Parameter
+		{
+			Name "Direct Light"
+			Flag "-dlight"
+			Description "Set direct lighting threshold."
+			Type "Decimal"
+			Value "25"
+			Min "0"
+		}
+
+		Parameter
+		{
+			Name "Fade"
+			Flag "-fade"
+			Description "Set global fade (larger values create shorter lights)."
+			Type "Decimal"
+			Value "1"
+			Min "0"
+		}
+
+		Parameter
+		{
+			Name "Gamma"
+			Flag "-gamma"
+			Description "Set global gamma value."
+			Type "Decimal"
+			Value "0.5"
+			Min "0"
+		}
+
+		Parameter
+		{
+			Name "Texture Reflect Gamma"
+			Flag "-texreflectgamma"
+			Description "Set texture reflectivity gamma"
+			Type "Decimal"
+			Value "0.5"
+			Min "0"
+		}
+
+		Parameter
+		{
+			Name "Texture Reflect Scale"
+			Flag "-texreflectscale"
+			Description "Set texture reflectivity scale"
+			Type "Decimal"
+			Value "2.0"
+			Min "0"
+		}
+
+		Parameter
+		{
+			Name "Min Light"
+			Flag "-minlight"
+			Description "Set minimum light intensity value."
+			Type "Decimal"
+			Precision "0"
+			Value "0"
+			Min "0"
+			Max "255"
+		}
+
+		Parameter
+		{
+			Name "Scale"
+			Flag "-scale"
+			Description "Set global light scaling value."
+			Type "Decimal"
+			Value "1"
+			Min "0"
+		}
+
+		Parameter
+		{
+			Name "Sky"
+			Flag "-sky"
+			Description "Set ambient sunlight contribution in the shade outside."
+			Type "Decimal"
+			Value "0.5"
+			Min "0"
+		}
+
+		Parameter
+		{
+			Name "Smooth"
+			Flag "-smooth"
+			Description "Set smoothing threshold for blending (in degrees)."
+			Type "Decimal"
+			Value "50"
+			Min "0"
+			Max "180"
+		}
+
+		Parameter
+		{
+			Name "Smooth 2"
+			Flag "-smooth2"
+			Description "Set smoothing threshold between different textures"
+			Type "Decimal"
+			Value "50"
+			Min "0"
+			Max "180"
+		}
+
+		Parameter
+		{
+			Name "Texture Chop"
+			Flag "-texchop"
+			Description "Set radiosity patch size for texture light faces."
+			Type "Decimal"
+			Value "32"
+			Min "1"
+		}
+
+		Parameter
+		{
+			Name "Limiter"
+			Flag "-limiter"
+			Description "Set light clipping threshold (-1 = None)"
+			Type "Decimal"
+			Precision "0"
+			Value "-1"
+			Min "-1"
+		}
+
+		Parameter
+		{
+			Name "Blur"
+			Flag "-blur"
+			Description "Enlarge lightmap sample to blur the lightmap"
+			Type "Decimal"
+			Value "1"
+			Min "1"
+		}
+
+		Parameter
+		{
+			Name "No Blur Bleed Fix"
+			Flag "-nobleedfix"
+			Description "Don't fix wall bleeding problem for large blur value."
+		}
+
+		Parameter
+		{
+			Name "Draw Sample"
+			Flag "-drawsample"
+			Description "Export light sample positions in an area to a sample.pts file."
+			Type "String"
+			Value "x y z r"
+		}
+
+		Parameter
+		{
+			Name "Draw Patch"
+			Flag "-drawpatch"
+			Description "Export light patch positions to a patch.pts file."
+		}
+
+		Parameter
+		{
+			Name "Draw Edge"
+			Flag "-drawedge"
+			Description "Export smooth edge positions to an edge.pts file."
+		}
+
+		Parameter
+		{
+			Name "Draw Lerp"
+			Flag "-drawlerp"
+			Description "Show bounce light triangulation status"
+		}
+
+		Parameter
+		{
+			Name "Draw Nudge"
+			Flag "-drawnudge"
+			Description "Show nudged samples."
+		}
+
+		Parameter
+		{
+			Name "Draw Overload"
+			Flag "-drawoverload"
+			Description "Highlight fullbright spots in the map."
+		}
+
+		Parameter
+		{
+			Name "Compress"
+			Flag "-compress"
+			Description "Specify compress transfer type"
+			Type "Choice"
+			Options "32 Bit,16 Bit,8 Bit"
+			OptionValues "0,1,2"
+		}
+
+		Parameter
+		{
+			Name "RBG Compress"
+			Flag "-rgbcompress"
+			Description "Specify compress rgb transfer type"
+			Type "Choice"
+			Options "96 Bit,48 Bit,32 Bit,24 Bit"
+			OptionValues "0,1,2,3"
+		}
+		
+		Parameter
+		{
+			Name "Soft Sky"
+			Flag "-softsky"
+			Description "Enable or disable skylight smoothing."
+			Type "Choice"
+			Options "Off,On"
+			OptionValues "0,1"
+		}
+
+		Parameter
+		{
+			Name "Block Opaque"
+			Flag "-blockopaque"
+			Description "Enable or disable removal of black areas around opaque entities."
+			Type "Choice"
+			Options "Off,On"
+			OptionValues "0,1"
+		}
+
+		Parameter
+		{
+			Name "Depth"
+			Flag "-depth"
+			Description "Specify thickness of translucent objects"
+			Type "Decimal"
+			Min "0.1"
+			Value "1"
+		}
+
+		Parameter
+		{
+			Name "Lights file"
+			Flag "-lights"
+			Description "Specify a custom path to the lights.rad file."
+			Type "File"
+			Filter "Radiosity Files (*.rad)|*.rad|Text Files (*.txt)|*.txt"
+		}
+
+		Parameter
+		{
+			Name "Ambient Light"
+			Flag "-ambient"
+			Description "Set ambient world light."
+			Type "ColourFloat"
+			Value "0 0 0"
+		}
+
+		Parameter
+		{
+			Name "Gamma Color"
+			Flag "-colourgamma"
+			Description "Sets different gamma values for r, g, b."
+			Type "ColourFloat"
+			Value "0 0 0"
+		}
+
+		Parameter
+		{
+			Name "Jitter"
+			Flag "-jitter"
+			Description "Adds noise, monochromatic, for dithering."
+			Type "Colour"
+			Value "0 0 0"
+		}
+
+		Parameter
+		{
+			Name "Jitter Color"
+			Flag "-colourjitter"
+			Description "Adds noise, independent colours, for dithering."
+			Type "Colour"
+			Value "0 0 0"
+		}
+
+		Parameter
+		{
+			Name "Scale Color"
+			Flag "-colourscale"
+			Description "Sets different lightscale values for r, g ,b."
+			Type "ColourFloat"
+			Value "0 0 0"
+		}
+	}
+	
+	
+	Tool
+	{
+		Name "Shared"
+		Description "Options shared between all tools"
+		Order "5"
+        Enabled "True"
+		
+		Parameter
+		{
+			Name "Chart"
+			Flag "-chart"
+			Description "Enable BSP statistics chart."
+		}
+		
+		Parameter
+		{
+			Name "Estimate"
+			Flag "-estimate"
+			Description "Display progress estimates during compile. Not very accurate."
+		}
+		
+		Parameter
+		{
+			Name "No Info"
+			Flag "-noinfo"
+			Description "Disable printing of the table of current settings when each tool starts."
+		}
+		
+		Parameter
+		{
+			Name "No Log"
+			Flag "-nolog"
+			Description "Don't generate the .log and .err files."
+		}
+		
+		Parameter
+		{
+			Name "Verbose"
+			Flag "-verbose"
+			Description "Use verbose output. Shows extra informational messages which may or may not be important."
+		}
+		
+		Parameter
+		{
+			Name "Low Priority"
+			Flag "-low"
+			Enabled "True"
+			Description "Tools run in low priority. Lets you do other stuff while the compile process is happening."
+		}
+		
+		Parameter
+		{
+			Name "High Priority"
+			Flag "-high"
+			Description "Tools run in high priority. Melts your CPU and turns your operating system into a frozen screen until the compile finishes."
+		}
+		
+		Parameter
+		{
+			Name "Texture Data"
+			Flag "-texdata"
+			Description "Set the maximum texture memory limit in kB"
+			Type "Decimal"
+			Precision "0"
+			Value "4096"
+			Min "2048"
+		}
+		
+		Parameter
+		{
+			Name "Light Data"
+			Flag "-lightdata"
+			Description "Set the maximum lightmap memory limit in kB"
+			Type "Decimal"
+			Precision "0"
+			Value "6144"
+			Min "2048"
+		}
+		
+		Parameter
+		{
+			Name "Threads"
+			Flag "-threads"
+			Description "Manually specify the number of threads to run on."
+			Type "Decimal"
+			Precision "0"
+			Value "1"
+			Min "1"
+		}
+		
+		Parameter
+		{
+			Name "Developer"
+			Flag "-dev"
+			Description "Compile with developer messages. You probably don't need this."
+			Type "Choice"
+			Value "Error"
+			Options "Off,Error,Warning,Info,Fluff,Spam,MegaSpam"
+			OptionValues "0,1,2,3,4,5,6"
+		}
+	}
+}

@@ -1,0 +1,390 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F5715CFA-8F04-4892-A1EF-C3E2C3017750}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sledge.BspEditor.Tools</RootNamespace>
+    <AssemblyName>Sledge.BspEditor.Tools</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>CS4014</NoWarn>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActiveToolOverlayRenderable.cs" />
+    <Compile Include="BaseTool.cs" />
+    <Compile Include="Brush\Brushes\ArchBrush.cs" />
+    <Compile Include="Brush\Brushes\BlockBrush.cs" />
+    <Compile Include="Brush\Brushes\ConeBrush.cs" />
+    <Compile Include="Brush\Brushes\Controls\BooleanControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\BooleanControl.Designer.cs">
+      <DependentUpon>BooleanControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\BrushControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\FontChooserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\FontChooserControl.Designer.cs">
+      <DependentUpon>FontChooserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\NumericControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\NumericControl.Designer.cs">
+      <DependentUpon>NumericControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\TextControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\Brushes\Controls\TextControl.Designer.cs">
+      <DependentUpon>TextControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\Brushes\CylinderBrush.cs" />
+    <Compile Include="Brush\Brushes\PipeBrush.cs" />
+    <Compile Include="Brush\Brushes\PyramidBrush.cs" />
+    <Compile Include="Brush\Brushes\SphereBrush.cs" />
+    <Compile Include="Brush\Brushes\TetrahedronBrush.cs" />
+    <Compile Include="Brush\Brushes\TextBrush.cs" />
+    <Compile Include="Brush\Brushes\TorusBrush.cs" />
+    <Compile Include="Brush\Brushes\WedgeBrush.cs" />
+    <Compile Include="Brush\BrushSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Brush\BrushSidebarPanel.Designer.cs">
+      <DependentUpon>BrushSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Brush\BrushTool.cs" />
+    <Compile Include="Brush\IBrush.cs" />
+    <Compile Include="CameraTool.cs" />
+    <Compile Include="Clip\ClipTool.cs" />
+    <Compile Include="Cordon\CordonBoxDraggableState.cs" />
+    <Compile Include="Cordon\CordonTool.cs" />
+    <Compile Include="Cordon\ToggleCordon.cs" />
+    <Compile Include="Decal\DecalTool.cs" />
+    <Compile Include="Draggable\BaseDraggable.cs" />
+    <Compile Include="Draggable\BaseDraggableTool.cs" />
+    <Compile Include="Draggable\BoxAction.cs" />
+    <Compile Include="Draggable\BoxDraggableState.cs" />
+    <Compile Include="Draggable\BoxResizeHandle.cs" />
+    <Compile Include="Draggable\BoxState.cs" />
+    <Compile Include="Draggable\DraggableCoordinate.cs" />
+    <Compile Include="Draggable\IDraggable.cs" />
+    <Compile Include="Draggable\IDraggableState.cs" />
+    <Compile Include="Draggable\InternalBoxResizeHandle.cs" />
+    <Compile Include="Draggable\ResizeHandle.cs" />
+    <Compile Include="Entity\EntitySidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Entity\EntitySidebarPanel.Designer.cs">
+      <DependentUpon>EntitySidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\EntityTool.cs" />
+    <Compile Include="Grid\DecreaseGrid.cs" />
+    <Compile Include="Grid\GridListMenuItemProvider.cs" />
+    <Compile Include="Grid\GridStatusItem.cs" />
+    <Compile Include="Grid\IncreaseGrid.cs" />
+    <Compile Include="Grid\SwitchGrid.cs" />
+    <Compile Include="Grid\ToggleSnapToGrid.cs" />
+    <Compile Include="MenuDataProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Selection\SelectionBoxDraggableState.cs" />
+    <Compile Include="Selection\SelectionSidebarPanel.cs" />
+    <Compile Include="Selection\SelectTool.cs" />
+    <Compile Include="Selection\SelectToolSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Selection\SelectToolSidebarPanel.Designer.cs">
+      <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Selection\ToggleIgnoreGroupingCommand.cs" />
+    <Compile Include="Selection\TransformationHandles\ITransformationHandle.cs" />
+    <Compile Include="Selection\TransformationHandles\ResizeTransformHandle.cs" />
+    <Compile Include="Selection\TransformationHandles\RotateTransformHandle.cs" />
+    <Compile Include="Selection\TransformationHandles\RotationOrigin.cs" />
+    <Compile Include="Selection\TransformationHandles\SkewTransformHandle.cs" />
+    <Compile Include="Selection\TransformationHandles\TextureTransformationType.cs" />
+    <Compile Include="Texture\ApplyActiveTexture.cs" />
+    <Compile Include="Texture\BrowseActiveTexture.cs" />
+    <Compile Include="Texture\ReplaceTextures.cs" />
+    <Compile Include="Texture\SmartEditTextureBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureApplicationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureApplicationForm.Designer.cs">
+      <DependentUpon>TextureApplicationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Texture\TextureBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureBrowser.Designer.cs">
+      <DependentUpon>TextureBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Texture\TextureListPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureReplaceDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureReplaceDialog.Designer.cs">
+      <DependentUpon>TextureReplaceDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Texture\TextureSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureSidebarPanel.Designer.cs">
+      <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Texture\TextureTool.cs" />
+    <Compile Include="Texture\TextureToolSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Texture\TextureToolSidebarPanel.Designer.cs">
+      <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ToolCursors.cs" />
+    <Compile Include="ToolInitialiser.cs" />
+    <Compile Include="ToolProcessor.cs" />
+    <Compile Include="ToolActivator.cs" />
+    <Compile Include="ToolStatusItem.cs" />
+    <Compile Include="ToolViewportListener.cs" />
+    <Compile Include="Vertex\Controls\VertexEditFaceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexEditFaceControl.Designer.cs">
+      <DependentUpon>VertexEditFaceControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexErrorsSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexErrorsSidebarPanel.Designer.cs">
+      <DependentUpon>VertexErrorsSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexPointControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexPointControl.Designer.cs">
+      <DependentUpon>VertexPointControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexScaleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexScaleControl.Designer.cs">
+      <DependentUpon>VertexScaleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Vertex\Controls\VertexSidebarPanel.Designer.cs">
+      <DependentUpon>VertexSidebarPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vertex\Errors\BackwardsFace.cs" />
+    <Compile Include="Vertex\Errors\ConcaveFace.cs" />
+    <Compile Include="Vertex\Errors\CoplanarFaces.cs" />
+    <Compile Include="Vertex\Errors\IVertexErrorCheck.cs" />
+    <Compile Include="Vertex\Errors\NonPlanarVertices.cs" />
+    <Compile Include="Vertex\Errors\OverlappingVertices.cs" />
+    <Compile Include="Vertex\Errors\VertexError.cs" />
+    <Compile Include="Vertex\Selection\MutableFace.cs" />
+    <Compile Include="Vertex\Selection\MutableSolid.cs" />
+    <Compile Include="Vertex\Selection\VertexHidden.cs" />
+    <Compile Include="Vertex\Selection\VertexSelection.cs" />
+    <Compile Include="Vertex\Selection\VertexSolid.cs" />
+    <Compile Include="Vertex\Tools\VertexFaceEditTool.cs" />
+    <Compile Include="Vertex\Tools\VertexPointTool.cs" />
+    <Compile Include="Vertex\Tools\VertexScaleTool.cs" />
+    <Compile Include="Vertex\Tools\VertexSubtool.cs" />
+    <Compile Include="Vertex\Selection\MutableVertex.cs" />
+    <Compile Include="Vertex\Tools\WrapperDraggableState.cs" />
+    <Compile Include="Vertex\VertexTool.cs" />
+    <Compile Include="Widgets\RotationWidget.cs" />
+    <Compile Include="Widgets\Widget.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sledge.BspEditor.Editing\Sledge.BspEditor.Editing.csproj">
+      <Project>{D33E1027-1956-44C4-B920-85281F703704}</Project>
+      <Name>Sledge.BspEditor.Editing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.BspEditor.Rendering\Sledge.BspEditor.Rendering.csproj">
+      <Project>{D27BB6A7-FE81-45B5-9B68-B23E4169F16D}</Project>
+      <Name>Sledge.BspEditor.Rendering</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.BspEditor\Sledge.BspEditor.csproj">
+      <Project>{37c3fe6b-16f4-431f-ab67-fba7c681ccee}</Project>
+      <Name>Sledge.BspEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
+      <Project>{5d414ac8-8b93-489f-9960-877923400fed}</Project>
+      <Name>Sledge.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
+      <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
+      <Name>Sledge.DataStructures</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
+      <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>
+      <Name>Sledge.Providers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Rendering\Sledge.Rendering.csproj">
+      <Project>{4DA7F88D-64FF-4036-8A11-6175169DA851}</Project>
+      <Name>Sledge.Rendering</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.Shell\Sledge.Shell.csproj">
+      <Project>{1e0beb41-cf2e-4f48-838e-452c1dcf575f}</Project>
+      <Name>Sledge.Shell</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Resources\Cursor_Rotate.cur" />
+    <Content Include="Resources\Menu_Cordon.png" />
+    <Content Include="Resources\Menu_IgnoreGrouping.png" />
+    <Content Include="Resources\Menu_ReplaceTextures.png" />
+    <Content Include="Resources\Tool_VM.png" />
+    <Content Include="Translations\Sledge.BspEditor.Tools.en.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Translations\Sledge.BspEditor.Tools.fr.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Brush\Brushes\Controls\BooleanControl.resx">
+      <DependentUpon>BooleanControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brush\Brushes\Controls\FontChooserControl.resx">
+      <DependentUpon>FontChooserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brush\Brushes\Controls\NumericControl.resx">
+      <DependentUpon>NumericControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brush\Brushes\Controls\TextControl.resx">
+      <DependentUpon>TextControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Brush\BrushSidebarPanel.resx">
+      <DependentUpon>BrushSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Entity\EntitySidebarPanel.resx">
+      <DependentUpon>EntitySidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Selection\SelectToolSidebarPanel.resx">
+      <DependentUpon>SelectToolSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureApplicationForm.resx">
+      <DependentUpon>TextureApplicationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureBrowser.resx">
+      <DependentUpon>TextureBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureReplaceDialog.resx">
+      <DependentUpon>TextureReplaceDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureSidebarPanel.resx">
+      <DependentUpon>TextureSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Texture\TextureToolSidebarPanel.resx">
+      <DependentUpon>TextureToolSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\VertexEditFaceControl.resx">
+      <DependentUpon>VertexEditFaceControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\VertexErrorsSidebarPanel.resx">
+      <DependentUpon>VertexErrorsSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\VertexPointControl.resx">
+      <DependentUpon>VertexPointControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\VertexScaleControl.resx">
+      <DependentUpon>VertexScaleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vertex\Controls\VertexSidebarPanel.resx">
+      <DependentUpon>VertexSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Tool_Test.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Tool_Brush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Tool_Select.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Tool_Camera.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Menu_LargerGrid.png" />
+    <Content Include="Resources\Menu_SmallerGrid.png" />
+    <Content Include="Resources\Menu_SnapToGrid.png" />
+    <Content Include="Resources\Tool_Clip.png" />
+    <Content Include="Resources\Tool_Cordon.png" />
+    <Content Include="Resources\Tool_Decal.png" />
+    <Content Include="Resources\Tool_Entity.png" />
+    <None Include="Resources\Tool_Texture.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="LogicAndTrick.Oy">
+      <Version>1.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Poly2Tri">
+      <Version>1.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Numerics.Vectors">
+      <Version>4.5.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reactive">
+      <Version>4.1.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

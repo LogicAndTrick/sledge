@@ -11,6 +11,7 @@ namespace Sledge.FileSystem
     {
         /// <summary>
         /// Traverses a file path. If the path starts with a /, it will search from the root.
+        /// If the path has a root name at the start followed by a colon, it will also search from the root.
         /// If a path contains . or .., they will be treated as the current and parent directories respectively.
         /// Otherwise, files and folders will be traversed until the end of the path.
         /// </summary>
@@ -19,13 +20,25 @@ namespace Sledge.FileSystem
         /// <returns>The file at the end of the path. Returns null if the path was not found.</returns>
         public static IFile TraversePath(this IFile file, string path)
         {
-            var f = file;
-            for (var i = 0; i < path.Split('/', '\\').Length; i++)
+            path = (path ?? "").Replace('\\', '/');
+            var idx = path.IndexOf(":", StringComparison.InvariantCulture);
+            if (idx > 0)
             {
-                var name = path.Split('/', '\\')[i];
-                if (i == 0 && name == "") while (f != null && f.Parent != null) f = f.Parent;
-                else if (name == "") throw new FileNotFoundException("Invalid path.");
+                path = path.Substring(idx + 1);
+                if (path.Length == 0 || path[0] != '/') path = '/' + path;
+            }
+            var f = file;
+            var split = path.Split('/');
+            for (var i = 0; i < split.Length; i++)
+            {
+                var name = split[i];
+                if (i == 0 && name == "")
+                {
+                    while (f != null && f.Parent != null) f = f.Parent;
+                    continue; // We've moved to the parent, start at the next path component
+                }
 
+                if (name == "") throw new FileNotFoundException("Invalid path.");
                 if (f == null) return null;
 
                 switch (name)

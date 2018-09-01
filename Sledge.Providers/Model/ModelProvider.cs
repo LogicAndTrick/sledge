@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Sledge.Common;
 using Sledge.FileSystem;
-using Sledge.Graphics.Helpers;
 
 namespace Sledge.Providers.Model
 {
@@ -70,11 +65,6 @@ namespace Sledge.Providers.Model
             {
                 var model = provider.LoadFromFile(file);
                 model.PreprocessModel();
-                for (var i = 0; i < model.Textures.Count; i++)
-                {
-                    var t = model.Textures[i];
-                    t.TextureObject = TextureHelper.Create(String.Format("ModelProvider: {0}/{1}/{2}", path, t.Name, i), t.Image, t.Image.Width, t.Image.Height, TextureFlags.None);
-                }
                 Models[path] = model;
                 return model;
             }
@@ -84,7 +74,7 @@ namespace Sledge.Providers.Model
         private static void UnloadModel(DataStructures.Models.Model model)
         {
             model.Dispose();
-            foreach (var kv in Models.Where(x => x.Value == model)) Models.Remove(kv.Key);
+            foreach (var kv in Models.Where(x => x.Value == model).ToList()) Models.Remove(kv.Key);
         }
 
         protected abstract bool IsValidForFile(IFile file);

@@ -1,0 +1,347 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.BspEditor.Editing",
+        "Language": "fr",
+        "Inherit": ""
+    },
+    "@Settings": {
+    },
+    "Commands": {
+        "EditVisgroups": {
+            "Name": "Modifier les groupes VIS",
+            "Details": "Voir et modifier les groupes VIS de la carte."
+        },
+        "OpenAboutWindow": {
+            "Name": "A propos de Sledge",
+            "Details": "Voir les informations concernant cette application."
+        },
+        "OpenSledgeWebsite": {
+            "Name": "Site internet de Sledge",
+            "Details": "Aller sur le site internet de Sledge."
+        },
+        "OpenEntityReport": {
+            "Name": "Rapport des entités",
+            "Details": "Ouvre la fenêtre de rapport des entités."
+        },
+        "OpenSelectionDetails": {
+            "Name": "Show selected brush information",
+            "Details": "Show details of the currently selected objects."
+        },
+        "OpenMapInformation": {
+            "Name": "Informations de la carte",
+            "Details": "Ouvre la fenêtre concernant les informations de la carte."
+        },
+        "OpenObjectProperties": {
+            "Name": "Propriétés de l'objet",
+            "Details": "Ouvre la fenêtre des propriétés de l'objet."
+        },
+        "OpenRootProperties": {
+            "Name": "Propriétés de la carte",
+            "Details": "Ouvre la fenêtre des propriétés de la carte."
+        },
+        "PasteSpecial": {
+            "Name": "Coller spécial...",
+            "Details": "Colle plusieurs copies avec des transformations appliquées."
+        },
+        "TieToEntity": {
+            "Name": "Lier à une entité",
+            "Details": "Crée une entité à partir des objets sélectionnés.",
+            "EntitySelectedTitle": "Entité déjà sélectionné",
+            "OneEntitySelectedMessage": "Vous avez déjà sélectionné une entité (un '{0}'), que voulez-vous faire ?\n - Garder l'entité actuelle et ajouter les objets sélectionnés à cette dernière\n - Créer une nouvelle entité et ajouter les objects sélectionnés à cette dernière",
+            "MultipleEntitiesSelectedMessage": "You have selected multiple entities, which one would you like to keep?",
+            "KeepExisting": "Garder l'existante",
+            "CreateNew": "Crée une nouvelle",
+            "OK": "OK",
+            "Cancel": "Annuler"
+        },
+        "Modification": {
+            "Carve": {
+                "Name": "Creuser (Carve)",
+                "Details": "Creuse l'objet sélectionné dans tous les blocs en collision. (Utilisez avec précaution)"
+            },
+            "Hollow": {
+                "Name": "Faire le vide (Hollow)...",
+                "Details": "Fait le vide dans les blocs sélectionnés. (Utilisez avec précaution)",
+                "PromptTitle": "Sélectionnez l'épaisseur des murs",
+                "PromptWallWidth": "Epaisseur des murs (une valeur négative travaillera en extérieur)",
+                "WarningMessage": "Ceci fera le vide dans les {0} blocs sélectionnés.",
+                "OK": "OK",
+                "Cancel": "Annuler"
+            },
+            "Transform": {
+                "Name": "Transformer...",
+                "Details": "Transforme la sélection actuelle.",
+                "ErrorCannotScaleByZeroTitle": "Il n'est pas possible d'appliquer une échelle de 0",
+                "ErrorCannotScaleByZeroMessage": "Merci de spécifier une échelle qui est différente de 0."
+            },
+            "SnapToGrid": {
+                "Name": "Attacher à la grille",
+                "Details": "Attache toute la sélection à la grille dans son intégrité."
+            },
+            "SnapToGridIndividually": {
+                "Name": "Attacher à la grille individuellement",
+                "Details": "Attache chaque objet sélectionné à la grille en tant qu'objets séparés."
+            },
+            "AlignObjectsXMin": {
+                "Name": "Aligner sur le minimum de l'axe X",
+                "Details": "Aligne les objets sélectionnés sur le minimum de l'axe X de la sélection."
+            },
+            "AlignObjectsYMin": {
+                "Name": "Aligner sur le minimum de l'axe Y",
+                "Details": "Aligne les objets sélectionnés sur le minimum de l'axe Y de la sélection."
+            },
+            "AlignObjectsZMin": {
+                "Name": "Aligner sur le minimum de l'axe Z",
+                "Details": "Aligne les objets sélectionnés sur le minimum de l'axe Z de la sélection."
+            },
+            "AlignObjectsXMax": {
+                "Name": "Aligner sur le maximum de l'axe X",
+                "Details": "Aligne les objets sélectionnés sur le maximum de l'axe X de la sélection."
+            },
+            "AlignObjectsYMax": {
+                "Name": "Aligner sur le maximum de l'axe Y",
+                "Details": "Aligne les objets sélectionnés sur le maximum de l'axe Y de la sélection."
+            },
+            "AlignObjectsZMax": {
+                "Name": "Aligner sur le maximum de l'axe Z",
+                "Details": "Aligne les objets sélectionnés sur le maximum de l'axe Z de la sélection."
+            },
+            "FlipSelectionX": {
+                "Name": "Retourner sur l'axe X",
+                "Details": "Retourne les objets sélectionnés sur l'axe X."
+            },
+            "FlipSelectionY": {
+                "Name": "Retourner sur l'axe Y",
+                "Details": "Retourne les objets sélectionnés sur l'axe Y."
+            },
+            "FlipSelectionZ": {
+                "Name": "Retourner sur l'axe Z",
+                "Details": "Retourne les objets sélectionnés sur l'axe Z."
+            }
+        },
+        "Toggles": {
+            "ToggleTextureLock": {
+                "Name": "Verrouiller les textures",
+                "Details": "Définit l'état du verrouillage des textures pour les opérations uniformes (transformation, rotation)."
+            },
+            "ToggleTextureScalingLock": {
+                "Name": "Verrouiller l'échelle des textures",
+                "Details": "Définit l'état du verrouillage des textures en cas de changement d'échelle."
+            }
+        },
+        "Pointfile": {
+            "LoadPointfile": {
+                "Name": "Charger un pointfile...",
+                "Details": "Sélectionne un fichier pointfile (.lin, .pts) généré par les outils de compilation.",
+                "InvalidPointfile": "{0} n'est un pointfile valide !"
+            },
+            "QuickLoadPointfile": {
+                "Name": "Charger rapidement un pointfile...",
+                "Details": "Recherche un fichier pointfile pour cette carte et le charge si un résultat a été trouvé.",
+                "InvalidPointfile": "{0} n'est un pointfile valide !",
+                "NoPointfileFoundTitle": "Aucun pointfile trouvé",
+                "NoPointfileFoundMessage": "Aucun pointfile n'a été trouvé. Voulez-vous parcourir pour en chercher un ?"
+            },
+            "UnloadPointfile": {
+                "Name": "Décharger le pointfile",
+                "Details": "Décharge le pointfile."
+            }
+        },
+        "View": {
+            "CenterSelectionAll": {
+                "Name": "Centrer toutes les vues sur la sélection",
+                "Details": "Déplace toutes les caméras de toutes les vues sur la sélection actuelle."
+            },
+            "CenterSelection3D": {
+                "Name": "Centrer les vues 3D sur la sélection",
+                "Details": "Déplace toutes les caméras des vues 3D sur la sélection actuelle."
+            },
+            "CenterSelection2D": {
+                "Name": "Centrer les vues 2D sur la sélection",
+                "Details": "Déplace toutes les caméras des vues 2D sur la sélection actuelle."
+            },
+            "GoToObjectID": {
+                "Name": "Aller à l'objet par son ID",
+                "Details": "Sélectionne et centre les vues sur un objet spécifique.",
+                "Title": "Saissisez l'ID de l'objet",
+                "ObjectID": "ID de l'objet",
+                "OK": "OK",
+                "Cancel": "Annuler"
+            },
+            "GoToLocation": {
+                "Name": "Aller aux coordonnées",
+                "Details": "Centre les vues sur des coordonnées spécifiques.",
+                "Title": "Saissisez les coordonnées",
+                "OK": "OK",
+                "Cancel": "Annuler"
+            },
+            "AutosizeViews": {
+                "Name": "Redimensionner automatiquement les vues",
+                "Details": "Redimensionne les vues automatiquement de manière proportionnée."
+            }
+        },
+        "Quick": {
+            "HideSelectedObjects": {
+                "Name": "Cacher les objets sélectionnés",
+                "Details": "Cache tous les objets qui sont actuellement sélectionnés."
+            },
+            "HideUnselectedObjects": {
+                "Name": "Cacher les objets non-sélectionnés",
+                "Details": "Cache tous les objets qui ne sont pas actuellemnt sélectionnés."
+            },
+            "ShowHiddenObjects": {
+                "Name": "Afficher les objets cachés",
+                "Details": "Afficher tous les objets qui sont actuellment cachés."
+            }
+        }
+    },
+    "Components": {
+        "Properties": {
+            "ObjectPropertiesDialog": {
+                "Apply": "Appliquer",
+                "OK": "OK",
+                "Cancel": "Annuler",
+                "ResetUnsavedChanges": "Réinitialiser les changements non enregistrés",
+                "UnsavedChanges": "Changements non enregistrés",
+                "DoYouWantToSaveFirst": "Il y a eu des changemnts non enregistrés. Voulez-vous les enregistrer ?"
+            },
+            "Tabs": {
+                "EmptyTab": {
+                    "NothingIsSelected": "Il y a aucune sélection actuellement."
+                },
+                "VisgroupTab": {
+                    "Name": "Groupes VIS",
+                    "MemberOfGroup": "Membre du groupe :",
+                    "EditVisgroups": "Modifier les groupes VIS"
+                },
+                "ClassInfoTab": {
+                    "Name": "Informations sur la classe",
+                    "ClassLabel": "Classe :",
+                    "KeyValuesLabel": "Paires clé/valeur :",
+                    "PropertyNameLabel": "Nom de la propriété",
+                    "PropertyValueLabel": "Valeur",
+                    "HelpLabel": "Aide :",
+                    "CommentsLabel": "Commentaires :",
+                    "SmartEditButton": "Modifications intelligente",
+                    "HelpButton": "Aide",
+                    "CopyButton": "Copier",
+                    "PasteButton": "Coller",
+                    "AddButton": "Ajouter",
+                    "DeleteButton": "Supprimer",
+                    "MultipleClassesText": "<classes multiple>",
+                    "MultipleValuesText": "<valeurs multiple>"
+                },
+                "FlagsTab": {
+                    "Name": "Drapeaux"
+                }
+            },
+            "SmartEdit": {
+                "SmartEditFileBrowser": {
+                    "Browse": "Parcourir...",
+                    "Preview": "Prévisualiser"
+                }
+            }
+        },
+        "Visgroup": {
+            "VisgroupEditForm": {
+                "Title": "Editeur de groupes VIS",
+                "NameLabel": "Nom",
+                "ColorLabel": "Couleur (cliquez pour changer)",
+                "AddButton": "Ajouter un groupe",
+                "RemoveButton": "Supprimer le groupe",
+                "OkButton": "OK",
+                "CancelButton": "Annuler"
+            },
+            "VisgroupSidebarPanel": {
+                "EditButton": "Modifier",
+                "SelectButton": "Sélectionner",
+                "ShowAllButton": "Tout afficher",
+                "NewButton": "Nouveau",
+                "AutoVisgroups": "Automatique"
+            }
+        },
+        "AboutDialog": {
+        },
+        "CheckForProblemsDialog": {
+            "Title": "Problèmes dans la carte",
+            "Details": "Détails",
+            "GoToError": "Aller à l'erreur",
+            "FixError": "Corriger l'erreur",
+            "FixAllOfType": "Corriger tous les problèmes du même type",
+            "FixAll": "Corriger tous les problèmes",
+            "VisibleObjectsOnly": "Objets visible uniquement",
+            "CloseButton": "Fermer"
+        },
+        "PasteSpecialDialog": {
+            "Title": "Coller spécial",
+            "NumberOfCopies": "Nombre de copies à coller :",
+            "StartPoint": "Point de départ",
+            "StartAtOrigin": "Démarrer à l'origine de la carte",
+            "StartAtCenterOfOriginal": "Démarrer à l'origine de l'objet original",
+            "StartAtCenterOfSelection": "Démarrer au centre de la sélection",
+            "Grouping": "Groupage",
+            "NoGrouping": "Pas de groupage",
+            "GroupIndividual": "Grouper les copies individuellement",
+            "GroupAll": "Grouper toutes les copies",
+            "Offset": "Décalage (accumulé)",
+            "Rotation": "Rotation (accumulé)",
+            "MakeEntityNamesUnique": "Rendre les noms des entités uniques",
+            "PrevixEntityNames": "Préfixer les noms des entités par :",
+            "OK": "OK",
+            "Cancel": "Annuler"
+        },
+        "TransformDialog": {
+            "Title": "Transformer",
+            "Source": "Source",
+            "Rotate": "Pivioter",
+            "Translate": "Translater",
+            "Scale": "Echelle",
+            "OK": "OK",
+            "Cancel": "Annuler"
+        },
+        "Compile": {
+            "CompileOutputComponent": {
+                "Title": "Compiler",
+                "CompileCompletedSuccessfully": "La compilation est un succès.",
+                "CompileFailed": "La compilation a échoué. Consultez le journal des messages pour voir les détails."
+            },
+            "CompileDialog": {
+
+            }
+        },
+        "EntityReportDialog": {
+            "Title": "Rapport des entités",
+            "ClassHeader": "Classe",
+            "NameHeader": "Nom",
+            "GoTo": "Aller à",
+            "Delete": "Supprimer",
+            "Properties": "Propriétés",
+            "FollowSelection": "Suivre la sélection",
+            "Filter": "Filtrer",
+            "ShowAll": "Tout montrer",
+            "ShowPoint": "Entités point uniquement",
+            "ShowBrush": "Entités blocs uniquement",
+            "IncludeHidden": "Inclure les objets cachés",
+            "FilterByKeyValue": "Filtrer par clé/valeur :",
+            "Exact": "Exact",
+            "FilterByClass": "Filtrer par classe",
+            "ResetFilters": "Réinitialiser les filtres",
+            "Close": "Fermer"
+        },
+        "MapInformationDialog": {
+            "Title": "Information de la carte",
+            "Solids": "Blocs",
+            "Faces": "Faces",
+            "PointEntities": "Entités points",
+            "SolidEntities": "Entités blocs",
+            "UniqueTextures": "Textures uniques",
+            "TextureMemory": "Mémoire de textures",
+            "TexturePackagesUsed": "Packs de textures utilisés",
+            "CloseButton": "Fermer",
+            "CalculatingTextureMemoryUsage": "Calcul en cours..."
+        },
+        "SelectionDetailsDialog": {
+            "Title": "Détails de la sélection"
+        }
+    }
+}

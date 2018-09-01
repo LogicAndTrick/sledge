@@ -7,34 +7,35 @@ using Sledge.DataStructures.GameData;
 
 namespace Sledge.Providers.GameData
 {
-    public class FgdProvider : GameDataProvider
+    public class FgdProvider
     {
         private String CurrentFile { get; set; }
 
-        protected override bool IsValidForFile(string filename)
+        public DataStructures.GameData.GameData OpenFile(string filename)
         {
-            return filename.EndsWith(".fgd", true, CultureInfo.InvariantCulture);
+            return GetFromFile(filename);
         }
 
-        protected override bool IsValidForStream(Stream stream)
-        {
-            // not really any way of knowing
-            return true;
-        }
-
-        protected override DataStructures.GameData.GameData GetFromFile(string filename)
+        private DataStructures.GameData.GameData GetFromFile(string filename)
         {
             if (!File.Exists(filename)) throw new ProviderException("File does not exist: " + filename);
             CurrentFile = filename;
-            var parsed = base.GetFromFile(filename);
+
+            DataStructures.GameData.GameData parsed;
+
+            using (var s = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                parsed = GetFromStream(s);
+            }
+
             CurrentFile = null;
             return parsed;
         }
 
-        protected override DataStructures.GameData.GameData GetFromStream(Stream stream)
+        private DataStructures.GameData.GameData GetFromStream(Stream stream)
         {
             var lex = Lex(new StreamReader(stream));
-            return Parse(lex.Where(l => l.Type != LexType.Comment));
+            return Parse(lex.Where(l => l.Type != LexType.Comment).ToList());
         }
 
         private DataStructures.GameData.GameData Parse(IEnumerable<LexObject> lex)
@@ -66,7 +67,7 @@ namespace Sledge.Providers.GameData
                     var incfile = Path.Combine(path, filename);
 
                     var current = CurrentFile;
-                    var incgd = GetGameDataFromFile(incfile);
+                    var incgd = GetFromFile(incfile);
                     CurrentFile = current;
 
                     if (!gd.Includes.Any(x => String.Equals(x, filename, StringComparison.InvariantCultureIgnoreCase))) gd.Includes.Add(filename);
@@ -186,7 +187,7 @@ namespace Sledge.Providers.GameData
                     }
                     iterator.MoveNext();
                 }
-                // = class_name : "Descr" + "iption" [
+                // = class_name : "Descr" + "iption" : "Additional information" [
                 Assert(iterator.Current, iterator.Current.Type == LexType.Equals, "Expected equals, got " + iterator.Current.Type);
                 Expect(iterator, LexType.Value);
                 gdo.Name = iterator.Current.Value;
@@ -197,6 +198,12 @@ namespace Sledge.Providers.GameData
                     // : {"Descr" + "iption"} [
                     iterator.MoveNext();
                     gdo.Description = ParsePlusString(iterator);
+                }
+                if (iterator.Current.Type == LexType.Colon)
+                {
+                    // Check for additional information
+                    iterator.MoveNext();
+                    gdo.AdditionalInformation = ParsePlusString(iterator);
                 }
                 Assert(iterator.Current, iterator.Current.Type == LexType.OpenBracket, "Unexpected " + iterator.Current.Type);
 
@@ -289,6 +296,8 @@ namespace Sledge.Providers.GameData
                             // Parsing property options:
                             // value : description
                             // value : description : 0
+                            // value : description : 0 : "long description"
+                            // value : description : "long description"
                             iterator.MoveNext();
                             while (iterator.Current.IsValueOrString())
                             {
@@ -308,17 +317,36 @@ namespace Sledge.Providers.GameData
                                 else
                                 {
                                     opt.Description = iterator.Current.GetValue();
-                                    iterator.MoveNext();
-                                        // ParsePlusString moves next once it's complete, need to do the same here
+                                    iterator.MoveNext(); // ParsePlusString moves next once it's complete, need to do the same here
                                 }
 
                                 prop.Options.Add(opt);
+
                                 if (iterator.Current.Type != LexType.Colon)
                                 {
                                     continue;
                                 }
-                                Expect(iterator, LexType.Value);
-                                opt.On = iterator.Current.Value == "1";
+
+                                // There's a default value, a long description, or both
+                                iterator.MoveNext();
+                                if (iterator.Current.Type == LexType.Value)
+                                {
+                                    // If we have a value, it's the flag default
+                                    opt.On = iterator.Current.Value == "1";
+                                    iterator.MoveNext();
+
+                                    // If we find another colon, there's a long description present as well
+                                    // Otherwise we're finished here
+                                    if (iterator.Current.Type == LexType.Colon) iterator.MoveNext();
+                                    else continue;
+                                }
+                                // Assert without moving next
+                                if (iterator.Current.Type != LexType.String)
+                                {
+                                    throw new ProviderException("Unable to parse FGD. Expected " + LexType.String + ", got " + iterator.Current.Type + ".\n" +
+                                                                "On line " + iterator.Current.LineNumber + ", character " + iterator.Current.CharacterNumber);
+                                }
+                                opt.LongDescription = iterator.Current.GetValue();
                                 iterator.MoveNext();
                             }
                             Assert(iterator.Current, iterator.Current.Type == LexType.CloseBracket, "Unexpected " + iterator.Current.Type);

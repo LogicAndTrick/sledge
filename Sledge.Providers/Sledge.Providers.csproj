@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sledge.Providers</RootNamespace>
     <AssemblyName>Sledge.Providers</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -30,52 +33,46 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=0.9.9.3, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenTK.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameData\FgdGameDataProvider.cs" />
     <Compile Include="GameData\FgdProvider.cs" />
-    <Compile Include="GameData\GameDataProvider.cs" />
+    <Compile Include="GameData\IGameDataProvider.cs" />
     <Compile Include="GenericStructure.cs" />
-    <Compile Include="BinaryExtensions.cs" />
-    <Compile Include="Map\MapFormatProvider.cs" />
-    <Compile Include="Map\MapProvider.cs" />
-    <Compile Include="Map\ObjProvider.cs" />
-    <Compile Include="Map\VmfProvider.cs" />
-    <Compile Include="Model\MdlProvider.cs" />
-    <Compile Include="Model\ModelProvider.cs" />
-    <Compile Include="Model\ModelReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderException.cs" />
     <Compile Include="ProviderNotFoundException.cs" />
-    <Compile Include="Map\RmfProvider.cs" />
+    <Compile Include="Texture\MultiTextureStreamSource.cs" />
+    <Compile Include="Texture\ITexturePackageProvider.cs" />
+    <Compile Include="Texture\Spr\SpriteRenderMode.cs" />
+    <Compile Include="Texture\Spr\SprTexturePackage.cs" />
+    <Compile Include="Texture\Spr\SprStreamSource.cs" />
+    <Compile Include="Texture\Spr\SprTexturePackageProvider.cs" />
+    <Compile Include="Texture\TextureFlags.cs" />
+    <Compile Include="Texture\TexturePackageReference.cs" />
     <Compile Include="Texture\NullTextureStreamSource.cs" />
     <Compile Include="Texture\TextureSubItemType.cs" />
-    <Compile Include="Texture\VmtProvider.cs" />
-    <Compile Include="Texture\SpriteOrientation.cs" />
-    <Compile Include="Texture\SprProvider.cs" />
-    <Compile Include="Texture\TextureCollection.cs" />
+    <Compile Include="Texture\Spr\SpriteOrientation.cs" />
     <Compile Include="Texture\TextureItem.cs" />
     <Compile Include="Texture\TexturePackage.cs" />
-    <Compile Include="Texture\TextureProvider.cs" />
     <Compile Include="Texture\ITextureStreamSource.cs" />
     <Compile Include="Texture\TextureSubItem.cs" />
-    <Compile Include="Texture\Vtf\VtfImageFormat.cs" />
-    <Compile Include="Texture\Vtf\VtfImageFlag.cs" />
-    <Compile Include="Texture\Vtf\VtfProvider.cs" />
-    <Compile Include="Texture\WadProvider.cs" />
+    <Compile Include="Texture\Wad\WadTexturePackage.cs" />
+    <Compile Include="Texture\Wad\WadTexturePackageProvider.cs" />
+    <Compile Include="Texture\Wad\Format\WadEntry.cs" />
+    <Compile Include="Texture\Wad\Format\WadEntryType.cs" />
+    <Compile Include="Texture\Wad\Format\WadImageStream.cs" />
+    <Compile Include="Texture\Wad\Format\WadPackage.cs" />
+    <Compile Include="Texture\Wad\Format\WadPackageStreamSource.cs" />
+    <Compile Include="Texture\Wad\WadTextureStreamSourceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
@@ -90,19 +87,23 @@
       <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>
       <Name>Sledge.FileSystem</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sledge.Graphics\Sledge.Graphics.csproj">
-      <Project>{614D4144-8920-4975-AC67-DBBA5CB1EB43}</Project>
-      <Name>Sledge.Graphics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sledge.Packages\Sledge.Packages.csproj">
       <Project>{BB1AF818-8CCA-4BC8-A4A8-B7A0627B68DD}</Project>
       <Name>Sledge.Packages</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sledge.Rendering\Sledge.Rendering.csproj">
+      <Project>{4da7f88d-64ff-4036-8a11-6175169da851}</Project>
+      <Name>Sledge.Rendering</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Map\RMF22.txt" />
+    <PackageReference Include="System.Numerics.Vectors">
+      <Version>4.5.0</Version>
+    </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
