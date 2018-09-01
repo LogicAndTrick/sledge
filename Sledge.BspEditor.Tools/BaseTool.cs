@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
@@ -46,65 +47,59 @@ namespace Sledge.BspEditor.Tools
             return snap && grid != null ? grid.Snap(c) : c.Snap(1);
         }
 
-        public Vector3 SnapToSelection(Vector3 c, MapViewport vp)
+        public Vector3 SnapToSelection(Vector3 c, OrthographicCamera camera)
         {
             var gridData = Document.Map.Data.GetOne<GridData>();
             var snap = !KeyboardState.Alt && gridData?.SnapToGrid == true;
-            if (!snap) return c;
+            if (!snap) return c.Snap(1);
 
-            var grid = gridData?.Grid;
-            var snapped = grid != null ? grid.Snap(c) : c;
-
+            var snapped = gridData.Grid?.Snap(c) ?? c.Snap(1);
             if (Document.Selection.IsEmpty) return snapped;
 
-            return c;
-            // todo !snap
+            // Try and snap the the selection box center
+            var selBox = Document.Selection.GetSelectionBoundingBox();
+            var selCenter = camera.Flatten(selBox.Center);
+            if (Math.Abs(selCenter.X - c.X) < selBox.Width / 10 && Math.Abs(selCenter.Y - c.Y) < selBox.Height / 10) return selCenter;
 
-            //// Try and snap the the selection box center
-            //var selBox = Document.Selection.GetSelectionBoundingBox();
-            //var selCenter = vp.Flatten(selBox.Center);
-            //if (DMath.Abs(selCenter.X - c.X) < selBox.Width / 10 && DMath.Abs(selCenter.Y - c.Y) < selBox.Height / 10) return selCenter;
+            var objects = Document.Selection.ToList();
 
-            //var objects = Document.Selection.GetSelectedObjects().ToList();
+            // Try and snap to an object center
+            foreach (var mo in objects)
+            {
+                if (mo is Group || mo is Root) continue;
+                var center = camera.Flatten(mo.BoundingBox.Center);
+                if (Math.Abs(center.X - c.X) >= mo.BoundingBox.Width / 10f) continue;
+                if (Math.Abs(center.Y - c.Y) >= mo.BoundingBox.Height / 10f) continue;
+                return center;
+            }
 
-            //// Try and snap to an object center
-            //foreach (var mo in objects)
-            //{
-            //    if (!(mo is Entity) && !(mo is Solid)) continue;
-            //    var center = vp.Flatten(mo.BoundingBox.Center);
-            //    if (DMath.Abs(center.X - c.X) >= mo.BoundingBox.Width / 10) continue;
-            //    if (DMath.Abs(center.Y - c.Y) >= mo.BoundingBox.Height / 10) continue;
-            //    return center;
-            //}
+            // Get all the edges of the selected objects
+            var lines = objects
+                .SelectMany(x => x.GetPolygons())
+                .SelectMany(x => x.GetLines())
+                .Select(x => new Line(camera.Flatten(x.Start), camera.Flatten(x.End)))
+                .ToList();
 
-            //// Get all the edges of the selected objects
-            //var lines = objects.SelectMany(x =>
-            //{
-            //    if (x is Entity) return x.BoundingBox.GetBoxLines();
-            //    if (x is Solid) return ((Solid) x).Faces.SelectMany(f => f.GetLines());
-            //    return new Line[0];
-            //}).Select(x => new Line(vp.Flatten(x.Start), vp.Flatten(x.End))).ToList();
+            // Try and snap to an edge
+            var closest = snapped;
+            foreach (var line in lines)
+            {
+                // if the line and the grid are in the same spot, return the snapped point
+                if (line.ClosestPoint(snapped).EquivalentTo(snapped)) return snapped;
 
-            //// Try and snap to an edge
-            //var closest = snapped;
-            //foreach (var line in lines)
-            //{
-            //    // if the line and the grid are in the same spot, return the snapped point
-            //    if (line.ClosestPoint(snapped).EquivalentTo(snapped)) return snapped;
+                // Test for corners and midpoints within a 10% tolerance
+                var pointTolerance = (line.End - line.Start).Length() / 10;
+                if ((line.Start - c).Length() < pointTolerance) return line.Start;
+                if ((line.End - c).Length() < pointTolerance) return line.End;
 
-            //    // Test for corners and midpoints within a 10% tolerance
-            //    var pointTolerance = (line.End - line.Start).VectorMagnitude() / 10;
-            //    if ((line.Start - c).VectorMagnitude() < pointTolerance) return line.Start;
-            //    if ((line.End - c).VectorMagnitude() < pointTolerance) return line.End;
+                var center = (line.Start + line.End) / 2;
+                if ((center - c).Length() < pointTolerance) return center;
 
-            //    var center = (line.Start + line.End) / 2;
-            //    if ((center - c).VectorMagnitude() < pointTolerance) return center;
-
-            //    // If the line is closer to the grid point, return the line
-            //    var lineSnap = line.ClosestPoint(c);
-            //    if ((closest - c).VectorMagnitude() > (lineSnap - c).VectorMagnitude()) closest = lineSnap;
-            //}
-            //return closest;
+                // If the line is closer to the grid point, return the line
+                var lineSnap = line.ClosestPoint(c);
+                if ((closest - c).Length() > (lineSnap - c).Length()) closest = lineSnap;
+            }
+            return closest;
         }
 
         protected Vector3? GetNudgeValue(Keys k)
@@ -382,7 +377,7 @@ namespace Sledge.BspEditor.Tools
 
         protected virtual void Invalidate()
         {
-            // todo
+            // todo BETA: investigate adding invalidation back into BaseTool rendering
         }
 
         public virtual void Render(BufferBuilder builder)

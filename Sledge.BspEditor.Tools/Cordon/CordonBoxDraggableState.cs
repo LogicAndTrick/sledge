@@ -10,8 +10,6 @@ namespace Sledge.BspEditor.Tools.Cordon
     {
         public CordonBoxDraggableState(BaseDraggableTool tool) : base(tool)
         {
-            // todo render the outer edges?
-            // the old cordon tool used: Color.FromArgb(128, Color.Orange)
         }
 
         public void Update()

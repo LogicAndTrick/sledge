@@ -70,7 +70,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             var mouseDiff = State.Tool.SnapIfNeeded(nsmd);
             if (KeyboardState.Shift && !KeyboardState.Alt)
             {
-                // todo: this is hard-coded to only work on the square grid
+                // todo post-beta: this is hard-coded to only work on the square grid
                 var gridData = doc.Map.Data.GetOne<GridData>();
                 if (gridData?.Grid is SquareGrid sg && gridData?.SnapToGrid == true)
                 {

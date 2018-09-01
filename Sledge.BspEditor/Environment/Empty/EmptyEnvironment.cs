@@ -56,5 +56,8 @@ namespace Sledge.BspEditor.Environment.Empty
         {
             return false;
         }
+
+        public string DefaultBrushEntity => "";
+        public string DefaultPointEntity => "";
     }
 }

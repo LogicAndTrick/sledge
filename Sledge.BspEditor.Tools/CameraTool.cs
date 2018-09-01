@@ -252,7 +252,7 @@ namespace Sledge.BspEditor.Tools
                 graphics.FillEllipse(handleBrush, p1.X - 4, p1.Y - 4, 8, 8);
                 graphics.DrawEllipse(Pens.Black, p1.X - 4, p1.Y - 4, 8, 8);
 
-                // todo: triangle arrow?
+                // todo post-beta: triangle arrow for cameras in 2D?
             }
 
             graphics.SmoothingMode = SmoothingMode.Default;

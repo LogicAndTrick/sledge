@@ -52,7 +52,7 @@ namespace Sledge.BspEditor.Tools.Entity
                 EntityTypeList.BeginUpdate();
                 EntityTypeList.Items.Clear();
 
-                var def = ""; // todo !environment doc.Game.DefaultPointEntity;
+                var def = doc.Environment.DefaultPointEntity;
                 GameDataObject reselect = null, redef = null;
                 foreach (var gdo in gameData.Classes.Where(x => x.ClassType == ClassType.Point).OrderBy(x => x.Name.ToLowerInvariant()))
                 {

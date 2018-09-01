@@ -38,7 +38,6 @@ namespace Sledge.Shell.Forms
 
         protected virtual bool CheckIgnoreHotkey(Control source, Keys keyData)
         {
-            // todo !hotkeys other controls need to be checked too
             if (source is TextBox)
             {
                 return IsTextBoxKey(keyData);

@@ -136,7 +136,7 @@ namespace Sledge.BspEditor.Tools.Entity
 
         private Vector3? GetIntersectionPoint(IMapObject obj, DataStructures.Geometric.Line line)
         {
-            // todo !selection opacity/hidden
+            // todo BETA !selection opacity/hidden
             //.Where(x => x.Opacity > 0 && !x.IsHidden)
             return obj?.GetPolygons()
                 .Select(x => x.GetIntersectionPoint(line))

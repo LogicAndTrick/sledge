@@ -43,7 +43,7 @@ namespace Sledge.Shell.Commands
             {
                 // prompt user to select document type
                 //loader = null;
-                // todo !
+                // todo BETA: Support multiple document types
                 Log.Info(nameof(NewFile), "Todo: Prompt for user to select document type");
             }
 

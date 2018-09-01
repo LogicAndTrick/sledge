@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
@@ -77,6 +78,13 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
                     d => d.Map.Data.Replace(point),
                     c => c.Add(c.Document.Map.Root)
                 ));
+
+                if (point.Lines.Any())
+                {
+                    var start = point.Lines[0].Start;
+                    await Oy.Publish("MapDocument:Viewport:Focus2D", start);
+                    await Oy.Publish("MapDocument:Viewport:Focus3D", start);
+                }
             }
         }
     }

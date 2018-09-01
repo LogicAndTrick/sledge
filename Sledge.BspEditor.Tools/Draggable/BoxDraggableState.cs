@@ -239,7 +239,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         protected virtual bool ShouldDrawBoxText()
         {
-            return ShouldDrawBox(); // todo! && Sledge.Settings.View.DrawBoxText;
+            return ShouldDrawBox();
         }
 
         protected virtual Color GetRenderFillColour()

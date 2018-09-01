@@ -148,7 +148,7 @@ namespace Sledge.BspEditor.Editing.Components
                 foreach (var ut in uniqueTextures)
                 {
                     var tex = await tc.GetTextureItem(ut);
-                    // todo non-goldsource: the texture size operation will need to be outsourced to the provider to properly calculate usage for non-24-bit textures
+                    // todo BETA: Other engines: the texture size operation will need to be outsourced to the provider to properly calculate usage for non-24-bit textures
                     texUsage += tex.Width * tex.Height * 3; // 3 bytes per pixel
                 }
                 var textureMemoryMb = texUsage / (1024m * 1024m);

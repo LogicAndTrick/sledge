@@ -52,17 +52,17 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
 
         protected virtual void OnSelectError(VertexError error)
         {
-            // todo
+            // todo post-beta: vertex errors
         }
 
         protected virtual void OnFixError(VertexError error)
         {
-            // todo 
+            // todo post-beta: vertex errors
         }
 
         protected virtual void OnFixAllErrors()
         {
-            // todo
+            // todo post-beta: vertex errors
         }
 
         private class ErrorWrapper

@@ -74,5 +74,9 @@ namespace Sledge.BspEditor.Environment
         /// </summary>
         /// <returns>A list of automatic visgroups</returns>
         IEnumerable<AutomaticVisgroup> GetAutomaticVisgroups();
+
+        string DefaultBrushEntity { get; }
+
+        string DefaultPointEntity { get; }
     }
 }

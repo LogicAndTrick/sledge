@@ -145,14 +145,15 @@ namespace Sledge.BspEditor.Tools.Texture
         private void SetMemory<T>(string name, T value)
         {
             name = GetType().Name + '.' + name;
-            // todo
+            // todo post-beta: texture browser memory
         }
 
         private T GetMemory<T>(string name, T def = default(T))
         {
             name = GetType().Name + '.' + name;
             return def;
-            // todo return _document != null ? _document.GetMemory(name, def) : def;
+            // todo post-beta: texture browser memory
+            // return _document != null ? _document.GetMemory(name, def) : def;
         }
 
         private void TextureSelected(object sender, string item)

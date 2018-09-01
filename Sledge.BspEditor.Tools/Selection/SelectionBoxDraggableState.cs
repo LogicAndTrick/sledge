@@ -174,55 +174,6 @@ namespace Sledge.BspEditor.Tools.Selection
             return false;
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
-        {
-            if (State.Action == BoxAction.Resizing)
-            {
-                // todo ...?
-            }
-            else
-            {
-                base.Render(viewport, camera, worldMin, worldMax, graphics);
-            }
-        }
-
-        // public override IEnumerable<Element> GetViewportElements(MapViewport viewport, OrthographicCamera camera)
-        // {
-        //     var list = new List<Element>();
-        //     var tf = GetTransformationMatrix(viewport, camera, Tool.Document);
-        //     if (State.Action == BoxAction.Resizing && tf.HasValue)
-        //     {
-        //         // todo this looks pretty silly when the box doesn't perfectly match the transformed selection
-        //         var box = new Box(State.OrigStart, State.OrigEnd);
-        //         box = box.Transform(Matrix.FromOpenTKMatrix4x4(tf.Value));
-        //         if (ShouldDrawBox())
-        //         {
-        //             foreach (var face in box.GetBoxFaces())
-        //             {
-        //                 var verts = face.Select(x => new PositionVertex(new Position(x.ToVector3()), 0, 0)).ToList();
-        //                 var rc = GetRenderBoxColour();
-        //                 var fe = new FaceElement(PositionType.World, Material.Flat(Color.FromArgb(rc.A / 8, rc)), verts)
-        //                 {
-        //                     RenderFlags = RenderFlags.Wireframe,
-        //                     CameraFlags = CameraFlags.Orthographic,
-        //                     AccentColor = GetRenderBoxColour(),
-        //                     ZIndex = -20 // Put this face underneath the grid because it's semi-transparent
-        //                 };
-        //                 list.Add(fe);
-        //             }
-        //         }
-        //         if (ShouldDrawBoxText())
-        //         {
-        //             list.AddRange(GetBoxTextElements(viewport, box.Start.ToVector3(), box.End.ToVector3()));
-        //         }
-        //     }
-        //     else
-        //     {
-        //         list.AddRange(base.GetViewportElements(viewport, camera));
-        //     }
-        //     return list;
-        // }
-
         public Matrix4x4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, MapDocument doc)
         {
             if (State.Action != BoxAction.Resizing) return null;

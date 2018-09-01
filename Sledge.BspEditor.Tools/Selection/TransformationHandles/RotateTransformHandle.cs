@@ -77,16 +77,13 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             var angle = Math.Acos(Math.Max(-1, Math.Min(1, origv.Dot(newv))));
             if ((origv.Cross(newv).Z < 0)) angle = 2 * Math.PI - angle;
 
-            var shf = KeyboardState.Shift;
-            // todo !selection rotation style
-            //var def = Select.RotationStyle;
-            var snap = true; // (def == RotationStyle.SnapOnShift && shf) || (def == RotationStyle.SnapOffShift && !shf);
-            if (snap)
-            {
-                var deg = angle * (180 / Math.PI);
-                var rnd = Math.Round(deg / 15) * 15;
-                angle = rnd * (Math.PI / 180);
-            }
+            // TODO post-beta: configurable rotation snapping
+            var roundingDegrees = 15f;
+            if (KeyboardState.Alt) roundingDegrees = 1;
+
+            var deg = angle * (180 / Math.PI);
+            var rnd = Math.Round(deg / roundingDegrees) * roundingDegrees;
+            angle = rnd * (Math.PI / 180);
 
             Matrix4x4 rotm;
             if (camera.ViewType == OrthographicCamera.OrthographicType.Top) rotm = Matrix4x4.CreateRotationZ((float)angle);

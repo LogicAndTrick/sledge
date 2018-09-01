@@ -98,7 +98,7 @@ namespace Sledge.BspEditor.Editing.Commands
             var ops = new List<IOperation>();
 
             var gameData = await document.Environment.GetGameData();
-            var def = ""; // todo !environment doc.Game.DefaultBrushEntity;
+            var def = document.Environment.DefaultBrushEntity;
             var defaultEntityClass = (
                 from g in gameData.Classes
                 where g.ClassType == ClassType.Solid

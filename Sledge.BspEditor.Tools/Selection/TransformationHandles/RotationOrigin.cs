@@ -25,7 +25,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
 
         public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
-            Position = _tool.SnapToSelection(camera.Expand(position) + camera.GetUnusedCoordinate(Position), viewport);
+            Position = _tool.SnapToSelection(camera.Expand(position) + camera.GetUnusedCoordinate(Position), camera);
             OnDragMoved();
         }
 

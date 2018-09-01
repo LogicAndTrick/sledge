@@ -46,7 +46,8 @@ namespace Sledge.BspEditor.Tools.Decal
 
         private Vector3? GetIntersectionPoint(IMapObject obj, Line line)
         {
-            // todo !selection opacity/hidden
+            // todo BETA: Decal tool (and others) must obey IHidden
+            // Extract this code out to a common method 
             //.Where(x => x.Opacity > 0 && !x.IsHidden)
             return obj?.GetPolygons()
                 .Select(x => x.GetIntersectionPoint(line))

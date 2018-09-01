@@ -61,7 +61,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.SmartEdit
 
         private void DoValidation()
         {
-            // todo
+            // todo BETA: smartedit controls need to know more about what they're editing
             // _validationLabel.Text = "";
             // if (EditingEntityData.Count > 1)
             // {

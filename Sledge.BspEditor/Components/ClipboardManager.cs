@@ -7,11 +7,13 @@ using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Translations;
 using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Components
 {
     [Export]
+    [AutoTranslate]
     public class ClipboardManager
     {
         public class ClipboardEntry
@@ -36,6 +38,9 @@ namespace Sledge.BspEditor.Components
 
         public int SizeOfClipboardRing { get; set; }
         private readonly List<ClipboardEntry> Ring;
+        
+        public string NothingSelected { get; set; }
+        public string NumSelected { get; set; }
 
         private static string SerialisedName => "Sledge.BspEditor.Clipboard";
 
@@ -65,15 +70,14 @@ namespace Sledge.BspEditor.Components
 
         private string GetDescription(List<IMapObject> list)
         {
-            // todo- translate clipboard text
             switch (list.Count)
             {
                 case 0:
-                    return "Nothing";
+                    return NothingSelected;
                 case 1:
                     return list[0].GetType().Name;
                 default:
-                    return $"{list.Count} object(s)";
+                    return string.Format(NumSelected, list.Count);
             }
         }
 

@@ -40,7 +40,7 @@ namespace Sledge.Rendering.Renderables
         public bool ShouldRender(IPipeline pipeline, IViewport viewport)
         {
             return _pipelines.Contains(pipeline.Type)
-                   && (!OrthographicOnly || false) // todo
+                   && (!OrthographicOnly || viewport.Camera is OrthographicCamera)
                    && (!PerspectiveOnly || viewport.Camera is PerspectiveCamera);
         }
 

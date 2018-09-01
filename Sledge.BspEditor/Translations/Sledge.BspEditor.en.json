@@ -51,6 +51,10 @@
         }
     },
     "Components": {
+        "ClipboardManager": {
+            "NothingSelected": "Nothing",
+            "NumSelected": "{0} objects"
+        },
         "ClipboardSidebarPanel": {
             "Title": "Clipboard"
         }

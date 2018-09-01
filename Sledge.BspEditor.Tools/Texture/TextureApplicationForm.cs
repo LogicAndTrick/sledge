@@ -62,7 +62,8 @@ namespace Sledge.BspEditor.Tools.Texture
             set
             {
                 _document = new WeakReference<MapDocument>(value);
-                var precision = 4; // todo  _document != null && _document.Game != null && _document.Game.Engine == Engine.Goldsource ? 2 : 4;
+                var precision = 4; // todo post-beta: environment-specific texture values precision
+                                   // _document != null && _document.Game != null && _document.Game.Engine == Engine.Goldsource ? 2 : 4;
                 ScaleXValue.DecimalPlaces = ScaleYValue.DecimalPlaces = precision;
             }
         }
@@ -663,7 +664,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void SmoothingGroupsButtonClicked(object sender, EventArgs e)
         {
-            // TODO SOURCE: Texture Smoothing Groups
+            // TODO Source: Texture Smoothing Groups
         }
 
         private void OnClosing(object sender, FormClosingEventArgs e)

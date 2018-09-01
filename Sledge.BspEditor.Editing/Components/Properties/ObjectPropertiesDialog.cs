@@ -91,7 +91,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         /// </summary>
         private void UpdateTabVisibility(IContext context, List<IMapObject> objects)
         {
-            // todo: to avoid UI flashing, only add/remove tabs when they need to, rather than always
+            // todo BETA: to avoid UI flashing, only add/remove tabs when they need to, rather than always
             tabPanel.SuspendLayout();
             var sel = tabPanel.SelectedIndex < tabPanel.TabCount ? tabPanel.SelectedTab : null;
             tabPanel.TabPages.Clear();

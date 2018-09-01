@@ -309,7 +309,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
 
         private void OnItemDrag(object sender, ItemDragEventArgs e)
         {
-            // todo ordering
+            // todo post-beta: visgroup drag-and-drop ordering
             //DoDragDrop(e.Item, DragDropEffects.Move);
         }
 
