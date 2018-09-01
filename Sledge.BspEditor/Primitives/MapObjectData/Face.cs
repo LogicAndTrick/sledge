@@ -195,6 +195,12 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
                 UpdatePlane();
             }
 
+            public void Flip()
+            {
+                _list.Reverse();
+                UpdatePlane();
+            }
+
             public void Clear()
             {
                 _list.Clear();

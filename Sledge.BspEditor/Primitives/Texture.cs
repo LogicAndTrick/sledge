@@ -118,8 +118,8 @@ namespace Sledge.BspEditor.Primitives
 
             #endif
 
-            // If the determinant isn't 1, then we can't transform safely.
-            if (Math.Abs(matrix.GetDeterminant() - 1) > 0.0001f) return;
+            // If the determinant isn't 1, then we can't transform safely. (-1 is okay too)
+            if (Math.Abs(matrix.GetDeterminant()) - 1 > 0.0001f) return;
 
             var startU = Vector3.Transform(UAxis, matrix);
             var startV = Vector3.Transform(VAxis, matrix);

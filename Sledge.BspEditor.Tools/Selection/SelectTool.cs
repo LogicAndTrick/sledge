@@ -84,10 +84,16 @@ namespace Sledge.BspEditor.Tools.Selection
         }
 
         public string Align { get; set; }
+        public string Flip { get; set; }
+        public string Rotate { get; set; }
         public string Left { get; set; }
         public string Right { get; set; }
         public string Top { get; set; }
         public string Bottom { get; set; }
+        public string Vertically { get; set; }
+        public string Horizontally { get; set; }
+        public string Clockwise { get; set; }
+        public string AntiClockwise { get; set; }
 
         public SelectTool()
         {
@@ -202,8 +208,10 @@ namespace Sledge.BspEditor.Tools.Selection
                 if (b.Viewport.Is2D)
                 {
                     var f = camera.Flatten(new Vector3(1, 2, 3));
+                    var e = camera.Expand(f);
                     var flat = new {X = (int) f.X, Y = (int) f.Y, Z = (int) f.Z};
-                    
+                    var expand = new {X = (int) e.X, Y = (int) e.Y, Z = (int) e.Z};
+
                     var left = flat.X == 1 ? "AlignXMin" : (flat.X == 2 ? "AlignYMin" : "AlignZMin");
                     var right = flat.X == 1 ? "AlignXMax" : (flat.X == 2 ? "AlignYMax" : "AlignZMax");
                     var bottom = flat.Y == 1 ? "AlignXMin" : (flat.Y == 2 ? "AlignYMin" : "AlignZMin");
@@ -226,6 +234,31 @@ namespace Sledge.BspEditor.Tools.Selection
                     var d = b.CreateCommandItem($"BspEditor:Tools:{bottom}");
                     d.Text = Bottom;
                     group.DropDownItems.Add(d);
+
+                    var horizontal = flat.X == 1 ? "FlipX" : (flat.X == 2 ? "FlipY" : "FlipZ");
+                    var vertical = flat.Y == 2 ? "FlipY" : (flat.Y == 3 ? "FlipZ" : "FlipX");
+
+                    group = b.AddGroup(Flip);
+
+                    var h = b.CreateCommandItem($"BspEditor:Tools:{horizontal}");
+                    h.Text = Horizontally;
+                    group.DropDownItems.Add(h);
+
+                    var v = b.CreateCommandItem($"BspEditor:Tools:{vertical}");
+                    v.Text = Vertically;
+                    group.DropDownItems.Add(v);
+
+                    group = b.AddGroup(Rotate);
+
+                    var axis = expand.X == 0 ? Vector3.UnitX : (expand.Y == 0 ? -Vector3.UnitY : Vector3.UnitZ);
+
+                    var cw = b.CreateCommandItem("BspEditor:Tools:Rotate", new { Axis = axis, Angle = -90f });
+                    cw.Text = Clockwise;
+                    group.DropDownItems.Add(cw);
+
+                    var acw = b.CreateCommandItem("BspEditor:Tools:Rotate", new { Axis = axis, Angle = 90f });
+                    acw.Text = AntiClockwise;
+                    group.DropDownItems.Add(acw);
                 }
 
                 b.AddCommand("BspEditor:Map:Properties");

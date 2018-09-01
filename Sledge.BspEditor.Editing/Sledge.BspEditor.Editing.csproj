@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\Modification\AlignObjects.cs" />
+    <Compile Include="Commands\Modification\RotateSelection.cs" />
     <Compile Include="Commands\Modification\FlipSelection.cs" />
     <Compile Include="Commands\Modification\SnapToGrid.cs" />
     <Compile Include="Commands\Modification\Carve.cs" />

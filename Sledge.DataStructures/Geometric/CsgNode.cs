@@ -54,10 +54,7 @@ namespace Sledge.DataStructures.Geometric
 
         public void Invert()
         {
-            foreach (var polygon in Polygons)
-            {
-                polygon.Flip();
-            }
+            Polygons = Polygons.Select(x => x.Flip()).ToList();
             Plane = new Plane(-Plane.Normal, Plane.PointOnPlane);
             if (Front != null) Front.Invert();
             if (Back != null) Back.Invert();

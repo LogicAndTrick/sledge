@@ -124,10 +124,16 @@
     "Selection": {
         "SelectTool": {
             "Align": "Align to...",
+            "Flip": "Flip...",
+            "Rotate": "Rotate...",
             "Left": "Left",
             "Right": "Right",
             "Top": "Top",
-            "Bottom": "Bottom"
+            "Bottom": "Bottom",
+            "Vertically": "Vertically",
+            "Horizontally": "Horizontally",
+            "Clockwise": "90° clockwise",
+            "AntiClockwise": "90° anti-clockwise"
         }
     },
     "Texture": {

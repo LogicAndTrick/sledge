@@ -138,9 +138,9 @@ namespace Sledge.DataStructures.Geometric
             return PlaneClassification.Spanning;
         }
 
-        public void Flip()
+        public Polygon Flip()
         {
-            Vertices.Reverse();
+            return new Polygon(Vertices.Reverse());
         }
 
         public Vector3? GetIntersectionPoint(Line line, bool ignoreDirection = false)
