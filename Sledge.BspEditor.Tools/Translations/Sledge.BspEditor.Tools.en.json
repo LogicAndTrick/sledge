@@ -5,12 +5,20 @@
         "Inherit": ""
     },
     "@Settings": {
-        "@Group.Brush": "Brush tool",
-        "@Group.Selection": "Selection",
+        "@Group.Tools": "Tools",
+        "@Group.Tools/Brush": "Brush tool",
+        "@Group.Tools/Entity": "Entity tool",
+        "@Group.Tools/Selection": "Selection tool",
         "BrushTool": {
             "SelectionBoxBackgroundOpacity": "Selection box background opacity",
+            "SelectCreatedBrush": "Select brush on creation",
             "SwitchToSelectAfterCreation": "Switch to select tool after brush creation",
             "ResetBrushTypeOnCreation": "Reset to default brush type after brush creation"
+        },
+        "EntityTool": {
+            "SelectCreatedEntity": "Select entity on creation",
+            "SwitchToSelectAfterCreation": "Switch to select tool after entity creation",
+            "ResetEntityTypeOnCreation": "Reset to default entity type after entity creation"
         },
         "SelectTool": {
             "SelectionBoxBackgroundOpacity": "Selection box background opacity",
@@ -25,7 +33,6 @@
         "Map": "Map"
     },
     "Brush": {
-        // todo: translate brushes
         "BrushTool": {
             "CreateObject": "Create {0}"
         },

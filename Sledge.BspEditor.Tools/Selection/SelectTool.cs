@@ -64,12 +64,12 @@ namespace Sledge.BspEditor.Tools.Selection
 
         IEnumerable<SettingKey> ISettingsContainer.GetKeys()
         {
-            yield return new SettingKey("Selection", "SelectionBoxBackgroundOpacity", typeof(int));
-            yield return new SettingKey("Selection", "SelectionBoxStippled", typeof(bool));
-            yield return new SettingKey("Selection", "AutoSelectBox", typeof(bool));
-            yield return new SettingKey("Selection", "Show3DWidgets", typeof(bool));
-            yield return new SettingKey("Selection", "SelectByCenterHandles", typeof(bool));
-            yield return new SettingKey("Selection", "OnlySelectByCenterHandles", typeof(bool));
+            yield return new SettingKey("Tools/Selection", "SelectionBoxBackgroundOpacity", typeof(int));
+            yield return new SettingKey("Tools/Selection", "SelectionBoxStippled", typeof(bool));
+            yield return new SettingKey("Tools/Selection", "AutoSelectBox", typeof(bool));
+            yield return new SettingKey("Tools/Selection", "Show3DWidgets", typeof(bool));
+            yield return new SettingKey("Tools/Selection", "SelectByCenterHandles", typeof(bool));
+            yield return new SettingKey("Tools/Selection", "OnlySelectByCenterHandles", typeof(bool));
         }
 
         void ISettingsContainer.LoadValues(ISettingsStore store)

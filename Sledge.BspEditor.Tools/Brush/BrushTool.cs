@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
@@ -55,6 +56,7 @@ namespace Sledge.BspEditor.Tools.Brush
         // Settings
 
         [Setting("SelectionBoxBackgroundOpacity")] private int _selectionBoxBackgroundOpacity = 64;
+        [Setting("SelectCreatedBrush")] private bool _selectCreatedBrush = true;
         [Setting("SwitchToSelectAfterCreation")] private bool _switchToSelectAfterCreation = false;
         [Setting("ResetBrushTypeOnCreation")] private bool _resetBrushTypeOnCreation = false;
 
@@ -62,9 +64,10 @@ namespace Sledge.BspEditor.Tools.Brush
 
         IEnumerable<SettingKey> ISettingsContainer.GetKeys()
         {
-            yield return new SettingKey("Brush", "SelectionBoxBackgroundOpacity", typeof(int));
-            yield return new SettingKey("Brush", "SwitchToSelectAfterCreation", typeof(bool));
-            yield return new SettingKey("Brush", "ResetBrushTypeOnCreation", typeof(bool));
+            yield return new SettingKey("Tools/Brush", "SelectionBoxBackgroundOpacity", typeof(int));
+            yield return new SettingKey("Tools/Brush", "SelectCreatedBrush", typeof(bool));
+            yield return new SettingKey("Tools/Brush", "SwitchToSelectAfterCreation", typeof(bool));
+            yield return new SettingKey("Tools/Brush", "ResetBrushTypeOnCreation", typeof(bool));
         }
 
         void ISettingsContainer.LoadValues(ISettingsStore store)
@@ -183,11 +186,18 @@ namespace Sledge.BspEditor.Tools.Brush
         {
             var brush = GetBrush(bounds, Document.Map.NumberGenerator);
             if (brush == null) return;
+            
+            var transaction = new Transaction();
 
-            brush.IsSelected = true;
-            brush.FindAll().ForEach(x => x.IsSelected = true);
+            transaction.Add(new Attach(Document.Map.Root.ID, brush));
 
-            MapDocumentOperation.Perform(Document, new Attach(Document.Map.Root.ID, brush));
+            if (_selectCreatedBrush)
+            {
+                transaction.Add(new Deselect(Document.Selection));
+                transaction.Add(new Select(brush.FindAll()));
+            }
+
+            MapDocumentOperation.Perform(Document, transaction);
         }
 
         private IMapObject GetBrush(Box bounds, UniqueNumberGenerator idg)

@@ -90,7 +90,17 @@ namespace Sledge.Shell.Forms
                 if (par > 0)
                 {
                     var sub = k.Key.Substring(0, par);
-                    if (nodes.ContainsKey(sub)) parentNode = nodes[sub];
+                    if (nodes.ContainsKey(sub))
+                    {
+                        parentNode = nodes[sub];
+                    }
+                    else
+                    {
+                        var pgh = new GroupHolder(sub, _translations.Value.GetSetting("@Group." + sub) ?? sub);
+                        parentNode = new TreeNode(pgh.Label) {Tag = pgh};
+                        GroupList.Nodes.Add(parentNode);
+                        nodes.Add(sub, parentNode);
+                    }
                 }
                 var node = new TreeNode(gh.Label) { Tag = gh };
                 if (parentNode != null) parentNode.Nodes.Add(node);

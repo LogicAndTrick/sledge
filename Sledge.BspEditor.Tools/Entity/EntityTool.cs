@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
@@ -17,6 +18,7 @@ using Sledge.Common;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
+using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
@@ -28,10 +30,11 @@ using Sledge.Rendering.Resources;
 namespace Sledge.BspEditor.Tools.Entity
 {
     [Export(typeof(ITool))]
+    [Export(typeof(ISettingsContainer))]
     [OrderHint("F")]
     [AutoTranslate]
     [DefaultHotkey("Shift+E")]
-    public class EntityTool : BaseTool
+    public class EntityTool : BaseTool, ISettingsContainer
     {
         private enum EntityState
         {
@@ -45,6 +48,31 @@ namespace Sledge.BspEditor.Tools.Entity
         private string _activeEntity;
 
         public string CreateObject { get; set; } = "Create {0}";
+
+        // Settings
+
+        [Setting("SelectCreatedEntity")] private bool _selectCreatedEntity = true;
+        [Setting("SwitchToSelectAfterCreation")] private bool _switchToSelectAfterCreation = false;
+        [Setting("ResetEntityTypeOnCreation")] private bool _resetEntityTypeOnCreation = false;
+
+        string ISettingsContainer.Name => "Sledge.BspEditor.Tools.EntityTool";
+
+        IEnumerable<SettingKey> ISettingsContainer.GetKeys()
+        {
+            yield return new SettingKey("Tools/Entity", "SelectCreatedEntity", typeof(bool));
+            yield return new SettingKey("Tools/Entity", "SwitchToSelectAfterCreation", typeof(bool));
+            yield return new SettingKey("Tools/Entity", "ResetEntityTypeOnCreation", typeof(bool));
+        }
+
+        void ISettingsContainer.LoadValues(ISettingsStore store)
+        {
+            store.LoadInstance(this);
+        }
+
+        void ISettingsContainer.StoreValues(ISettingsStore store)
+        {
+            store.StoreInstance(this);
+        }
 
         public EntityTool()
         {
@@ -254,16 +282,29 @@ namespace Sledge.BspEditor.Tools.Entity
                     new EntityData { Name = gd },
                     new ObjectColor(colour),
                     new Origin(origin),
-                },
-                IsSelected = false // Select.SelectCreatedEntity
+                }
             };
 
-            var action = new Attach(Document.Map.Root.ID, entity);
-            await MapDocumentOperation.Perform(Document, action);
+            var transaction = new Transaction();
 
-            //if (Select.SwitchToSelectAfterEntity)
+            transaction.Add(new Attach(Document.Map.Root.ID, entity));
+
+            if (_selectCreatedEntity)
             {
-                //Mediator.Publish(HotkeysMediator.SwitchTool, HotkeyTool.Selection);
+                transaction.Add(new Deselect(Document.Selection));
+                transaction.Add(new Select(entity.FindAll()));
+            }
+
+            await MapDocumentOperation.Perform(Document, transaction);
+
+            if (_switchToSelectAfterCreation)
+            {
+                Oy.Publish("ActivateTool", "SelectTool");
+            }
+
+            if (_resetEntityTypeOnCreation)
+            {
+                Oy.Publish("EntityTool:ResetEntityType", this);
             }
         }
 

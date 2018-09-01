@@ -33,6 +33,7 @@ namespace Sledge.BspEditor.Tools.Entity
             CreateHandle();
 
             Oy.Subscribe<MapDocument>("Document:Activated", RefreshEntities);
+            Oy.Subscribe<EntityTool>("EntityTool:ResetEntityType", ResetEntityType);
         }
 
         public bool IsInContext(IContext context)
@@ -46,6 +47,7 @@ namespace Sledge.BspEditor.Tools.Entity
 
             var sel = GetSelectedEntity()?.Name;
             var gameData = await doc.Environment.GetGameData();
+            var defaultName = doc.Environment.DefaultPointEntity ?? "";
             
             EntityTypeLabel.InvokeLater(() =>
             {
@@ -65,7 +67,7 @@ namespace Sledge.BspEditor.Tools.Entity
                 {
                     redef = gameData.Classes
                         .Where(x => x.ClassType == ClassType.Point)
-                        .OrderBy(x => x.Name.StartsWith("info_player_start") ? 0 : 1)
+                        .OrderBy(x => x.Name == defaultName ? 0 : (x.Name.StartsWith("info_player_start") ? 1 : 2))
                         .FirstOrDefault();
                 }
 
@@ -73,6 +75,24 @@ namespace Sledge.BspEditor.Tools.Entity
                 EntityTypeList.EndUpdate();
             });
             EntityTypeList_SelectedIndexChanged(null, null);
+        }
+
+        private async Task ResetEntityType(EntityTool tool)
+        {
+            var doc = tool.Document;
+            if (doc == null) return;
+
+            var gameData = await doc.Environment.GetGameData();
+            var defaultName = doc.Environment.DefaultPointEntity ?? "";
+
+            var redef = gameData.Classes
+                .Where(x => x.ClassType == ClassType.Point)
+                .OrderBy(x => x.Name == defaultName ? 0 : (x.Name.StartsWith("info_player_start") ? 1 : 2))
+                .FirstOrDefault();
+            if (redef != null)
+            {
+                EntityTypeList.SelectedItem = redef;
+            }
         }
 
         private GameDataObject GetSelectedEntity()
