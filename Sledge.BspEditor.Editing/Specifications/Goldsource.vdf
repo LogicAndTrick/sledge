@@ -11,42 +11,39 @@ Specification
 	{
 		Name "Fast"
 		Description "Run the compile in fast mode to get a quick lower-quality preview of your work"
-        RunCsg "True"
-        RunBsp "True"
-        RunVis "True"
-        RunRad "True"
-		Csg "-wadautodetect -low -estimate -noinfo"
-		Bsp "-low -estimate -noinfo"
-		Vis "-fast -low -estimate -noinfo"
-		Rad "-fast -low -estimate -noinfo"
+        Arguments
+        {
+	        CSG "-wadautodetect -low -estimate -noinfo"
+	        BSP "-low -estimate -noinfo"
+	        VIS "-fast -low -estimate -noinfo"
+	        RAD "-fast -low -estimate -noinfo"
+        }
 	}
 
 	Preset
 	{
 		Name "Normal"
 		Description "Run the compile using the standard settings"
-        RunCsg "True"
-        RunBsp "True"
-        RunVis "True"
-        RunRad "True"
-		Csg "-wadautodetect -low -estimate -noinfo"
-		Bsp "-low -estimate -noinfo"
-		Vis "-low -estimate -noinfo"
-		Rad "-low -estimate -noinfo"
+        Arguments
+        {
+		    CSG "-wadautodetect -low -estimate -noinfo"
+		    BSP "-low -estimate -noinfo"
+		    VIS "-low -estimate -noinfo"
+		    RAD "-low -estimate -noinfo"
+        }
 	}
 
 	Preset
 	{
 		Name "Final"
 		Description "Runs the compile tools in full mode to get the best possible quality result"
-        RunCsg "True"
-        RunBsp "True"
-        RunVis "True"
-        RunRad "True"
-		Csg "-wadautodetect -low -estimate -noinfo"
-		Bsp "-low -estimate -noinfo"
-		Vis "-full -low -estimate -noinfo"
-		Rad "-extra -low -estimate -noinfo"
+        Arguments
+        {
+		    CSG "-wadautodetect -low -estimate -noinfo"
+		    BSP "-low -estimate -noinfo"
+		    VIS "-full -low -estimate -noinfo"
+		    RAD "-extra -low -estimate -noinfo"
+        }
 	}
 
 	Tool

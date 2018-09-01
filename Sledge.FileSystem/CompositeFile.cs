@@ -37,6 +37,8 @@ namespace Sledge.FileSystem
             get { return Parent == null ? "\\" : Path.Combine(Parent.FullPathName, Name); }
         }
 
+        public IFile FirstFile => First(x => x);
+
         private T First<T>(Func<IFile, T> func)
         {
             var f = Files.FirstOrDefault(x => x.Exists) ?? Files.First();

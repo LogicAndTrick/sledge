@@ -58,6 +58,15 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.grpDirectories = new System.Windows.Forms.GroupBox();
             this.grpFgds = new System.Windows.Forms.GroupBox();
             this.grpBuildTools = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.chkCopyBsp = new System.Windows.Forms.CheckBox();
+            this.chkCopyRes = new System.Windows.Forms.CheckBox();
+            this.chkCopyErr = new System.Windows.Forms.CheckBox();
+            this.chkCopyLog = new System.Windows.Forms.CheckBox();
+            this.chkCopyMap = new System.Windows.Forms.CheckBox();
+            this.chkMapCopyBsp = new System.Windows.Forms.CheckBox();
+            this.chkAskRunGame = new System.Windows.Forms.CheckBox();
+            this.chkRunGame = new System.Windows.Forms.CheckBox();
             this.chkIncludeToolsDirectory = new System.Windows.Forms.CheckBox();
             this.lblBuildExeFolder = new System.Windows.Forms.Label();
             this.lblBuildBSP = new System.Windows.Forms.Label();
@@ -409,6 +418,15 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             // grpBuildTools
             // 
+            this.grpBuildTools.Controls.Add(this.label1);
+            this.grpBuildTools.Controls.Add(this.chkCopyBsp);
+            this.grpBuildTools.Controls.Add(this.chkCopyRes);
+            this.grpBuildTools.Controls.Add(this.chkCopyErr);
+            this.grpBuildTools.Controls.Add(this.chkCopyLog);
+            this.grpBuildTools.Controls.Add(this.chkCopyMap);
+            this.grpBuildTools.Controls.Add(this.chkMapCopyBsp);
+            this.grpBuildTools.Controls.Add(this.chkAskRunGame);
+            this.grpBuildTools.Controls.Add(this.chkRunGame);
             this.grpBuildTools.Controls.Add(this.chkIncludeToolsDirectory);
             this.grpBuildTools.Controls.Add(this.lblBuildExeFolder);
             this.grpBuildTools.Controls.Add(this.lblBuildBSP);
@@ -423,18 +441,115 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.grpBuildTools.Controls.Add(this.btnBuildToolsBrowse);
             this.grpBuildTools.Location = new System.Drawing.Point(6, 479);
             this.grpBuildTools.Name = "grpBuildTools";
-            this.grpBuildTools.Size = new System.Drawing.Size(459, 207);
+            this.grpBuildTools.Size = new System.Drawing.Size(459, 307);
             this.grpBuildTools.TabIndex = 48;
             this.grpBuildTools.TabStop = false;
             this.grpBuildTools.Text = "Build Tools";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(6, 277);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(148, 20);
+            this.label1.TabIndex = 43;
+            this.label1.Text = "Copy to map folder:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // chkCopyBsp
+            // 
+            this.chkCopyBsp.Checked = true;
+            this.chkCopyBsp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkCopyBsp.Location = new System.Drawing.Point(75, 202);
+            this.chkCopyBsp.Name = "chkCopyBsp";
+            this.chkCopyBsp.Size = new System.Drawing.Size(368, 20);
+            this.chkCopyBsp.TabIndex = 42;
+            this.chkCopyBsp.Text = "Copy BSP/RES to game folder";
+            this.chkCopyBsp.UseVisualStyleBackColor = true;
+            // 
+            // chkCopyRes
+            // 
+            this.chkCopyRes.Checked = true;
+            this.chkCopyRes.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkCopyRes.Location = new System.Drawing.Point(345, 276);
+            this.chkCopyRes.Name = "chkCopyRes";
+            this.chkCopyRes.Size = new System.Drawing.Size(49, 24);
+            this.chkCopyRes.TabIndex = 42;
+            this.chkCopyRes.Text = "RES";
+            this.chkCopyRes.UseVisualStyleBackColor = true;
+            // 
+            // chkCopyErr
+            // 
+            this.chkCopyErr.Checked = true;
+            this.chkCopyErr.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkCopyErr.Location = new System.Drawing.Point(298, 276);
+            this.chkCopyErr.Name = "chkCopyErr";
+            this.chkCopyErr.Size = new System.Drawing.Size(49, 24);
+            this.chkCopyErr.TabIndex = 42;
+            this.chkCopyErr.Text = "ERR";
+            this.chkCopyErr.UseVisualStyleBackColor = true;
+            // 
+            // chkCopyLog
+            // 
+            this.chkCopyLog.Checked = true;
+            this.chkCopyLog.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkCopyLog.Location = new System.Drawing.Point(250, 276);
+            this.chkCopyLog.Name = "chkCopyLog";
+            this.chkCopyLog.Size = new System.Drawing.Size(49, 24);
+            this.chkCopyLog.TabIndex = 42;
+            this.chkCopyLog.Text = "LOG";
+            this.chkCopyLog.UseVisualStyleBackColor = true;
+            // 
+            // chkCopyMap
+            // 
+            this.chkCopyMap.Checked = true;
+            this.chkCopyMap.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkCopyMap.Location = new System.Drawing.Point(204, 276);
+            this.chkCopyMap.Name = "chkCopyMap";
+            this.chkCopyMap.Size = new System.Drawing.Size(49, 24);
+            this.chkCopyMap.TabIndex = 42;
+            this.chkCopyMap.Text = "MAP";
+            this.chkCopyMap.UseVisualStyleBackColor = true;
+            // 
+            // chkMapCopyBsp
+            // 
+            this.chkMapCopyBsp.Checked = true;
+            this.chkMapCopyBsp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkMapCopyBsp.Location = new System.Drawing.Point(160, 276);
+            this.chkMapCopyBsp.Name = "chkMapCopyBsp";
+            this.chkMapCopyBsp.Size = new System.Drawing.Size(49, 24);
+            this.chkMapCopyBsp.TabIndex = 42;
+            this.chkMapCopyBsp.Text = "BSP";
+            this.chkMapCopyBsp.UseVisualStyleBackColor = true;
+            // 
+            // chkAskRunGame
+            // 
+            this.chkAskRunGame.Checked = true;
+            this.chkAskRunGame.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAskRunGame.Location = new System.Drawing.Point(75, 254);
+            this.chkAskRunGame.Name = "chkAskRunGame";
+            this.chkAskRunGame.Size = new System.Drawing.Size(368, 20);
+            this.chkAskRunGame.TabIndex = 42;
+            this.chkAskRunGame.Text = "Ask before running the game";
+            this.chkAskRunGame.UseVisualStyleBackColor = true;
+            // 
+            // chkRunGame
+            // 
+            this.chkRunGame.Checked = true;
+            this.chkRunGame.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRunGame.Location = new System.Drawing.Point(75, 228);
+            this.chkRunGame.Name = "chkRunGame";
+            this.chkRunGame.Size = new System.Drawing.Size(368, 20);
+            this.chkRunGame.TabIndex = 42;
+            this.chkRunGame.Text = "Run the game after successful compile";
+            this.chkRunGame.UseVisualStyleBackColor = true;
             // 
             // chkIncludeToolsDirectory
             // 
             this.chkIncludeToolsDirectory.Checked = true;
             this.chkIncludeToolsDirectory.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkIncludeToolsDirectory.Location = new System.Drawing.Point(75, 64);
+            this.chkIncludeToolsDirectory.Location = new System.Drawing.Point(9, 64);
             this.chkIncludeToolsDirectory.Name = "chkIncludeToolsDirectory";
-            this.chkIncludeToolsDirectory.Size = new System.Drawing.Size(293, 24);
+            this.chkIncludeToolsDirectory.Size = new System.Drawing.Size(434, 20);
             this.chkIncludeToolsDirectory.TabIndex = 33;
             this.chkIncludeToolsDirectory.Text = "Automatically include textures found in this directory";
             this.chkIncludeToolsDirectory.UseVisualStyleBackColor = true;
@@ -451,7 +566,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             // lblBuildBSP
             // 
-            this.lblBuildBSP.Location = new System.Drawing.Point(170, 95);
+            this.lblBuildBSP.Location = new System.Drawing.Point(35, 91);
             this.lblBuildBSP.Name = "lblBuildBSP";
             this.lblBuildBSP.Size = new System.Drawing.Size(34, 20);
             this.lblBuildBSP.TabIndex = 23;
@@ -460,16 +575,16 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             // txtBuildToolsDirectory
             // 
-            this.txtBuildToolsDirectory.Location = new System.Drawing.Point(75, 38);
+            this.txtBuildToolsDirectory.Location = new System.Drawing.Point(9, 38);
             this.txtBuildToolsDirectory.Name = "txtBuildToolsDirectory";
-            this.txtBuildToolsDirectory.Size = new System.Drawing.Size(288, 20);
+            this.txtBuildToolsDirectory.Size = new System.Drawing.Size(354, 20);
             this.txtBuildToolsDirectory.TabIndex = 22;
             this.txtBuildToolsDirectory.Text = "example: C:\\hammer_alt";
             this.txtBuildToolsDirectory.TextChanged += new System.EventHandler(this.BuildToolsDirectoryTextChanged);
             // 
             // lblBuildCSG
             // 
-            this.lblBuildCSG.Location = new System.Drawing.Point(170, 122);
+            this.lblBuildCSG.Location = new System.Drawing.Point(35, 118);
             this.lblBuildCSG.Name = "lblBuildCSG";
             this.lblBuildCSG.Size = new System.Drawing.Size(34, 20);
             this.lblBuildCSG.TabIndex = 24;
@@ -480,7 +595,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.cmbRadExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbRadExe.FormattingEnabled = true;
-            this.cmbRadExe.Location = new System.Drawing.Point(210, 175);
+            this.cmbRadExe.Location = new System.Drawing.Point(75, 171);
             this.cmbRadExe.Name = "cmbRadExe";
             this.cmbRadExe.Size = new System.Drawing.Size(153, 21);
             this.cmbRadExe.TabIndex = 28;
@@ -489,14 +604,14 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.cmbBspExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbBspExe.FormattingEnabled = true;
-            this.cmbBspExe.Location = new System.Drawing.Point(210, 94);
+            this.cmbBspExe.Location = new System.Drawing.Point(75, 90);
             this.cmbBspExe.Name = "cmbBspExe";
             this.cmbBspExe.Size = new System.Drawing.Size(153, 21);
             this.cmbBspExe.TabIndex = 29;
             // 
             // lblBuildVIS
             // 
-            this.lblBuildVIS.Location = new System.Drawing.Point(170, 149);
+            this.lblBuildVIS.Location = new System.Drawing.Point(35, 145);
             this.lblBuildVIS.Name = "lblBuildVIS";
             this.lblBuildVIS.Size = new System.Drawing.Size(34, 20);
             this.lblBuildVIS.TabIndex = 25;
@@ -507,7 +622,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.cmbVisExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbVisExe.FormattingEnabled = true;
-            this.cmbVisExe.Location = new System.Drawing.Point(210, 148);
+            this.cmbVisExe.Location = new System.Drawing.Point(75, 144);
             this.cmbVisExe.Name = "cmbVisExe";
             this.cmbVisExe.Size = new System.Drawing.Size(153, 21);
             this.cmbVisExe.TabIndex = 30;
@@ -516,14 +631,14 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.cmbCsgExe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbCsgExe.FormattingEnabled = true;
-            this.cmbCsgExe.Location = new System.Drawing.Point(210, 121);
+            this.cmbCsgExe.Location = new System.Drawing.Point(75, 117);
             this.cmbCsgExe.Name = "cmbCsgExe";
             this.cmbCsgExe.Size = new System.Drawing.Size(153, 21);
             this.cmbCsgExe.TabIndex = 31;
             // 
             // lblBuildRAD
             // 
-            this.lblBuildRAD.Location = new System.Drawing.Point(170, 176);
+            this.lblBuildRAD.Location = new System.Drawing.Point(35, 172);
             this.lblBuildRAD.Name = "lblBuildRAD";
             this.lblBuildRAD.Size = new System.Drawing.Size(34, 20);
             this.lblBuildRAD.TabIndex = 26;
@@ -546,7 +661,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.grpTextures.Controls.Add(this.cklTexturePackages);
             this.grpTextures.Controls.Add(this.lblDefaultTextureScale);
             this.grpTextures.Controls.Add(this.nudDefaultTextureScale);
-            this.grpTextures.Location = new System.Drawing.Point(6, 692);
+            this.grpTextures.Location = new System.Drawing.Point(6, 792);
             this.grpTextures.Name = "grpTextures";
             this.grpTextures.Size = new System.Drawing.Size(459, 233);
             this.grpTextures.TabIndex = 49;
@@ -581,7 +696,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.Controls.Add(this.grpFgds);
             this.Controls.Add(this.grpDirectories);
             this.Name = "GoldsourceEnvironmentEditor";
-            this.Size = new System.Drawing.Size(472, 928);
+            this.Size = new System.Drawing.Size(472, 1029);
             ((System.ComponentModel.ISupportInitialize)(this.nudDefaultTextureScale)).EndInit();
             this.grpDirectories.ResumeLayout(false);
             this.grpDirectories.PerformLayout();
@@ -640,5 +755,14 @@ namespace Sledge.BspEditor.Environment.Goldsource
         private System.Windows.Forms.GroupBox grpTextures;
         private System.Windows.Forms.CheckedListBox cklTexturePackages;
         private System.Windows.Forms.Label lblTexturePackageExclusions;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox chkCopyBsp;
+        private System.Windows.Forms.CheckBox chkCopyRes;
+        private System.Windows.Forms.CheckBox chkCopyErr;
+        private System.Windows.Forms.CheckBox chkCopyLog;
+        private System.Windows.Forms.CheckBox chkCopyMap;
+        private System.Windows.Forms.CheckBox chkMapCopyBsp;
+        private System.Windows.Forms.CheckBox chkAskRunGame;
+        private System.Windows.Forms.CheckBox chkRunGame;
     }
 }

@@ -58,6 +58,16 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 VisExe = GetVal(environment.Properties, "VisExe", ""),
                 RadExe = GetVal(environment.Properties, "RadExe", ""),
 
+                GameCopyBsp = GetVal(environment.Properties, "GameCopyBsp", true),
+                GameRun = GetVal(environment.Properties, "GameRun", true),
+                GameAsk = GetVal(environment.Properties, "GameAsk", true),
+
+                MapCopyBsp = GetVal(environment.Properties, "MapCopyBsp", false),
+                MapCopyMap = GetVal(environment.Properties, "MapCopyMap", false),
+                MapCopyLog = GetVal(environment.Properties, "MapCopyLog", false),
+                MapCopyErr = GetVal(environment.Properties, "MapCopyErr", false),
+                MapCopyRes = GetVal(environment.Properties, "MapCopyRes", false),
+
                 DefaultTextureScale = GetVal(environment.Properties, "DefaultTextureScale", 0m),
                 ExcludedWads = GetVal(environment.Properties, "ExcludedWads", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
             };
@@ -94,6 +104,16 @@ namespace Sledge.BspEditor.Environment.Goldsource
                     { "CsgExe", env.CsgExe },
                     { "VisExe", env.VisExe },
                     { "RadExe", env.RadExe },
+
+                    { "GameCopyBsp", Convert.ToString(env.GameCopyBsp, CultureInfo.InvariantCulture) },
+                    { "GameRun", Convert.ToString(env.GameRun, CultureInfo.InvariantCulture) },
+                    { "GameAsk", Convert.ToString(env.GameAsk, CultureInfo.InvariantCulture) },
+
+                    { "MapCopyBsp", Convert.ToString(env.MapCopyBsp, CultureInfo.InvariantCulture) },
+                    { "MapCopyMap", Convert.ToString(env.MapCopyMap, CultureInfo.InvariantCulture) },
+                    { "MapCopyLog", Convert.ToString(env.MapCopyLog, CultureInfo.InvariantCulture) },
+                    { "MapCopyErr", Convert.ToString(env.MapCopyErr, CultureInfo.InvariantCulture) },
+                    { "MapCopyRes", Convert.ToString(env.MapCopyRes, CultureInfo.InvariantCulture) },
 
                     { "DefaultTextureScale", Convert.ToString(env.DefaultTextureScale, CultureInfo.InvariantCulture) },
 

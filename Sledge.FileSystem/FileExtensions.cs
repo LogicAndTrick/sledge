@@ -105,7 +105,16 @@ namespace Sledge.FileSystem
             }
             if (par == null) return file.FullPathName;
             return path;
+        }
 
+        /// <summary>
+        /// For a file on disk, return the path to this file. Otherwise, will return null.
+        /// </summary>
+        public static string GetPathOnDisk(this IFile file)
+        {
+            if (file is CompositeFile cf) file = cf.FirstFile;
+            if (file is NativeFile nf) return nf.FullPathName;
+            return null;
         }
     }
 }

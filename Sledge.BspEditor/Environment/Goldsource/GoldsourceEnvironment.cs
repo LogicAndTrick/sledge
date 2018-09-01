@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
@@ -58,6 +60,16 @@ namespace Sledge.BspEditor.Environment.Goldsource
         public string VisExe { get; set; }
         public string BspExe { get; set; }
         public string RadExe { get; set; }
+
+        public bool GameCopyBsp { get; set; }
+        public bool GameRun { get; set; }
+        public bool GameAsk { get; set; }
+
+        public bool MapCopyBsp { get; set; }
+        public bool MapCopyMap { get; set; }
+        public bool MapCopyLog { get; set; }
+        public bool MapCopyErr { get; set; }
+        public bool MapCopyRes { get; set; }
 
         public List<string> ExcludedWads { get; set; }
 
@@ -162,7 +174,17 @@ namespace Sledge.BspEditor.Environment.Goldsource
         public async Task UpdateDocumentData(MapDocument document)
         {
             var tc = await GetTextureCollection();
-            document.Map.Root.Data.GetOne<EntityData>()?.Set("wad", string.Join(";", GetUsedTexturePackages(document, tc).Select(x => x.Location).Where(x => x.EndsWith(".wad"))));
+
+            // Get the list of used packages - the packages are abstracted away from the file system, so we don't know where they are located yet
+            var usedPackages = GetUsedTexturePackages(document, tc).Select(x => x.Location).ToHashSet(StringComparer.InvariantCultureIgnoreCase);
+
+            // Get the list of wad locations - for the wad texture provider, this is a quick operation
+            var wads = _wadProvider.GetPackagesInFile(Root).Select(x => x.File.GetPathOnDisk()).Where(x => x != null).ToList();
+
+            // Get the list of wads that are in the used set
+            var usedWads = wads.Where(x => usedPackages.Contains(Path.GetFileName(x))).ToList();
+
+            document.Map.Root.Data.GetOne<EntityData>()?.Set("wad", string.Join(";", usedWads));
         }
 
         private IEnumerable<string> GetUsedTextures(MapDocument document)
@@ -197,7 +219,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             {
                 var workingDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
                 if (!Directory.Exists(workingDir)) Directory.CreateDirectory(workingDir);
-                batch.Variables["WorkingDirectory"] = workingDir;
+                b.Variables["WorkingDirectory"] = workingDir;
 
                 await Oy.Publish("Compile:Debug", $"Working directory is: {workingDir}\r\n");
             }));
@@ -208,12 +230,12 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 var fn = d.FileName;
                 if (String.IsNullOrWhiteSpace(fn) || fn.IndexOf('.') < 0) fn = Path.GetRandomFileName();
                 var mapFile = Path.GetFileNameWithoutExtension(fn) + ".map";
-                batch.Variables["MapFileName"] = mapFile;
+                b.Variables["MapFileName"] = mapFile;
 
                 var path = Path.Combine(b.Variables["WorkingDirectory"], mapFile);
                 b.Variables["MapFile"] = path;
 
-                await Oy.Publish("Command:Run", new CommandMessage("Internal:SaveDocument", new
+                await Oy.Publish("Command:Run", new CommandMessage("Internal:ExportDocument", new
                 {
                     Document = d,
                     Path = path,
@@ -250,33 +272,85 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // Copy resulting files around
             batch.Steps.Add(new BatchCallback(async (b, d) =>
             {
-                var origDir = Path.GetDirectoryName(d.FileName);
-                if (origDir != null && Directory.Exists(origDir))
-                {
-                    var linFile = Path.ChangeExtension(b.Variables["MapFile"], "lin");
-                    if (File.Exists(linFile)) File.Copy(linFile, Path.Combine(origDir, Path.GetFileName(linFile)), true);
-
-                    var ptsFile = Path.ChangeExtension(b.Variables["MapFile"], "pts");
-                    if (File.Exists(ptsFile)) File.Copy(ptsFile, Path.Combine(origDir, Path.GetFileName(ptsFile)), true);
-                }
-
+                var mapDir = Path.GetDirectoryName(d.FileName);
                 var gameMapDir = Path.Combine(BaseDirectory, ModDirectory, "maps");
-                if (b.Successful && Directory.Exists(gameMapDir))
-                {
-                    var bspFile = Path.ChangeExtension(b.Variables["MapFile"], "bsp");
-                    if (File.Exists(bspFile)) File.Copy(bspFile, Path.Combine(gameMapDir, Path.GetFileName(bspFile)), true);
 
-                    var resFile = Path.ChangeExtension(b.Variables["MapFile"], "res");
-                    if (File.Exists(resFile)) File.Copy(resFile, Path.Combine(gameMapDir, Path.GetFileName(resFile)), true);
+                // Copy configured files to the map directory
+                CopyFile(MapCopyBsp, "bsp", mapDir);
+                CopyFile(MapCopyMap, "map", mapDir);
+                CopyFile(MapCopyRes, "res", mapDir);
+                CopyFile(MapCopyErr, "err", mapDir);
+                CopyFile(MapCopyLog, "log", mapDir);
+
+                // Always copy pointfiles if they exist
+                CopyFile(true, "lin", mapDir);
+                CopyFile(true, "pts", mapDir);
+
+                // Copy the BSP/RES to the game dir if configured
+                CopyFile(b.Successful && GameCopyBsp, "bsp", gameMapDir);
+                CopyFile(b.Successful && GameCopyBsp, "res", gameMapDir);
+
+                void CopyFile(bool test, string extension, string directory)
+                {
+                    if (!test || directory == null || !Directory.Exists(directory)) return;
+
+                    var file = Path.ChangeExtension(b.Variables["MapFile"], extension);
+                    if (file == null || !File.Exists(file)) return;
+
+                    File.Copy(file, Path.Combine(directory, Path.GetFileName(file)), true);
                 }
             }));
 
             // Delete temp directory
             batch.Steps.Add(new BatchCallback(async (b, d) =>
             {
-                var workingDir = batch.Variables["WorkingDirectory"];
+                var workingDir = b.Variables["WorkingDirectory"];
                 if (Directory.Exists(workingDir)) Directory.Delete(workingDir, true);
             }));
+
+            if (GameRun)
+            {
+                batch.Steps.Add(new BatchCallback(async (b, d) =>
+                {
+                    if (!b.Successful) return;
+
+                    if (GameAsk)
+                    {
+                        var ask = MessageBox.Show(
+                            $"The compile of {d.Name} completed successfully.\nWould you like to run the game now?",
+                            "Compile Successful!",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question
+                        );
+                        if (ask != DialogResult.Yes) return;
+                    }
+
+                    var exe = Path.Combine(BaseDirectory, GameExe);
+                    if (!File.Exists(exe))
+                    {
+                        MessageBox.Show(
+                            "The location of the game executable is incorrect. Please ensure that the game configuration has been set up correctly.",
+                            "Failed to launch!",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                        return;
+                    }
+
+                    var gameArg = ModDirectory == "valve" ? "" : $"-game {ModDirectory} ";
+                    var mapName = Path.GetFileNameWithoutExtension(b.Variables["MapFileName"]);
+
+                    var flags = String.Format("{0}-dev -console +map \"{1}\"", gameArg, mapName);
+                    try
+                    {
+                        Process.Start(exe, flags);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Launching game failed: " + ex.Message, "Failed to launch!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }));
+            }
 
             return batch;
         }

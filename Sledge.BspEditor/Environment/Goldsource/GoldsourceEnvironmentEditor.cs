@@ -50,6 +50,16 @@ namespace Sledge.BspEditor.Environment.Goldsource
             cmbVisExe.SelectedIndexChanged += OnEnvironmentChanged;
             cmbRadExe.SelectedIndexChanged += OnEnvironmentChanged;
 
+            chkCopyBsp.CheckedChanged += OnEnvironmentChanged;
+            chkRunGame.CheckedChanged += OnEnvironmentChanged;
+            chkAskRunGame.CheckedChanged += OnEnvironmentChanged;
+
+            chkMapCopyBsp.CheckedChanged += OnEnvironmentChanged;
+            chkCopyMap.CheckedChanged += OnEnvironmentChanged;
+            chkCopyLog.CheckedChanged += OnEnvironmentChanged;
+            chkCopyErr.CheckedChanged += OnEnvironmentChanged;
+            chkCopyRes.CheckedChanged += OnEnvironmentChanged;
+
             nudDefaultTextureScale.ValueChanged += OnEnvironmentChanged;
 
             cklTexturePackages.ItemCheck += (s, e) => this.InvokeLater(() => OnEnvironmentChanged(s, e)); // So it happens after the checkstate has changed, not before
@@ -95,6 +105,16 @@ namespace Sledge.BspEditor.Environment.Goldsource
             cmbVisExe.SelectedItem = env.VisExe;
             cmbRadExe.SelectedItem = env.RadExe;
 
+            chkCopyBsp.Checked = env.GameCopyBsp;
+            chkRunGame.Checked = env.GameRun;
+            chkAskRunGame.Checked = env.GameAsk;
+
+            chkMapCopyBsp.Checked = env.MapCopyBsp;
+            chkCopyMap.Checked = env.MapCopyMap;
+            chkCopyLog.Checked = env.MapCopyLog;
+            chkCopyErr.Checked = env.MapCopyErr;
+            chkCopyRes.Checked = env.MapCopyRes;
+
             nudDefaultTextureScale.Value = env.DefaultTextureScale;
 
             cklTexturePackages.Items.Clear();
@@ -129,6 +149,16 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 CsgExe = Convert.ToString(cmbCsgExe.SelectedItem, CultureInfo.InvariantCulture),
                 VisExe = Convert.ToString(cmbVisExe.SelectedItem, CultureInfo.InvariantCulture),
                 RadExe = Convert.ToString(cmbRadExe.SelectedItem, CultureInfo.InvariantCulture),
+
+                GameCopyBsp = chkCopyBsp.Checked,
+                GameRun = chkRunGame.Checked,
+                GameAsk = chkAskRunGame.Checked,
+
+                MapCopyBsp = chkMapCopyBsp.Checked,
+                MapCopyMap = chkCopyMap.Checked,
+                MapCopyLog = chkCopyLog.Checked,
+                MapCopyErr = chkCopyErr.Checked,
+                MapCopyRes = chkCopyRes.Checked,
 
                 DefaultTextureScale = nudDefaultTextureScale.Value,
                 ExcludedWads = GetTexturePackageSelection().Where(x => !x.Value).Select(x => x.Key).ToList()

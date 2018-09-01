@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Interfaces;
 using Veldrid;
@@ -33,7 +34,14 @@ namespace Sledge.Rendering.Resources
 
             Task.Factory.StartNew(async () =>
             {
-                device.UpdateTexture(_texture, await source.GetData(), 0, 0, 0, w, h, _texture.Depth, 0, 0);
+                try
+                {
+                    device.UpdateTexture(_texture, await source.GetData(), 0, 0, 0, w, h, _texture.Depth, 0, 0);
+                }
+                catch
+                {
+                    // Error udating texture, the texture may have been disposed
+                }
                 _mipsGenerated = false;
             });
 
