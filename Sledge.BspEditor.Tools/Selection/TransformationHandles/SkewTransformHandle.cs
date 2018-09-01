@@ -1,8 +1,11 @@
 ﻿using System.Numerics;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Grid;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
+using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using KeyboardState = Sledge.Shell.Input.KeyboardState;
 
@@ -64,11 +67,15 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             if (!_skewStart.HasValue || !_skewEnd.HasValue) return null;
 
             var nsmd = _skewEnd.Value - _skewStart.Value;
-            var mouseDiff = nsmd; // doc.Snap(nsmd, doc.Map.GridSpacing);
-            if (KeyboardState.Shift)
+            var mouseDiff = State.Tool.SnapIfNeeded(nsmd);
+            if (KeyboardState.Shift && !KeyboardState.Alt)
             {
-                // !todo selection (snapping)
-                // mouseDiff = doc.Snap(nsmd, doc.Map.GridSpacing / 2);
+                // todo: this is hard-coded to only work on the square grid
+                var gridData = doc.Map.Data.GetOne<GridData>();
+                if (gridData?.Grid is SquareGrid sg && gridData?.SnapToGrid == true)
+                {
+                    mouseDiff = nsmd.Snap(sg.Step / 2);
+                }
             }
 
             var relative = camera.Flatten(state.OrigEnd - state.OrigStart);

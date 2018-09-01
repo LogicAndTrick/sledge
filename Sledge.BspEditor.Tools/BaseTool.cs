@@ -38,17 +38,12 @@ namespace Sledge.BspEditor.Tools
             return context.Get<MapDocument>("ActiveDocument") != null;
         }
 
-        public Vector3 Snap(Vector3 c)
+        public Vector3 SnapIfNeeded(Vector3 c)
         {
             var gridData = Document.Map.Data.GetOne<GridData>();
             var snap = !KeyboardState.Alt && gridData?.SnapToGrid == true;
             var grid = gridData?.Grid;
             return snap && grid != null ? grid.Snap(c) : c.Snap(1);
-        }
-
-        public Vector3 SnapIfNeeded(Vector3 c)
-        {
-            return Snap(c);
         }
 
         public Vector3 SnapToSelection(Vector3 c, MapViewport vp)
