@@ -9,8 +9,18 @@
         "@Group.FileAssociations": "File Associations",
         "@Group.Hotkeys": "Hotkeys",
         "@Group.Interface": "Interface",
+        "@Group.Autosaving": "Autosaving",
         "Translations": {
             "Language": "Interface language (requires restart)"
+        },
+        "Autosaver": {
+            "Enabled": "Enable automatic saving",
+            "IntervalMinutes": "Interval between autosaves (minutes)",
+            "RetainNumber": "Number of autosaves to keep (0 keeps all)",
+            "SaveToAlternateDirectory": "Autosave to a different directory",
+            "AutosaveDirectory": "Directory to save to (if not the document directory)",
+            "OnlySaveIfChanged": "Only autosave if the document has unsaved changes",
+            "SaveDocumentOnAutosave": "Also save the document's main file when autosaving (automatic Ctrl+S)"
         }
     },
     "Commands": {

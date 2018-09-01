@@ -43,7 +43,10 @@
   <ItemGroup>
     <Compile Include="Colour.cs" />
     <Compile Include="Container.cs" />
-    <Compile Include="Scheduler.cs" />
+    <Compile Include="Scheduling\Schedule.cs" />
+    <Compile Include="Scheduling\Scheduler.cs" />
+    <Compile Include="Scheduling\ScheduleType.cs" />
+    <Compile Include="Scheduling\SerialisedSchedule.cs" />
     <Compile Include="Shell\Commands\CommandExtensions.cs" />
     <Compile Include="Shell\Commands\CommandIDAttribute.cs" />
     <Compile Include="Shell\Commands\CommandMessage.cs" />

@@ -30,6 +30,7 @@
         {
             this.Textbox = new System.Windows.Forms.TextBox();
             this.Label = new System.Windows.Forms.Label();
+            this.BrowseButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Textbox
@@ -38,7 +39,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Textbox.Location = new System.Drawing.Point(86, 3);
             this.Textbox.Name = "Textbox";
-            this.Textbox.Size = new System.Drawing.Size(261, 20);
+            this.Textbox.Size = new System.Drawing.Size(226, 20);
             this.Textbox.TabIndex = 3;
             // 
             // Label
@@ -50,10 +51,24 @@
             this.Label.TabIndex = 2;
             this.Label.Text = "label1";
             // 
+            // BrowseButton
+            // 
+            this.BrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.BrowseButton.Location = new System.Drawing.Point(318, 3);
+            this.BrowseButton.Name = "BrowseButton";
+            this.BrowseButton.Size = new System.Drawing.Size(28, 20);
+            this.BrowseButton.TabIndex = 4;
+            this.BrowseButton.Text = "...";
+            this.BrowseButton.UseVisualStyleBackColor = true;
+            this.BrowseButton.Visible = false;
+            this.BrowseButton.Click += new System.EventHandler(this.BrowseButtonClicked);
+            // 
             // TextEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.BrowseButton);
             this.Controls.Add(this.Textbox);
             this.Controls.Add(this.Label);
             this.Name = "TextEditor";
@@ -67,5 +82,6 @@
 
         private System.Windows.Forms.TextBox Textbox;
         private System.Windows.Forms.Label Label;
+        private System.Windows.Forms.Button BrowseButton;
     }
 }
