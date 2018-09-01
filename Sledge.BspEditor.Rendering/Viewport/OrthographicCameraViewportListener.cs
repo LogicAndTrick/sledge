@@ -4,8 +4,6 @@ using System.Numerics;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.Common;
-using Sledge.DataStructures.Geometric;
-using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
 using Sledge.Shell;
 using Sledge.Shell.Input;

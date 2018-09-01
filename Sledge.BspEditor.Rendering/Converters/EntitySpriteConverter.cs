@@ -1,15 +1,11 @@
-using System;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.ChangeHandlers;
 using Sledge.BspEditor.Rendering.Resources;
-using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
-using Sledge.Providers.Texture;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Pipelines;

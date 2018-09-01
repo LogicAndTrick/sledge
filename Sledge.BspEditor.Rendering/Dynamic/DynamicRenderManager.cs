@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
-using Sledge.BspEditor.Rendering.Overlay;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Interfaces;
-using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Resources;
 

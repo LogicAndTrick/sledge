@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Rendering.Resources;
 
 namespace Sledge.BspEditor.Rendering.Converters

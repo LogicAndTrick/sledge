@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
-using Sledge.BspEditor.Documents;
-using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;

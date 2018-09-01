@@ -1,5 +1,3 @@
-using Sledge.Rendering;
-
 namespace Sledge.BspEditor.Rendering.Viewport
 {
     public interface IViewportEventListener

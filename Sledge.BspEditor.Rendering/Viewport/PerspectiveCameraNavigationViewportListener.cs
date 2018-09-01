@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Sledge.Common.Easings;
-using Sledge.Rendering;
 using Sledge.Rendering.Cameras;
 using Sledge.Shell;
 using Sledge.Shell.Input;

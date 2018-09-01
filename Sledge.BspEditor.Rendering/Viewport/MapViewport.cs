@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Numerics;
 using System.Windows.Forms;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Viewports;

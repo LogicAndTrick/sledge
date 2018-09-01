@@ -8,7 +8,6 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.ChangeHandlers;
-using Sledge.BspEditor.Rendering.Scene;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
