@@ -19,7 +19,6 @@ using Sledge.BspEditor.Tools.Properties;
 using Sledge.BspEditor.Tools.Vertex.Errors;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 using Sledge.BspEditor.Tools.Vertex.Tools;
-using Sledge.Common;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
@@ -32,7 +31,6 @@ using Sledge.Rendering.Engine;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
-using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools.Vertex

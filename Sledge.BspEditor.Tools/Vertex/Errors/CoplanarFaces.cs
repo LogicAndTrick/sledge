@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using Sledge.BspEditor.Primitives.MapObjectData;
-using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 
 namespace Sledge.BspEditor.Tools.Vertex.Errors

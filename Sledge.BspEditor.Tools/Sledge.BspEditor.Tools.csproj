@@ -147,10 +147,8 @@
     <Compile Include="Selection\TransformationHandles\RotationOrigin.cs" />
     <Compile Include="Selection\TransformationHandles\SkewTransformHandle.cs" />
     <Compile Include="Selection\TransformationHandles\TextureTransformationType.cs" />
-    <Compile Include="Texture\AlignMode.cs" />
     <Compile Include="Texture\ApplyActiveTexture.cs" />
     <Compile Include="Texture\BrowseActiveTexture.cs" />
-    <Compile Include="Texture\JustifyMode.cs" />
     <Compile Include="Texture\ReplaceTextures.cs" />
     <Compile Include="Texture\SmartEditTextureBrowser.cs">
       <SubType>Component</SubType>

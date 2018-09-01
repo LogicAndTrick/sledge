@@ -130,8 +130,6 @@ namespace Sledge.BspEditor.Tools.Selection
             {
                 show3DWidgets = x == "1";
                 _selectionBox.ShowWidgets = show3DWidgets;
-                //_selectionBox.Widgets.ForEach(a => a.Active = false);
-                //if (show3DWidgets && _selectionBox.Widgets.Any()) _selectionBox.Widgets[0].Active = true;
                 _selectionBox.Update();
             });
         }
@@ -704,11 +702,6 @@ namespace Sledge.BspEditor.Tools.Selection
                 // If the shift key is down, select all brushes that are fully contained by the box
                 // If select by handles only is on, select all brushes with centers inside the box
                 // Otherwise, select all brushes that intersect with the box
-
-                //Func<Box, IEnumerable<IMapObject>> selector = x => Document.Map.Root.GetAllNodesIntersectingWith(x);
-                //if (Sledge.Settings.Select.BoxSelectByCenterHandlesOnly) selector = x => MapDocument.Map.WorldSpawn.GetAllNodesWithCentersContainedWithin(x);
-                //if (KeyboardState.Shift) selector = x => Document.Map.Root.GetAllNodesContainedWithin(x);
-                //var nodes = selector(boundingbox).ToList();
 
                 Predicate<IMapObject> filter = x => true;
                 if (KeyboardState.Shift) filter = x => x.BoundingBox.ContainedWithin(boundingbox);

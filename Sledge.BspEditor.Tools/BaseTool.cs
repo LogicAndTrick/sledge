@@ -407,12 +407,6 @@ namespace Sledge.BspEditor.Tools
             }
         }
 
-        // protected virtual IEnumerable<SceneObject> GetSceneObjects()
-        // {
-        //     if (!Active) return new SceneObject[0];
-        //     return Children.Where(x => x.Active).SelectMany(x => x.GetSceneObjects());
-        // }
-
         #endregion
     }
 }

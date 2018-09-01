@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 using Sledge.DataStructures.Geometric;
 

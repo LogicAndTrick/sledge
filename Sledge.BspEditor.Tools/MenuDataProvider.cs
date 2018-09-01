@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using Sledge.BspEditor.Primitives;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 
