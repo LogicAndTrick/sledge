@@ -106,11 +106,13 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             face.Transform(Matrix4x4.CreateScale(Vector3.One * 0.9f, origin));
             face.Transform(Matrix4x4.CreateTranslation(face.Plane.Normal * num));
 
+            var vertList = face.Vertices.ToList();
+
             // Create a face for each new edge -> old edge
             foreach (var edge in face.GetEdges())
             {
-                var startIndex = face.Vertices.FindIndex(x => x.Position.EquivalentTo(edge.Start));
-                var endIndex = face.Vertices.FindIndex(x => x.Position.EquivalentTo(edge.End));
+                var startIndex = vertList.FindIndex(x => x.Position.EquivalentTo(edge.Start));
+                var endIndex = vertList.FindIndex(x => x.Position.EquivalentTo(edge.End));
                 var verts = new[] { vertexPositions[startIndex], vertexPositions[endIndex], edge.End, edge.Start };
                 var f = new MutableFace(verts, face.Texture.Clone());
                 solid.Faces.Add(f);

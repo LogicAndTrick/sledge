@@ -10,6 +10,7 @@ namespace Sledge.BspEditor.Tools.Draggable
     public interface IDraggable : IOverlayRenderable
     {
         Vector3 Origin { get; }
+        Vector3 ZIndex { get; }
         event EventHandler DragStarted;
         event EventHandler DragMoved;
         event EventHandler DragEnded;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.Common.Threading;
 using Sledge.DataStructures.Geometric;
 using Plane = Sledge.DataStructures.Geometric.Plane;
 
@@ -11,20 +12,20 @@ namespace Sledge.BspEditor.Tools.Vertex.Selection
 {
     public class MutableFace
     {
-        public List<MutableVertex> Vertices { get; }
+        public IList<MutableVertex> Vertices { get; }
         public Primitives.Texture Texture { get; set; }
         public Plane Plane => new Plane(Vertices[0].Position, Vertices[1].Position, Vertices[2].Position);
         public Vector3 Origin => Vertices.Aggregate(Vector3.Zero, (a, b) => a + b.Position) / Vertices.Count;
 
         public MutableFace(Face face)
         {
-            Vertices = face.Vertices.Select(x => new MutableVertex(x)).ToList();
+            Vertices = new ThreadSafeList<MutableVertex>(face.Vertices.Select(x => new MutableVertex(x)));
             Texture = face.Texture.Clone();
         }
 
         public MutableFace(IEnumerable<Vector3> vertices, Primitives.Texture texture)
         {
-            Vertices = vertices.Select(x => new MutableVertex(x)).ToList();
+            Vertices = new ThreadSafeList<MutableVertex>(vertices.Select(x => new MutableVertex(x)));
             Texture = texture;
         }
 

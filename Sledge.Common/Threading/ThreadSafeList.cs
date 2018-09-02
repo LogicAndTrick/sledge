@@ -29,6 +29,11 @@ namespace Sledge.Common.Threading
             _lock = ((ICollection) _list).SyncRoot;
         }
 
+        public ThreadSafeList(IEnumerable<T> items) : this()
+        {
+            AddRange(items);
+        }
+
         public bool Contains(T item)
         {
             lock (_lock) return _list.Contains(item);

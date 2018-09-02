@@ -17,6 +17,7 @@ using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
+using Sledge.Shell;
 using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools.Vertex.Tools
@@ -145,6 +146,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         public override async Task SelectionChanged()
         {
+            UpdateSplitEnabled();
             await UpdateVertices();
         }
 
@@ -297,7 +299,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         private void UpdateSplitEnabled()
         {
-            _control.SplitEnabled = CanSplit();
+            var canSplit = CanSplit();
+            _control.InvokeLater(() => _control.SplitEnabled = canSplit);
         }
 
         private bool CanSplit()
@@ -332,77 +335,57 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         private void Split()
         {
-            throw new NotImplementedException();
-            //var face = GetSplitFace(out var vertexSolid);
-            //if (face == null) return;
-            //
-            //var solid = vertexSolid.Copy;
-            //
-            //var sel = GetVisiblePoints().Where(x => x.IsSelected).ToList();
-            //var p1 = sel[0];
-            //var p2 = sel[1];
-            //
-            //if (p1.IsMidpoint) AddAdjacentPoint(face, p1, solid);
-            //if (p2.IsMidpoint) AddAdjacentPoint(face, p2, solid);
-            //
-            //var polygon = new Polygon(face.Vertices.Select(x => x));
-            //var clip = new Plane(p1.Position, p2.Position, p1.Position + face.Plane.Normal * 10);
-            //Polygon back, front;
-            //polygon.Split(clip, out back, out front);
-            //if (back == null || front == null) return;
-            //
-            //solid.Data.Remove(face);
-            //
-            //CreateFace(back, solid, face);
-            //CreateFace(front, solid, face);
-            //
-            //UpdateSolids(new List<VertexSolid> { vertexSolid });
+            var face = GetSplitFace(out var vertexSolid);
+            if (face == null) return;
+
+            var solid = vertexSolid.Copy;
+
+            var sel = GetVisiblePoints().Where(x => x.IsSelected).ToList();
+            var p1 = sel[0];
+            var p2 = sel[1];
+
+            if (p1.IsMidpoint) AddAdjacentPoint(face, p1, solid);
+            if (p2.IsMidpoint) AddAdjacentPoint(face, p2, solid);
+
+            var polygon = new Polygon(face.Vertices.Select(x => x.Position)).ToPrecisionPolygon();
+            var clip = new DataStructures.Geometric.Plane(p1.Position, p2.Position, p1.Position + face.Plane.Normal * 10).ToPrecisionPlane();
+
+            polygon.Split(clip, out var back, out var front);
+            if (back == null || front == null) return;
+
+            solid.Faces.Remove(face);
+            solid.Faces.Add(new MutableFace(back.ToStandardPolygon().Vertices, face.Texture.Clone()));
+            solid.Faces.Add(new MutableFace(front.ToStandardPolygon().Vertices, face.Texture.Clone()));
+
+            UpdateSolids(new List<VertexSolid> { vertexSolid });
         }
 
-        //private void SplitFace()
-        //{
-        //    if (CanSplit())
-        //    {
-        //        Split();
-        //    }
-        //}
-        //
-        //private void CreateFace(Polygon polygon, Solid parent, Face original)
-        //{
-        //    var verts = polygon.Vertices;
-        //    var f = new Face(Document.Map.NumberGenerator.Next("Face"))
-        //    {
-        //        Plane = new Plane(verts[0], verts[1], verts[2]),
-        //        Texture = original.Texture.Clone()
-        //    };
-        //    f.Vertices.AddRange(verts.Select(x => x.Clone()));
-        //    parent.Data.Add(f);
-        //}
+        private void AddAdjacentPoint(MutableFace face, VertexPoint point, MutableSolid solid)
+        {
+            var s = point.MidpointStart.Position;
+            var e = point.MidpointEnd.Position;
 
-        //private void AddAdjacentPoint(Face face, VertexPoint point, Solid solid)
-        //{
-        //    var s = point.MidpointStart.Position;
-        //    var e = point.MidpointEnd.Position;
-        //
-        //    foreach (var f in solid.Faces.Where(x => x != face))
-        //    {
-        //        foreach (var edge in f.GetEdges())
-        //        {
-        //            if (edge.Start == s && edge.End == e)
-        //            {
-        //                var idx = f.Vertices.IndexOf(e);
-        //                f.Vertices.Insert(idx, point.Position.Clone());
-        //                return;
-        //            }
-        //            if (edge.Start == e && edge.End == s)
-        //            {
-        //                var idx = f.Vertices.IndexOf(s);
-        //                f.Vertices.Insert(idx, point.Position.Clone());
-        //                return;
-        //            }
-        //        }
-        //    }
-        //}
+            foreach (var f in solid.Faces.Where(x => x != face))
+            {
+                var vertList = f.Vertices.ToList();
+
+                foreach (var edge in f.GetEdges())
+                {
+                    if (edge.Start == s && edge.End == e)
+                    {
+                        var idx = vertList.FindIndex(x => x.Position.EquivalentTo(e));
+                        f.Vertices.Insert(idx, new MutableVertex(point.Position));
+                        return;
+                    }
+                    if (edge.Start == e && edge.End == s)
+                    {
+                        var idx = vertList.FindIndex(x => x.Position.EquivalentTo(s));
+                        f.Vertices.Insert(idx, new MutableVertex(point.Position));
+                        return;
+                    }
+                }
+            }
+        }
 
         #endregion
 
@@ -487,6 +470,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             var val = !toggle || !first.IsSelected;
             points.ForEach(x => x.IsSelected = val);
 
+            UpdateSplitEnabled();
             Invalidate();
         }
 
@@ -497,6 +481,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 point.IsSelected = false;
             }
 
+            UpdateSplitEnabled();
             Invalidate();
         }
 
@@ -679,6 +664,16 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             public VertexPoint MidpointEnd { get; set; }
 
             public override Vector3 Origin => IsDragging ? DraggingPosition : Position;
+
+            public override Vector3 ZIndex
+            {
+                get
+                {
+                    var pos = IsDragging ? DraggingPosition : Position;
+                    if (IsSelected) pos += Vector3.One * 1000000;
+                    return pos;
+                }
+            }
 
             public VertexPoint(VertexPointTool tool, VertexSolid solid)
             {

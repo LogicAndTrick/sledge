@@ -214,7 +214,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            foreach (var obj in CollectObjects(x => new[] { x }).OrderByDescending(x => camera.GetUnusedValue(x.Origin)))
+            foreach (var obj in CollectObjects(x => new[] { x }).OrderBy(x => camera.GetUnusedValue(x.ZIndex)))
             {
                 obj.Render(viewport, camera, worldMin, worldMax, graphics);
             }

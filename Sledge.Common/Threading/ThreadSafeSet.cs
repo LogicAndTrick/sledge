@@ -22,6 +22,11 @@ namespace Sledge.Common.Threading
             _lock = new object();
         }
 
+        public ThreadSafeSet(IEnumerable<T> items) : this()
+        {
+            UnionWith(items);
+        }
+
         void ICollection<T>.Add(T item)
         {
             lock (_lock) _set.Add(item);

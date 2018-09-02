@@ -324,6 +324,16 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             public Vector3 DraggingPosition { get; set; }
 
             public override Vector3 Origin => Position;
+            
+            public override Vector3 ZIndex
+            {
+                get
+                {
+                    var pos = Position;
+                    if (IsSelected) pos += Vector3.One * 1000000;
+                    return pos;
+                }
+            }
 
             public bool IsHighlighted { get; set; }
             public bool IsSelected { get; set; }

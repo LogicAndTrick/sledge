@@ -31,6 +31,15 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             }
         }
 
+        public Vector3 ZIndex
+        {
+            get
+            {
+                var list = GetDraggables().ToList();
+                return list.Aggregate(Vector3.Zero, (a, b) => a + b.ZIndex) / list.Count();
+            }
+        }
+
         public event EventHandler DragStarted;
         public event EventHandler DragMoved;
         public event EventHandler DragEnded;
