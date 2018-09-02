@@ -14,16 +14,38 @@ namespace Sledge.Shell
     [Export]
     internal class Bootstrapper
     {
-        [ImportMany] private IEnumerable<Lazy<IStartupHook>> _startupHooks;
-        [ImportMany] private IEnumerable<Lazy<IUIStartupHook>> _uiStartupHooks;
-        [ImportMany] private IEnumerable<Lazy<IInitialiseHook>> _initialiseHooks;
-        [ImportMany] private IEnumerable<Lazy<IShuttingDownHook>> _shuttingDownHooks;
-        [ImportMany] private IEnumerable<Lazy<IUIShutdownHook>> _uiShutdownHooks;
-        [ImportMany] private IEnumerable<Lazy<IShutdownHook>> _shutdownHooks;
+        private readonly List<IStartupHook> _startupHooks;
+        private readonly List<IUIStartupHook> _uiStartupHooks;
+        private readonly List<IInitialiseHook> _initialiseHooks;
+        private readonly List<IShuttingDownHook> _shuttingDownHooks;
+        private readonly List<IUIShutdownHook> _uiShutdownHooks;
+        private readonly List<IShutdownHook> _shutdownHooks;
 
+        [ImportingConstructor]
+        public Bootstrapper
+        (
+            [ImportMany] IEnumerable<Lazy<IStartupHook>> startupHooks,
+            [ImportMany] IEnumerable<Lazy<IUIStartupHook>> uiStartupHooks,
+            [ImportMany] IEnumerable<Lazy<IInitialiseHook>> initialiseHooks,
+            [ImportMany] IEnumerable<Lazy<IShuttingDownHook>> shuttingDownHooks,
+            [ImportMany] IEnumerable<Lazy<IUIShutdownHook>> uiShutdownHooks,
+            [ImportMany] IEnumerable<Lazy<IShutdownHook>> shutdownHooks
+        )
+        {
+            _startupHooks = startupHooks.Select(x => x.Value).ToList();
+            _uiStartupHooks = uiStartupHooks.Select(x => x.Value).ToList();
+            _initialiseHooks = initialiseHooks.Select(x => x.Value).ToList();
+            _shuttingDownHooks = shuttingDownHooks.Select(x => x.Value).ToList();
+            _uiShutdownHooks = uiShutdownHooks.Select(x => x.Value).ToList();
+            _shutdownHooks = shutdownHooks.Select(x => x.Value).ToList();
+        }
+
+        /// <summary>
+        /// Run all UI startup hooks
+        /// </summary>
         public void UIStartup()
         {
-            foreach (var hook in _uiStartupHooks.Select(x => x.Value).OrderBy(x => x.GetType().Name))
+            foreach (var hook in _uiStartupHooks.OrderBy(x => x.GetType().Name))
             {
                 Log.Debug("Bootstrapper", "UI Startup hook: " + hook.GetType().FullName);
                 hook.OnUIStartup();
@@ -31,12 +53,12 @@ namespace Sledge.Shell
         }
 
         /// <summary>
-        /// Run all shell-startup and startup hooks
+        /// Run all startup hooks
         /// </summary>
         /// <returns>The running task</returns>
         public async Task Startup()
         {
-            foreach (var export in _startupHooks.Select(x => x.Value).OrderBy(x => x.GetType().FullName))
+            foreach (var export in _startupHooks.OrderBy(x => x.GetType().FullName))
             {
                 Log.Debug("Bootstrapper", "Startup hook: " + export.GetType().FullName);
                 await export.OnStartup();
@@ -49,7 +71,7 @@ namespace Sledge.Shell
         /// <returns>The running task</returns>
         public async Task Initialise()
         {
-            foreach (var export in _initialiseHooks.Select(x => x.Value).OrderBy(x => x.GetType().FullName))
+            foreach (var export in _initialiseHooks.OrderBy(x => x.GetType().FullName))
             {
                 Log.Debug("Bootstrapper", "Initialise hook: " + export.GetType().FullName);
                 await export.OnInitialise();
@@ -62,7 +84,7 @@ namespace Sledge.Shell
         /// <returns>False if shutdown cannot continue</returns>
         public async Task<bool> ShuttingDown()
         {
-            foreach (var export in _shuttingDownHooks.Select(x => x.Value).OrderBy(x => x.GetType().FullName))
+            foreach (var export in _shuttingDownHooks.OrderBy(x => x.GetType().FullName))
             {
                 Log.Debug("Bootstrapper", "Shutting down hook: " + export.GetType().FullName);
                 if (!await export.OnShuttingDown()) return false;
@@ -70,9 +92,12 @@ namespace Sledge.Shell
             return true;
         }
 
+        /// <summary>
+        /// Run all UI shutdown hooks
+        /// </summary>
         public void UIShutdown()
         {
-            foreach (var hook in _uiShutdownHooks.Select(x => x.Value).OrderBy(x => x.GetType().Name))
+            foreach (var hook in _uiShutdownHooks.OrderBy(x => x.GetType().Name))
             {
                 Log.Debug("Bootstrapper", "UI Shutdown hook: " + hook.GetType().FullName);
                 hook.OnUIShutdown();
@@ -85,7 +110,7 @@ namespace Sledge.Shell
         /// <returns>The running task</returns>
         public async Task Shutdown()
         {
-            foreach (var export in _shutdownHooks.Select(x => x.Value).OrderBy(x => x.GetType().FullName))
+            foreach (var export in _shutdownHooks.OrderBy(x => x.GetType().FullName))
             {
                 Log.Debug("Bootstrapper", "Shutdown hook: " + export.GetType().FullName);
                 await export.OnShutdown();
