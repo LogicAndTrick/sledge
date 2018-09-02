@@ -50,7 +50,7 @@ namespace Sledge.BspEditor.Tools.Texture
             return "Texture Application Tool";
         }
 
-        private ITextured _sampled;
+        private Face _sampled;
 
         public FaceSelection GetSelection()
         {
@@ -65,7 +65,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private bool ShouldHideFaceMask => Document?.Map.Data.GetOne<HideFaceMask>()?.Hidden == true;
 
-        private void SetActiveTexture(ITextured tex)
+        private void SetActiveTexture(Face tex)
         {
             _sampled = tex;
             if (tex == null) return;
@@ -230,7 +230,7 @@ namespace Sledge.BspEditor.Tools.Texture
             {
                 if (alignTexture)
                 {
-                    AlignTextureToSample(_sampled, clone);
+                    clone.Texture.AlignWithTexture(clone.Plane, _sampled.Plane, _sampled.Texture);
                 }
                 else if (!textureOnly)
                 {
@@ -256,11 +256,6 @@ namespace Sledge.BspEditor.Tools.Texture
         private async Task AlignTextureToView()
         {
 
-        }
-
-        private async Task AlignTextureToSample(ITextured sample, ITextured target)
-        {
-            // todo: align texture
         }
 
         public override void Render(BufferBuilder builder)

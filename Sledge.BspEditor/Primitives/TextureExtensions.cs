@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Plane = Sledge.DataStructures.Geometric.Plane;
@@ -46,35 +47,37 @@ namespace Sledge.BspEditor.Primitives
 
             // Find the intersection edge vector
             var intersectionEdge = alignToPlane.Normal.Cross(currentPlane.Normal);
-            // Create a plane using the intersection edge as the normal
-            var intersectionPlane = new Plane(intersectionEdge, 0);
 
             // If the planes are parallel, the texture doesn't need any rotation - just different shift values.
-            var intersect = Plane.Intersect(alignToPlane, currentPlane, intersectionPlane);
-            if (intersect != null)
+            if (Math.Abs(intersectionEdge.Length()) > 0.01f)
             {
-                var texNormal = alignToTexture.GetNormal();
+                // Create a plane using the intersection edge as the normal
+                var intersectionPlane = new Plane(intersectionEdge, 0);
 
-                // Since the intersection plane is perpendicular to both face planes, we can find the angle
-                // between the two planes (the original texture plane and the plane of this face) by projecting
-                // the normals of the planes onto the perpendicular plane and taking the cross product.
+                var intersect = Plane.Intersect(alignToPlane, currentPlane, intersectionPlane);
+                if (intersect != null)
+                {
+                    // Since the intersection plane is perpendicular to both face planes, we can find the angle
+                    // between the two planes (the align plane and the plane of this face) by projecting
+                    // the normals of the planes onto the perpendicular plane and taking the cross product.
 
-                // Project the two normals onto the perpendicular plane
-                var ptNormal = intersectionPlane.Project(texNormal).Normalise();
-                var ppNormal = intersectionPlane.Project(currentPlane.Normal).Normalise();
+                    // Project the two normals onto the perpendicular plane
+                    var apNormal = intersectionPlane.Project(alignToPlane.Normal).Normalise();
+                    var cpNormal = intersectionPlane.Project(currentPlane.Normal).Normalise();
 
-                // Get the angle between the projected normals
-                var dot = Math.Round(ptNormal.Dot(ppNormal), 4);
-                var angle = (float) Math.Acos(dot); // A.B = cos(angle)
+                    // Get the angle between the projected normals
+                    var dot = Math.Round(apNormal.Dot(cpNormal), 4);
+                    var angle = (float) Math.Acos(dot); // A.B = cos(angle)
 
-                // Rotate the texture axis by the angle around the intersection edge
-                var transform = Matrix4x4.CreateFromAxisAngle(intersectionEdge.Normalise(), angle);
-                refU = transform.Transform(refU);
-                refV = transform.Transform(refV);
+                    // Rotate the texture axis by the angle around the intersection edge
+                    var transform = Matrix4x4.CreateFromAxisAngle(intersectionEdge.Normalise(), angle);
+                    refU = transform.Transform(refU);
+                    refV = transform.Transform(refV);
 
-                // Rotate the texture reference points as well, but around the intersection line, not the origin
-                refX = transform.Transform(refX + intersect.Value) - intersect.Value;
-                refY = transform.Transform(refY + intersect.Value) - intersect.Value;
+                    // Rotate the texture reference points as well, but around the intersection line, not the origin
+                    refX = transform.Transform(refX + intersect.Value) - intersect.Value;
+                    refY = transform.Transform(refY + intersect.Value) - intersect.Value;
+                }
             }
 
             // Convert the reference points back to get the final values
