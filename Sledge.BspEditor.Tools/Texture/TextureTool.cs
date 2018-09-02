@@ -50,8 +50,6 @@ namespace Sledge.BspEditor.Tools.Texture
             return "Texture Application Tool";
         }
 
-        private Face _sampled;
-
         public FaceSelection GetSelection()
         {
             var fs = Document.Map.Data.GetOne<FaceSelection>();
@@ -65,11 +63,11 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private bool ShouldHideFaceMask => Document?.Map.Data.GetOne<HideFaceMask>()?.Hidden == true;
 
-        private void SetActiveTexture(Face tex)
+        private void SetActiveTexture(ITextured tex)
         {
-            _sampled = tex;
             if (tex == null) return;
-            var at = new ActiveTexture {Name = _sampled?.Texture.Name};
+
+            var at = new ActiveTexture {Name = tex.Texture.Name};
             MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(at), x => x.Update(at)));
         }
 
@@ -135,7 +133,6 @@ namespace Sledge.BspEditor.Tools.Texture
         public override async Task ToolDeselected()
         {
             GetSelection().Clear();
-            _sampled = null;
             await base.ToolDeselected();
         }
 
@@ -215,7 +212,9 @@ namespace Sledge.BspEditor.Tools.Texture
             // Shift+Right: apply only
             // Ctrl+Right:  nothing...?
 
-            var activeTexture = Document.Map.Data.GetOne<ActiveTexture>()?.Name ?? _sampled?.Texture.Name ?? "";
+            var sampleFace = GetSelection().FirstOrDefault();
+
+            var activeTexture = Document.Map.Data.GetOne<ActiveTexture>()?.Name ?? sampleFace?.Texture.Name ?? "";
             if (String.IsNullOrWhiteSpace(activeTexture)) return;
 
             var alignTexture = KeyboardState.Alt;
@@ -226,24 +225,22 @@ namespace Sledge.BspEditor.Tools.Texture
             // apply texture
             clone.Texture.Name = activeTexture;
 
-            if (_sampled != null)
+            if (sampleFace != null)
             {
                 if (alignTexture)
                 {
-                    clone.Texture.AlignWithTexture(clone.Plane, _sampled.Plane, _sampled.Texture);
+                    clone.Texture.AlignWithTexture(clone.Plane, sampleFace.Plane, sampleFace.Texture);
                 }
                 else if (!textureOnly)
                 {
                     // apply values
-                    clone.Texture.SetRotation(_sampled.Texture.Rotation);
-                    clone.Texture.XScale = _sampled.Texture.XScale;
-                    clone.Texture.XShift = _sampled.Texture.XShift;
-                    clone.Texture.YScale = _sampled.Texture.YScale;
-                    clone.Texture.YShift = _sampled.Texture.YShift;
+                    clone.Texture.SetRotation(sampleFace.Texture.Rotation);
+                    clone.Texture.XScale = sampleFace.Texture.XScale;
+                    clone.Texture.XShift = sampleFace.Texture.XShift;
+                    clone.Texture.YScale = sampleFace.Texture.YScale;
+                    clone.Texture.YShift = sampleFace.Texture.YShift;
                 }
             }
-
-            var sel = GetSelection();
 
             var edit = new Transaction(
                 new RemoveMapObjectData(parent.ID, face),

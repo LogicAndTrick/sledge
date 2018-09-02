@@ -497,7 +497,7 @@ namespace Sledge.BspEditor.Providers
                 var ed = new EntityData();
                 foreach (var kv in obj.Properties)
                 {
-                    if (ExcludedKeys.Contains(kv.Key.ToLower())) continue;
+                    if (kv.Key == null || ExcludedKeys.Contains(kv.Key.ToLower())) continue;
                     ed.Set(kv.Key, kv.Value);
                 }
                 ed.Name = obj.Get("classname", "");

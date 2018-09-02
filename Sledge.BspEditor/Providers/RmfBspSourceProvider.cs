@@ -256,7 +256,7 @@ namespace Sledge.BspEditor.Providers
             {
                 var key = br.ReadCString();
                 var value = br.ReadCString();
-                if (ExcludedKeys.Contains(key.ToLower())) continue;
+                if (key == null || ExcludedKeys.Contains(key.ToLower())) continue;
                 data.Set(key, value);
             }
 
@@ -440,7 +440,7 @@ namespace Sledge.BspEditor.Providers
             bw.Write(new byte[4]); // Unused
             bw.Write(data.Flags);
 
-            var props = data.Properties.Where(x => !ExcludedKeys.Contains(x.Key.ToLower())).ToList();
+            var props = data.Properties.Where(x => !String.IsNullOrWhiteSpace(x.Key) && !ExcludedKeys.Contains(x.Key.ToLower())).ToList();
             bw.Write(props.Count);
             foreach (var p in props)
             {
