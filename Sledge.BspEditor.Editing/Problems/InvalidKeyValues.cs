@@ -1,55 +1,72 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
-using Sledge.DataStructures.MapObjects;
+using Sledge.BspEditor.Modification.Operations.Data;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Translations;
+using Sledge.DataStructures.GameData;
 
 namespace Sledge.BspEditor.Editing.Problems
 {
+    [Export(typeof(IProblemCheck))]
+    [AutoTranslate]
     public class InvalidKeyValues : IProblemCheck
     {
-        public IEnumerable<Problem> Check(MapDocument document, bool visibleOnly)
+        public string Name { get; set; }
+        public string Details { get; set; }
+        public Uri Url => null;
+        public bool CanFix => true;
+
+        public async Task<List<Problem>> Check(MapDocument document, Predicate<IMapObject> filter)
         {
-            // MultiManagers require invalid key/values to work, exclude them from the search
-            var entities = document.WorldSpawn
-                .Find(x => x is Entity && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
-                .OfType<Entity>()
-                .Where(x => x.GameData != null)
-                .Where(x => !String.Equals(x.EntityData.Name, "multi_manager", StringComparison.InvariantCultureIgnoreCase))
+            var gamedata = await document.Environment.GetGameData();
+            return document.Map.Root.FindAll()
+                .Where(x => filter(x))
+                .Select(x => new { Object = x, EntityData = x.Data.GetOne<EntityData>() })
+                .Where(x => x.EntityData != null && GetInvalidKeys(gamedata, x.EntityData).Any())
+                .Select(x => new Problem().Add(x.Object))
                 .ToList();
-            foreach (var entity in entities)
-            {
-                var valid = true;
-                foreach (var prop in entity.EntityData.Properties)
-                {
-                    if (!entity.GameData.Properties.Any(x => String.Equals(x.Name, prop.Key, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        valid = false;
-                    }
-                }
-                if (!valid) yield return new Problem(GetType(), document, new[] { entity }, Fix, "Entity has invalid key/value pairs", "There are key/value pairs that are not specified in the game data. Ensure the latest FGDs are loaded. Fixing the problem will remove the invalid keys.");
-            }
         }
 
-        public IOperation Fix(Problem problem)
+        private IEnumerable<string> GetInvalidKeys(GameData gamedata, EntityData data)
         {
-            // todo
-            throw new NotImplementedException();
-            // var edit = new EditEntityData();
-            // foreach (var mo in problem.Objects.OfType<Entity>().Where(x => x.GameData != null))
-            // {
-            //     var ed = mo.GetEntityData().Clone();
-            //     foreach (var prop in mo.EntityData.Properties)
-            //     {
-            //         if (!mo.GameData.Properties.Any(x => String.Equals(x.Name, prop.Key, StringComparison.InvariantCultureIgnoreCase)))
-            //         {
-            //             ed.Properties.Remove(prop);
-            //         }
-            //     }
-            //     edit.AddEntity(mo, ed);
-            // }
-            // return edit;
+            // Multimanagers require invalid key/values to work, exclude them from the search
+            if (string.Equals(data.Name, "multi_manager", StringComparison.CurrentCultureIgnoreCase)) return new string[0];
+
+            var cls = gamedata.GetClass(data.Name);
+            if (cls == null) return new string[0];
+
+            return data.Properties.Select(x => x.Key)
+                .Except(cls.Properties.Select(x => x.Name), StringComparer.CurrentCultureIgnoreCase);
+        }
+
+        public async Task Fix(MapDocument document, Problem problem)
+        {
+            var gamedata = await document.Environment.GetGameData();
+
+            var transaction = new Transaction();
+
+            foreach (var obj in problem.Objects)
+            {
+                var data = obj.Data.GetOne<EntityData>();
+                if (data == null) continue;
+
+                var vals = new Dictionary<string, string>();
+
+                foreach (var key in GetInvalidKeys(gamedata, data))
+                {
+                    vals[key] = null;
+                }
+
+                transaction.Add(new EditEntityDataProperties(obj.ID, vals));
+            }
+
+            await MapDocumentOperation.Perform(document, transaction);
         }
     }
 }

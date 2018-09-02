@@ -372,6 +372,10 @@
             "Name": "Multiple objects have the same ID",
             "Details": "More than one object has the same ID. Each object ID should be unique. Fixing the problem will assign the duplicates new IDs."
         },
+        "EntityWithEntityChildren": {
+            "Name": "Entity has child entities",
+            "Details": "An entity with child entities was found. Fixing the problem will move the child entities outside of the entity's group."
+        },
         "GameDataNotFound": {
             "Name": "Entity class not found",
             "Details": "This entity class was not found in the current game data. Ensure that the correct FGDs are loaded."
@@ -380,6 +384,10 @@
             "Name": "Group has no children",
             "Details": "This group is empty. A group must have contents. Fixing the problem will delete the group."
         },
+        "InvalidKeyValues": {
+            "Name": "Entity has invalid key/value pairs",
+            "Details": "There are key/value pairs that are not specified in the game data. Ensure the latest FGDs are loaded. Fixing the problem will remove the invalid keys."
+        },
         "InvalidSolid": {
             "Name": "Invalid solid",
             "Details": "This solid is invalid. It is either not convex, has coplanar faces, or has off-plane vertices. Fixing the issue will delete the solid."
@@ -387,6 +395,18 @@
         "NoPlayerStart": {
             "Name": "This document has no player start",
             "Details": "There is no info_player_start entity in this document. The player will spawn at the origin instead. This may place the player inside geometry or in the void. Fixing the issue will place a player start entity at the document origin. It is recommended that you fix this problem manually." 
+        },
+        "PointEntityWithChildren": {
+            "Name": "Point entity has children",
+            "Details": "A point entity with children was found. A point entity cannot have any contents. Fixing the issue will move the children outside of the entity's group." 
+        },
+        "SolidEntityWithoutChildren": {
+            "Name": "Brush entity has no solid children",
+            "Details": "A brush entity with no solid children was found. A brush entity must have solid contents. Fixing the problem will delete the entity." 
+        },
+        "SolidWithChildren": {
+            "Name": "Solid has children",
+            "Details": "A solid with children was found. A solid cannot have any contents. Fixing the issue will move the children outside of the solid's group." 
         },
         "TextureAxisPerpendicularToFace": {
             "Name": "Texture axis perpendicular to face",

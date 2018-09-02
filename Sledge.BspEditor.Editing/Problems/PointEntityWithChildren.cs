@@ -1,32 +1,52 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Tree;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.GameData;
-using Sledge.DataStructures.MapObjects;
 
 namespace Sledge.BspEditor.Editing.Problems
 {
+    [Export(typeof(IProblemCheck))]
+    [AutoTranslate]
     public class PointEntityWithChildren : IProblemCheck
     {
-        public IEnumerable<Problem> Check(MapDocument document, bool visibleOnly)
+        public string Name { get; set; }
+        public string Details { get; set; }
+        public Uri Url => null;
+        public bool CanFix => true;
+
+        public async Task<List<Problem>> Check(MapDocument document, Predicate<IMapObject> filter)
         {
-            foreach (var entity in document.WorldSpawn
-                .Find(x => x is Entity && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
+            var gamedata = await document.Environment.GetGameData();
+            return document.Map.Root.FindAll()
                 .OfType<Entity>()
-                .Where(x => x.GameData != null)
-                .Where(x => x.GameData.ClassType != ClassType.Solid && x.GetChildren().Any()))
-            {
-                yield return new Problem(GetType(), document, new[] { entity }, Fix, "Point entity has children", "A point entity with children was found. A point entity cannot have any contents. Fixing the issue will move the children outside of the entity's group.");
-            }
+                .Where(x => x.Hierarchy.HasChildren)
+                .Where(x => filter(x))
+                .Select(x => new { Object = x, x.EntityData })
+                .Where(x => x.EntityData != null)
+                .Select(x => new { x.Object, x.EntityData, GameData = gamedata.GetClass(x.EntityData.Name) })
+                .Where(x => x.GameData != null && x.GameData.ClassType != ClassType.Solid)
+                .Select(x => new Problem().Add(x.Object))
+                .ToList();
         }
 
-        public IOperation Fix(Problem problem)
+        public Task Fix(MapDocument document, Problem problem)
         {
-            // todo
-            throw new NotImplementedException();
-            // return new Reparent(problem.Objects[0].Parent.ID, problem.Objects[0].GetChildren());
+            var transaction = new Transaction();
+
+            foreach (var obj in problem.Objects)
+            {
+                transaction.Add(new Detatch(obj.ID, obj.Hierarchy));
+                transaction.Add(new Attach(document.Map.Root.ID, obj.Hierarchy));
+            }
+
+            return MapDocumentOperation.Perform(document, transaction);
         }
     }
 }
