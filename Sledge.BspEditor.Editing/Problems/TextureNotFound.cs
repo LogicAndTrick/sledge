@@ -1,38 +1,78 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Linq;
+using System.Threading.Tasks;
+using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Data;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Translations;
+
 namespace Sledge.BspEditor.Editing.Problems
 {
-    /* todo fix this texture check
+    [Export(typeof(IProblemCheck))]
+    [AutoTranslate]
     public class TextureNotFound : IProblemCheck
     {
-        public IEnumerable<Problem> Check(Map map, bool visibleOnly)
+        public string Name { get; set; }
+        public string Details { get; set; }
+        public Uri Url => null;
+        public bool CanFix => true;
+
+        public async Task<List<Problem>> Check(MapDocument document, Predicate<IMapObject> filter)
         {
-            var faces = map.WorldSpawn
-                .Find(x => x is Solid && (!visibleOnly || (!x.IsVisgroupHidden && !x.IsCodeHidden)))
+            var tc = await document.Environment.GetTextureCollection();
+
+            // Get a list of all faces and textures
+            var faces = document.Map.Root.FindAll()
                 .OfType<Solid>()
-                .SelectMany(x => x.Faces)
-                .Where(x => x.Texture.Size.IsEmpty)
+                .Where(x => filter(x))
+                .SelectMany(x => x.Faces.Select(f => new {Object = x, Face = f}))
                 .ToList();
-            foreach (var name in faces.Select(x => x.Texture.Name).Distinct())
-            {
-                yield return new Problem(GetType(), map, faces.Where(x => x.Texture.Name == name).ToList(), Fix, "Texture not found: " + name, "This texture was not found in the currently loaded texture packages. Ensure that the correct texture packages are loaded. Fixing the problems will reset the face textures to the default texture.");
-            }
+
+            // Get the list of textures in the map and in the texture collection
+            var textureNames = faces.Select(x => x.Face.Texture.Name).ToHashSet();
+            var knownTextureNames = tc.GetAllTextures().ToHashSet();
+
+            // The set only contains textures that aren't known
+            textureNames.ExceptWith(knownTextureNames);
+
+            return faces
+                .Where(x => textureNames.Contains(x.Face.Texture.Name))
+                .Select(x => new Problem {Text = x.Face.Texture.Name}.Add(x.Object).Add(x.Face))
+                .ToList();
         }
 
-        public IOperation Fix(Problem problem)
+        public async Task Fix(MapDocument document, Problem problem)
         {
-            return new EditFace(problem.Faces, (d, x) =>
-                                                   {
-                                                       var ignored = "{#!~+-0123456789".ToCharArray();
-                                                       var def = d.TextureCollection.GetAllBrowsableItems()
-                                                           .OrderBy(i => new string(i.Name.Where(c => !ignored.Contains(c)).ToArray()) + "Z")
-                                                           .FirstOrDefault();
-                                                       if (def != null)
-                                                       {
-                                                           x.Texture.Name = def.Name;
-                                                           x.Texture.Size = new Size(def.Width, def.Height);
-                                                           x.CalculateTextureCoordinates(true);
-                                                       }
-                                                   }, true);
+            var tc = await document.Environment.GetTextureCollection();
+
+            // Get the default texture to apply
+            var first = tc.GetBrowsableTextures()
+                .OrderBy(t => t, StringComparer.CurrentCultureIgnoreCase)
+                .Where(item => item.Length > 0)
+                .Select(item => new { item, c = Char.ToLower(item[0]) })
+                .Where(t => t.c >= 'a' && t.c <= 'z')
+                .Select(t => t.item)
+                .FirstOrDefault();
+
+            var transaction = new Transaction();
+
+            foreach (var obj in problem.Objects)
+            {
+                foreach (var face in obj.Data.Intersect(problem.ObjectData).OfType<Face>())
+                {
+                    var clone = (Face)face.Clone();
+                    clone.Texture.Name = first;
+
+                    transaction.Add(new RemoveMapObjectData(obj.ID, face));
+                    transaction.Add(new AddMapObjectData(obj.ID, clone));
+                }
+            }
+
+            await MapDocumentOperation.Perform(document, transaction);
         }
     }
-    */
 }

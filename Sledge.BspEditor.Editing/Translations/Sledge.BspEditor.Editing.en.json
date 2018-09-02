@@ -408,9 +408,17 @@
             "Name": "Solid has children",
             "Details": "A solid with children was found. A solid cannot have any contents. Fixing the issue will move the children outside of the solid's group." 
         },
+        "TargetWithoutMatchingName": {
+            "Name": "Entity target has no matching named entity",
+            "Details": "This entity's target value doesn't have an matching named entity. Each target should have a matching target name. Fixing the problem will reset the target's value to a blank string." 
+        },
         "TextureAxisPerpendicularToFace": {
             "Name": "Texture axis perpendicular to face",
             "Details": "The texture axis of this face is perpendicular to the face plane. This occurs when manipulating objects with texture lock off, as well as various other operations. Re-align the texture to the face to repair. Fixing the problem will reset the textures to the face plane."
+        },
+        "TextureNotFound": {
+            "Name": "Texture not found",
+            "Details": "This texture was not found in the currently loaded texture packages. Ensure that the correct texture packages are loaded. Fixing the problems will reset the face textures to the default texture."
         }
     }
 }
