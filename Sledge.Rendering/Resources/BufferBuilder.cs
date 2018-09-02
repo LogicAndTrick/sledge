@@ -70,8 +70,12 @@ namespace Sledge.Rendering.Resources
 
             if (_inBuffer) return;
 
-            _currentVertexBuffer = _device.ResourceFactory.CreateBuffer(new BufferDescription(_vertexBufferSize, BufferUsage.Dynamic | BufferUsage.VertexBuffer));
-            _currentIndexBuffer = _device.ResourceFactory.CreateBuffer(new BufferDescription(_indexBufferSize, BufferUsage.Dynamic | BufferUsage.IndexBuffer));
+            // Cater for allocations that are larger than the buffer size
+            var vSize = Math.Max(_vertexBufferSize, vsize);
+            var iSize = Math.Max(_indexBufferSize, isize);
+
+            _currentVertexBuffer = _device.ResourceFactory.CreateBuffer(new BufferDescription(vSize, BufferUsage.Dynamic | BufferUsage.VertexBuffer));
+            _currentIndexBuffer = _device.ResourceFactory.CreateBuffer(new BufferDescription(iSize, BufferUsage.Dynamic | BufferUsage.IndexBuffer));
             _currentVertexMap = _device.Map(_currentVertexBuffer, MapMode.Write);
             _currentIndexMap = _device.Map(_currentIndexBuffer, MapMode.Write);
             _currentIndirectArguments = new List<IndirectArgument>();
@@ -87,6 +91,20 @@ namespace Sledge.Rendering.Resources
 
             var numInd = _currentIndirectArguments.Count;
             var indSize = Unsafe.SizeOf<IndirectDrawIndexedArguments>();
+
+            if (numInd == 0)
+            {
+                // No indirect arguments, this buffer is empty.
+                _currentVertexBuffer.Dispose();
+                _currentIndexBuffer.Dispose();
+
+                _currentVertexMap = _currentIndexMap = default(MappedResource);
+                _currentIndexBuffer = _currentVertexBuffer = null;
+                _currentVertexOffset = _currentIndexOffset = 0;
+                _currentIndirectArguments = null;
+                _inBuffer = false;
+                return;
+            }
 
             var bufferGroups = new List<BufferGroup>();
             var indirectBuffer = _device.ResourceFactory.CreateBuffer(new BufferDescription((uint) (numInd * indSize), BufferUsage.IndirectBuffer));
