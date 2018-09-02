@@ -11,9 +11,11 @@ using Sledge.Common.Translations;
 
 namespace Sledge.Shell.Components
 {
+#if DEBUG_EXTRA
     [AutoTranslate]
     [Export(typeof(ISidebarComponent))]
     [OrderHint("Y")]
+#endif
     public class ContextExplorerComponent : ISidebarComponent
     {
         private readonly ListBox _control;

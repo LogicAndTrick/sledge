@@ -11,8 +11,10 @@ using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Components
 {
+#if DEBUG_EXTRA
     [AutoTranslate]
     [Export(typeof(ISidebarComponent))]
+#endif
     [OrderHint("K")]
     public partial class ClipboardSidebarPanel : UserControl, ISidebarComponent
     {

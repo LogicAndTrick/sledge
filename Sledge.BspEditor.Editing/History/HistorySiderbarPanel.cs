@@ -12,8 +12,10 @@ using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.History
 {
+#if DEBUG_EXTRA
     [Export(typeof(ISidebarComponent))]
     [AutoTranslate]
+#endif
     public partial class HistorySiderbarPanel : UserControl, ISidebarComponent
     {
         public string Title { get; set; } = "History";
