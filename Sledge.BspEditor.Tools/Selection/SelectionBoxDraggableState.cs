@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using Sledge.BspEditor.Tools.Widgets;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
+using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Selection
 {
@@ -205,6 +207,27 @@ namespace Sledge.BspEditor.Tools.Selection
 
             _tool.TransformationModeChanged(CurrentTransformationMode);
             Update();
+        }
+
+        protected override void DrawBox(IViewport viewport, OrthographicCamera camera, Graphics graphics, Vector3 start, Vector3 end)
+        {
+            using (var b = new SolidBrush(GetRenderFillColour()))
+            {
+                graphics.FillRectangle(b, start.X, end.Y, end.X - start.X, start.Y - end.Y);
+            }
+
+            using (var p = new Pen(GetRenderBoxColour()))
+            {
+                if (_tool.SelectionBoxStippled) p.DashPattern = new float[] { 4, 4 };
+                graphics.DrawRectangle(p, start.X, end.Y, end.X - start.X, start.Y - end.Y);
+            }
+        }
+
+        protected override Color GetRenderFillColour()
+        {
+            var c = base.GetRenderFillColour();
+            var a = Math.Min(100, Math.Max(0, _tool.SelectionBoxBackgroundOpacity));
+            return Color.FromArgb(a, c);
         }
     }
 }

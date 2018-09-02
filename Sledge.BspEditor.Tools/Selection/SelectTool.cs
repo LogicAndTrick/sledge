@@ -53,12 +53,12 @@ namespace Sledge.BspEditor.Tools.Selection
 
         // Settings
 
-        [Setting("SelectionBoxBackgroundOpacity")] private int selectionBoxBackgroundOpacity = 64;
-        [Setting("SelectionBoxStippled")] private bool selectionBoxStippled = false;
-        [Setting("AutoSelectBox")] private bool autoSelectBox = false;
-        [Setting("Show3DWidgets")] private bool show3DWidgets = false;
-        [Setting("SelectByCenterHandles")] private bool selectByCenterHandles = true;
-        [Setting("OnlySelectByCenterHandles")] private bool onlySelectByCenterHandles = false;
+        [Setting] public int SelectionBoxBackgroundOpacity { get;set; } = 64;
+        [Setting] public bool SelectionBoxStippled { get; set; } = false;
+        [Setting] public bool AutoSelectBox { get; set; } = false;
+        [Setting] public bool Show3DWidgets { get; set; } = false;
+        [Setting] public bool SelectByCenterHandles { get; set; } = true;
+        [Setting] public bool OnlySelectByCenterHandles { get; set; } = false;
 
         string ISettingsContainer.Name => "Sledge.BspEditor.Tools.SelectTool";
 
@@ -75,7 +75,7 @@ namespace Sledge.BspEditor.Tools.Selection
         void ISettingsContainer.LoadValues(ISettingsStore store)
         {
             store.LoadInstance(this);
-            Oy.Publish("SelectTool:SetShow3DWidgets", show3DWidgets ? "1" : "0");
+            Oy.Publish("SelectTool:SetShow3DWidgets", Show3DWidgets ? "1" : "0");
         }
 
         void ISettingsContainer.StoreValues(ISettingsStore store)
@@ -99,20 +99,20 @@ namespace Sledge.BspEditor.Tools.Selection
         {
             _selectionBox = new SelectionBoxDraggableState(this);
             _selectionBox.BoxColour = Color.Yellow;
-            _selectionBox.FillColour = Color.FromArgb(selectionBoxBackgroundOpacity, Color.White);
-            _selectionBox.Stippled = selectionBoxStippled;
+            _selectionBox.FillColour = Color.FromArgb(SelectionBoxBackgroundOpacity, Color.White);
+            _selectionBox.Stippled = SelectionBoxStippled;
             _selectionBox.State.Changed += SelectionBoxChanged;
             States.Add(_selectionBox);
             Children.AddRange(_selectionBox.Widgets);
 
             _emptyBox = new BoxDraggableState(this);
             _emptyBox.BoxColour = Color.Yellow;
-            _emptyBox.FillColour = Color.FromArgb(selectionBoxBackgroundOpacity, Color.White);
-            _emptyBox.Stippled = selectionBoxStippled;
+            _emptyBox.FillColour = Color.FromArgb(SelectionBoxBackgroundOpacity, Color.White);
+            _emptyBox.Stippled = SelectionBoxStippled;
             _emptyBox.State.Changed += EmptyBoxChanged;
             _emptyBox.DragEnded += (sender, args) =>
             {
-                if (autoSelectBox) Confirm();
+                if (AutoSelectBox) Confirm();
             };
             States.Add(_emptyBox);
 
@@ -128,8 +128,8 @@ namespace Sledge.BspEditor.Tools.Selection
             });
             Oy.Subscribe<string>("SelectTool:Show3DWidgetsChanged", x =>
             {
-                show3DWidgets = x == "1";
-                _selectionBox.ShowWidgets = show3DWidgets;
+                Show3DWidgets = x == "1";
+                _selectionBox.ShowWidgets = Show3DWidgets;
                 _selectionBox.Update();
             });
         }
@@ -643,8 +643,8 @@ namespace Sledge.BspEditor.Tools.Selection
             // Get the first element that intersects with the box, selecting or deselecting as needed
             Func<IMapObject, Box, bool> filter;
 
-            if (onlySelectByCenterHandles) filter = CenterHandleIntersectFilter;
-            else if (!selectByCenterHandles) filter = LineIntersectFilter;
+            if (OnlySelectByCenterHandles) filter = CenterHandleIntersectFilter;
+            else if (!SelectByCenterHandles) filter = LineIntersectFilter;
             else filter = LineAndCenterIntersectFilter;
 
             return GetLineIntersections(box, filter).FirstOrDefault();
