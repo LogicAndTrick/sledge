@@ -160,25 +160,6 @@ namespace Sledge.BspEditor.Tools.Entity
 
         // 3D interaction
 
-        private Vector3? GetIntersectionPoint(IMapObject obj, DataStructures.Geometric.Line line)
-        {
-            // todo BETA !selection opacity/hidden
-            //.Where(x => x.Opacity > 0 && !x.IsHidden)
-            return obj?.GetPolygons()
-                .Select(x => x.GetIntersectionPoint(line))
-                .Where(x => x != null)
-                .OrderBy(x => (x.Value - line.Start).Length())
-                .FirstOrDefault();
-        }
-
-        private IEnumerable<IMapObject> GetBoundingBoxIntersections(DataStructures.Geometric.Line ray)
-        {
-            return Document.Map.Root.Collect(
-                x => x is Root || (x.BoundingBox != null && x.BoundingBox.IntersectsWith(ray)),
-                x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren
-            );
-        }
-
         protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             if (e.Button != MouseButtons.Left) return;
@@ -188,18 +169,12 @@ namespace Sledge.BspEditor.Tools.Entity
             var ray = new Line(rs, re);
 
             // Grab all the elements that intersect with the ray
-            var hits = GetBoundingBoxIntersections(ray);
-
-            // Sort the list of intersecting elements by distance from ray origin and grab the first hit
-            var hit = hits
-                .Select(x => new { Item = x, Intersection = GetIntersectionPoint(x, ray) })
-                .Where(x => x.Intersection != null)
-                .OrderBy(x => (x.Intersection.Value - ray.Start).Length())
+            var hit = Document.Map.Root.GetIntersectionsForVisibleObjects(ray)
                 .FirstOrDefault();
 
             if (hit == null) return; // Nothing was clicked
 
-            CreateEntity(hit.Intersection.Value);
+            CreateEntity(hit.Intersection);
         }
 
         // 2D interaction

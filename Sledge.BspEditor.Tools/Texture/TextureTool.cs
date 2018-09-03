@@ -104,7 +104,7 @@ namespace Sledge.BspEditor.Tools.Texture
             yield return Oy.Subscribe<ClickAction>("BspEditor:TextureTool:SetRightClickAction", a => _rightClickAction = a);
         }
 
-        private async Task DocumentUpdated(Change change)
+        private Task DocumentUpdated(Change change)
         {
             if (change.Document == Document)
             {
@@ -117,6 +117,7 @@ namespace Sledge.BspEditor.Tools.Texture
                     Invalidate();
                 }
             }
+            return Task.CompletedTask;
         }
 
         public override async Task ToolSelected()
@@ -142,14 +143,6 @@ namespace Sledge.BspEditor.Tools.Texture
             await base.ToolDeselected();
         }
 
-        private IEnumerable<IMapObject> GetBoundingBoxIntersections(DataStructures.Geometric.Line ray)
-        {
-            return Document.Map.Root.Collect(
-                x => x is Root || (x.BoundingBox != null && x.BoundingBox.IntersectsWith(ray)),
-                x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren
-            );
-        }
-
         protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             var vp = viewport;
@@ -157,12 +150,17 @@ namespace Sledge.BspEditor.Tools.Texture
 
             var (start, end) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
             var ray = new Line(start, end);
-            var hits = GetBoundingBoxIntersections(ray);
-
-            var clickedFace = hits.OfType<Solid>().SelectMany(a => a.Faces.Select(f => new { Face = f, Solid = a }))
+            
+            var clickedFace = Document.Map.Root.GetBoudingBoxIntersectionsForVisibleObjects(ray)
+                // We only care about solids
+                .OfType<Solid>()
+                // Specifically, their faces
+                .SelectMany(a => a.Faces.Select(f => new { Face = f, Solid = a }))
+                // Get the face intersection points and sort by distance from line start
                 .Select(x => new {x.Face, x.Solid, Intersection = new Polygon(x.Face.Vertices).GetIntersectionPoint(ray) })
                 .Where(x => x.Intersection != null)
                 .OrderBy(x => (x.Intersection.Value - ray.Start).Length())
+                // Select the closest one.
                 .Select(x => x)
                 .FirstOrDefault();
 
@@ -172,7 +170,7 @@ namespace Sledge.BspEditor.Tools.Texture
             else if (e.Button == MouseButtons.Right) ApplyFace(camera, clickedFace.Face, clickedFace.Solid);
         }
 
-        private async Task SelectFace(PerspectiveCamera camera, Face face, IMapObject parent)
+        private Task SelectFace(PerspectiveCamera camera, Face face, IMapObject parent)
         {
             // Left:       use defined action
             // Alt+Left:   lift
@@ -195,7 +193,7 @@ namespace Sledge.BspEditor.Tools.Texture
             }
 
             // Just sample texture without changing selection
-            if (!action.HasFlag(ClickAction.Select)) return;
+            if (!action.HasFlag(ClickAction.Select)) return Task.CompletedTask;
             
             // Clear selection if ctrl isn't down
             if (!KeyboardState.Ctrl) sel.Clear();
@@ -216,9 +214,10 @@ namespace Sledge.BspEditor.Tools.Texture
             Oy.Publish("TextureTool:SelectionChanged", GetSelection());
 
             Invalidate();
+            return Task.CompletedTask;
         }
 
-        private async Task ApplyFace(PerspectiveCamera camera, Face face, IMapObject parent)
+        private Task ApplyFace(PerspectiveCamera camera, Face face, IMapObject parent)
         {
             // Right:       use defined action
             // Alt+Right:   apply + align
@@ -232,7 +231,7 @@ namespace Sledge.BspEditor.Tools.Texture
             var sampleFace = GetSelection().FirstOrDefault();
 
             var activeTexture = Document.Map.Data.GetOne<ActiveTexture>()?.Name ?? sampleFace?.Texture.Name ?? "";
-            if (String.IsNullOrWhiteSpace(activeTexture)) return;
+            if (String.IsNullOrWhiteSpace(activeTexture)) return Task.CompletedTask;
 
             var clone = (Face) face.Clone();
 
@@ -278,19 +277,14 @@ namespace Sledge.BspEditor.Tools.Texture
                 changed = true;
             }
 
-            if (!changed) return;
+            if (!changed) return Task.CompletedTask;
 
             var edit = new Transaction(
                 new RemoveMapObjectData(parent.ID, face),
                 new AddMapObjectData(parent.ID, clone)
             );
 
-            MapDocumentOperation.Perform(Document, edit);
-        }
-
-        private async Task AlignTextureToView()
-        {
-
+            return MapDocumentOperation.Perform(Document, edit);
         }
 
         public override void Render(BufferBuilder builder)

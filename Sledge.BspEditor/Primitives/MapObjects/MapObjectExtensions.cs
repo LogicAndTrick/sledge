@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using Sledge.BspEditor.Primitives.MapObjectData;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Primitives.MapObjects
 {
@@ -166,6 +169,88 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             foreach (var mo in obj.Hierarchy)
             {
                 mo.ForEach(matcher, action, forceMatchIfParentMatches);
+            }
+        }
+
+        /// <summary>
+        /// Checks if an object is hidden via the <see cref="IObjectVisibility" /> data interface.
+        /// This method does not check if parent objects are hidden.
+        /// </summary>
+        /// <param name="obj">This object</param>
+        /// <returns>True if the object is hidden.</returns>
+        public static bool IsHidden(this IMapObject obj)
+        {
+            return obj.Data.OfType<IObjectVisibility>().Any(x => x.IsHidden);
+        }
+
+        /// <summary>
+        /// Get a list of visible objects where the bounding box intersects with a line.
+        /// The resulting list is a rough intersection only and should be further filtered
+        /// using <see cref="GetIntersectionPoint"/> or similar methods.
+        /// </summary>
+        /// <param name="obj">This object</param>
+        /// <param name="line">The line to test</param>
+        /// <returns>The list of child objects that intersect with the line</returns>
+        public static IEnumerable<IMapObject> GetBoudingBoxIntersectionsForVisibleObjects(this IMapObject obj, Line line)
+        {
+            return obj.Collect(
+                // Always traverse the root, otherwise only traverse visible parent objects
+                x => x is Root || (!x.IsHidden() && x.BoundingBox != null && x.BoundingBox.IntersectsWith(line)),
+                // Include the item only if it's a leaf node
+                x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren
+            );
+        }
+
+        /// <summary>
+        /// Gets the point closest to the line start where a line intersects with the geometry of this object.
+        /// </summary>
+        /// <param name="obj">This object</param>
+        /// <param name="line">The line to test</param>
+        /// <returns>The intersection point closest to the line start, or null if the line doesn't intersect this object.</returns>
+        public static Vector3? GetIntersectionPoint(this IMapObject obj, Line line)
+        {
+            return obj?.GetPolygons()
+                .Select(x => x.GetIntersectionPoint(line))
+                .Where(x => x.HasValue)
+                .OrderBy(x => (x.Value - line.Start).Length())
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Get all the child objects that intersect with a line and the points that they intersect at.
+        /// The result list is sorted by the intersection distance from the start of the line.
+        /// </summary>
+        /// <param name="obj">This object</param>
+        /// <param name="line">The line to test</param>
+        /// <returns>A list of child objects with their corresponding intersection points</returns>
+        public static IEnumerable<MapObjectIntersection> GetIntersectionsForVisibleObjects(this IMapObject obj, Line line)
+        {
+            return obj.GetBoudingBoxIntersectionsForVisibleObjects(line)
+                // Get the intersection points
+                .Select(x => new { Item = x, Intersection = x.GetIntersectionPoint(line) })
+                // Exclude null intersections
+                .Where(x => x.Intersection.HasValue)
+                // Sort by distance from line start
+                .OrderBy(x => (x.Intersection.Value - line.Start).Length())
+                // Return the results
+                .Select(x => new MapObjectIntersection(x.Item, x.Intersection.Value));
+        }
+
+        /// <summary>
+        /// A tuple class representing an object and its intersection point with a line
+        /// </summary>
+        public class MapObjectIntersection
+        {
+            /// <summary>The intersecting object</summary>
+            public IMapObject Object { get; }
+
+            /// <summary>The intersection point</summary>
+            public Vector3 Intersection { get; }
+
+            public MapObjectIntersection(IMapObject o, Vector3 intersection)
+            {
+                Object = o;
+                Intersection = intersection;
             }
         }
     }

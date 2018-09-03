@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
@@ -23,16 +24,20 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
     [Export(typeof(VertexSubtool))]
     public class VertexFaceEditTool : VertexSubtool
     {
-        [Import] private VertexEditFaceControl _control;
+        private readonly VertexEditFaceControl _control;
 
         public override string OrderHint => "F";
         public override string GetName() => "Face editing";
         public override Control Control => _control;
         
         private readonly List<SolidFace> _selectedFaces;
-        
-        public VertexFaceEditTool()
+
+        [ImportingConstructor]
+        public VertexFaceEditTool(
+            [Import] Lazy<VertexEditFaceControl> control
+        )
         {
+            _control = control.Value;
             _selectedFaces = new List<SolidFace>();
         }
 

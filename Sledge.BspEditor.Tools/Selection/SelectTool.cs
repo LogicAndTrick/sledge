@@ -417,25 +417,6 @@ namespace Sledge.BspEditor.Tools.Selection
             Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
         }
 
-        private Vector3? GetIntersectionPoint(IMapObject obj, Line line)
-        {
-            // todo BETA !selection opacity/hidden
-            //.Where(x => x.Opacity > 0 && !x.IsHidden)
-            return obj?.GetPolygons()
-                .Select(x => x.GetIntersectionPoint(line))
-                .Where(x => x.HasValue)
-                .OrderBy(x => (x.Value - line.Start).Length())
-                .FirstOrDefault();
-        }
-
-        private IEnumerable<IMapObject> GetBoundingBoxIntersections(Line ray)
-        {
-            return Document.Map.Root.Collect(
-                x => x is Root || (x.BoundingBox != null && x.BoundingBox.IntersectsWith(ray)),
-                x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren
-            );
-        }
-
         /// <summary>
         /// When the mouse is pressed in the 3D view, we want to select the clicked object.
         /// </summary>
@@ -452,14 +433,8 @@ namespace Sledge.BspEditor.Tools.Selection
             var ray = new Line(rayStart, rayEnd);
 
             // Grab all the elements that intersect with the ray
-            var hits = GetBoundingBoxIntersections(ray);
-
-            // Sort the list of intersecting elements by distance from ray origin
-            IntersectingObjectsFor3DSelection = hits
-                .Select(x => new { Item = x, Intersection = GetIntersectionPoint(x, ray) })
-                .Where(x => x.Intersection.HasValue)
-                .OrderBy(x => (x.Intersection.Value - ray.Start).Length())
-                .Select(x => x.Item)
+            IntersectingObjectsFor3DSelection = Document.Map.Root.GetIntersectionsForVisibleObjects(ray)
+                .Select(x => x.Object)
                 .ToList();
 
             // By default, select the closest object

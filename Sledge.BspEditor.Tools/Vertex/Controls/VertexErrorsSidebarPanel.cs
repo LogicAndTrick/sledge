@@ -17,14 +17,21 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
     [OrderHint("G")]
     public partial class VertexErrorsSidebarPanel : UserControl, ISidebarComponent
     {
-        [ImportMany] private IEnumerable<Lazy<IVertexErrorCheck>> _errorChecks;
-        [Import] private Lazy<ITranslationStringProvider> _translator;
+        private readonly IEnumerable<Lazy<IVertexErrorCheck>> _errorChecks;
+        private readonly Lazy<ITranslationStringProvider> _translator;
         
         public string Title => "Vertex Errors";
         public object Control => this;
 
-        public VertexErrorsSidebarPanel()
+        [ImportingConstructor]
+        public VertexErrorsSidebarPanel(
+            [ImportMany] IEnumerable<Lazy<IVertexErrorCheck>> errorChecks,
+            [Import] Lazy<ITranslationStringProvider> translator
+        )
         {
+            _errorChecks = errorChecks;
+            _translator = translator;
+
             InitializeComponent();
             
             Oy.Subscribe<VertexSelection>("VertexTool:Updated", t => UpdateErrorList(t));

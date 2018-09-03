@@ -11,12 +11,10 @@ using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.BspEditor.Rendering.Converters;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Properties;
-using Sledge.BspEditor.Tools.Vertex.Errors;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 using Sledge.BspEditor.Tools.Vertex.Tools;
 using Sledge.Common.Shell.Components;
@@ -43,10 +41,25 @@ namespace Sledge.BspEditor.Tools.Vertex
     [DefaultHotkey("Shift+V")]
     public class VertexTool : BaseDraggableTool, IInitialiseHook
     {
-        [Import] private EngineInterface _engine;
-        [ImportMany] private IEnumerable<Lazy<VertexSubtool>> _subTools;
-        [ImportMany] private IEnumerable<Lazy<IVertexErrorCheck>> _errorChecks;
-        [Import] private Lazy<MapObjectConverter> _converter;
+        private readonly EngineInterface _engine;
+        private readonly IEnumerable<Lazy<VertexSubtool>> _subTools;
+
+        private readonly VertexSelection _selection;
+
+        [ImportingConstructor]
+        public VertexTool(
+            [Import] EngineInterface engine,
+            [ImportMany] IEnumerable<Lazy<VertexSubtool>> subTools
+        )
+        {
+            _engine = engine;
+            _subTools = subTools;
+
+            Usage = ToolUsage.Both;
+            UseValidation = true;
+
+            _selection = new VertexSelection();
+        }
 
         public Task OnInitialise()
         {
@@ -58,17 +71,6 @@ namespace Sledge.BspEditor.Tools.Vertex
             }
 
             return Task.FromResult(false);
-        }
-
-        private readonly VertexSelection _selection;
-        
-        public VertexTool()
-        {
-            Usage = ToolUsage.Both;
-
-            UseValidation = true;
-
-            _selection = new VertexSelection();
         }
 
         public override Image GetIcon()
@@ -178,25 +180,6 @@ namespace Sledge.BspEditor.Tools.Vertex
         }
         
         #region 3D interaction
-        
-        private Vector3? GetIntersectionPoint(Solid obj, Line line)
-        {
-            // todo !selection opacity/hidden
-            //.Where(x => x.Opacity > 0 && !x.IsHidden)
-            return obj?.GetPolygons()
-                .Select(x => x.GetIntersectionPoint(line))
-                .Where(x => x != null)
-                .OrderBy(x => (x.Value - line.Start).Length())
-                .FirstOrDefault();
-        }
-
-        private IEnumerable<Solid> GetBoundingBoxIntersections(Line ray)
-        {
-            return Document.Map.Root.Collect(
-                x => x is Root || (x.BoundingBox != null && x.BoundingBox.IntersectsWith(ray)),
-                x => x is Solid && x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren
-            ).OfType<Solid>();
-        }
 
         /// <summary>
         /// When the mouse is pressed in the 3D view, we want to select the clicked object.
@@ -211,14 +194,9 @@ namespace Sledge.BspEditor.Tools.Vertex
             var ray = new Line(start, end);
 
             // Grab all the elements that intersect with the ray
-            var hits = GetBoundingBoxIntersections(ray);
-
-            // Sort the list of intersecting elements by distance from ray origin
-            var closestObject = hits
-                .Select(x => new { Item = x, Intersection = GetIntersectionPoint(x, ray) })
-                .Where(x => x.Intersection != null)
-                .OrderBy(x => (x.Intersection.Value - ray.Start).Length())
-                .Select(x => x.Item)
+            var closestObject = Document.Map.Root.GetIntersectionsForVisibleObjects(ray)
+                .Where(x => x.Object is Solid)
+                .Select(x => (Solid) x.Object)
                 .FirstOrDefault();
 
             SelectObject(closestObject);
