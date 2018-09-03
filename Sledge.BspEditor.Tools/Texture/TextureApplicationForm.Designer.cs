@@ -62,6 +62,12 @@
             this.LightmapLabel = new System.Windows.Forms.Label();
             this.LightmapValue = new System.Windows.Forms.NumericUpDown();
             this.HoverTip = new System.Windows.Forms.ToolTip(this.components);
+            this.SelectedTextureListPanel = new System.Windows.Forms.Panel();
+            this.RecentTextureListPanel = new System.Windows.Forms.Panel();
+            this.LeftClickActionButton = new Sledge.Shell.Controls.DropdownButton();
+            this.RightClickActionButton = new Sledge.Shell.Controls.DropdownButton();
+            this.LeftClickActionMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.RightClickActionMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.AlignGroup.SuspendLayout();
             this.JustifyGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RotationValue)).BeginInit();
@@ -309,7 +315,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 216F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 218F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
@@ -514,11 +520,63 @@
             this.HoverTip.IsBalloon = true;
             this.HoverTip.ReshowDelay = 100;
             // 
+            // SelectedTextureListPanel
+            // 
+            this.SelectedTextureListPanel.Location = new System.Drawing.Point(12, 178);
+            this.SelectedTextureListPanel.Name = "SelectedTextureListPanel";
+            this.SelectedTextureListPanel.Size = new System.Drawing.Size(300, 206);
+            this.SelectedTextureListPanel.TabIndex = 35;
+            // 
+            // RecentTextureListPanel
+            // 
+            this.RecentTextureListPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.RecentTextureListPanel.Location = new System.Drawing.Point(318, 178);
+            this.RecentTextureListPanel.Name = "RecentTextureListPanel";
+            this.RecentTextureListPanel.Size = new System.Drawing.Size(87, 179);
+            this.RecentTextureListPanel.TabIndex = 36;
+            // 
+            // LeftClickActionButton
+            // 
+            this.LeftClickActionButton.Location = new System.Drawing.Point(12, 390);
+            this.LeftClickActionButton.Menu = this.LeftClickActionMenu;
+            this.LeftClickActionButton.Name = "LeftClickActionButton";
+            this.LeftClickActionButton.Size = new System.Drawing.Size(148, 23);
+            this.LeftClickActionButton.TabIndex = 37;
+            this.LeftClickActionButton.Text = "Left click: Lift";
+            this.LeftClickActionButton.UseVisualStyleBackColor = true;
+            // 
+            // RightClickActionButton
+            // 
+            this.RightClickActionButton.Location = new System.Drawing.Point(164, 390);
+            this.RightClickActionButton.Menu = this.RightClickActionMenu;
+            this.RightClickActionButton.Name = "RightClickActionButton";
+            this.RightClickActionButton.Size = new System.Drawing.Size(148, 23);
+            this.RightClickActionButton.TabIndex = 37;
+            this.RightClickActionButton.Text = "Right click: Apply";
+            this.RightClickActionButton.UseVisualStyleBackColor = true;
+            // 
+            // LeftClickActionMenu
+            // 
+            this.LeftClickActionMenu.Name = "LeftClickActionMenu";
+            this.LeftClickActionMenu.Size = new System.Drawing.Size(61, 4);
+            this.LeftClickActionMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.SetLeftClickAction);
+            // 
+            // RightClickActionMenu
+            // 
+            this.RightClickActionMenu.Name = "RightClickActionMenu";
+            this.RightClickActionMenu.Size = new System.Drawing.Size(61, 4);
+            this.RightClickActionMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.SetRightClickAction);
+            // 
             // TextureApplicationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(417, 420);
+            this.Controls.Add(this.RightClickActionButton);
+            this.Controls.Add(this.LeftClickActionButton);
+            this.Controls.Add(this.RecentTextureListPanel);
+            this.Controls.Add(this.SelectedTextureListPanel);
             this.Controls.Add(this.HideMaskCheckbox);
             this.Controls.Add(this.RecentFilterTextbox);
             this.Controls.Add(this.FilterRecentLabel);
@@ -590,5 +648,11 @@
         private System.Windows.Forms.ToolTip HoverTip;
         private System.Windows.Forms.CheckBox AlignToFaceCheckbox;
         private System.Windows.Forms.CheckBox AlignToWorldCheckbox;
+        private System.Windows.Forms.Panel SelectedTextureListPanel;
+        private System.Windows.Forms.Panel RecentTextureListPanel;
+        private Shell.Controls.DropdownButton LeftClickActionButton;
+        private Shell.Controls.DropdownButton RightClickActionButton;
+        private System.Windows.Forms.ContextMenuStrip LeftClickActionMenu;
+        private System.Windows.Forms.ContextMenuStrip RightClickActionMenu;
     }
 }

@@ -218,14 +218,14 @@ namespace Sledge.Rendering.Cameras
             _position += Vector3.UnitZ * units;
         }
 
-        private Vector3 GetUp()
+        public Vector3 GetUp()
         {
             var normal = Vector3.Cross(GetRight(), Direction);
             normal = Vector3.Normalize(normal);
             return normal;
         }
         
-        private Vector3 GetRight()
+        public Vector3 GetRight()
         {
             var temp = Direction;
             temp.Z = 0;

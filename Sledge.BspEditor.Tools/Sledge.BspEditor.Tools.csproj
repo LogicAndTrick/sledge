@@ -158,6 +158,7 @@
     <Compile Include="Selection\TransformationHandles\TextureTransformationType.cs" />
     <Compile Include="Texture\ApplyActiveTexture.cs" />
     <Compile Include="Texture\BrowseActiveTexture.cs" />
+    <Compile Include="Texture\ClickAction.cs" />
     <Compile Include="Texture\ReplaceTextures.cs" />
     <Compile Include="Texture\SmartEditTextureBrowser.cs">
       <SubType>Component</SubType>

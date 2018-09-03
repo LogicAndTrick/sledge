@@ -171,7 +171,15 @@
             "Fit": "Fit",
             "TreatAsOne": "Treat as one",
             "HideMask": "Hide mask",
-            "FilterRecent:": "Filter recent"
+            "FilterRecent:": "Filter recent",
+            "LeftClick": "Left",
+            "RightClick": "Right",
+            "ActionLift": "Lift",
+            "ActionSelect": "Select",
+            "ActionApply": "Apply",
+            "ActionValues": "Values",
+            "ActionAxis": "Axes",
+            "ActionAlignToView": "Align to view"
         },
         "TextureBrowser": {
             "Title": "Texture browser",

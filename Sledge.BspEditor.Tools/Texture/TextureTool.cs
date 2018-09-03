@@ -34,6 +34,9 @@ namespace Sledge.BspEditor.Tools.Texture
     [DefaultHotkey("Shift+A")]
     public class TextureTool : BaseTool
     {
+        private ClickAction _leftClickAction = ClickAction.Lift | ClickAction.Select;
+        private ClickAction _rightClickAction = ClickAction.Apply | ClickAction.Values;
+
         public TextureTool()
         {
             Usage = ToolUsage.View3D;
@@ -96,6 +99,9 @@ namespace Sledge.BspEditor.Tools.Texture
             {
                 b.Intercepted = true;
             });
+
+            yield return Oy.Subscribe<ClickAction>("BspEditor:TextureTool:SetLeftClickAction", a => _leftClickAction = a);
+            yield return Oy.Subscribe<ClickAction>("BspEditor:TextureTool:SetRightClickAction", a => _rightClickAction = a);
         }
 
         private async Task DocumentUpdated(Change change)
@@ -162,27 +168,34 @@ namespace Sledge.BspEditor.Tools.Texture
 
             if (clickedFace == null) return;
 
-            if (e.Button == MouseButtons.Left) SelectFace(clickedFace.Face, clickedFace.Solid);
-            else if (e.Button == MouseButtons.Right) ApplyFace(clickedFace.Face, clickedFace.Solid);
+            if (e.Button == MouseButtons.Left) SelectFace(camera, clickedFace.Face, clickedFace.Solid);
+            else if (e.Button == MouseButtons.Right) ApplyFace(camera, clickedFace.Face, clickedFace.Solid);
         }
 
-        private async Task SelectFace(Face face, IMapObject parent)
+        private async Task SelectFace(PerspectiveCamera camera, Face face, IMapObject parent)
         {
-            // Left:       lift + select
+            // Left:       use defined action
             // Alt+Left:   lift
             // Shift+Left: lift + select all
             // Ctrl+Left:  use toggle selection
 
+            var action = _leftClickAction;
+            if (KeyboardState.Alt) action = ClickAction.Lift;
+            if (KeyboardState.Shift || KeyboardState.Ctrl) action = ClickAction.Select | ClickAction.Lift;
+
             var sel = GetSelection();
 
-            // Only sample the face if we're selecting it
-            if (!KeyboardState.Ctrl || !sel.IsSelected(parent, face))
+            if (action.HasFlag(ClickAction.Lift))
             {
-                SetActiveTexture(face);
+                // Only sample the face if we're selecting it
+                if (!KeyboardState.Ctrl || !sel.IsSelected(parent, face))
+                {
+                    SetActiveTexture(face);
+                }
             }
 
-            // If alt is down, just sample texture without changing selection
-            if (KeyboardState.Alt) return;
+            // Just sample texture without changing selection
+            if (!action.HasFlag(ClickAction.Select)) return;
             
             // Clear selection if ctrl isn't down
             if (!KeyboardState.Ctrl) sel.Clear();
@@ -205,42 +218,67 @@ namespace Sledge.BspEditor.Tools.Texture
             Invalidate();
         }
 
-        private async Task ApplyFace(Face face, IMapObject parent)
+        private async Task ApplyFace(PerspectiveCamera camera, Face face, IMapObject parent)
         {
-            // Right:       apply + values
+            // Right:       use defined action
             // Alt+Right:   apply + align
             // Shift+Right: apply only
             // Ctrl+Right:  nothing...?
+
+            var action = _rightClickAction;
+            if (KeyboardState.Alt) action = ClickAction.Apply | ClickAction.AlignToSample;
+            if (KeyboardState.Shift) action = ClickAction.Apply;
 
             var sampleFace = GetSelection().FirstOrDefault();
 
             var activeTexture = Document.Map.Data.GetOne<ActiveTexture>()?.Name ?? sampleFace?.Texture.Name ?? "";
             if (String.IsNullOrWhiteSpace(activeTexture)) return;
 
-            var alignTexture = KeyboardState.Alt;
-            var textureOnly = KeyboardState.Shift;
-
             var clone = (Face) face.Clone();
 
-            // apply texture
-            clone.Texture.Name = activeTexture;
+            bool changed = false;
 
-            if (sampleFace != null)
+            // Apply texture
+            if (!String.IsNullOrWhiteSpace(activeTexture) && action.HasFlag(ClickAction.Apply))
             {
-                if (alignTexture)
-                {
-                    clone.Texture.AlignWithTexture(clone.Plane, sampleFace.Plane, sampleFace.Texture);
-                }
-                else if (!textureOnly)
-                {
-                    // apply values
-                    clone.Texture.SetRotation(sampleFace.Texture.Rotation);
-                    clone.Texture.XScale = sampleFace.Texture.XScale;
-                    clone.Texture.XShift = sampleFace.Texture.XShift;
-                    clone.Texture.YScale = sampleFace.Texture.YScale;
-                    clone.Texture.YShift = sampleFace.Texture.YShift;
-                }
+                clone.Texture.Name = activeTexture;
+                changed = true;
             }
+
+            // Apply values
+            if (camera != null && action.HasFlag(ClickAction.AlignToView))
+            {
+                // align to camera
+                var uaxis = camera.GetRight();
+                var vaxis = camera.GetUp();
+                var pos = camera.Location;
+                clone.Texture.SetRotation(0);
+                clone.Texture.XScale = 1;
+                clone.Texture.YScale = 1;
+                clone.Texture.UAxis = uaxis;
+                clone.Texture.VAxis = vaxis;
+                clone.Texture.XShift = Vector3.Dot(uaxis, pos);
+                clone.Texture.YShift = Vector3.Dot(vaxis, pos);
+                changed = true;
+            }
+            else if (sampleFace != null && action.HasFlag(ClickAction.AlignToSample))
+            {
+                // align to face
+                clone.Texture.AlignWithTexture(clone.Plane, sampleFace.Plane, sampleFace.Texture);
+                changed = true;
+            }
+            else if (sampleFace != null && action.HasFlag(ClickAction.Values))
+            {
+                // apply values
+                clone.Texture.SetRotation(sampleFace.Texture.Rotation);
+                clone.Texture.XScale = sampleFace.Texture.XScale;
+                clone.Texture.XShift = sampleFace.Texture.XShift;
+                clone.Texture.YScale = sampleFace.Texture.YScale;
+                clone.Texture.YShift = sampleFace.Texture.YShift;
+                changed = true;
+            }
+
+            if (!changed) return;
 
             var edit = new Transaction(
                 new RemoveMapObjectData(parent.ID, face),

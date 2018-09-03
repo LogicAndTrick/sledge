@@ -95,6 +95,17 @@ namespace Sledge.BspEditor.Tools.Texture
                 });
         }
 
+        public string LeftClick { get; set; }
+        public string RightClick { get; set; }
+
+        public string ActionLift { get; set; }
+        public string ActionSelect { get; set; }
+
+        public string ActionApply { get; set; }
+        public string ActionValues { get; set; }
+        public string ActionAxis { get; set; }
+        public string ActionAlignToView { get; set; }
+
         public void Translate(TranslationStringsCollection strings)
         {
             CreateHandle();
@@ -124,42 +135,78 @@ namespace Sledge.BspEditor.Tools.Texture
 
                 HideMaskCheckbox.Text = strings.GetString(prefix, "HideMask");
                 FilterRecentLabel.Text = strings.GetString(prefix, "FilterRecent");
+
+                LeftClick = strings.GetString(prefix, "LeftClick");
+                RightClick = strings.GetString(prefix, "RightClick");
+                ActionLift = strings.GetString(prefix, "ActionLift");
+                ActionSelect = strings.GetString(prefix, "ActionSelect");
+                ActionApply = strings.GetString(prefix, "ActionApply");
+                ActionValues = strings.GetString(prefix, "ActionValues");
+                ActionAxis = strings.GetString(prefix, "ActionAxis");
+                ActionAlignToView = strings.GetString(prefix, "ActionAlignToView");
+
+                LeftClickActionButton.Text = $@"{LeftClick}: {ActionLift}+{ActionSelect}";
+                LeftClickActionMenu.Items.Clear();
+                LeftClickActionMenu.Items.Add(new ToolStripMenuItem($"{ActionLift}+{ActionSelect}") { Tag = ClickAction.Lift | ClickAction.Select });
+                LeftClickActionMenu.Items.Add(new ToolStripMenuItem(ActionLift) { Tag = ClickAction.Lift });
+                LeftClickActionMenu.Items.Add(new ToolStripMenuItem(ActionSelect) { Tag = ClickAction.Select });
+
+                RightClickActionButton.Text = $@"{RightClick}: {ActionApply}+{ActionValues}";
+                RightClickActionMenu.Items.Clear();
+                RightClickActionMenu.Items.Add(new ToolStripMenuItem(ActionApply) { Tag = ClickAction.Apply });
+                RightClickActionMenu.Items.Add(new ToolStripMenuItem($"{ActionApply}+{ActionValues}") { Tag = ClickAction.Apply | ClickAction.Values });
+                RightClickActionMenu.Items.Add(new ToolStripMenuItem($"{ActionApply}+{ActionValues}+{ActionAxis}") { Tag = ClickAction.Apply | ClickAction.AlignToSample });
+                RightClickActionMenu.Items.Add(new ToolStripMenuItem(ActionAlignToView) { Tag = ClickAction.AlignToView });
             });
+        }
+
+        private void SetLeftClickAction(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (!(e.ClickedItem.Tag is ClickAction)) return;
+
+            var action = (ClickAction) e.ClickedItem.Tag;
+            LeftClickActionButton.Text = $@"{LeftClick}: {e.ClickedItem.Text}";
+            Oy.Publish("BspEditor:TextureTool:SetLeftClickAction", action);
+        }
+
+        private void SetRightClickAction(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (!(e.ClickedItem.Tag is ClickAction)) return;
+
+            var action = (ClickAction) e.ClickedItem.Tag;
+            RightClickActionButton.Text = $@"{RightClick}: {e.ClickedItem.Text}";
+            Oy.Publish("BspEditor:TextureTool:SetRightClickAction", action);
         }
 
         private void InitialiseTextureLists()
         {
-            RecentTexturesList = new TextureListPanel();
-            SelectedTexturesList = new TextureListPanel();
-            
-            RecentTexturesList.AllowMultipleSelection = false;
-            RecentTexturesList.AllowSelection = true;
-            RecentTexturesList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            RecentTexturesList.AutoScroll = true;
-            RecentTexturesList.BackColor = Color.Black;
-            RecentTexturesList.EnableDrag = false;
-            RecentTexturesList.ImageSize = 64;
-            RecentTexturesList.Location = new Point(318, 178);
-            RecentTexturesList.Name = "RecentTexturesList";
-            RecentTexturesList.Size = new Size(87, 179);
-            RecentTexturesList.TabIndex = 38;
-            RecentTexturesList.TextureSelected += TexturesListTextureSelected;
+            RecentTexturesList = new TextureListPanel
+            {
+                AllowMultipleSelection = false,
+                AllowSelection = true,
+                Dock = DockStyle.Fill,
+                AutoScroll = true,
+                BackColor = Color.Black,
+                EnableDrag = false,
+                ImageSize = 64
+            };
 
-            SelectedTexturesList.AllowMultipleSelection = false;
-            SelectedTexturesList.AllowSelection = true;
-            SelectedTexturesList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            SelectedTexturesList.AutoScroll = true;
-            SelectedTexturesList.BackColor = Color.Black;
-            SelectedTexturesList.EnableDrag = false;
-            SelectedTexturesList.ImageSize = 64;
-            SelectedTexturesList.Location = new Point(12, 178);
-            SelectedTexturesList.Name = "SelectedTexturesList";
-            SelectedTexturesList.Size = new Size(300, 232);
-            SelectedTexturesList.TabIndex = 37;
+            SelectedTexturesList = new TextureListPanel
+            {
+                AllowMultipleSelection = false,
+                AllowSelection = true,
+                Dock = DockStyle.Fill,
+                AutoScroll = true,
+                BackColor = Color.Black,
+                EnableDrag = false,
+                ImageSize = 64
+            };
+
+            RecentTexturesList.TextureSelected += TexturesListTextureSelected;
             SelectedTexturesList.TextureSelected += TexturesListTextureSelected;
 
-            Controls.Add(RecentTexturesList);
-            Controls.Add(SelectedTexturesList);
+            RecentTextureListPanel.Controls.Add(RecentTexturesList);
+            SelectedTextureListPanel.Controls.Add(SelectedTexturesList);
         }
 
         private async Task SetDocument(IDocument doc)
