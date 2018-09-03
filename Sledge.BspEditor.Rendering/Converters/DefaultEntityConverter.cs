@@ -107,6 +107,17 @@ namespace Sledge.BspEditor.Rendering.Converters
             groups.Add(new BufferGroup(PipelineType.WireframeGeneric, obj.IsSelected ? CameraType.Both : CameraType.Orthographic, false, origin, numSolidIndices, numWireframeIndices));
 
             builder.Append(points, indices, groups);
+            
+            // Also push the untransformed wireframe when selected
+            if (obj.IsSelected)
+            {
+                for (var i = 0; i < points.Length; i++) points[i].Flags = VertexFlags.None;
+                var untransformedIndices = indices.Skip((int)numSolidIndices);
+                builder.Append(points, untransformedIndices, new[]
+                {
+                    new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, obj.BoundingBox.Center, 0, numWireframeIndices)
+                });
+            }
 
             return Task.FromResult(0);
         }

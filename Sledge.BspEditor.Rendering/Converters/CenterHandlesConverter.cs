@@ -59,9 +59,15 @@ namespace Sledge.BspEditor.Rendering.Converters
             
             _engine.UploadTexture(CenterHandleTextureDataSource.Name, () => HandleDataSource);
 
-            var verts = (
+            var objs = (
                 from mo in objects
                 where mo is Solid || (mo is Entity && !mo.Hierarchy.HasChildren)
+                select mo
+            ).ToList();
+
+            var verts = (
+                // Current centers
+                from mo in objs
                 let color = mo.IsSelected ? Color.Red : mo.Data.GetOne<ObjectColor>()?.Color ?? Color.White
                 select new VertexStandard
                 {
@@ -69,6 +75,19 @@ namespace Sledge.BspEditor.Rendering.Converters
                     Normal = new Vector3(9, 9, 0),
                     Colour = color.ToVector4(),
                     Tint = Vector4.One
+                }
+            ).Union(
+                // Selective transformed centers
+                from mo in objs
+                where mo.IsSelected
+                let color = Color.Red
+                select new VertexStandard
+                {
+                    Position = mo.BoundingBox.Center,
+                    Normal = new Vector3(9, 9, 0),
+                    Colour = color.ToVector4(),
+                    Tint = Vector4.One,
+                    Flags = VertexFlags.SelectiveTransformed
                 }
             ).ToList();
 
