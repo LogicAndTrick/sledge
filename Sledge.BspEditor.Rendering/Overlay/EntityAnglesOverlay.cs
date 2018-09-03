@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Viewports;
@@ -18,7 +19,7 @@ namespace Sledge.BspEditor.Rendering.Overlay
         {
             if (camera.Zoom < 0.5f) return;
 
-            foreach (var ed in objects.OfType<Entity>().Where(x => x.EntityData != null))
+            foreach (var ed in objects.OfType<Entity>().Where(x => x.EntityData != null).Where(x => !x.Data.OfType<IObjectVisibility>().Any(v => v.IsHidden)))
             {
                 var ang = ed.EntityData.GetVector3("angles");
                 if (!ang.HasValue) continue;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
@@ -24,7 +25,13 @@ namespace Sledge.BspEditor.Rendering.Converters
     [Export(typeof(ISettingsContainer))]
     public class CenterHandlesConverter : IMapObjectGroupSceneConverter, ISettingsContainer
     {
-        [Import] private EngineInterface _engine;
+        private readonly EngineInterface _engine;
+
+        [ImportingConstructor]
+        public CenterHandlesConverter([Import] Lazy<EngineInterface> engine)
+        {
+            _engine = engine.Value;
+        }
 
         // Settings
 
@@ -62,6 +69,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             var objs = (
                 from mo in objects
                 where mo is Solid || (mo is Entity && !mo.Hierarchy.HasChildren)
+                where !mo.Data.OfType<IObjectVisibility>().Any(x => x.IsHidden)
                 select mo
             ).ToList();
 

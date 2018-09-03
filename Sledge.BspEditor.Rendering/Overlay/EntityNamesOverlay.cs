@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
 using System.Numerics;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Viewports;
@@ -21,7 +22,7 @@ namespace Sledge.BspEditor.Rendering.Overlay
             var nameFont = new Font(font, FontStyle.Bold);
 
             // Escape hatch in case there's too many entities on screen
-            var ents = objects.OfType<Entity>().Where(x => x.EntityData != null).ToList();
+            var ents = objects.OfType<Entity>().Where(x => x.EntityData != null).Where(x => !x.Data.OfType<IObjectVisibility>().Any(v => v.IsHidden)).ToList();
             if (ents.Count <= 0 || ents.Count > 100) return;
 
             graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
