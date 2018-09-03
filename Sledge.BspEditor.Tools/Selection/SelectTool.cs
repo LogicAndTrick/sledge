@@ -13,6 +13,7 @@ using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
+using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
@@ -59,6 +60,7 @@ namespace Sledge.BspEditor.Tools.Selection
         [Setting] public bool Show3DWidgets { get; set; } = false;
         [Setting] public bool SelectByCenterHandles { get; set; } = true;
         [Setting] public bool OnlySelectByCenterHandles { get; set; } = false;
+        [Setting] public bool KeepVisgroupsWhenCloning { get; set; } = true;
 
         string ISettingsContainer.Name => "Sledge.BspEditor.Tools.SelectTool";
 
@@ -70,6 +72,7 @@ namespace Sledge.BspEditor.Tools.Selection
             yield return new SettingKey("Tools/Selection", "Show3DWidgets", typeof(bool));
             yield return new SettingKey("Tools/Selection", "SelectByCenterHandles", typeof(bool));
             yield return new SettingKey("Tools/Selection", "OnlySelectByCenterHandles", typeof(bool));
+            yield return new SettingKey("Tools/Selection", "KeepVisgroupsWhenCloning", typeof(bool));
         }
 
         void ISettingsContainer.LoadValues(ISettingsStore store)
@@ -746,6 +749,7 @@ namespace Sledge.BspEditor.Tools.Selection
                     .OfType<IMapObject>()
                     .Select(mo =>
                     {
+                        // Transform the clone (and textures)
                         mo.Transform(transform);
                         if (textureTransformationType == TextureTransformationType.Uniform)
                         {
@@ -761,6 +765,13 @@ namespace Sledge.BspEditor.Tools.Selection
                                 t.Texture.TransformScale(transform);
                             }
                         }
+
+                        // Check if we need to clear the visgroups
+                        if (!KeepVisgroupsWhenCloning)
+                        {
+                            mo.Data.Remove(x => x is VisgroupID);
+                        }
+
                         return mo;
                     });
 

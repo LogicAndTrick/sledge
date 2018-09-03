@@ -5,6 +5,10 @@ using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Primitives.MapObjectData
 {
+    /// <summary>
+    /// Assigns a visgroup ID to a map object.
+    /// The visgroups themselves are stored as map data.
+    /// </summary>
     public class VisgroupID : IMapObjectData
     {
         public long ID { get; set; }

@@ -4,12 +4,14 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Editing.Components.Visgroup;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Data;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Translations;
 using Sledge.Shell;
@@ -158,6 +160,11 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         private void VisgroupToggled(object sender, VisgroupItem visgroup, CheckState state)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
+        }
+
+        private void EditVisgroupsClicked(object sender, System.EventArgs e)
+        {
+            Oy.Publish("Command:Run", new CommandMessage("BspEditor:Map:Visgroups"));
         }
     }
 }

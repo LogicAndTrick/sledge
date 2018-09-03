@@ -57,7 +57,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
         public VisgroupItem SelectedVisgroup
         {
             get => VisgroupTree.SelectedNode?.Tag as VisgroupItem;
-            set => VisgroupTree.SelectedNode = GetNodeForTag(value.Tag);
+            set => VisgroupTree.SelectedNode = GetNodeForTag(value?.Tag);
         }
 
         public VisgroupPanel()

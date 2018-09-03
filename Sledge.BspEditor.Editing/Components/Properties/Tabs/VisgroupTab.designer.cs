@@ -24,6 +24,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             this.btnEditVisgroups.TabIndex = 5;
             this.btnEditVisgroups.Text = "Edit Visgroups";
             this.btnEditVisgroups.UseVisualStyleBackColor = true;
+            this.btnEditVisgroups.Click += new System.EventHandler(this.EditVisgroupsClicked);
             // 
             // lblMemberOfGroup
             // 
@@ -41,6 +42,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.visgroupPanel.Location = new System.Drawing.Point(3, 23);
             this.visgroupPanel.Name = "visgroupPanel";
+            this.visgroupPanel.SelectedVisgroup = null;
             this.visgroupPanel.ShowCheckboxes = true;
             this.visgroupPanel.Size = new System.Drawing.Size(581, 413);
             this.visgroupPanel.TabIndex = 6;

@@ -26,7 +26,8 @@
             "AutoSelectBox": "Automatically select after drawing selection box",
             "Show3DWidgets": "Show 3D transformation widgets",
             "SelectByCenterHandles": "Allow selection by clicking center handles",
-            "OnlySelectByCenterHandles": "Only allow selection by clicking center handles"
+            "OnlySelectByCenterHandles": "Only allow selection by clicking center handles",
+            "KeepVisgroupsWhenCloning": "Keep visgroups when cloning"
         } 
     },
     "MenuDataProvider": {
