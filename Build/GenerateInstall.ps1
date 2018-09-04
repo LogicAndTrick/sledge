@@ -1,26 +1,41 @@
-$msbuild = Join-Path (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0').MSBuildToolsPath "MSBuild.exe"
+# Find app install locations
+
+# MSBuild
+$vswhere = [System.Environment]::ExpandEnvironmentVariables("%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe")
+$vspath = & $vswhere -latest -requires Microsoft.Component.MSBuild -property installationPath
+$msbuild = join-path $path 'MSBuild\15.0\Bin\MSBuild.exe'
+
+# 7-zip
 if (Test-Path 'HKLM:\SOFTWARE\7-Zip') {
     $7zip = Join-Path (Get-ItemProperty 'HKLM:\SOFTWARE\7-Zip').Path "7z.exe"
 } else {
     $7zip = Join-Path (Get-ItemProperty 'HKLM:\SOFTWARE\WOW6432Node\7-Zip').Path "7z.exe"
 }
+
+# NSIS
 if (Test-Path 'HKLM:\SOFTWARE\NSIS') {
     $nsis = Join-Path (Get-ItemProperty 'HKLM:\SOFTWARE\NSIS').'(default)' "makensis.exe"
 } else {
     $nsis = Join-Path (Get-ItemProperty 'HKLM:\SOFTWARE\WOW6432Node\NSIS').'(default)' "makensis.exe"
 }
 
+# Delete existing out directory
 If (Test-Path './Out') { Remove-Item './Out' -recurse }
 
+# Create out directories and log file
 (New-Item './Out' -ItemType directory) | Out-Null
+(New-Item './Out/Build' -ItemType directory) | Out-Null
 $log = './Out/Build.log'
 (Set-Content $log '')
 
-echo 'Building Solution...'
-(& $msbuild '../Sledge.sln' '/p:Configuration=Release') | Add-Content $log
+$outputPath = Resolve-Path './Out/Build'
 
-echo 'Copying Files...'
-(& 'robocopy.exe' '../Sledge.Editor/bin/Release/' 'Out/Build' '/S' '/XF' '*.pdb' '*.xml' '*.vshost.*' 'Settings.vdf' '*.ico') | Add-Content $log
+# Build the project
+echo 'Building Solution...'
+(& $msbuild '../Sledge.sln' '/p:Configuration=Release' "/p:OutputPath=$outputPath") | Add-Content $log
+
+(& del '.\Out\Build\*.pdb') | Add-Content $log
+(& del '.\Out\Build\*.xml') | Add-Content $log
 
 $version = (Get-Command './Out/Build/Sledge.Editor.exe').FileVersionInfo.ProductVersion
 $zipfile = './Out/Sledge.Editor.' + $version + '.zip'

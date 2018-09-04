@@ -5,7 +5,31 @@
         "LanguageDescription":  "English",
         "Inherit": ""
     },
+    "@Settings": {
+        "UpdateChecker": {
+            "CheckForUpdates": "Check for updates on startup"
+        }
+    },
     "ShellSetup": {
         "Title": "Sledge Editor"
+    },
+    "Update": {
+        "UpdaterForm": {
+            "Title": "Update Available!",
+            "UpdateAvailable": "A new version of Sledge is available!\nWould you like to download it now?",
+            "Downloading": "Downloading..."
+        },
+        "CheckForUpdates": {
+            "Name": "Check for updates",
+            "Details": "Check online for updates",
+            "NoUpdatesTitle": "No updates found",
+            "NoUpdatesMessage": "This version of Sledge is currently up-to-date.",
+            "UpdateErrorTitle": "Update error",
+            "UpdateErrorMessage": "There was a problem downloading the update details, please try again later or visit the Sledge website to check the latest version."
+        },
+        "UpdateChecker": {
+            "UpdateDownloadedTitle": "Update ready to install",
+            "UpdateDownloadedMessage": "An update has been downloaded, would you like to install it now? Selecting 'No' will install it later."
+        }
     }
 }

@@ -13,7 +13,7 @@ VIProductVersion "{version}"
 VIAddVersionKey "FileVersion" "{version}"
 VIAddVersionKey "ProductName" "Sledge Editor"
 VIAddVersionKey "FileDescription" "Installer for Sledge Editor"
-VIAddVersionKey "LegalCopyright" "http://logic-and-trick.com 2013"
+VIAddVersionKey "LegalCopyright" "http://logic-and-trick.com 2018"
 
 ; Ensure Admin Rights
 !include LogicLib.nsh
@@ -45,6 +45,13 @@ Section "Sledge Editor"
     
     SectionIn RO
     SetOutPath $INSTDIR
+
+    ; Purge junk from old installs
+    Delete "$INSTDIR\*.dll"
+    Delete "$INSTDIR\Sledge.Editor.Elevate.exe"
+    Delete "$INSTDIR\Sledge.Editor.Updater.exe"
+    Delete "$INSTDIR\UpdateSources.txt"
+
     File /r "Build\*"
     
     WriteRegStr HKLM "Software\Sledge\Editor" "InstallDir" "$INSTDIR"

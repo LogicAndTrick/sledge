@@ -295,7 +295,6 @@ Global
 		{E8B9264D-7AA0-4397-8F8E-367701C2DF89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8B9264D-7AA0-4397-8F8E-367701C2DF89}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E8B9264D-7AA0-4397-8F8E-367701C2DF89}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E8B9264D-7AA0-4397-8F8E-367701C2DF89}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E8B9264D-7AA0-4397-8F8E-367701C2DF89}.Release|x86.ActiveCfg = Release|Any CPU
 		{E8B9264D-7AA0-4397-8F8E-367701C2DF89}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
