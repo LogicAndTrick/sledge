@@ -2,6 +2,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 {
     public interface IViewportEventListener
     {
+        string OrderHint { get; }
         MapViewport Viewport { get; set; }
 
         bool IsActive();

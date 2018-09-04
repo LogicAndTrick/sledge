@@ -6,6 +6,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 {
     public class RightClickViewportListener : IViewportEventListener
     {
+        public string OrderHint => "U";
         public MapViewport Viewport { get; set; }
 
         private readonly ContextMenuStrip _contextMenu;

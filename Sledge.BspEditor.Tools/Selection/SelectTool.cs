@@ -461,6 +461,8 @@ namespace Sledge.BspEditor.Tools.Selection
                 return;
             }
 
+            e.Handled = true;
+
             var desel = new List<IMapObject>();
             var sel = new List<IMapObject>();
 

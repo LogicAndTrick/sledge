@@ -84,7 +84,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         private void ListenerDo(Action<IViewportEventListener> action)
         {
-            foreach (var listener in Listeners.Where(x => x.IsActive()))
+            foreach (var listener in Listeners.Where(x => x.IsActive()).OrderBy(x => x.OrderHint))
             {
                 try
                 {
@@ -99,7 +99,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         private void ListenerDoEvent(ViewportEvent e, Action<IViewportEventListener, ViewportEvent> action)
         {
-            foreach (var listener in Listeners.Where(x => x.IsActive()))
+            foreach (var listener in Listeners.Where(x => x.IsActive()).OrderBy(x => x.OrderHint))
             {
                 try
                 {

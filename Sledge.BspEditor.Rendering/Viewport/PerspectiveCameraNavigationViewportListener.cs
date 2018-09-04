@@ -14,6 +14,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 {
     public class PerspectiveCameraNavigationViewportListener : IViewportEventListener, IOverlayRenderable
     {
+        public string OrderHint => "W";
         public MapViewport Viewport { get; set; }
 
         private int LastKnownX { get; set; }

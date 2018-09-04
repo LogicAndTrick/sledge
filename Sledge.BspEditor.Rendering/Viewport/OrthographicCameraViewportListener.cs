@@ -12,6 +12,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 {
     public class OrthographicCameraViewportListener : IViewportEventListener
     {
+        public string OrderHint => "W";
         public MapViewport Viewport { get; set; }
 
         private OrthographicCamera Camera => Viewport.Viewport.Camera as OrthographicCamera;
