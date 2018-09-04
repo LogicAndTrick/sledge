@@ -6,9 +6,9 @@ using Sledge.Common.Transport;
 
 namespace Sledge.BspEditor.Tools.Vertex.Selection
 {
-    public class VertexHidden : IMapObjectData, IObjectVisibility
+    public class VertexHidden : IMapObjectData, IRenderVisibility
     {
-        public bool IsHidden => true;
+        public bool IsRenderHidden => true;
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {

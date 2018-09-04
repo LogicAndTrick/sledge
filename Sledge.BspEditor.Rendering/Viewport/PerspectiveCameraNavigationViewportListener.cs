@@ -301,7 +301,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         public void MouseDoubleClick(ViewportEvent e)
         {
-            
+            if (FreeLook) e.Handled = true;
         }
 
         public void DragStart(ViewportEvent e)

@@ -23,7 +23,8 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         public bool Supports(IMapObject obj)
         {
-            return obj.Data.OfType<IObjectVisibility>().Any(x => x.IsHidden);
+            return obj.Data.OfType<IObjectVisibility>().Any(x => x.IsHidden)
+                || obj.Data.OfType<IRenderVisibility>().Any(x => x.IsRenderHidden);
         }
 
         public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)

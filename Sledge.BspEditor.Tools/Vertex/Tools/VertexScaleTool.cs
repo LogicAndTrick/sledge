@@ -225,8 +225,6 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            if (KeyboardState.IsKeyDown(Keys.Space)) return;
-
             var toggle = KeyboardState.Ctrl;
 
             var l = camera.EyeLocation;

@@ -411,9 +411,6 @@ namespace Sledge.BspEditor.Tools.Selection
         protected override void MouseDoubleClick(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             if (Document.Selection.IsEmpty) return;
-            
-            // Don't show Object Properties while navigating the view, because mouse cursor will be hidden
-            if (KeyboardState.IsKeyDown(Keys.Space)) return;
             Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
         }
 
@@ -425,9 +422,6 @@ namespace Sledge.BspEditor.Tools.Selection
         /// <param name="e">The click event</param>
         protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            // Do not perform selection if space is down
-            //if (View.Camera3DPanRequiresMouseClick && KeyboardState.IsKeyDown(Keys.Space)) return;
-
             // First, get the ray that is cast from the clicked point along the viewport frustrum
             var (rayStart, rayEnd) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
             var ray = new Line(rayStart, rayEnd);
