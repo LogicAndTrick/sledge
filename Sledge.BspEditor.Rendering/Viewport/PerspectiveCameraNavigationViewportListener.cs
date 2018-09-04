@@ -14,7 +14,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
 {
     public class PerspectiveCameraNavigationViewportListener : IViewportEventListener, IOverlayRenderable
     {
-        public string OrderHint => "W";
+        public string OrderHint => FreeLook ? "A" : "W";
         public MapViewport Viewport { get; set; }
 
         private int LastKnownX { get; set; }
@@ -290,12 +290,13 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         public void MouseDown(ViewportEvent e)
         {
+            if (FreeLook && KeyboardState.IsKeyDown(Keys.Space)) e.Handled = true;
             SetFreeLook();
         }
 
         public void MouseClick(ViewportEvent e)
         {
-            
+            if (FreeLook) e.Handled = true;
         }
 
         public void MouseDoubleClick(ViewportEvent e)
