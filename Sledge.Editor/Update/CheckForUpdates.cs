@@ -17,8 +17,8 @@ namespace Sledge.Editor.Update
     [CommandID("Sledge:Editor:CheckForUpdates")]
     public class CheckForUpdates : ICommand
     {
-        private Form _shell;
-        private ITranslationStringProvider _translation;
+        private readonly Form _shell;
+        private readonly ITranslationStringProvider _translation;
 
         public string Name { get; set; } = "Check for updates";
         public string Details { get; set; } = "Check online for updates";
@@ -55,7 +55,7 @@ namespace Sledge.Editor.Update
             if (result == null) return;
 
             var version = GetCurrentVersion();
-            if (String.Equals(result.Version, version, StringComparison.InvariantCultureIgnoreCase))
+            if (result.Version <= version)
             {
                 if (!silent)
                 {
@@ -87,10 +87,9 @@ namespace Sledge.Editor.Update
             });
         }
 
-        private String GetCurrentVersion()
+        private Version GetCurrentVersion()
         {
-            var info = typeof(Program).Assembly.GetName().Version;
-            return info.ToString();
+            return typeof(Program).Assembly.GetName().Version;
         }
 
         private async Task<UpdateCheckResult> GetUpdateCheckResult(string url)
@@ -108,7 +107,7 @@ namespace Sledge.Editor.Update
 
                     return new UpdateCheckResult
                     {
-                        Version = str[0],
+                        Version = new Version(str[0]),
                         Date = DateTime.Parse(str[1])
                     };
                 }
@@ -131,7 +130,7 @@ namespace Sledge.Editor.Update
 
         private class UpdateCheckResult
         {
-            public string Version { get; set; }
+            public Version Version { get; set; }
             public DateTime Date { get; set; }
         }
     }

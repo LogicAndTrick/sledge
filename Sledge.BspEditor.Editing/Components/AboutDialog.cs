@@ -12,11 +12,16 @@ namespace Sledge.BspEditor.Editing.Components
 
             VersionLabel.Text = FileVersionInfo.GetVersionInfo(typeof (MapDocument).Assembly.Location).FileVersion;
 
-            // LTLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://logic-and-trick.com");
-            // GithubLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "https://github.com/LogicAndTrick/sledge");
-            // GPLLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://www.gnu.org/licenses/gpl-2.0.html");
-            // AJLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://scrub-studios.com");
-            // TWHLLink.Click += (s, e) => Mediator.Publish(EditorMediator.OpenWebsite, "http://twhl.info");
+            LTLink.Click += (s, e) => OpenSite("http://logic-and-trick.com");
+            GithubLink.Click += (s, e) => OpenSite("https://github.com/LogicAndTrick/sledge");
+            GPLLink.Click += (s, e) => OpenSite("https://opensource.org/licenses/BSD-3-Clause");
+            AJLink.Click += (s, e) => OpenSite("http://scrub-studios.com");
+            TWHLLink.Click += (s, e) => OpenSite("https://twhl.info");
+        }
+
+        private void OpenSite(string url)
+        {
+            Process.Start(url);
         }
     }
 }

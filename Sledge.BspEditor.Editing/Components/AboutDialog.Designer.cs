@@ -56,7 +56,7 @@
             this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button1.Location = new System.Drawing.Point(213, 278);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(113, 23);
+            this.button1.Size = new System.Drawing.Size(131, 23);
             this.button1.TabIndex = 1;
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
@@ -114,9 +114,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(286, 103);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(231, 13);
+            this.label3.Size = new System.Drawing.Size(223, 13);
             this.label3.TabIndex = 5;
-            this.label3.Text = "Open source software - licensed under the GPL";
+            this.label3.Text = "Open source software - licensed under BSD-3";
             // 
             // GithubLink
             // 
@@ -133,10 +133,10 @@
             this.GPLLink.AutoSize = true;
             this.GPLLink.Location = new System.Drawing.Point(348, 146);
             this.GPLLink.Name = "GPLLink";
-            this.GPLLink.Size = new System.Drawing.Size(145, 13);
+            this.GPLLink.Size = new System.Drawing.Size(195, 13);
             this.GPLLink.TabIndex = 6;
             this.GPLLink.TabStop = true;
-            this.GPLLink.Text = "gnu.org/licenses/gpl-2.0.html";
+            this.GPLLink.Text = "opensource.org/licenses/BSD-3-Clause";
             // 
             // label4
             // 
@@ -226,7 +226,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(542, 305);
+            this.ClientSize = new System.Drawing.Size(560, 305);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);

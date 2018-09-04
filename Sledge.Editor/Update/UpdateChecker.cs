@@ -37,6 +37,9 @@ namespace Sledge.Editor.Update
 
         public Task OnInitialise()
         {
+#if DEBUG
+            _checkForUpdates = false;
+#endif
             if (_checkForUpdates)
             {
                 Scheduler.Schedule(this, CheckForUpdates, TimeSpan.FromSeconds(5));
