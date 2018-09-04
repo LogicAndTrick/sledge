@@ -12,7 +12,7 @@ namespace Sledge.Rendering.Pipelines
     public class WireframeGenericPipeline : IPipeline
     {
         public PipelineType Type => PipelineType.WireframeGeneric;
-        public int Group => 10;
+        public int Group => 1;
         public float Order => 10;
 
         private Shader _vertex;
