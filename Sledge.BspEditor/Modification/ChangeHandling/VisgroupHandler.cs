@@ -3,12 +3,11 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
-using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 
-namespace Sledge.BspEditor.Modification
+namespace Sledge.BspEditor.Modification.ChangeHandling
 {
     /// <summary>
     /// Handles changes on visgroups and objects to maintain the object list and visibilities.
@@ -16,6 +15,8 @@ namespace Sledge.BspEditor.Modification
     [Export(typeof(IMapDocumentChangeHandler))]
     public class VisgroupHandler : IMapDocumentChangeHandler
     {
+        public string OrderHint => "M";
+
         public async Task Changed(Change change)
         {
             var changed = false;
@@ -82,10 +83,11 @@ namespace Sledge.BspEditor.Modification
 
             if (makeVisible.Any())
             {
-                await MapDocumentOperation.Perform(change.Document, new TrivialOperation(
-                    d => makeVisible.ToList().ForEach(x => x.Data.Remove(v => v is VisgroupHidden)),
-                    c => c.UpdateRange(makeVisible)
-                ));
+                foreach (var mv in makeVisible)
+                {
+                    mv.Data.Remove(x => x is VisgroupHidden);
+                    change.Update(mv);
+                }
             }
 
             // Fire event if changes were found

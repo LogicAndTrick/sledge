@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.ChangeHandling;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
@@ -19,6 +20,7 @@ namespace Sledge.BspEditor.Tools.Grid
     public class GridStatusItem : IStatusItem, IMapDocumentChangeHandler
     {
         public event EventHandler<string> TextChanged;
+        public string OrderHint => "M";
 
         public string ID => "Sledge.BspEditor.Tools.Grid.GridStatusItem";
         public int Width => 120;

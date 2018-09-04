@@ -62,7 +62,6 @@
     <Compile Include="Converters\AxisLinesConverter.cs" />
     <Compile Include="Converters\CenterHandlesConverter.cs" />
     <Compile Include="Converters\CordonBoundsConverter.cs" />
-    <Compile Include="Converters\CordonClippingConverter.cs" />
     <Compile Include="Converters\DefaultEntityConverter.cs" />
     <Compile Include="Converters\DefaultSolidConverter.cs" />
     <Compile Include="Converters\EntityDecalConverter.cs" />

@@ -105,9 +105,11 @@
         }
     },
     "Modification": {
-        "SelectionHandler": {
-            "NoObjectsSelected": "No objects selected",
-            "NumObjectsSelected": "{0} objects selected"
+        "ChangeHandling": {
+            "SelectionHandler": {
+                "NoObjectsSelected": "No objects selected",
+                "NumObjectsSelected": "{0} objects selected"
+            }
         }
     } 
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.ChangeHandling;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.DataStructures.GameData;
 using Sledge.DataStructures.Geometric;
@@ -14,6 +15,8 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
     [Export(typeof(IMapDocumentChangeHandler))]
     public class EntitySpriteChangeHandler : IMapDocumentChangeHandler
     {
+        public string OrderHint => "M";
+
         public async Task Changed(Change change)
         {
             var gd = await change.Document.Environment.GetGameData();

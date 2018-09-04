@@ -10,7 +10,7 @@ using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Translations;
 
-namespace Sledge.BspEditor.Modification
+namespace Sledge.BspEditor.Modification.ChangeHandling
 {
     [Export(typeof(IMapDocumentChangeHandler))]
     [Export(typeof(IStatusItem))]
@@ -19,14 +19,15 @@ namespace Sledge.BspEditor.Modification
     public class SelectionHandler : IMapDocumentChangeHandler, IStatusItem
     {
         public event EventHandler<string> TextChanged;
+        public string OrderHint => "W";
 
-        public string ID => "Sledge.BspEditor.Rendering.Components.ViewportZoomStatusItem";
+        public string ID => "Sledge.BspEditor.Modification.SelectionHandler";
         public int Width => 180;
         public bool HasBorder => true;
         public string Text { get; set; } = "";
 
-        public string NoObjectsSelected { get; set; }
-        public string NumObjectsSelected { get; set; }
+        public string NoObjectsSelected { get; set; } = "";
+        public string NumObjectsSelected { get; set; } = "{0}";
 
         public async Task Changed(Change change)
         {
@@ -36,12 +37,36 @@ namespace Sledge.BspEditor.Modification
                 sel = new Selection();
                 change.Document.Map.Data.Add(sel);
             }
+
+            // Any hidden objects should be deselected
+            HideDeselectedObjects(change);
+
             if (sel.Update(change))
             {
                 await Oy.Publish("MapDocument:SelectionChanged", change.Document);
                 await Oy.Publish("Menu:Update", String.Empty);
             }
             UpdateText(sel);
+        }
+
+        private void HideDeselectedObjects(Change change)
+        {
+            // Objects that are selected but hidden should be deselected
+            var items = change.Added.Union(change.Updated).Where(x => x.IsSelected && x.IsHidden()).ToHashSet();
+
+            // Parents should only be selected if all their children are selected, so recursively deselect those too
+            while (items.Any())
+            {
+                var list = items.ToList();
+                items.Clear();
+
+                foreach (var o in list.Where(x => x.IsSelected))
+                {
+                    o.IsSelected = false;
+                    change.Update(o);
+                    items.Add(o.Hierarchy.Parent);
+                }
+            }
         }
 
         private void UpdateText(Selection selection)
