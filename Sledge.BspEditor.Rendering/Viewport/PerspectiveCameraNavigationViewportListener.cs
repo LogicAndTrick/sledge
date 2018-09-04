@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Numerics;
 using System.Windows.Forms;
 using Sledge.Common.Easings;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
+using Sledge.Rendering.Viewports;
 using Sledge.Shell;
 using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Rendering.Viewport
 {
-    public class PerspectiveCameraNavigationViewportListener : IViewportEventListener
+    public class PerspectiveCameraNavigationViewportListener : IViewportEventListener, IOverlayRenderable
     {
         public MapViewport Viewport { get; set; }
 
@@ -183,7 +186,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 Cursor.Clip = Viewport.Control.RectangleToScreen(new Rectangle(0, 0, Viewport.Width, Viewport.Height));
                 SetCapture(true);
                 Viewport.AquireInputLock(this);
-                AddSceneObjects();
             }
             else if (!FreeLook && !CursorVisible)
             {
@@ -191,7 +193,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 CursorClip = Rectangle.Empty;
                 SetCapture(false);
                 Viewport.ReleaseInputLock(this);
-                ClearSceneObjects();
             }
         }
 
@@ -338,7 +339,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
                     CursorClip = Rectangle.Empty;
                     SetCapture(false);
                     Viewport.ReleaseInputLock(this);
-                    ClearSceneObjects();
                 }
                 PositionKnown = false;
                 Focus = false;
@@ -355,38 +355,24 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         }
 
-        private void ClearSceneObjects()
+        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            //if (DocumentManager.CurrentDocument == null) return;
-            //DocumentManager.CurrentDocument.SceneManager.ClearTemporaryObjects(this);
+            // 
         }
 
-        private void AddSceneObjects()
+        public void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
         {
-            //if (DocumentManager.CurrentDocument == null) return;
+            if (CursorVisible) return;
 
-            //var line1 = new LineElement(PositionType.Screen, Color.White, new List<Position>
-            //{
-            //    new Position(new Vector3(0.5f, 0.5f, 0)) { Normalised = true, Offset = new Vector3(-5, 0, 0) },
-            //    new Position(new Vector3(0.5f, 0.5f, 0)) { Normalised = true, Offset = new Vector3(+5, 0, 0) },
-            //})
-            //{
-            //    Viewport = Viewport.Viewport,
-            //    Smooth = false
-            //};
+            var x = viewport.Width / 2;
+            var y = viewport.Height / 2;
+            const int size = 3;
 
-            //var line2 = new LineElement(PositionType.Screen, Color.White, new List<Position>
-            //{
-            //    new Position(new Vector3(0.5f, 0.5f, 0)) { Normalised = true, Offset = new Vector3(0, -5, 0) },
-            //    new Position(new Vector3(0.5f, 0.5f, 0)) { Normalised = true, Offset = new Vector3(0, +5, 0) },
-            //})
-            //{
-            //    Viewport = Viewport.Viewport,
-            //    Smooth = false
-            //};
+            graphics.FillRectangle(Brushes.Black, x - 1, y - size - 1, 3, size + size + 3);
+            graphics.FillRectangle(Brushes.Black, x - size - 1, y - 1, size + size + 3, 3);
 
-            //DocumentManager.CurrentDocument.SceneManager.AddTemporaryObject(this, line1);
-            //DocumentManager.CurrentDocument.SceneManager.AddTemporaryObject(this, line2);
+            graphics.DrawLine(Pens.White, x, y - size, x, y + size);
+            graphics.DrawLine(Pens.White, x - size, y, x + size, y);
         }
     }
 }

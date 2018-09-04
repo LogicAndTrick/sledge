@@ -10,6 +10,7 @@ using Sledge.BspEditor.Components;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Rendering.Viewport
@@ -21,6 +22,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         private readonly Control _panel;
         private IViewport _viewport;
         private MapViewport _mapViewport;
+        private ListenerOverlayRenderable _overlayRenderable;
 
         private readonly List<Subscription> _subscriptions;
         private ICamera _camera;
@@ -44,6 +46,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             _listeners = listeners;
             _camera = new PerspectiveCamera();
             _panel = new Panel {Dock = DockStyle.Fill, BackColor = Color.Black};
+
             _subscriptions = new List<Subscription>
             {
                 Oy.Subscribe<Vector3>("MapDocument:Viewport:Focus2D", Focus2D),
@@ -53,13 +56,19 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 Oy.Subscribe<Tuple<Vector3, Vector3>>("MapDocument:Viewport:Set3D", Set3D),
                 Oy.Subscribe<Vector3>("MapDocument:Viewport:Set2D", Set2D),
             };
+
             _viewport = _engine.CreateViewport();
             _viewport.Camera = _camera;
             _viewport.Control.Dock = DockStyle.Fill;
             _panel.Controls.Add(_viewport.Control);
+
             _mapViewport = new MapViewport(_viewport);
             _mapViewport.Listeners.AddRange(_listeners.SelectMany(x => x.Create(_mapViewport)));
             _mapViewport.ListenerException += ListenerException;
+
+            _overlayRenderable = new ListenerOverlayRenderable(_mapViewport);
+            _engine.Add(_overlayRenderable);
+
             Oy.Publish("MapViewport:Created", _mapViewport);
         }
 
@@ -160,8 +169,35 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         public void Dispose()
         {
+            _engine.Remove(_overlayRenderable);
             _subscriptions.ForEach(Oy.Unsubscribe);
             _viewport?.Dispose();
+        }
+
+        private class ListenerOverlayRenderable : IOverlayRenderable
+        {
+            private readonly MapViewport _control;
+
+            public ListenerOverlayRenderable(MapViewport control)
+            {
+                _control = control;
+            }
+
+            public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+            {
+                foreach (var r in _control.Listeners.OfType<IOverlayRenderable>())
+                {
+                    r.Render(viewport, camera, worldMin, worldMax, graphics);
+                }
+            }
+
+            public void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+            {
+                foreach (var r in _control.Listeners.OfType<IOverlayRenderable>())
+                {
+                    r.Render(viewport, camera, graphics);
+                }
+            }
         }
     }
 }
