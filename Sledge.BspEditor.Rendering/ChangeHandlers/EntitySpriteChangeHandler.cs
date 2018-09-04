@@ -34,7 +34,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             var cls = gd?.GetClass(entity.EntityData.Name);
             var scale = 1f;
             var color = Color.White;
-            var size = new SizeF(entity.BoundingBox.Width, entity.BoundingBox.Height);
+            SizeF? size = new SizeF(entity.BoundingBox.Width, entity.BoundingBox.Height);
 
             if (cls != null)
             {
@@ -51,13 +51,16 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
                     if (colProp.VariableType == VariableType.Color255) col /= 255f;
                     if (col.HasValue) color = col.Value.ToColor();
                 }
-            }
 
-            var tc = await doc.Environment.GetTextureCollection();
-            var texture = await tc.GetTextureItem(name);
-            if (texture != null)
-            {
-                size = texture.Size;
+                if (cls.Behaviours.Any(x => string.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    var tc = await doc.Environment.GetTextureCollection();
+                    var texture = await tc.GetTextureItem(name);
+                    if (texture != null)
+                    {
+                        size = texture.Size;
+                    }
+                }
             }
 
             return new EntitySprite(name, scale, color, size);

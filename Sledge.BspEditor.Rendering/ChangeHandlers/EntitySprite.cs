@@ -19,12 +19,12 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
         public bool ContentsReplaced => !string.IsNullOrWhiteSpace(Name);
 
-        public EntitySprite(string name, float scale, Color color, SizeF size)
+        public EntitySprite(string name, float scale, Color color, SizeF? size)
         {
             Name = name;
             Scale = scale;
             Color = color;
-            Size = size;
+            Size = size ?? SizeF.Empty;
         }
 
         public EntitySprite(SerialisedObject obj)
@@ -49,7 +49,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
         public Box GetBoundingBox(IMapObject obj)
         {
-            if (string.IsNullOrWhiteSpace(Name)) return null;
+            if (string.IsNullOrWhiteSpace(Name) || Size.IsEmpty) return null;
             var origin = obj.Data.GetOne<Origin>()?.Location ?? Vector3.Zero;
             var half = new Vector3(Size.Width, Size.Width, Size.Height) * Scale / 2;
             return new Box(origin - half, origin + half);

@@ -56,7 +56,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
                 }
             }
 
-            return new Box(Origin - Vector3.One * 16, Origin + Vector3.One * 16);
+            return new Box(Origin - Vector3.One * 8, Origin + Vector3.One * 8);
         }
 
         public override IEnumerable<Polygon> GetPolygons()

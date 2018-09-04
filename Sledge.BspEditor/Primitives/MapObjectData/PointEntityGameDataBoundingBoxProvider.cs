@@ -39,9 +39,9 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             var cls = _data.Classes.FirstOrDefault(x => String.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase) && x.ClassType == ClassType.Point);
             if (cls == null) return null;
 
-            // Default to 16
-            var sub = new Vector3(-16, -16, -16);
-            var add = new Vector3(16, 16, 16);
+            // Default to 16x16
+            var sub = new Vector3(-8, -8, -8);
+            var add = new Vector3(8, 8, 8);
 
             // Get the size behaviour
             var behav = cls.Behaviours.SingleOrDefault(x => x.Name == "size");
