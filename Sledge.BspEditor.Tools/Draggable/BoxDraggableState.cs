@@ -197,16 +197,17 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            var start = camera.WorldToScreen(Vector3.Min(State.Start, State.End));
-            var end = camera.WorldToScreen(Vector3.Max(State.Start, State.End));
-
             if (ShouldDrawBox())
             {
+                var start = camera.WorldToScreen(Vector3.Min(State.Start, State.End));
+                var end = camera.WorldToScreen(Vector3.Max(State.Start, State.End));
                 DrawBox(viewport, camera, graphics, start, end);
             }
 
             if (ShouldDrawBoxText())
             {
+                var start = camera.WorldToScreen(Vector3.Min(State.Start, State.End));
+                var end = camera.WorldToScreen(Vector3.Max(State.Start, State.End));
                 DrawBoxText(viewport, camera, graphics, start, end);
             }
         }

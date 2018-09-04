@@ -779,11 +779,11 @@ namespace Sledge.BspEditor.Tools.Texture
 
                     if (num == 0)
                     {
-                        XScale = face.Texture.XScale;
-                        YScale = face.Texture.YScale;
-                        XShift = face.Texture.XShift;
-                        YShift = face.Texture.YShift;
-                        Rotation = face.Texture.Rotation;
+                        if (!float.IsNaN(face.Texture.XScale)) XScale = face.Texture.XScale;
+                        if (!float.IsNaN(face.Texture.YScale)) YScale = face.Texture.YScale;
+                        if (!float.IsNaN(face.Texture.XShift)) XShift = face.Texture.XShift;
+                        if (!float.IsNaN(face.Texture.YShift)) YShift = face.Texture.YShift;
+                        if (!float.IsNaN(face.Texture.Rotation)) Rotation = face.Texture.Rotation;
                     }
                     else
                     {

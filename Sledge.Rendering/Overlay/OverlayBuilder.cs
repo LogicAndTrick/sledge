@@ -90,7 +90,7 @@ namespace Sledge.Rendering.Overlay
 
             if (oc != null)
             {
-                var up = (Vector3.One - oc.Expand(new Vector3(1, 1, 0))) * 1000000000;
+                var up = (Vector3.One - oc.Expand(new Vector3(1, 1, 0))) * 1000;
                 var tl = oc.ScreenToWorld(Vector3.Zero) + up;
                 var br = oc.ScreenToWorld(new Vector3(_width, _height, 0)) - up;
                 min = Vector3.Min(tl, br);

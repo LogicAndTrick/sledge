@@ -12,12 +12,12 @@
         "BrushTool": {
             "SelectionBoxBackgroundOpacity": "Selection box background opacity",
             "SelectCreatedBrush": "Select brush on creation",
-            "SwitchToSelectAfterCreation": "Switch to select tool after brush creation",
+            "SwitchToSelectAfterBrushCreation": "Switch to select tool after brush creation",
             "ResetBrushTypeOnCreation": "Reset to default brush type after brush creation"
         },
         "EntityTool": {
             "SelectCreatedEntity": "Select entity on creation",
-            "SwitchToSelectAfterCreation": "Switch to select tool after entity creation",
+            "SwitchToSelectAfterEntityCreation": "Switch to select tool after entity creation",
             "ResetEntityTypeOnCreation": "Reset to default entity type after entity creation"
         },
         "SelectTool": {

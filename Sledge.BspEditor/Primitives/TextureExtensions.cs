@@ -13,10 +13,7 @@ namespace Sledge.BspEditor.Primitives
         public static void AlignToNormal(this Texture tex, Vector3 normal)
         {
             // Get the closest axis for this normal
-            Vector3 axis;
-            if (normal.X >= normal.Y && normal.X >= normal.Z) axis = Vector3.UnitX;
-            else if (normal.Y >= normal.Z) axis = Vector3.UnitY;
-            else axis = Vector3.UnitZ;
+            var axis = normal.ClosestAxis();
 
             var tempV = axis == Vector3.UnitZ ? -Vector3.UnitY : -Vector3.UnitZ;
             tex.UAxis = normal.Cross(tempV).Normalise();

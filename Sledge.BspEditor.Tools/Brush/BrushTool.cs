@@ -57,7 +57,7 @@ namespace Sledge.BspEditor.Tools.Brush
 
         [Setting("SelectionBoxBackgroundOpacity")] private int _selectionBoxBackgroundOpacity = 64;
         [Setting("SelectCreatedBrush")] private bool _selectCreatedBrush = true;
-        [Setting("SwitchToSelectAfterCreation")] private bool _switchToSelectAfterCreation = false;
+        [Setting("SwitchToSelectAfterBrushCreation")] private bool _switchToSelectAfterCreation = false;
         [Setting("ResetBrushTypeOnCreation")] private bool _resetBrushTypeOnCreation = false;
 
         string ISettingsContainer.Name => "Sledge.BspEditor.Tools.BrushTool";
@@ -66,7 +66,7 @@ namespace Sledge.BspEditor.Tools.Brush
         {
             yield return new SettingKey("Tools/Brush", "SelectionBoxBackgroundOpacity", typeof(int));
             yield return new SettingKey("Tools/Brush", "SelectCreatedBrush", typeof(bool));
-            yield return new SettingKey("Tools/Brush", "SwitchToSelectAfterCreation", typeof(bool));
+            yield return new SettingKey("Tools/Brush", "SwitchToSelectAfterBrushCreation", typeof(bool));
             yield return new SettingKey("Tools/Brush", "ResetBrushTypeOnCreation", typeof(bool));
         }
 

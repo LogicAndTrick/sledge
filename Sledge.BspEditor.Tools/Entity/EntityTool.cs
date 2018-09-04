@@ -52,7 +52,7 @@ namespace Sledge.BspEditor.Tools.Entity
         // Settings
 
         [Setting("SelectCreatedEntity")] private bool _selectCreatedEntity = true;
-        [Setting("SwitchToSelectAfterCreation")] private bool _switchToSelectAfterCreation = false;
+        [Setting("SwitchToSelectAfterEntityCreation")] private bool _switchToSelectAfterCreation = false;
         [Setting("ResetEntityTypeOnCreation")] private bool _resetEntityTypeOnCreation = false;
 
         string ISettingsContainer.Name => "Sledge.BspEditor.Tools.EntityTool";
@@ -60,7 +60,7 @@ namespace Sledge.BspEditor.Tools.Entity
         IEnumerable<SettingKey> ISettingsContainer.GetKeys()
         {
             yield return new SettingKey("Tools/Entity", "SelectCreatedEntity", typeof(bool));
-            yield return new SettingKey("Tools/Entity", "SwitchToSelectAfterCreation", typeof(bool));
+            yield return new SettingKey("Tools/Entity", "SwitchToSelectAfterEntityCreation", typeof(bool));
             yield return new SettingKey("Tools/Entity", "ResetEntityTypeOnCreation", typeof(bool));
         }
 
