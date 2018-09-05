@@ -188,6 +188,8 @@ namespace Sledge.BspEditor.Editing.Components
 
         private IEnumerable<TreeNode> GetEntityNodes(EntityData data)
         {
+            if (data == null) yield break;
+
             yield return new TreeNode("Flags: " + data.Flags);
         }
 
