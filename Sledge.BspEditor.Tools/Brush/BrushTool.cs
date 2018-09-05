@@ -205,8 +205,12 @@ namespace Sledge.BspEditor.Tools.Brush
             var brush = _activeBrush;
             if (brush == null) return null;
 
+            // Don't round if the box is rather small
+            var rounding = RoundVertices ? 0 : 2;
+            if (bounds.SmallestDimension < 10) rounding = 2;
+
             var ti = Document.Map.Data.GetOne<ActiveTexture>()?.Name ?? "aaatrigger";
-            var created = brush.Create(idg, bounds, ti, RoundVertices ? 0 : 2).ToList();
+            var created = brush.Create(idg, bounds, ti, rounding).ToList();
 
             // Align all textures to the face and set the texture scale
             foreach (var f in created.SelectMany(x => x.Data.OfType<Face>()))

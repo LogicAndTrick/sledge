@@ -31,6 +31,19 @@ namespace Sledge.DataStructures.Geometric
         /// </summary>
         public float Height => End.Z - Start.Z;
 
+        /// <summary>
+        /// Get the smallest dimension of this box
+        /// </summary>
+        public float SmallestDimension => Math.Min(Width, Math.Min(Length, Height));
+
+        /// <summary>
+        /// Get the largest dimension of this box
+        /// </summary>
+        public float LargestDimension => Math.Max(Width, Math.Max(Length, Height));
+
+        /// <summary>
+        /// Get the width (X), length(Y), and height (Z) of this box as a vector.
+        /// </summary>
         public Vector3 Dimensions => new Vector3(Width, Length, Height);
 
         public Box(Vector3 start, Vector3 end) : this(new[] { start, end})
