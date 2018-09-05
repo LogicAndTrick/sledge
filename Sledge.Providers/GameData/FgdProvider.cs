@@ -205,6 +205,14 @@ namespace Sledge.Providers.GameData
                     iterator.MoveNext();
                     gdo.AdditionalInformation = ParsePlusString(iterator);
                 }
+
+                // Handle case where the class has no definition and the next token starts a new class
+                if (iterator.Current.Type == LexType.At)
+                {
+                    gd.Classes.Add(gdo);
+                    return;
+                }
+
                 Assert(iterator.Current, iterator.Current.Type == LexType.OpenBracket, "Unexpected " + iterator.Current.Type);
 
                 // Parsing:
