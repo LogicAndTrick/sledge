@@ -404,9 +404,15 @@ namespace Sledge.BspEditor.Tools.Widgets
         {
             var center = _pivotPoint;
             var origin = new Vector3(center.X, center.Y, center.Z);
-            var distance = (camera.EyeLocation - origin).Length();
 
+            var distance = (camera.EyeLocation - origin).Length();
             if (distance <= 1) return;
+
+            // Ensure points that can't be projected properly don't get rendered
+            var screenOrigin = camera.WorldToScreen(origin);
+            var sop = new PointF(screenOrigin.X, screenOrigin.Y);
+            var rec = new RectangleF(-200, -200, camera.Width + 400, camera.Height + 400);
+            if (!rec.Contains(sop)) return;
 
             var radius = 0.15f * distance;
 
