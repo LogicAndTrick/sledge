@@ -69,14 +69,37 @@ namespace Sledge.Shell.Forms
             Oy.Subscribe<string>("Shell:OpenCommandBox", async o => await this.InvokeAsync(() => OpenCommandBox(o)));
 
             Oy.Subscribe<Exception>("Shell:UnhandledException", ShowExceptionDialog);
+            Oy.Subscribe<Exception>("Shell:UnhandledExceptionOnce", ShowExceptionDialogOnce);
         }
 
-        private async Task ShowExceptionDialog(Exception obj)
+        private Task ShowExceptionDialog(Exception obj)
         {
             this.InvokeLater(() => {
                 var ed = new ExceptionWindow(obj);
                 ed.ShowDialog(this);
             });
+            return Task.CompletedTask;
+        }
+
+        private Task ShowExceptionDialogOnce(Exception obj)
+        {
+            return ShowException(obj) ? ShowExceptionDialog(obj) : Task.CompletedTask;
+        }
+
+        private readonly HashSet<string> _shownExceptions = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+
+        private string GetExceptionData(Exception exception)
+        {
+            return exception == null ? "" : $"{exception.Message}|{exception.StackTrace}|{GetExceptionData(exception.InnerException)}";
+        }
+
+        private bool ShowException(Exception exception)
+        {
+            var exData = GetExceptionData(exception);
+            if (_shownExceptions.Contains(exData)) return false;
+
+            _shownExceptions.Add(exData);
+            return true;
         }
 
         private async Task InstanceOpened(List<string> args)

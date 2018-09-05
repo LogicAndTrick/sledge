@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Numerics;
+using LogicAndTrick.Oy;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Pipelines;
@@ -105,8 +106,15 @@ namespace Sledge.Rendering.Overlay
 
                 foreach (var b in builders)
                 {
-                    if (pc != null) b.Render(_viewport, pc, g);
-                    if (oc != null) b.Render(_viewport, oc, min, max, g);
+                    try
+                    {
+                        if (pc != null) b.Render(_viewport, pc, g);
+                        if (oc != null) b.Render(_viewport, oc, min, max, g);
+                    }
+                    catch (Exception ex)
+                    {
+                        Oy.Publish("Shell:UnhandledExceptionOnce", ex);
+                    }
                 }
             }
 
