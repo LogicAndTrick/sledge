@@ -17,8 +17,8 @@ namespace Sledge.Shell.Components
     [Export(typeof(ISettingsContainer))]
     public class Autosaver : ISettingsContainer
     {
-        [Import] private DocumentRegister _documentRegister;
-        [ImportMany] private IDocumentLoader[] _loaders;
+        private readonly DocumentRegister _documentRegister;
+        private readonly IDocumentLoader[] _loaders;
 
         [Setting] private bool Enabled { get; set; } = true;
         [Setting] private int IntervalMinutes { get; set; } = 5;
@@ -27,6 +27,13 @@ namespace Sledge.Shell.Components
         [Setting] private string AutosaveDirectory { get; set; } = "";
         [Setting] private bool OnlySaveIfChanged { get; set; } = true;
         [Setting] private bool SaveDocumentOnAutosave { get; set; } = true;
+
+        [ImportingConstructor]
+        public Autosaver([Import] Lazy<DocumentRegister> documentRegister, [ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders)
+        {
+            _documentRegister = documentRegister.Value;
+            _loaders = loaders.Select(x => x.Value).ToArray();
+        }
 
         public string Name => "Sledge.Shell.Autosaver";
 

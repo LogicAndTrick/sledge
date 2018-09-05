@@ -23,10 +23,16 @@ namespace Sledge.Shell.Commands
     [MenuImage(typeof(Resources), nameof(Resources.Menu_New))]
     public class NewFile : ICommand
     {
-        [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _loaders;
+        private readonly IEnumerable<Lazy<IDocumentLoader>> _loaders;
 
         public string Name { get; set; } = "New";
         public string Details { get; set; } = "New";
+
+        [ImportingConstructor]
+        public NewFile([ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders)
+        {
+            _loaders = loaders;
+        }
 
         public bool IsInContext(IContext context)
         {

@@ -31,10 +31,10 @@ namespace Sledge.Shell.Forms
         private readonly List<IDocument> _documents;
         private readonly object _lock = new object();
 
-        [Import] private Bootstrapper _bootstrapper;
-        [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _loaders;
-        [Import] private DocumentRegister _documentRegister;
-        [Import] private ITranslationStringProvider _translation;
+        private Lazy<Bootstrapper> _bootstrapper;
+        private IEnumerable<Lazy<IDocumentLoader>> _loaders;
+        private Lazy<DocumentRegister> _documentRegister;
+        private Lazy<ITranslationStringProvider> _translation;
 
         public string Title { get; set; } = "Sledge Shell";
 
@@ -43,8 +43,19 @@ namespace Sledge.Shell.Forms
 
         internal ToolStripPanel ToolStrip => ToolStripContainer.TopToolStripPanel;
 
-        public Shell()
+        [ImportingConstructor]
+        public Shell(
+            [Import] Lazy<Bootstrapper> bootstrapper, 
+            [ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders, 
+            [Import] Lazy<DocumentRegister> documentRegister, 
+            [Import] Lazy<ITranslationStringProvider> translation
+        )
         {
+            _bootstrapper = bootstrapper;
+            _loaders = loaders;
+            _documentRegister = documentRegister;
+            _translation = translation;
+
             _documents = new List<IDocument>();
 
             InitializeComponent();
@@ -106,7 +117,7 @@ namespace Sledge.Shell.Forms
         {
             foreach (var arg in args.Skip(1))
             {
-                Sledge.Common.Logging.Log.Debug(nameof(Shell), $"Command line: `{arg}`");
+                Common.Logging.Log.Debug(nameof(Shell), $"Command line: `{arg}`");
                 if (!File.Exists(arg)) continue;
 
                 await Oy.Publish("Command:Run", new CommandMessage("Internal:OpenDocument", new
@@ -119,9 +130,9 @@ namespace Sledge.Shell.Forms
         protected override void OnLoad(EventArgs e)
         {
             // Bootstrap the shell
-            _bootstrapper.UIStartup();
-            _bootstrapper.Startup()
-                .ContinueWith(_ => _bootstrapper.Initialise())
+            _bootstrapper.Value.UIStartup();
+            _bootstrapper.Value.Startup()
+                .ContinueWith(_ => _bootstrapper.Value.Initialise())
                 .ContinueWith(_ => PostLoad());
 
             // Set up bootstrapping for shutdown
@@ -171,11 +182,20 @@ namespace Sledge.Shell.Forms
 
             // Try to close all the open documents
             SaveOpenDocuments();
-            foreach (var doc in _documents.ToArray())
+
+            // Get the list of currently open documents
+            List<IDocument> docs;
+            lock (_lock) docs = _documents.ToList();
+
+            foreach (var doc in docs)
             {
+                // Request to close the document
                 await Oy.Publish("Document:RequestClose", doc);
-                if (_documents.Contains(doc))
+                lock (_lock)
                 {
+                    // If the document is still open than we can't continue
+                    if (!_documents.Contains(doc)) continue;
+
                     Closing += DoClosing;
                     Closing -= CancelClose;
                     return;
@@ -183,7 +203,7 @@ namespace Sledge.Shell.Forms
             }
 
             // Close anything else
-            if (!await _bootstrapper.ShuttingDown())
+            if (!await _bootstrapper.Value.ShuttingDown())
             {
                 Closing += DoClosing;
                 Closing -= CancelClose;
@@ -194,37 +214,40 @@ namespace Sledge.Shell.Forms
             Closing -= CancelClose;
             Enabled = false;
             this.InvokeSync(() => { 
-                _bootstrapper.UIShutdown();
+                _bootstrapper.Value.UIShutdown();
             });
-            await _bootstrapper.Shutdown();
+            await _bootstrapper.Value.Shutdown();
             Close();
         }
 
         private void SaveOpenDocuments()
         {
             _openDocuments = new List<DocumentPointer>();
-            foreach (var d in _documents)
+            lock (_lock)
             {
-                var loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.CanSave(d));
-                var pointer = loader?.GetDocumentPointer(d);
-                if (pointer != null)
+                foreach (var d in _documents)
                 {
-                    var dp = new DocumentPointer(pointer);
-                    _openDocuments.Add(dp);
+                    var loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.CanSave(d));
+                    var pointer = loader?.GetDocumentPointer(d);
+                    if (pointer != null)
+                    {
+                        var dp = new DocumentPointer(pointer);
+                        _openDocuments.Add(dp);
+                    }
                 }
             }
         }
 
         private async Task<bool> SaveUnsavedDocuments()
         {
-            var unsaved = _documentRegister.OpenDocuments.Where(x => x.HasUnsavedChanges).ToList();
+            var unsaved = _documentRegister.Value.OpenDocuments.Where(x => x.HasUnsavedChanges).ToList();
             if (!unsaved.Any()) return true; // nothing unsaved
 
             DialogResult result;
 
             using (var d = new SaveChangesForm(unsaved))
             {
-                d.Translate(_translation);
+                d.Translate(_translation.Value);
                 d.Owner = this;
                 result = await d.ShowDialogAsync();
             }
@@ -257,11 +280,12 @@ namespace Sledge.Shell.Forms
         
         // Subscriptions
 
-        private async Task OpenDocument(IDocument document)
+        private Task OpenDocument(IDocument document)
         {
             lock (_lock)
             {
-                if (_documents.Contains(document)) return;
+                if (_documents.Contains(document)) return Task.CompletedTask;
+
                 _documents.Add(document);
                 var page = new TabPage
                 {
@@ -273,6 +297,8 @@ namespace Sledge.Shell.Forms
                 DocumentTabs.SelectedIndex = DocumentTabs.TabPages.Count - 1;
                 TabChanged(DocumentTabs, EventArgs.Empty);
             }
+
+            return Task.CompletedTask;
         }
 
         private void DocumentSwitch(IDocument document)
@@ -288,19 +314,22 @@ namespace Sledge.Shell.Forms
 
         }
 
-        private async Task CloseDocument(IDocument document)
+        private Task CloseDocument(IDocument document)
         {
             lock (_lock)
             {
-                if (!_documents.Contains(document)) return;
+                if (!_documents.Contains(document)) return Task.CompletedTask;
+
                 _documents.Remove(document);
                 var page = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == document);
                 if (page != null) DocumentTabs.TabPages.Remove(page);
                 TabChanged(DocumentTabs, EventArgs.Empty);
             }
+
+            return Task.CompletedTask;
         }
 
-        private async Task DocumentChanged(IDocument document)
+        private Task DocumentChanged(IDocument document)
         {
             var page = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == document);
             if (page != null && document != null)
@@ -308,6 +337,8 @@ namespace Sledge.Shell.Forms
                 page.Text = document.Name;
                 page.ImageKey = document.HasUnsavedChanges ? "Dirty" : "Clean";
             }
+
+            return Task.CompletedTask;
         }
 
         private async Task DocumentCloseAndPrompt(IDocument doc)
@@ -352,12 +383,13 @@ namespace Sledge.Shell.Forms
             return true;
         }
 
-        private async Task OpenCommandBox(string obj)
+        private Task OpenCommandBox(string obj)
         {
             var cb = new CommandBox();
             cb.Location = new Point(Location.X + (Size.Width - cb.Width) / 2, Location.Y + (Size.Height - cb.Height) / 4);
             cb.StartPosition = FormStartPosition.Manual;
             cb.Show(this);
+            return Task.CompletedTask;
         }
 
         // Form events
@@ -366,8 +398,7 @@ namespace Sledge.Shell.Forms
         {
             if (DocumentTabs.SelectedTab != null)
             {
-                var doc = DocumentTabs.SelectedTab.Tag as IDocument;
-                if (doc != null)
+                if (DocumentTabs.SelectedTab.Tag is IDocument doc)
                 {
                     var currentControl = DocumentContainer.Controls.OfType<Control>().FirstOrDefault();
                     if (currentControl != doc.Control)
@@ -399,8 +430,7 @@ namespace Sledge.Shell.Forms
 
         private void RequestClose(object sender, int index)
         {
-            var doc = DocumentTabs.TabPages[index].Tag as IDocument;
-            if (doc != null)
+            if (DocumentTabs.TabPages[index].Tag is IDocument doc)
             {
                 Oy.Publish("Command:Run", new CommandMessage("Internal:CloseDocument", new
                 {
@@ -435,6 +465,8 @@ namespace Sledge.Shell.Forms
             public string FileName { get; set; }
             public Dictionary<string, string> Metadata { get; set; }
 
+            // ReSharper disable once UnusedMember.Local
+            // Don't delete this, it's used for reflection
             public DocumentPointer()
             {
                 Metadata = new Dictionary<string, string>();

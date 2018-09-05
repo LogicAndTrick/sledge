@@ -21,11 +21,18 @@ namespace Sledge.Shell.Commands
     [Internal]
     public class OpenDocument : ICommand
     {
-        [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _loaders;
-        [Import] private DocumentRegister _documentRegister;
+        private readonly IEnumerable<Lazy<IDocumentLoader>> _loaders;
+        private readonly Lazy<DocumentRegister> _documentRegister;
 
         public string Name { get; set; } = "Load";
         public string Details { get; set; } = "Load";
+
+        [ImportingConstructor]
+        public OpenDocument([ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders, [Import] Lazy<DocumentRegister> documentRegister)
+        {
+            _loaders = loaders;
+            _documentRegister = documentRegister;
+        }
 
         public bool IsInContext(IContext context)
         {
@@ -39,7 +46,7 @@ namespace Sledge.Shell.Commands
             if (path != null && File.Exists(path))
             {
                 // Is the document already open?
-                var openDoc = _documentRegister.OpenDocuments.FirstOrDefault(x => string.Equals(x.FileName, path, StringComparison.InvariantCultureIgnoreCase));
+                var openDoc = _documentRegister.Value.OpenDocuments.FirstOrDefault(x => string.Equals(x.FileName, path, StringComparison.InvariantCultureIgnoreCase));
                 if (openDoc != null)
                 {
                     await Oy.Publish("Document:Switch", openDoc);

@@ -19,10 +19,16 @@ namespace Sledge.Shell.Commands
     [Internal]
     public class ExportDocument : ICommand
     {
-        [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _loaders;
+        private readonly IEnumerable<Lazy<IDocumentLoader>> _loaders;
 
         public string Name { get; set; } = "Export";
         public string Details { get; set; } = "Export";
+
+        [ImportingConstructor]
+        public ExportDocument([ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders)
+        {
+            _loaders = loaders;
+        }
 
         public bool IsInContext(IContext context)
         {

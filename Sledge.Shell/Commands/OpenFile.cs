@@ -23,10 +23,16 @@ namespace Sledge.Shell.Commands
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Open))]
     public class OpenFile : ICommand
     {
-        [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _loaders;
+        private readonly IEnumerable<Lazy<IDocumentLoader>> _loaders;
 
         public string Name { get; set; } = "Open";
         public string Details { get; set; } = "Open...";
+
+        [ImportingConstructor]
+        public OpenFile([ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders)
+        {
+            _loaders = loaders;
+        }
 
         public bool IsInContext(IContext context)
         {

@@ -12,9 +12,15 @@ namespace Sledge.Editor
     [AutoTranslate]
     public class ShellSetup : IInitialiseHook
     {
-        [Import("Shell")] private Form _shell;
+        private readonly Form _shell;
 
         public string Title { get; set; }
+
+        [ImportingConstructor]
+        public ShellSetup([Import("Shell")] Form shell)
+        {
+            _shell = shell;
+        }
 
         public Task OnInitialise()
         {

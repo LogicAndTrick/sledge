@@ -23,10 +23,16 @@ namespace Sledge.Shell.Commands
     [MenuImage(typeof(Resources), nameof(Resources.Menu_SaveAs))]
     public class SaveFileAs : ICommand
     {
-        [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _loaders;
+        private readonly IEnumerable<Lazy<IDocumentLoader>> _loaders;
 
         public string Name { get; set; } = "Save As...";
         public string Details { get; set; } = "Save As...";
+
+        [ImportingConstructor]
+        public SaveFileAs([ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders)
+        {
+            _loaders = loaders;
+        }
 
         public bool IsInContext(IContext context)
         {

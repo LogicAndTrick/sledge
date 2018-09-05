@@ -15,19 +15,26 @@ namespace Sledge.Shell.Commands
     [MenuItem("File", "", "Exit", "M")]
     public class Exit : ICommand
     {
-        [Import] private Forms.Shell _shell;
+        private readonly Forms.Shell _shell;
 
         public string Name { get; set; } = "Exit";
         public string Details { get; set; } = "Exit";
+
+        [ImportingConstructor]
+        internal Exit([Import] Forms.Shell shell)
+        {
+            _shell = shell;
+        }
 
         public bool IsInContext(IContext context)
         {
             return true;
         }
 
-        public async Task Invoke(IContext context, CommandParameters parameters)
+        public Task Invoke(IContext context, CommandParameters parameters)
         {
             _shell.Close();
+            return Task.CompletedTask;
         }
     }
 }

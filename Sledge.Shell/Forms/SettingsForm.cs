@@ -19,10 +19,10 @@ namespace Sledge.Shell.Forms
     [AutoTranslate]
     public partial class SettingsForm : Form, IDialog
     {
-        [ImportMany] private IEnumerable<Lazy<ISettingEditorFactory>> _editorFactories;
-        [ImportMany] private IEnumerable<Lazy<ISettingsContainer>> _settingsContainers;
-        [Import] private Lazy<ITranslationStringProvider> _translations;
-        [Import("Shell", typeof(Form))] private Lazy<Form> _parent;
+        private readonly IEnumerable<Lazy<ISettingEditorFactory>> _editorFactories;
+        private readonly IEnumerable<Lazy<ISettingsContainer>> _settingsContainers;
+        private readonly Lazy<ITranslationStringProvider> _translations;
+        private readonly Lazy<Form> _parent;
 
         private Dictionary<ISettingsContainer, List<SettingKey>> _keys;
         private Dictionary<ISettingsContainer, JsonSettingsStore> _values;
@@ -44,9 +44,20 @@ namespace Sledge.Shell.Forms
             get => CancelButton.Text;
             set => this.InvokeLater(() => CancelButton.Text = value);
         }
-        
-        public SettingsForm()
+
+        [ImportingConstructor]
+        public SettingsForm(
+            [ImportMany] IEnumerable<Lazy<ISettingEditorFactory>> editorFactories, 
+            [ImportMany] IEnumerable<Lazy<ISettingsContainer>> settingsContainers, 
+            [Import] Lazy<ITranslationStringProvider> translations, 
+            [Import("Shell")] Lazy<Form> parent
+        )
         {
+            _editorFactories = editorFactories;
+            _settingsContainers = settingsContainers;
+            _translations = translations;
+            _parent = parent;
+
             InitializeComponent();
             Icon = Icon.FromHandle(Resources.Menu_Options.GetHicon());
             CreateHandle();

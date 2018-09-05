@@ -11,13 +11,14 @@ namespace Sledge.Common.Translations
     [Export]
     public class TranslationStringsCatalog
     {
-        [ImportMany("AutoTranslate")] private IEnumerable<Lazy<object>> _autoTranslate;
-
-        private List<string> _loaded;
+        private readonly IEnumerable<Lazy<object>> _autoTranslate;
+        private readonly List<string> _loaded;
         public Dictionary<string, Language> Languages { get; set; }
 
-        public TranslationStringsCatalog()
+        [ImportingConstructor]
+        public TranslationStringsCatalog([ImportMany("AutoTranslate")] IEnumerable<Lazy<object>> autoTranslate)
         {
+            _autoTranslate = autoTranslate;
             Languages = new Dictionary<string, Language>();
             _loaded = new List<string>();
         }

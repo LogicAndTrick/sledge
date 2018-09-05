@@ -11,10 +11,17 @@ namespace Sledge.Shell.Components
     [Export(typeof(IMenuItemProvider))]
     public class CommandMenuItemProvider : IMenuItemProvider
     {
-        [ImportMany] private IEnumerable<Lazy<ICommand>> _commands;
+        private readonly IEnumerable<Lazy<ICommand>> _commands;
         
         // Store the hotkey register so we know what the hotkey for each command is
-        [Import] private HotkeyRegister _hotkeys;
+        private readonly HotkeyRegister _hotkeys;
+
+        [ImportingConstructor]
+        internal CommandMenuItemProvider([ImportMany] IEnumerable<Lazy<ICommand>> commands, [Import] Lazy<HotkeyRegister> hotkeys)
+        {
+            _commands = commands;
+            _hotkeys = hotkeys.Value;
+        }
 
         public event EventHandler MenuItemsChanged;
 
