@@ -71,10 +71,7 @@ namespace Sledge.Shell.Forms
             public string InformationMessage { get; set; }
             public string UserEnteredInformation { get; set; }
 
-            public string Source
-            {
-                get { return Exception.Source; }
-            }
+            public string Source => Exception.Source;
 
             public string Message
             {
@@ -85,10 +82,7 @@ namespace Sledge.Shell.Forms
                 }
             }
 
-            public string StackTrace
-            {
-                get { return Exception.StackTrace; }
-            }
+            public string StackTrace => Exception.StackTrace;
 
             public string FullStackTrace { get; set; }
 

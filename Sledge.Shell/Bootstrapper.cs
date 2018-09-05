@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using LogicAndTrick.Oy;
 using Sledge.Common.Logging;
 using Sledge.Common.Shell.Hooks;
 
@@ -40,6 +41,36 @@ namespace Sledge.Shell
             _shutdownHooks = shutdownHooks.Select(x => x.Value).ToList();
         }
 
+        private void Handle<T>(string description, T hook, Action<T> function)
+        {
+            try
+            {
+#if DEBUG
+                Log.Debug("Bootstrapper", description + ": " + hook.GetType().FullName);
+#endif
+                function(hook);
+            }
+            catch (Exception e)
+            {
+                Oy.Publish("Shell:UnhandledException", e);
+            }
+        }
+
+        private async Task Handle<T>(string description, T hook, Func<T, Task> function)
+        {
+            try
+            {
+#if DEBUG
+                Log.Debug("Bootstrapper", description + ": " + hook.GetType().FullName);
+#endif
+                await function(hook);
+            }
+            catch (Exception e)
+            {
+                Oy.Publish("Shell:UnhandledException", e);
+            }
+        }
+
         /// <summary>
         /// Run all UI startup hooks
         /// </summary>
@@ -47,8 +78,7 @@ namespace Sledge.Shell
         {
             foreach (var hook in _uiStartupHooks.OrderBy(x => x.GetType().Name))
             {
-                Log.Debug("Bootstrapper", "UI Startup hook: " + hook.GetType().FullName);
-                hook.OnUIStartup();
+                Handle("UI Startup hook", hook, h => h.OnUIStartup());
             }
         }
 
@@ -60,8 +90,7 @@ namespace Sledge.Shell
         {
             foreach (var export in _startupHooks.OrderBy(x => x.GetType().FullName))
             {
-                Log.Debug("Bootstrapper", "Startup hook: " + export.GetType().FullName);
-                await export.OnStartup();
+                await Handle("Startup hook", export, h => h.OnStartup());
             }
         }
 
@@ -73,8 +102,7 @@ namespace Sledge.Shell
         {
             foreach (var export in _initialiseHooks.OrderBy(x => x.GetType().FullName))
             {
-                Log.Debug("Bootstrapper", "Initialise hook: " + export.GetType().FullName);
-                await export.OnInitialise();
+                await Handle("Initialise hook", export, h => h.OnInitialise());
             }
         }
 
@@ -86,8 +114,15 @@ namespace Sledge.Shell
         {
             foreach (var export in _shuttingDownHooks.OrderBy(x => x.GetType().FullName))
             {
-                Log.Debug("Bootstrapper", "Shutting down hook: " + export.GetType().FullName);
-                if (!await export.OnShuttingDown()) return false;
+                try
+                {
+                    Log.Debug("Bootstrapper", "Shutting down hook: " + export.GetType().FullName);
+                    if (!await export.OnShuttingDown()) return false;
+                }
+                catch
+                {
+                    // We're shutting down anyway, so don't report this one
+                }
             }
             return true;
         }
@@ -99,8 +134,7 @@ namespace Sledge.Shell
         {
             foreach (var hook in _uiShutdownHooks.OrderBy(x => x.GetType().Name))
             {
-                Log.Debug("Bootstrapper", "UI Shutdown hook: " + hook.GetType().FullName);
-                hook.OnUIShutdown();
+                Handle("UI Shutdown hook", hook, h => h.OnUIShutdown());
             }
         }
 
@@ -112,8 +146,7 @@ namespace Sledge.Shell
         {
             foreach (var export in _shutdownHooks.OrderBy(x => x.GetType().FullName))
             {
-                Log.Debug("Bootstrapper", "Shutdown hook: " + export.GetType().FullName);
-                await export.OnShutdown();
+                await Handle("Shutdown hook", export, h => h.OnShutdown());
             }
         }
     }

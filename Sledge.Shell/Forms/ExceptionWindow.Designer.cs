@@ -77,9 +77,9 @@
             // 
             this.FrameworkVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.FrameworkVersion.Enabled = false;
             this.FrameworkVersion.Location = new System.Drawing.Point(184, 177);
             this.FrameworkVersion.Name = "FrameworkVersion";
+            this.FrameworkVersion.ReadOnly = true;
             this.FrameworkVersion.Size = new System.Drawing.Size(288, 20);
             this.FrameworkVersion.TabIndex = 3;
             // 
@@ -96,9 +96,9 @@
             // 
             this.OperatingSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.OperatingSystem.Enabled = false;
             this.OperatingSystem.Location = new System.Drawing.Point(184, 203);
             this.OperatingSystem.Name = "OperatingSystem";
+            this.OperatingSystem.ReadOnly = true;
             this.OperatingSystem.Size = new System.Drawing.Size(288, 20);
             this.OperatingSystem.TabIndex = 3;
             // 
@@ -115,9 +115,9 @@
             // 
             this.SledgeVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SledgeVersion.Enabled = false;
             this.SledgeVersion.Location = new System.Drawing.Point(184, 229);
             this.SledgeVersion.Name = "SledgeVersion";
+            this.SledgeVersion.ReadOnly = true;
             this.SledgeVersion.Size = new System.Drawing.Size(288, 20);
             this.SledgeVersion.TabIndex = 3;
             // 
@@ -135,10 +135,10 @@
             this.FullError.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.FullError.Enabled = false;
             this.FullError.Location = new System.Drawing.Point(184, 255);
             this.FullError.Multiline = true;
             this.FullError.Name = "FullError";
+            this.FullError.ReadOnly = true;
             this.FullError.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.FullError.Size = new System.Drawing.Size(288, 64);
             this.FullError.TabIndex = 3;

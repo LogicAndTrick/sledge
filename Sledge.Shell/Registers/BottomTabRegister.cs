@@ -19,10 +19,24 @@ namespace Sledge.Shell.Registers
     public class BottomTabRegister : IStartupHook
     {
         // The bottom tab register needs direct access to the shell
-        [Import] private Forms.Shell _shell;
-        [ImportMany] private IEnumerable<Lazy<IBottomTabComponent>> _bottomTabComponents;
+        private readonly Lazy<Forms.Shell> _shell;
+        private readonly IEnumerable<Lazy<IBottomTabComponent>> _bottomTabComponents;
 
-        public async Task OnStartup()
+        private readonly List<IBottomTabComponent> _components;
+
+        [ImportingConstructor]
+        internal BottomTabRegister(
+            [Import] Lazy<Forms.Shell> shell,
+            [ImportMany] IEnumerable<Lazy<IBottomTabComponent>> bottomTabComponents
+        )
+        {
+            _shell = shell;
+            _bottomTabComponents = bottomTabComponents;
+
+            _components = new List<IBottomTabComponent>();
+        }
+
+        public Task OnStartup()
         {
             // Register the exported sidebar components
             foreach (var export in _bottomTabComponents)
@@ -32,37 +46,33 @@ namespace Sledge.Shell.Registers
             }
 
             Initialise();
+
             // Subscribe to context changes
             Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
+
+            return Task.CompletedTask;
         }
 
         private void Initialise()
         {
-            _shell.Invoke((MethodInvoker)delegate
+            _shell.Value.Invoke((MethodInvoker)delegate
             {
-                _shell.BottomTabs.TabPages.Clear();
+                _shell.Value.BottomTabs.TabPages.Clear();
                 foreach (var btc in _components)
                 {
                     var page = new TabPage(btc.Title) { Tag = btc, Visible = false };
                     page.Controls.Add((Control) btc.Control);
-                    _shell.BottomTabs.TabPages.Add(page);
+                    _shell.Value.BottomTabs.TabPages.Add(page);
                 }
             });
         }
 
-        private readonly List<IBottomTabComponent> _components;
-
-        public BottomTabRegister()
+        private Task ContextChanged(IContext context)
         {
-            _components = new List<IBottomTabComponent>();
-        }
-
-        private async Task ContextChanged(IContext context)
-        {
-            _shell.Invoke((MethodInvoker) delegate
+            _shell.Value.Invoke((MethodInvoker) delegate
             {
-                _shell.BottomTabs.SuspendLayout();
-                foreach (var tab in _shell.BottomTabs.TabPages.OfType<TabPage>())
+                _shell.Value.BottomTabs.SuspendLayout();
+                foreach (var tab in _shell.Value.BottomTabs.TabPages.OfType<TabPage>())
                 {
                     var btc = tab.Tag as IBottomTabComponent;
                     if (btc == null) continue;
@@ -72,8 +82,9 @@ namespace Sledge.Shell.Registers
 
                     if (iic != vis) tab.Visible = iic;
                 }
-                _shell.BottomTabs.ResumeLayout();
+                _shell.Value.BottomTabs.ResumeLayout();
             });
+            return Task.CompletedTask;
         }
     }
 }
