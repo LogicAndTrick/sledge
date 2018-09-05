@@ -6,14 +6,18 @@
     },
     "@Settings": {
         "@Group.Navigation": "Navigation",
+        "@Group.Navigation/2D": "2D",
+        "@Group.Navigation/3D": "3D",
         "@Group.Rendering": "Rendering",
         "@Group.Rendering/Grid": "Grid",
         "CameraNavigationViewportSettings": {
-            "Camera2DPanRequiresMouseClick": "Moving the 2D camera requires a mouse click",
-            "Camera3DPanRequiresMouseClick": "Moving the 3D camera requires a mouse click",
-            "ForwardSpeed": "Forward speed in 3D view",
-            "TimeToTopSpeed": "Time to top speed in 3D view",
+            "Camera2DPanRequiresMouseClick": "Moving the 2D camera (when space is pressed) requires a mouse click",
+            "Camera3DPanRequiresMouseClick": "Moving the 3D camera (when space is pressed) requires a mouse click",
+            "FOV": "Vertical field of view",
+            "ForwardSpeed": "Maximum forward speed (units)",
+            "TimeToTopSpeed": "Time to top speed (seconds)",
             "MouseWheelMoveDistance": "Mouse wheel move distance",
+            "MouseWheelZoomMultiplier": "Mouse wheel zoom multiplier",
             "InvertX": "Invert X axis",
             "InvertY": "Invert Y axis"
         },

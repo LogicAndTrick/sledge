@@ -3,7 +3,6 @@ using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using Sledge.Common;
 using Sledge.Rendering.Cameras;
 using Sledge.Shell;
 using Sledge.Shell.Input;
@@ -84,7 +83,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             if (e.KeyCode == Keys.Space)
             {
                 Viewport.Control.Cursor = Cursors.SizeAll;
-                if (false) //!Sledge.Settings.View.Camera2DPanRequiresMouseClick)
+                if (!CameraNavigationViewportSettings.Camera2DPanRequiresMouseClick)
                 {
                     Viewport.Control.Capture = true;
                     var p = e.Sender.Control.PointToClient(Cursor.Position);
@@ -92,9 +91,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 }
                 e.Handled = true;
             }
-
-            var moveAllowed = false; //DocumentManager.CurrentDocument != null && (DocumentManager.CurrentDocument.Selection.IsEmpty() || !Sledge.Settings.Select.ArrowKeysNudgeSelection);
-            if (moveAllowed)
+            
+            if (KeyboardState.Shift)
             {
                 var shift = new Vector3(0, 0, 0);
 
@@ -132,7 +130,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
                         var zoom = press < 6 ? 1 / pow : pow;
                         Camera.Zoom = zoom;
                         Oy.Publish("MapDocument:ViewportZoomStatus:UpdateValue", Camera.Zoom);
-                        // Mediator.Publish(EditorMediator.ViewZoomChanged, Camera.Zoom);
                     }
                 }
             }
@@ -146,7 +143,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
             if (space || mmouse)
             {
                 Viewport.Control.Cursor = Cursors.SizeAll;
-                if (lmouse || mmouse /*|| !Sledge.Settings.View.Camera2DPanRequiresMouseClick*/)
+                if (lmouse || mmouse || !CameraNavigationViewportSettings.Camera2DPanRequiresMouseClick)
                 {
                     var point = new Vector3(e.X, Viewport.Height - e.Y, 0);
                     if (_mouseDown != null)
@@ -158,32 +155,28 @@ namespace Sledge.BspEditor.Rendering.Viewport
                     e.Handled = true;
                 }
             }
-
-            //var pt = Viewport.ProperScreenToWorld(new Vector3(e.X, e.Y, 0));
-            //Mediator.Publish(EditorMediator.MouseVector3sChanged, pt);
-
+            
             Oy.Publish<Vector3?>("MapDocument:ViewportMouseLocationStatus:UpdateValue", Camera.ScreenToWorld(e.X, e.Y));
         }
 
         public void MouseWheel(ViewportEvent e)
         {
             var before = Camera.Flatten(Camera.ScreenToWorld(new Vector3(e.X, e.Y, 0)));
-            Camera.Zoom *= (float) Math.Pow(/*Sledge.Settings.View.ScrollWheelZoomMultiplier*/ 1.4f, (e.Delta < 0 ? -1 : 1));
+            Camera.Zoom *= (float) Math.Pow((double) CameraNavigationViewportSettings.MouseWheelZoomMultiplier, (e.Delta < 0 ? -1 : 1));
             var after = Camera.Flatten(Camera.ScreenToWorld(new Vector3(e.X, e.Y, 0)));
             Camera.Position -= (after - before);
 
-            //Mediator.Publish(EditorMediator.ViewZoomChanged, Camera.Zoom);
             Oy.Publish("MapDocument:ViewportZoomStatus:UpdateValue", Camera.Zoom);
             if (KeyboardState.IsKeyDown(Keys.ControlKey))
             {
-                //Mediator.Publish(EditorMediator.SetZoomValue, Camera.Zoom);
+                Oy.Publish("MapDocument:Viewport:SetZoom", Camera.Zoom);
             }
         }
 
         public void MouseUp(ViewportEvent e)
         {
             var space = KeyboardState.IsKeyDown(Keys.Space);
-            var req = true;// Sledge.Settings.View.Camera2DPanRequiresMouseClick;
+            var req = CameraNavigationViewportSettings.Camera2DPanRequiresMouseClick;
             if (space && (!req || e.Button == MouseButtons.Left))
             {
                 e.Handled = true;
@@ -200,7 +193,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public void MouseDown(ViewportEvent e)
         {
             var space = KeyboardState.IsKeyDown(Keys.Space);
-            var req = true; // Sledge.Settings.View.Camera2DPanRequiresMouseClick;
+            var req = CameraNavigationViewportSettings.Camera2DPanRequiresMouseClick;
             if (space && (!req || e.Button == MouseButtons.Left))
             {
                 e.Handled = true;
@@ -244,8 +237,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
             {
                 Viewport.Control.Cursor = Cursors.SizeAll;
             }
-            //Mediator.Publish(EditorMediator.ViewFocused);
-            //Mediator.Publish(EditorMediator.ViewZoomChanged, Camera.Zoom);
 
             Oy.Publish("MapDocument:ViewportZoomStatus:UpdateValue", Camera.Zoom);
         }
@@ -253,7 +244,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public void MouseLeave(ViewportEvent e)
         {
             Viewport.Control.Cursor = Cursors.Default;
-            //Mediator.Publish(EditorMediator.ViewUnfocused);
 
             Oy.Publish("MapDocument:ViewportZoomStatus:UpdateValue", 0f);
             Oy.Publish<Vector3?>("MapDocument:ViewportMouseLocationStatus:UpdateValue", null);

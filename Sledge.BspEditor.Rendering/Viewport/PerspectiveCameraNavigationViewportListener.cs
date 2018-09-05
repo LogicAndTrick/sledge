@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
+using Sledge.Common;
 using Sledge.Common.Easings;
+using Sledge.Common.Shell.Components;
+using Sledge.Common.Shell.Context;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
@@ -30,6 +35,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         private long _lastMillis;
         private readonly Easing _easing;
         private readonly List<Keys> _downKeys;
+        private readonly IContext _context;
 
         public PerspectiveCameraNavigationViewportListener(MapViewport vp)
         {
@@ -44,16 +50,19 @@ namespace Sledge.BspEditor.Rendering.Viewport
             _downKeys = new List<Keys>();
             _downMillis = _lastMillis = 0;
             _easing = Easing.FromType(EasingType.Sinusoidal, EasingDirection.Out);
-            // todo !camera navigation Mediator.Subscribe(EditorMediator.ToolSelected, this);
+
+            _context = Container.Get<IContext>();
+            Oy.Subscribe<ITool>("Tool:Activated", ToolSelected);
         }
 
-        private void ToolSelected(object tool)
+        private Task ToolSelected(ITool tool)
         {
             if (FreeLook || FreeLookToggle)
             {
                 FreeLook = FreeLookToggle = false;
                 SetFreeLook();
             }
+            return Task.CompletedTask;
         }
 
         public void UpdateFrame(long frame)
@@ -81,8 +90,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
             if (CameraNavigationViewportSettings.TimeToTopSpeed > 0)
             {
-                var downFor = (frame - _downMillis) / CameraNavigationViewportSettings.TimeToTopSpeed;
+                var downFor = (frame - _downMillis) / (CameraNavigationViewportSettings.TimeToTopSpeed * 1000);
                 if (downFor >= 0 && downFor < 1) units *= (float) _easing.Evaluate((double) downFor);
+                Console.WriteLine(downFor);
             }
 
             if (KeyboardState.Shift) units *= 2;
@@ -168,8 +178,9 @@ namespace Sledge.BspEditor.Rendering.Viewport
             {
                 var left = Control.MouseButtons.HasFlag(MouseButtons.Left);
                 var right = Control.MouseButtons.HasFlag(MouseButtons.Right);
-                
-                if (false) // TODO: ToolManager.ActiveTool is CameraTool)
+
+                var activeTool = _context.Get<ITool>("ActiveTool");
+                if (activeTool != null && activeTool.GetType().Name == "CameraTool")
                 {
                     FreeLook = left || right;
                 }
@@ -279,7 +290,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public void MouseWheel(ViewportEvent e)
         {
             if (!Viewport.IsUnlocked(this) || e.Delta == 0) return;
-            //if (!Focus || (ToolManager.ActiveTool != null && ToolManager.ActiveTool.IsCapturingMouseWheel())) return;
             Camera.Advance((e.Delta / (float) Math.Abs(e.Delta)) * (float) CameraNavigationViewportSettings.MouseWheelMoveDistance);
         }
 

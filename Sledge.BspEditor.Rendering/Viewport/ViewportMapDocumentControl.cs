@@ -55,6 +55,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 Oy.Subscribe<Box>("MapDocument:Viewport:Focus3D", Focus3D),
                 Oy.Subscribe<Tuple<Vector3, Vector3>>("MapDocument:Viewport:Set3D", Set3D),
                 Oy.Subscribe<Vector3>("MapDocument:Viewport:Set2D", Set2D),
+                Oy.Subscribe<float>("MapDocument:Viewport:SetZoom", SetZoom),
+                Oy.Subscribe<int>("MapDocument:Viewport:SetFOV", SetFOV),
             };
 
             _viewport = _engine.CreateViewport();
@@ -95,6 +97,24 @@ namespace Sledge.BspEditor.Rendering.Viewport
         }
 
         #region Camera manipulation
+
+        private Task SetZoom(float zoom)
+        {
+            if (Camera is OrthographicCamera cam)
+            {
+                cam.Zoom = zoom;
+            }
+            return Task.FromResult(0);
+        }
+
+        private Task SetFOV(int fov)
+        {
+            if (Camera is PerspectiveCamera cam)
+            {
+                cam.FOV = fov;
+            }
+            return Task.FromResult(0);
+        }
 
         private Task Set3D(Tuple<Vector3, Vector3> pair)
         {
