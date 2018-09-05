@@ -173,6 +173,19 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
         public async Task UpdateDocumentData(MapDocument document)
         {
+            // Ensure that worldspawn has the correct entity data
+            var ed = document.Map.Root.Data.GetOne<EntityData>();
+
+            if (ed == null)
+            {
+                ed = new EntityData();
+                document.Map.Root.Data.Add(ed);
+            }
+
+            ed.Name = "worldspawn";
+
+            // Set the wad usage - this required when exporting to map for compile
+
             var tc = await GetTextureCollection();
 
             // Get the list of used packages - the packages are abstracted away from the file system, so we don't know where they are located yet
