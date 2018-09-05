@@ -48,6 +48,7 @@ Section "Sledge Editor"
 
     ; Purge junk from old installs
     Delete "$INSTDIR\*.dll"
+    Delete "$INSTDIR\*.pdb"
     Delete "$INSTDIR\Sledge.Editor.Elevate.exe"
     Delete "$INSTDIR\Sledge.Editor.Updater.exe"
     Delete "$INSTDIR\UpdateSources.txt"

@@ -39,7 +39,7 @@ $outputPath = Resolve-Path './Out/Build'
 echo 'Building Solution...'
 (& $msbuild '../Sledge.sln' '/p:Configuration=Release' "/p:OutputPath=$outputPath") | Add-Content $log
 
-(& del '.\Out\Build\*.pdb') | Add-Content $log
+#(& del '.\Out\Build\*.pdb') | Add-Content $log
 (& del '.\Out\Build\*.xml') | Add-Content $log
 
 $version = (Get-Command './Out/Build/Sledge.Editor.exe').FileVersionInfo.ProductVersion
