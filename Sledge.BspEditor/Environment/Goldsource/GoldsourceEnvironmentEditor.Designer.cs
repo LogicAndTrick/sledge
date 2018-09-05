@@ -82,6 +82,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.grpTextures = new System.Windows.Forms.GroupBox();
             this.lblTexturePackageExclusions = new System.Windows.Forms.Label();
             this.cklTexturePackages = new System.Windows.Forms.CheckedListBox();
+            this.chkToggleAllTextures = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudDefaultTextureScale)).BeginInit();
             this.grpDirectories.SuspendLayout();
             this.grpFgds.SuspendLayout();
@@ -659,6 +660,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.grpTextures.Controls.Add(this.lblTexturePackageExclusions);
             this.grpTextures.Controls.Add(this.cklTexturePackages);
+            this.grpTextures.Controls.Add(this.chkToggleAllTextures);
             this.grpTextures.Controls.Add(this.lblDefaultTextureScale);
             this.grpTextures.Controls.Add(this.nudDefaultTextureScale);
             this.grpTextures.Location = new System.Drawing.Point(6, 792);
@@ -686,6 +688,18 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.cklTexturePackages.Name = "cklTexturePackages";
             this.cklTexturePackages.Size = new System.Drawing.Size(444, 169);
             this.cklTexturePackages.TabIndex = 39;
+            // 
+            // chkToggleAllTextures
+            // 
+            this.chkToggleAllTextures.Checked = true;
+            this.chkToggleAllTextures.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkToggleAllTextures.Location = new System.Drawing.Point(372, 41);
+            this.chkToggleAllTextures.Name = "chkToggleAllTextures";
+            this.chkToggleAllTextures.Size = new System.Drawing.Size(81, 18);
+            this.chkToggleAllTextures.TabIndex = 42;
+            this.chkToggleAllTextures.Text = "Toggle all";
+            this.chkToggleAllTextures.UseVisualStyleBackColor = true;
+            this.chkToggleAllTextures.CheckedChanged += new System.EventHandler(this.ToggleAllTextures);
             // 
             // GoldsourceEnvironmentEditor
             // 
@@ -764,5 +778,6 @@ namespace Sledge.BspEditor.Environment.Goldsource
         private System.Windows.Forms.CheckBox chkMapCopyBsp;
         private System.Windows.Forms.CheckBox chkAskRunGame;
         private System.Windows.Forms.CheckBox chkRunGame;
+        private System.Windows.Forms.CheckBox chkToggleAllTextures;
     }
 }

@@ -448,5 +448,14 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
             cklTexturePackages.EndUpdate();
         }
+
+        private void ToggleAllTextures(object sender, EventArgs e)
+        {
+            var on = chkToggleAllTextures.Checked;
+            for (var i = 0; i < cklTexturePackages.Items.Count; i++)
+            {
+                cklTexturePackages.SetItemChecked(i, on);
+            }
+        }
     }
 }

@@ -208,9 +208,10 @@ namespace Sledge.BspEditor.Tools.Brush
             var ti = Document.Map.Data.GetOne<ActiveTexture>()?.Name ?? "aaatrigger";
             var created = brush.Create(idg, bounds, ti, RoundVertices ? 0 : 2).ToList();
 
-            // Align all textures to the face
+            // Align all textures to the face and set the texture scale
             foreach (var f in created.SelectMany(x => x.Data.OfType<Face>()))
             {
+                f.Texture.XScale = f.Texture.YScale = (float) Document.Environment.DefaultTextureScale;
                 f.Texture.AlignToNormal(f.Plane.Normal);
             }
 

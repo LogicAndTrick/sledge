@@ -47,8 +47,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 DefaultPointEntity = GetVal(environment.Properties, "DefaultPointEntity", ""),
                 DefaultBrushEntity = GetVal(environment.Properties, "DefaultBrushEntity", ""),
                 OverrideMapSize = GetVal(environment.Properties, "OverrideMapSize", false),
-                MapSizeLow = GetVal(environment.Properties, "MapSizeLow", 0m),
-                MapSizeHigh = GetVal(environment.Properties, "MapSizeHigh", 0m),
+                MapSizeLow = GetVal(environment.Properties, "MapSizeLow", -4096m),
+                MapSizeHigh = GetVal(environment.Properties, "MapSizeHigh", 4096m),
                 IncludeFgdDirectoriesInEnvironment = GetVal(environment.Properties, "IncludeFgdDirectoriesInEnvironment", true),
 
                 ToolsDirectory = GetVal(environment.Properties, "ToolsDirectory", ""),
@@ -68,7 +68,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 MapCopyErr = GetVal(environment.Properties, "MapCopyErr", false),
                 MapCopyRes = GetVal(environment.Properties, "MapCopyRes", false),
 
-                DefaultTextureScale = GetVal(environment.Properties, "DefaultTextureScale", 0m),
+                DefaultTextureScale = GetVal(environment.Properties, "DefaultTextureScale", 1m),
                 ExcludedWads = GetVal(environment.Properties, "ExcludedWads", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
             };
             return gse;

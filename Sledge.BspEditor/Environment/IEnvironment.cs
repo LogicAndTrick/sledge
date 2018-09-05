@@ -78,5 +78,7 @@ namespace Sledge.BspEditor.Environment
         string DefaultBrushEntity { get; }
 
         string DefaultPointEntity { get; }
+
+        decimal DefaultTextureScale { get; }
     }
 }

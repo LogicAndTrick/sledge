@@ -51,7 +51,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
         public decimal MapSizeLow { get; set; }
         public decimal MapSizeHigh { get; set; }
 
-        public decimal DefaultTextureScale { get; set; }
+        public decimal DefaultTextureScale { get; set; } = 1;
 
         public string ToolsDirectory { get; set; }
         public bool IncludeToolsDirectoryInEnvironment { get; set; }

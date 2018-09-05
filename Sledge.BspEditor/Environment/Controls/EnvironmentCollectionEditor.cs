@@ -85,6 +85,10 @@ namespace Sledge.BspEditor.Environment.Controls
                 };
                 _value.Add(newEnv);
                 UpdateTreeNodes();
+
+                var nodeToSelect = treEnvironments.Nodes.OfType<TreeNode>().SelectMany(x => x.Nodes.OfType<TreeNode>()).FirstOrDefault(x => x.Tag == newEnv);
+                if (nodeToSelect != null) treEnvironments.SelectedNode = nodeToSelect;
+
                 OnValueChanged?.Invoke(this, Key);
             }
         }
