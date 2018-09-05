@@ -17,7 +17,18 @@ namespace Sledge.Shell.Settings
     [Export(typeof(IShutdownHook))]
     public class SettingsProvider : IInitialiseHook, IShutdownHook
     {
-        [ImportMany] private IEnumerable<Lazy<ISettingsContainer>> _settingsContainers;
+        private readonly IEnumerable<Lazy<ISettingsContainer>> _settingsContainers;
+
+        private readonly Dictionary<string, JsonSettingsStore> _values;
+        private readonly List<ISettingsContainer> _containers;
+
+        [ImportingConstructor]
+        public SettingsProvider([ImportMany] IEnumerable<Lazy<ISettingsContainer>> settingsContainers)
+        {
+            _settingsContainers = settingsContainers;
+            _values = new Dictionary<string, JsonSettingsStore>();
+            _containers = new List<ISettingsContainer>();
+        }
 
         public async Task OnInitialise()
         {
@@ -33,22 +44,13 @@ namespace Sledge.Shell.Settings
 
             // Listen for setting events
             Oy.Subscribe<string>("Settings:Load", LoadSettings);
-            Oy.Subscribe<string>("Settings:Save", SaveSettings);
+            Oy.Subscribe("Settings:Save", () => SaveSettings(null));
         }
         
         public async Task OnShutdown()
         {
             // Save settings on close
             await SaveSettings(null);
-        }
-
-        private readonly Dictionary<string, JsonSettingsStore> _values;
-        private readonly List<ISettingsContainer> _containers;
-
-        public SettingsProvider()
-        {
-            _values = new Dictionary<string, JsonSettingsStore>();
-            _containers = new List<ISettingsContainer>();
         }
 
         /// <summary>
@@ -65,7 +67,7 @@ namespace Sledge.Shell.Settings
         /// </summary>
         /// <param name="name">The name of the settings module to load, or null to load all</param>
         /// <returns>A task that completes when the load is complete</returns>
-        private async Task LoadSettings(string name)
+        private Task LoadSettings(string name)
         {
             if (name == null) _values.Clear();
             else if (_values.ContainsKey(name)) _values.Remove(name);
@@ -100,6 +102,7 @@ namespace Sledge.Shell.Settings
                 container.LoadValues(_values.ContainsKey(container.Name) ? _values[container.Name] : new JsonSettingsStore());
             }
             Log.Debug("Settings", "Settings loaded.");
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -107,7 +110,7 @@ namespace Sledge.Shell.Settings
         /// </summary>
         /// <param name="name">The name of the settings module to save, or null to save all</param>
         /// <returns>A task that complete when the operation is complete</returns>
-        private async Task SaveSettings(string name)
+        private Task SaveSettings(string name)
         {
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Sledge", "Shell");
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -120,6 +123,7 @@ namespace Sledge.Shell.Settings
                 File.WriteAllText(Path.Combine(path, container.Name + ".json"), store.ToJson());
             }
             Log.Debug("Settings", "Settings saved.");
+            return Task.CompletedTask;
         }
     }
 }
