@@ -22,15 +22,29 @@ namespace Sledge.BspEditor.Documents
     [Export(typeof(IDocumentLoader))]
     public class BspSourceDocumentLoader : IDocumentLoader
     {
-        [ImportMany] private IEnumerable<Lazy<IBspSourceProvider>> _providers;
-        [ImportMany] private IEnumerable<Lazy<IBspSourceProcessor>> _processors;
-        [Import] private EnvironmentRegister _environments;
-        [Import("Shell", typeof(Form))] private Lazy<Form> _shell;
+        private readonly IEnumerable<Lazy<IBspSourceProvider>> _providers;
+        private readonly IEnumerable<Lazy<IBspSourceProcessor>> _processors;
+        private readonly Lazy<EnvironmentRegister> _environments;
+        private readonly Lazy<Form> _shell;
 
         public string FileTypeDescription { get; set; }
         public string UntitledDocumentName { get; set; }
 
         private static int _untitled = 1;
+
+        [ImportingConstructor]
+        public BspSourceDocumentLoader(
+            [ImportMany] IEnumerable<Lazy<IBspSourceProvider>> providers,
+            [ImportMany] IEnumerable<Lazy<IBspSourceProcessor>> processors,
+            [Import] Lazy<EnvironmentRegister> environments,
+            [Import("Shell")] Lazy<Form> shell
+        )
+        {
+            _providers = providers;
+            _processors = processors;
+            _environments = environments;
+            _shell = shell;
+        }
 
         public IEnumerable<FileExtensionInfo> SupportedFileExtensions
         {
@@ -49,7 +63,7 @@ namespace Sledge.BspEditor.Documents
 
         private async Task<IEnvironment> GetEnvironment()
         {
-            var envs = _environments.GetSerialisedEnvironments().ToList();
+            var envs = _environments.Value.GetSerialisedEnvironments().ToList();
             SerialisedEnvironment chosenEnvironment = null;
             if (envs.Count == 1)
             {
@@ -69,7 +83,7 @@ namespace Sledge.BspEditor.Documents
                 if (result != DialogResult.OK) return null;
             }
 
-            if (chosenEnvironment != null) return _environments.GetEnvironment(chosenEnvironment.ID);
+            if (chosenEnvironment != null) return _environments.Value.GetEnvironment(chosenEnvironment.ID);
             return new EmptyEnvironment();
         }
 
@@ -190,7 +204,7 @@ namespace Sledge.BspEditor.Documents
             var envId = documentPointer.Get<string>("Environment");
             if (String.IsNullOrWhiteSpace(fileName) || String.IsNullOrWhiteSpace(envId)) return null;
             
-            var env = _environments.GetEnvironment(envId);
+            var env = _environments.Value.GetEnvironment(envId);
             if (env == null) return null;
 
             if (!File.Exists(fileName)) return null;

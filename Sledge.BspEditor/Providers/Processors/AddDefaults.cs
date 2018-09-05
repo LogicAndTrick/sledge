@@ -14,7 +14,13 @@ namespace Sledge.BspEditor.Providers.Processors
     [Export(typeof(IBspSourceProcessor))]
     public class AddDefaults : IBspSourceProcessor
     {
-        [Import] private SquareGridFactory _squareGridFactory;
+        private readonly SquareGridFactory _squareGridFactory;
+
+        [ImportingConstructor]
+        public AddDefaults([Import] SquareGridFactory squareGridFactory)
+        {
+            _squareGridFactory = squareGridFactory;
+        }
 
         public string OrderHint => "A";
 

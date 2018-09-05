@@ -11,8 +11,14 @@ namespace Sledge.BspEditor.Primitives
     [Export]
     public class MapElementFactory
     {
-        [ImportMany] private IEnumerable<Lazy<IMapElementFormatter>> _imports;
-        
+        private readonly IEnumerable<Lazy<IMapElementFormatter>> _imports;
+
+        [ImportingConstructor]
+        public MapElementFactory([ImportMany] IEnumerable<Lazy<IMapElementFormatter>> imports)
+        {
+            _imports = imports;
+        }
+
         public IMapElement Deserialise(SerialisedObject obj)
         {
             var elem = _imports.Select(x => x.Value).FirstOrDefault(x => x.IsSupported(obj))?.Deserialise(obj);

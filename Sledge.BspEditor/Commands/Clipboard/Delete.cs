@@ -22,6 +22,7 @@ namespace Sledge.BspEditor.Commands.Clipboard
     {
         public override string Name { get; set; } = "Delete";
         public override string Details { get; set; } = "Delete the current selection";
+
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
             var sel = document.Selection.GetSelectedParents().ToList();

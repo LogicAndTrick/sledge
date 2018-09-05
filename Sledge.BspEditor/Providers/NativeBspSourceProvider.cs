@@ -17,8 +17,8 @@ namespace Sledge.BspEditor.Providers
     [Export(typeof(IBspSourceProvider))]
     public class NativeBspSourceProvider : IBspSourceProvider
     {
-        [Import] private SerialisedObjectFormatter _formatter;
-        [Import] private MapElementFactory _factory;
+        private readonly SerialisedObjectFormatter _formatter;
+        private readonly MapElementFactory _factory;
 
         private static readonly IEnumerable<Type> SupportedTypes = new List<Type>
         {
@@ -29,6 +29,13 @@ namespace Sledge.BspEditor.Providers
         };
 
         public IEnumerable<Type> SupportedDataTypes => SupportedTypes;
+
+        [ImportingConstructor]
+        public NativeBspSourceProvider([Import] Lazy<SerialisedObjectFormatter> formatter, [Import] Lazy<MapElementFactory> factory)
+        {
+            _formatter = formatter.Value;
+            _factory = factory.Value;
+        }
 
         public IEnumerable<FileExtensionInfo> SupportedFileExtensions { get; } = new[]
         {

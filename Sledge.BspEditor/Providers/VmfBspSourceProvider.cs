@@ -38,6 +38,14 @@ namespace Sledge.BspEditor.Providers
 
         public IEnumerable<Type> SupportedDataTypes => SupportedTypes;
 
+        [ImportingConstructor]
+        public VmfBspSourceProvider([Import] Lazy<SerialisedObjectFormatter> formatter, [Import] Lazy<MapElementFactory> factory, [Import] Lazy<SquareGridFactory> squareGridFactory)
+        {
+            _formatter = formatter.Value;
+            _factory = factory.Value;
+            _squareGridFactory = squareGridFactory.Value;
+        }
+
         public IEnumerable<FileExtensionInfo> SupportedFileExtensions { get; } = new[]
         {
             new FileExtensionInfo("Valve map format", ".vmf", ".vmx"), 

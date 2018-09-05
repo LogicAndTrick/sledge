@@ -22,6 +22,7 @@ namespace Sledge.BspEditor.Commands.Modification
     {
         public override string Name { get; set; } = "Select None";
         public override string Details { get; set; } = "Clear selection";
+
         protected override Task Invoke(MapDocument document, CommandParameters parameters)
         {
             var op = new Deselect(document.Map.Root.FindAll());

@@ -15,8 +15,6 @@ namespace Sledge.BspEditor.Providers.Processors
     [Export(typeof(IBspSourceProcessor))]
     public class HandleVisgroups : IBspSourceProcessor
     {
-        public static string Prefix = typeof(HandleVisgroups).FullName;
-
         public string OrderHint => "C";
 
         public Task AfterLoad(MapDocument document)

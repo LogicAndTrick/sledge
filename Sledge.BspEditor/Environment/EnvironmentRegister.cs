@@ -12,8 +12,14 @@ namespace Sledge.BspEditor.Environment
     [Export(typeof(ISettingEditorFactory))]
     public class EnvironmentRegister : ISettingsContainer, ISettingEditorFactory
     {
-        [ImportMany] private IEnumerable<Lazy<IEnvironmentFactory>> _factories;
+        private readonly IEnumerable<Lazy<IEnvironmentFactory>> _factories;
         private EnvironmentCollection _environments = new EnvironmentCollection();
+
+        [ImportingConstructor]
+        public EnvironmentRegister([ImportMany] IEnumerable<Lazy<IEnvironmentFactory>> factories)
+        {
+            _factories = factories;
+        }
 
         public string OrderHint => "B";
 

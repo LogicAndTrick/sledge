@@ -22,10 +22,17 @@ namespace Sledge.BspEditor.Commands.Clipboard
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Cut))]
     public class Cut : BaseCommand
     {
-        [Import] private Lazy<ClipboardManager> _clipboard;
+        private readonly Lazy<ClipboardManager> _clipboard;
 
         public override string Name { get; set; } = "Cut";
         public override string Details { get; set; } = "Copy the current selection and remove it";
+
+        [ImportingConstructor]
+        public Cut([Import] Lazy<ClipboardManager> clipboard)
+        {
+            _clipboard = clipboard;
+        }
+
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
             var sel = document.Selection.GetSelectedParents().ToList();

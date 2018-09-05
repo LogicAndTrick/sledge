@@ -20,10 +20,17 @@ namespace Sledge.BspEditor.Commands.Clipboard
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Copy))]
     public class Copy : BaseCommand
     {
-        [Import] private Lazy<ClipboardManager> _clipboard;
+        private readonly Lazy<ClipboardManager> _clipboard;
 
         public override string Name { get; set; } = "Copy";
         public override string Details { get; set; } = "Copy the current selection";
+
+        [ImportingConstructor]
+        public Copy([Import] Lazy<ClipboardManager> clipboard)
+        {
+            _clipboard = clipboard;
+        }
+
         protected override Task Invoke(MapDocument document, CommandParameters parameters)
         {
             var sel = document.Selection.GetSelectedParents().ToList();

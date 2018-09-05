@@ -21,10 +21,16 @@ namespace Sledge.BspEditor.Commands.Clipboard
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Paste))]
     public class Paste : BaseCommand
     {
-        [Import] private Lazy<ClipboardManager> _clipboard;
+        private readonly Lazy<ClipboardManager> _clipboard;
 
         public override string Name { get; set; } = "Paste";
         public override string Details { get; set; } = "Paste the current clipboard contents";
+
+        [ImportingConstructor]
+        public Paste([Import] Lazy<ClipboardManager> clipboard)
+        {
+            _clipboard = clipboard;
+        }
 
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {

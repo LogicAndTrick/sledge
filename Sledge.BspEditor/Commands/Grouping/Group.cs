@@ -22,6 +22,7 @@ namespace Sledge.BspEditor.Commands.Grouping
     {
         public override string Name { get; set; } = "Group";
         public override string Details { get; set; } = "Group selected objects";
+
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
             var sel = document.Selection.GetSelectedParents().ToList();

@@ -22,8 +22,8 @@ namespace Sledge.BspEditor.Components
     [Export(typeof(ISettingsContainer))]
     public class MapDocumentControlHost : UserControl, ISettingsContainer, IUIShutdownHook, IUIStartupHook
     {
-        [ImportMany] private IEnumerable<Lazy<IMapDocumentControlFactory>> _controlFactories;
-        [Import("Shell")] private Form _shell;
+        private readonly IEnumerable<Lazy<IMapDocumentControlFactory>> _controlFactories;
+        private readonly Form _shell;
         
         public static MapDocumentControlHost Instance { get; private set; }
 
@@ -32,8 +32,15 @@ namespace Sledge.BspEditor.Components
 
         // Be careful to ensure this is created on the UI thread
 
-        public MapDocumentControlHost()
+        [ImportingConstructor]
+        public MapDocumentControlHost(
+            [ImportMany] IEnumerable<Lazy<IMapDocumentControlFactory>> controlFactories,
+            [Import("Shell")] Form shell
+        )
         {
+            _controlFactories = controlFactories;
+            _shell = shell;
+
             MapDocumentControls = new List<CellReference>();
         }
 

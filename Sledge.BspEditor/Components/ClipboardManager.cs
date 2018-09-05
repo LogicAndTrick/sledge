@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
@@ -33,8 +34,8 @@ namespace Sledge.BspEditor.Components
             }
         }
 
-        [Import] private MapElementFactory _factory;
-        [Import] private SerialisedObjectFormatter _formatter;
+        private readonly MapElementFactory _factory;
+        private readonly SerialisedObjectFormatter _formatter;
 
         public int SizeOfClipboardRing { get; set; }
         private readonly List<ClipboardEntry> Ring;
@@ -44,8 +45,14 @@ namespace Sledge.BspEditor.Components
 
         private static string SerialisedName => "Sledge.BspEditor.Clipboard";
 
-        public ClipboardManager()
+        [ImportingConstructor]
+        public ClipboardManager(
+            [Import] Lazy<MapElementFactory> factory,
+            [Import] Lazy<SerialisedObjectFormatter> formatter
+        )
         {
+            _factory = factory.Value;
+            _formatter = formatter.Value;
             SizeOfClipboardRing = 10;
             Ring = new List<ClipboardEntry>();
         }
