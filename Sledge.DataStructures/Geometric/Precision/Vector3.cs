@@ -76,7 +76,7 @@ namespace Sledge.DataStructures.Geometric.Precision
         public Vector3 Normalise()
         {
             var len = Length();
-            return len == 0 ? new Vector3(0, 0, 0) : new Vector3(X / len, Y / len, Z / len);
+            return Math.Abs(len) < 0.0001 ? new Vector3(0, 0, 0) : new Vector3(X / len, Y / len, Z / len);
         }
 
         public Vector3 Absolute()
@@ -101,7 +101,7 @@ namespace Sledge.DataStructures.Geometric.Precision
 
         public static Vector3 operator /(Vector3 c, double f)
         {
-            return f == 0 ? new Vector3(0, 0, 0) : new Vector3(c.X / f, c.Y / f, c.Z / f);
+            return Math.Abs(f) < 0.0001 ? new Vector3(0, 0, 0) : new Vector3(c.X / f, c.Y / f, c.Z / f);
         }
 
         public static Vector3 operator *(Vector3 c, double f)

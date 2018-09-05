@@ -20,24 +20,31 @@ namespace Sledge.BspEditor.Primitives
                 return false;
             }
 
-            front = MakeSolid(generator, solid, frontPoly.ToStandardPolyhedron());
-            back = MakeSolid(generator, solid, backPoly.ToStandardPolyhedron());
+            front = MakeSolid(generator, solid, frontPoly);
+            back = MakeSolid(generator, solid, backPoly);
             return true;
         }
 
-        private static Solid MakeSolid(UniqueNumberGenerator generator, Solid original, Polyhedron poly)
+        private static Solid MakeSolid(UniqueNumberGenerator generator, Solid original, DataStructures.Geometric.Precision.Polyhedron poly)
         {
+            var originalFacePlanes = original.Faces.Select(x => new
+            {
+                Face = x,
+                Plane = x.Plane.ToPrecisionPlane()
+            }).ToList();
+
             var solid = new Solid(generator.Next("MapObject")) { IsSelected = original.IsSelected };
             foreach (var p in poly.Polygons)
             {
                 // Use the first face if we can't find any with the same plane (it's the clipping plane)
-                var originalFace =
-                    original.Faces.FirstOrDefault(x => p.ClassifyAgainstPlane(x.Plane) == PlaneClassification.OnPlane)
-                    ?? original.Faces.FirstOrDefault();
+                var originalFace = originalFacePlanes
+                                       .Where(x => p.ClassifyAgainstPlane(x.Plane) == PlaneClassification.OnPlane)
+                                       .Select(x => x.Face)
+                                       .FirstOrDefault() ?? original.Faces.FirstOrDefault();
 
                 var face = new Face(generator.Next("Face"));
-                face.Vertices.AddRange(p.Vertices);
-                face.Plane = p.Plane;
+                face.Vertices.AddRange(p.Vertices.Select(x => x.ToStandardVector3()));
+                face.Plane = p.Plane.ToStandardPlane();
 
                 if (originalFace != null)
                 {

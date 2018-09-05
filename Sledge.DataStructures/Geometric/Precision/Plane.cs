@@ -62,7 +62,7 @@ namespace Sledge.DataStructures.Geometric.Precision
         ///  value == 1 if Vector3 is above the plane<br />
         ///  value == 0 if Vector3 is on the plane.
         /// </returns>
-        public int OnPlane(Vector3 co, double epsilon = 0.5d)
+        public int OnPlane(Vector3 co, double epsilon = 0.0001d)
         {
             //eval (s = Ax + By + Cz + D) at point (x,y,z)
             //if s > 0 then point is "above" the plane (same side as normal)
