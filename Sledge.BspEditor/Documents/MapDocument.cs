@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
@@ -34,6 +35,8 @@ namespace Sledge.BspEditor.Documents
         public Map Map { get; set; }
         public IEnvironment Environment { get; }
 
+        private List<Subscription> _subscriptions;
+
         public Selection Selection
         {
             get
@@ -55,18 +58,19 @@ namespace Sledge.BspEditor.Documents
 
             Environment = environment;
 
-            Oy.Subscribe<IDocument>("Document:RequestClose", IfThis(RequestClose));
-            Oy.Subscribe<IDocument>("Document:Saved", IfThis(Saved));
-            Oy.Subscribe<MapDocumentOperation>("MapDocument:Perform", async c =>
+            _subscriptions = new List<Subscription>
             {
-                if (c.Document == this && !c.Operation.Trivial)
+                Oy.Subscribe<IDocument>("Document:RequestClose", IfThis(RequestClose)),
+                Oy.Subscribe<IDocument>("Document:Saved", IfThis(Saved)),
+                Oy.Subscribe<MapDocumentOperation>("MapDocument:Perform", async c =>
                 {
-                    HasUnsavedChanges = true;
-                    await Oy.Publish("Document:Changed", this);
-                }
-            });
-
-            // Subscribe to map changes
+                    if (c.Document == this && !c.Operation.Trivial)
+                    {
+                        HasUnsavedChanges = true;
+                        await Oy.Publish("Document:Changed", this);
+                    }
+                })
+            };
         }
 
         private Func<IDocument, Task> IfThis(Func<Task> callback)
@@ -86,6 +90,7 @@ namespace Sledge.BspEditor.Documents
         private async Task RequestClose()
         {
             await Oy.Publish("Document:Closed", this);
+            _subscriptions.ForEach(x => x.Dispose());
         }
     }
 }
