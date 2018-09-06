@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Common.Shell.Settings;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
@@ -31,6 +32,7 @@ namespace Sledge.BspEditor.Rendering.Converters
         public CenterHandlesConverter([Import] Lazy<EngineInterface> engine)
         {
             _engine = engine.Value;
+            _engine.UploadTexture(CenterHandleTextureDataSource.Name, HandleDataSource.Width, HandleDataSource.Height, HandleDataSource.Data, HandleDataSource.SampleType);
         }
 
         // Settings
@@ -60,11 +62,9 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.DefaultMedium;
 
-        public Task Convert(BufferBuilder builder, MapDocument document, IEnumerable<IMapObject> objects)
+        public Task Convert(BufferBuilder builder, MapDocument document, IEnumerable<IMapObject> objects, ResourceCollector resourceCollector)
         {
             if (!_drawCenterHandles) return Task.CompletedTask;
-            
-            _engine.UploadTexture(CenterHandleTextureDataSource.Name, () => HandleDataSource);
 
             var objs = (
                 from mo in objects
@@ -108,11 +108,10 @@ namespace Sledge.BspEditor.Rendering.Converters
         }
 
         private static readonly CenterHandleTextureDataSource HandleDataSource = new CenterHandleTextureDataSource();
-        private class CenterHandleTextureDataSource : ITextureDataSource
+        private class CenterHandleTextureDataSource
         {
             public const string Name = "DefaultSolidConverter::CenterHandle::X";
-            private readonly byte[] _data;
-
+            public byte[] Data { get; }
             public TextureSampleType SampleType => TextureSampleType.Point;
             public int Width => 9;
             public int Height => 9;
@@ -128,15 +127,10 @@ namespace Sledge.BspEditor.Rendering.Converters
                         g.DrawLine(Pens.White, img.Width - 2, 1, 1, img.Height - 2);
                     }
                     var lb = img.LockBits(new Rectangle(0, 0, img.Width, img.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                    _data = new byte[lb.Stride * lb.Height];
-                    Marshal.Copy(lb.Scan0, _data, 0, _data.Length);
+                    Data = new byte[lb.Stride * lb.Height];
+                    Marshal.Copy(lb.Scan0, Data, 0, Data.Length);
                     img.UnlockBits(lb);
                 }
-            }
-
-            public Task<byte[]> GetData()
-            {
-                return Task.FromResult(_data);
             }
         }
     }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Scene;
 using Sledge.Rendering.Engine;
 
@@ -17,7 +18,7 @@ namespace Sledge.BspEditor.Rendering.Converters
         [ImportMany] private IEnumerable<Lazy<IMapObjectGroupSceneConverter>> _groupConverters;
         [Import] private Lazy<EngineInterface> _engine;
 
-        public async Task Convert(MapDocument document, SceneBuilder builder, IEnumerable<IMapObject> affected)
+        public async Task Convert(MapDocument document, SceneBuilder builder, IEnumerable<IMapObject> affected, ResourceCollector resourceCollector)
         {
             var objs = document.Map.Root.FindAll();
             if (affected != null)
@@ -36,7 +37,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
                 foreach (var gc in groupConverters)
                 {
-                    gc.Convert(builder.MainBuffer, document, g);
+                    gc.Convert(builder.MainBuffer, document, g, resourceCollector);
                 }
 
                 foreach (var obj in g)
@@ -44,7 +45,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                     foreach (var converter in converters)
                     {
                         if (!converter.Supports(obj)) continue;
-                        await converter.Convert(builder.MainBuffer, document, obj);
+                        await converter.Convert(builder.MainBuffer, document, obj, resourceCollector);
                         if (converter.ShouldStopProcessing(document, obj)) break;
                     }
                 }

@@ -16,13 +16,9 @@ namespace Sledge.Rendering.Engine
             ResourceLoader = new ResourceLoader(this);
         }
 
-        private long _lastFrame;
         public void Update(long frame)
         {
-            if (frame < _lastFrame + 100000) return;
-            _lastFrame = frame;
 
-            ResourceLoader.DeleteUnreferencedTextures();
         }
     }
 }

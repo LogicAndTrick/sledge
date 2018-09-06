@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Converters;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
@@ -32,7 +33,8 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
             return obj is Root;
         }
 
-        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
+        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj,
+            ResourceCollector resourceCollector)
         {
             var pointfile = GetPointfile(document);
             if (pointfile == null) return Task.FromResult(0);

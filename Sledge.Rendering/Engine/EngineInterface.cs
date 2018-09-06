@@ -10,6 +10,7 @@ using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using Veldrid;
 using Buffer = Sledge.Rendering.Resources.Buffer;
+using Texture = Sledge.Rendering.Resources.Texture;
 
 namespace Sledge.Rendering.Engine
 {
@@ -43,9 +44,14 @@ namespace Sledge.Rendering.Engine
             return new BufferBuilder(Engine.Instance.Device, size);
         }
 
-        public void UploadTexture(string name, Func<ITextureDataSource> source)
+        public IResource UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
         {
-            Engine.Instance.Context.ResourceLoader.UploadTexture(name, source);
+            return Engine.Instance.Context.ResourceLoader.UploadTexture(name, width, height, data, sampleType);
+        }
+
+        public void DestroyResource(IResource resource)
+        {
+            if (resource is Texture t) Engine.Instance.Context.ResourceLoader.DestroyTexture(t);
         }
 
         public IViewport CreateViewport()

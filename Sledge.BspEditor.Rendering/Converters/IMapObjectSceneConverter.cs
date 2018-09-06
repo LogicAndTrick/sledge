@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Rendering.Resources;
 
 namespace Sledge.BspEditor.Rendering.Converters
@@ -37,7 +38,8 @@ namespace Sledge.BspEditor.Rendering.Converters
         /// <param name="builder">The scene builder</param>
         /// <param name="document">The current document</param>
         /// <param name="obj">The object to convert</param>
-        Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj);
+        /// <param name="resourceCollector">A resource collecter to precache resources</param>
+        Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector);
     }
 
     /// <summary>
@@ -56,6 +58,7 @@ namespace Sledge.BspEditor.Rendering.Converters
         /// <param name="builder">The buffer builder</param>
         /// <param name="document">The current document</param>
         /// <param name="objects">The group of objects to convert</param>
-        Task Convert(BufferBuilder builder, MapDocument document, IEnumerable<IMapObject> objects);
+        /// <param name="resourceCollector">A resource collecter to precache resources</param>
+        Task Convert(BufferBuilder builder, MapDocument document, IEnumerable<IMapObject> objects, ResourceCollector resourceCollector);
     }
 }

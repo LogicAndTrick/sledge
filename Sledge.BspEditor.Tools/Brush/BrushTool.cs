@@ -272,7 +272,7 @@ namespace Sledge.BspEditor.Tools.Brush
             return _preview ?? new List<IMapObject>();
         }
 
-        public override void Render(BufferBuilder builder)
+        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
             if (box.State.Action != BoxAction.Idle)
             {
@@ -281,15 +281,15 @@ namespace Sledge.BspEditor.Tools.Brush
                 {
                     foreach (var obj in GetPreview().OfType<Solid>())
                     {
-                        await Convert(builder, Document, obj);
+                        await Convert(builder, Document, obj, resourceCollector);
                     }
                 }).Wait();
             }
 
-            base.Render(builder);
+            base.Render(builder, resourceCollector);
         }
 
-        private async Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
+        private async Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
         {
             var solid = (Solid)obj;
 
@@ -373,10 +373,7 @@ namespace Sledge.BspEditor.Tools.Brush
                 groups.Add(new BufferGroup(t == null ? PipelineType.FlatColourGeneric : PipelineType.TexturedGeneric, CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd));
                 texOffset += texInd;
 
-                if (t != null)
-                {
-                    _engine.UploadTexture(texture, () => new EnvironmentTextureSource(document.Environment, t));
-                }
+                if (t != null) resourceCollector.RequireTexture(t.Name);
             }
 
             // groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Rendering.Resources;
 
 namespace Sledge.BspEditor.Rendering.Converters
@@ -27,7 +28,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 || obj.Data.OfType<IRenderVisibility>().Any(x => x.IsRenderHidden);
         }
 
-        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
+        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
         {
             return Task.FromResult(false);
         }

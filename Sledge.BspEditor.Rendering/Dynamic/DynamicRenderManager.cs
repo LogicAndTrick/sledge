@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Rendering.Engine;
@@ -18,6 +19,7 @@ namespace Sledge.BspEditor.Rendering.Dynamic
         [Import] private Lazy<EngineInterface> _engine;
         [ImportMany] private IDynamicRenderable[] _dynamicRenderables;
         [ImportMany] private IMapObjectDynamicRenderable[] _documentDynamicRenderables;
+        [Import] private ResourceCollection _resourceCollection;
 
         private BufferBuilder _builder;
         private BufferBuilderRenderable _renderable;
@@ -40,17 +42,22 @@ namespace Sledge.BspEditor.Rendering.Dynamic
             var builder = _engine.Value.CreateBufferBuilder(BufferSize.Small);
             var renderable = new BufferBuilderRenderable(builder);
 
-            foreach (var dr in _dynamicRenderables)
-            {
-                dr.Render(builder);
-            }
 
             if (_activeDocument.TryGetTarget(out var md))
             {
+                var resourceCollector = new ResourceCollector();
+
+                foreach (var dr in _dynamicRenderables)
+                {
+                    dr.Render(builder, resourceCollector);
+                }
+
                 foreach (var ddr in _documentDynamicRenderables)
                 {
-                    ddr.Render(md, builder);
+                    ddr.Render(md, builder, resourceCollector);
                 }
+
+                Task.Run(() => _resourceCollection.Upload(md.Environment, resourceCollector, _engine.Value)).Wait();
             }
 
             builder.Complete();

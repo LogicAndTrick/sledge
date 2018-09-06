@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Resources;
@@ -203,13 +204,13 @@ namespace Sledge.BspEditor.Tools.Draggable
             return list;
         }
 
-        public override void Render(BufferBuilder builder)
+        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
             foreach (var obj in CollectObjects(x => new[] {x}))
             {
                 obj.Render(builder);
             }
-            base.Render(builder);
+            base.Render(builder, resourceCollector);
         }
 
         public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)

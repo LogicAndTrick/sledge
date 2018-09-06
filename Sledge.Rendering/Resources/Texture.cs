@@ -1,24 +1,20 @@
-﻿using System;
-using System.Threading.Tasks;
-using Sledge.Rendering.Engine;
+﻿using Sledge.Rendering.Engine;
 using Sledge.Rendering.Interfaces;
 using Veldrid;
 
 namespace Sledge.Rendering.Resources
 {
-    internal class Texture
+    internal class Texture : IResource
     {
-        internal long NumBindings { get; set; }
-
         private readonly Veldrid.Texture _texture;
         private readonly TextureView _view;
         private readonly ResourceSet _set;
 
         private bool _mipsGenerated;
 
-        public Texture(RenderContext context, ITextureDataSource source)
+        public Texture(RenderContext context, int width, int height, byte[] data, TextureSampleType sampleType)
         {
-            uint w = (uint) source.Width, h = (uint) source.Height;
+            uint w = (uint) width, h = (uint) height;
 
             uint numMips = 4;
             if (w < 16 || h < 16)
@@ -32,21 +28,18 @@ namespace Sledge.Rendering.Resources
                 TextureUsage.Sampled | TextureUsage.GenerateMipmaps
             ));
 
-            Task.Run(async () =>
+            try
             {
-                try
-                {
-                    device.UpdateTexture(_texture, await source.GetData(), 0, 0, 0, w, h, _texture.Depth, 0, 0);
-                }
-                catch
-                {
-                    // Error updating texture, the texture may have been disposed
-                }
-                _mipsGenerated = false;
-            });
+                device.UpdateTexture(_texture, data, 0, 0, 0, w, h, _texture.Depth, 0, 0);
+            }
+            catch
+            {
+                // Error updating texture, the texture may have been disposed
+            }
+            _mipsGenerated = false;
 
             var sampler = context.ResourceLoader.TextureSampler;
-            if (source.SampleType == TextureSampleType.Point) sampler = context.ResourceLoader.OverlaySampler;
+            if (sampleType == TextureSampleType.Point) sampler = context.ResourceLoader.OverlaySampler;
             
             _view = device.ResourceFactory.CreateTextureView(_texture);
             _set = device.ResourceFactory.CreateResourceSet(new ResourceSetDescription(
@@ -63,7 +56,6 @@ namespace Sledge.Rendering.Resources
             }
 
             cl.SetGraphicsResourceSet(slot, _set);
-            NumBindings++;
         }
 
         public void Dispose()

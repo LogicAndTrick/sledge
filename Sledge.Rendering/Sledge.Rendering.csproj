@@ -71,15 +71,15 @@
     <Compile Include="Engine\RenderContext.cs" />
     <Compile Include="Engine\ResourceLoader.cs" />
     <Compile Include="Engine\Scene.cs" />
+    <Compile Include="Resources\TextureSampleType.cs" />
     <Compile Include="Overlay\IOverlayRenderable.cs" />
     <Compile Include="Overlay\OverlayBuilder.cs" />
     <Compile Include="Pipelines\OverlayPipeline.cs" />
     <Compile Include="Pipelines\TexturedBillboardPipeline.cs" />
     <Compile Include="Primitives\VertexFlags.cs" />
     <Compile Include="Resources\BufferSize.cs" />
-    <Compile Include="Resources\WhiteTextureSource.cs" />
     <Compile Include="Renderables\FpsMonitor.cs" />
-    <Compile Include="Interfaces\ITextureDataSource.cs" />
+    <Compile Include="Resources\IResource.cs" />
     <Compile Include="MathFunctions.cs" />
     <Compile Include="Interfaces\IUpdateable.cs" />
     <Compile Include="Pipelines\TexturedGenericPipeline.cs" />

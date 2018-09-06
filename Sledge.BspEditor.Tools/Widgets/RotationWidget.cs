@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
@@ -304,7 +305,7 @@ namespace Sledge.BspEditor.Tools.Widgets
             if (_mouseDown != CircleType.None) e.Handled = true;
         }
 
-        public override void Render(BufferBuilder builder)
+        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
             if (_mouseMovePoint.HasValue && _mouseDown != CircleType.None)
             {
@@ -351,7 +352,7 @@ namespace Sledge.BspEditor.Tools.Widgets
                 );
             }
 
-            base.Render(builder);
+            base.Render(builder, resourceCollector);
         }
 
         public override void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)

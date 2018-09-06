@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Vertex.Controls;
 using Sledge.BspEditor.Tools.Vertex.Selection;
@@ -205,9 +206,9 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             Invalidate();
         }
 
-        public override void Render(BufferBuilder builder)
+        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
-            base.Render(builder);
+            base.Render(builder, resourceCollector);
 
             var verts = new List<VertexStandard>();
             var indices = new List<int>();

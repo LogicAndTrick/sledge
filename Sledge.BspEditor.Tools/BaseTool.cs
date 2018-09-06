@@ -9,6 +9,7 @@ using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
@@ -380,12 +381,12 @@ namespace Sledge.BspEditor.Tools
             // todo BETA: investigate adding invalidation back into BaseTool rendering
         }
 
-        public virtual void Render(BufferBuilder builder)
+        public virtual void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
             if (!Active) return;
             foreach (var c in Children.Where(x => x.Active))
             {
-                c.Render(builder);
+                c.Render(builder, resourceCollector);
             }
         }
 

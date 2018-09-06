@@ -37,7 +37,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             return es != null && es.ContentsReplaced ? es : null;
         }
 
-        public async Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
+        public async Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
         {
             var entity = (Entity) obj;
             var tc = await document.Environment.GetTextureCollection();
@@ -54,10 +54,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             var t = await tc.GetTextureItem(name);
 
             var texture = $"{document.Environment.ID}::{name}";
-            if (t != null)
-            {
-                _engine.UploadTexture(texture, () => new EnvironmentTextureSource(document.Environment, t));
-            }
+            if (t != null) resourceCollector.RequireTexture(t.Name);
 
             var tint = sd.Color.ToVector4();
 

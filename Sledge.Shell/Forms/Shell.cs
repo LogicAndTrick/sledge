@@ -414,7 +414,7 @@ namespace Sledge.Shell.Forms
                 }
                 else
                 {
-                    Oy.Publish<IDocument>("Document:Activated", null);
+                    Oy.Publish<IDocument>("Document:Activated", new NoDocument());
                     Oy.Publish("Context:Remove", new ContextInfo("ActiveDocument"));
                     Text = Title;
                 }
@@ -422,7 +422,7 @@ namespace Sledge.Shell.Forms
             else
             {
                 DocumentContainer.Controls.Clear();
-                Oy.Publish<IDocument>("Document:Activated", null);
+                Oy.Publish<IDocument>("Document:Activated", new NoDocument());
                 Oy.Publish("Context:Remove", new ContextInfo("ActiveDocument"));
                 Text = Title;
             }

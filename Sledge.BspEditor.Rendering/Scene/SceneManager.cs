@@ -8,6 +8,7 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Converters;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Rendering.Engine;
@@ -25,6 +26,7 @@ namespace Sledge.BspEditor.Rendering.Scene
         private readonly Lazy<MapObjectConverter> _converter;
         private readonly Lazy<EngineInterface> _engine;
         private readonly DocumentRegister _documentRegister;
+        private readonly ResourceCollection _resourceCollection;
 
         private readonly object _lock = new object();
         private SceneBuilder _sceneBuilder;
@@ -35,12 +37,14 @@ namespace Sledge.BspEditor.Rendering.Scene
         public SceneManager(
             [Import] Lazy<MapObjectConverter> converter,
             [Import] Lazy<EngineInterface> engine,
-            [Import] DocumentRegister documentRegister
+            [Import] DocumentRegister documentRegister,
+            [Import] ResourceCollection resourceCollection
         )
         {
             _converter = converter;
             _engine = engine;
             _documentRegister = documentRegister;
+            _resourceCollection = resourceCollection;
         }
 
         /// <inheritdoc />
@@ -86,6 +90,8 @@ namespace Sledge.BspEditor.Rendering.Scene
 
         private async Task DocumentClosed(IDocument doc)
         {
+            var envs = _documentRegister.OpenDocuments.OfType<MapDocument>().Select(x => x.Environment).ToHashSet();
+            _resourceCollection.DisposeOtherEnvironments(envs, _engine.Value);
             if (_activeDocument.TryGetTarget(out var md) && md == doc)
             {
                 await UpdateScene(null, null);
@@ -115,7 +121,9 @@ namespace Sledge.BspEditor.Rendering.Scene
 
                     if (md != null)
                     {
-                        waitTask = _converter.Value.Convert(md, _sceneBuilder, affected);
+                        var resourceCollector = new ResourceCollector();
+                        waitTask = _converter.Value.Convert(md, _sceneBuilder, affected, resourceCollector)
+                            .ContinueWith(t => _resourceCollection.Upload(md.Environment, resourceCollector, _engine.Value));
                     }
                 }
             }

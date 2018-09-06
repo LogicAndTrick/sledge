@@ -235,16 +235,16 @@ namespace Sledge.BspEditor.Tools.Vertex
 
         #endregion
 
-        public override void Render(BufferBuilder builder)
+        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
-            base.Render(builder);
+            base.Render(builder, resourceCollector);
 
             // Force this work to happen on a new thread so waiting on it won't block the context
             Task.Run(async () =>
             {
                 foreach (var obj in _selection)
                 {
-                    await Convert(builder, Document, obj.Copy);
+                    await Convert(builder, Document, obj.Copy, resourceCollector);
                 }
             }).Wait();
         }
@@ -255,7 +255,7 @@ namespace Sledge.BspEditor.Tools.Vertex
             base.Invalidate();
         }
 
-        private async Task Convert(BufferBuilder builder, MapDocument document, MutableSolid solid)
+        private async Task Convert(BufferBuilder builder, MapDocument document, MutableSolid solid, ResourceCollector resourceCollector)
         {
             var displayFlags = document.Map.Data.GetOne<DisplayFlags>();
             var hideNull = displayFlags?.HideNullTextures == true;
@@ -346,10 +346,7 @@ namespace Sledge.BspEditor.Tools.Vertex
                 groups.Add(new BufferGroup(t == null ? PipelineType.FlatColourGeneric : PipelineType.TexturedGeneric, CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd));
                 texOffset += texInd;
 
-                if (t != null)
-                {
-                    _engine.UploadTexture(texture, () => new EnvironmentTextureSource(document.Environment, t));
-                }
+                if (t != null) resourceCollector.RequireTexture(t.Name);
             }
 
             // groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));

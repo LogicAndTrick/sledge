@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
@@ -25,7 +26,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Root;
         }
         
-        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
+        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
         {
             var points = new[]
             {

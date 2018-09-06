@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Rendering.Dynamic;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Rendering.Cameras;
@@ -44,9 +45,9 @@ namespace Sledge.BspEditor.Tools
             ActiveTool?.Render(viewport, camera, graphics);
         }
 
-        public void Render(BufferBuilder builder)
+        public void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
-            ActiveTool?.Render(builder);
+            ActiveTool?.Render(builder, resourceCollector);
         }
     }
 }

@@ -14,6 +14,7 @@ using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
@@ -87,7 +88,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         protected override void DocumentChanged()
         {
-            SetFaceSelectionFromObjectSelection();
+            if (Document != null) SetFaceSelectionFromObjectSelection();
             base.DocumentChanged();
         }
 
@@ -287,9 +288,9 @@ namespace Sledge.BspEditor.Tools.Texture
             return MapDocumentOperation.Perform(Document, edit);
         }
 
-        public override void Render(BufferBuilder builder)
+        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
-            base.Render(builder);
+            base.Render(builder, resourceCollector);
 
             var sel = GetSelection();
             if (sel.IsEmpty) return;

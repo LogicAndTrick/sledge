@@ -12,6 +12,7 @@ using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common;
@@ -285,7 +286,7 @@ namespace Sledge.BspEditor.Tools.Entity
 
         // Rendering
 
-        public override void Render(BufferBuilder builder)
+        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
             if (_state != EntityState.None)
             {
@@ -352,7 +353,7 @@ namespace Sledge.BspEditor.Tools.Entity
                 builder.Append(points, indices, groups);
             }
 
-            base.Render(builder);
+            base.Render(builder, resourceCollector);
         }
     }
 }

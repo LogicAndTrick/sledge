@@ -21,8 +21,6 @@ namespace Sledge.BspEditor.Rendering.Converters
     [Export(typeof(IMapObjectSceneConverter))]
     public class DefaultSolidConverter : IMapObjectSceneConverter
     {
-        [Import] private EngineInterface _engine;
-
         public MapObjectSceneConverterPriority Priority => MapObjectSceneConverterPriority.DefaultLowest;
 
         public bool ShouldStopProcessing(MapDocument document, IMapObject obj)
@@ -35,12 +33,12 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj.Data.OfType<Face>().Any();
         }
 
-        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
+        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
         {
-            return ConvertFaces(builder, document, obj, obj.Data.Get<Face>().ToList(), _engine);
+            return ConvertFaces(builder, document, obj, obj.Data.Get<Face>().ToList(), resourceCollector);
         }
 
-        internal static async Task ConvertFaces(BufferBuilder builder, MapDocument document, IMapObject obj, List<Face> faces, EngineInterface engine)
+        internal static async Task ConvertFaces(BufferBuilder builder, MapDocument document, IMapObject obj, List<Face> faces, ResourceCollector resourceCollector)
         {
             var displayFlags = document.Map.Data.GetOne<DisplayFlags>();
             var hideNull = displayFlags?.HideNullTextures == true;
@@ -134,10 +132,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 groups.Add(new BufferGroup(t == null ? PipelineType.FlatColourGeneric : PipelineType.TexturedGeneric, CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd));
                 texOffset += texInd;
 
-                if (t != null)
-                {
-                    engine.UploadTexture(texture, () => new EnvironmentTextureSource(document.Environment, t));
-                }
+                if (t != null) resourceCollector.RequireTexture(t.Name);
             }
 
             // groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));

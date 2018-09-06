@@ -61,6 +61,7 @@
     <Compile Include="Shell\Commands\CommandMessage.cs" />
     <Compile Include="Shell\Commands\CommandParameters.cs" />
     <Compile Include="Shell\Commands\ICommand.cs" />
+    <Compile Include="Shell\Documents\NoDocument.cs" />
     <Compile Include="Shell\Hooks\IUIShutdownHook.cs" />
     <Compile Include="Shell\Hooks\IUIStartupHook.cs" />
     <Compile Include="Shell\Hotkeys\IHotkeyProvider.cs" />

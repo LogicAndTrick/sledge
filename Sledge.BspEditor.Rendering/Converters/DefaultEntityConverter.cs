@@ -8,6 +8,7 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.ChangeHandlers;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
@@ -32,12 +33,12 @@ namespace Sledge.BspEditor.Rendering.Converters
             return obj is Entity && !obj.Hierarchy.HasChildren;
         }
 
-        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj)
+        public Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)
         {
-            return ConvertBox(builder, document, obj, obj.BoundingBox);
+            return ConvertBox(builder, obj, obj.BoundingBox);
         }
 
-        internal static Task ConvertBox(BufferBuilder builder, MapDocument document, IMapObject obj, Box box)
+        internal static Task ConvertBox(BufferBuilder builder, IMapObject obj, Box box)
         {
             // It's always a box, these numbers are known
             const uint numVertices = 4 * 6;

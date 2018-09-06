@@ -80,7 +80,8 @@
     <Compile Include="Overlay\ViewportTextOverlay.cs" />
     <Compile Include="Overlay\OverlayManager.cs" />
     <Compile Include="Renderer.cs" />
-    <Compile Include="Resources\EnvironmentTextureSource.cs" />
+    <Compile Include="Resources\ResourceCollection.cs" />
+    <Compile Include="Resources\ResourceCollector.cs" />
     <Compile Include="Scene\SceneBuilderRenderable.cs" />
     <Compile Include="Viewport\CameraViewportEventListenerFactory.cs" />
     <Compile Include="Viewport\IViewportEventListenerFactory.cs" />

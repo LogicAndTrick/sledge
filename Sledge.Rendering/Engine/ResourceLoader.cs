@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Shaders;
 using Veldrid;
@@ -51,36 +50,26 @@ namespace Sledge.Rendering.Engine
             TextureSampler = context.Device.Aniso4xSampler;
             OverlaySampler = context.Device.PointSampler;
 
-            MissingTexture = new Lazy<Texture>(() => UploadTexture("", () => new WhiteTextureSource()));
+            MissingTexture = new Lazy<Texture>(() => UploadTexture("", 1, 1, new byte[] { 255, 255, 255, 255 }, TextureSampleType.Standard));
         }
 
         private readonly ConcurrentDictionary<string, Texture> _textures = new ConcurrentDictionary<string, Texture>();
 
-        internal Texture UploadTexture(string name, Func<ITextureDataSource> source)
+        internal Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
         {
-            return _textures.GetOrAdd(name, n => new Texture(_context, source()));
+            return _textures.GetOrAdd(name, n => new Texture(_context, width, height, data, sampleType));
+        }
+
+        internal void DestroyTexture(Texture texture)
+        {
+            var keys = _textures.Where(x => x.Value == texture).ToList();
+            if (keys.Any()) _textures.TryRemove(keys[0].Key, out _);
+            texture.Dispose();
         }
 
         internal Texture GetTexture(string name)
         {
             return _textures.TryGetValue(name, out var tex) ? tex : MissingTexture.Value;
-        }
-
-        internal void DeleteUnreferencedTextures()
-        {
-            if (MissingTexture.IsValueCreated) MissingTexture.Value.NumBindings++;
-            foreach (var tkv in _textures.ToList())
-            {
-                if (tkv.Value.NumBindings == 0)
-                {
-                    _textures.TryRemove(tkv.Key, out _);
-                    tkv.Value.Dispose();
-                }
-                else
-                {
-                    tkv.Value.NumBindings = 0;
-                }
-            }
         }
 
         public (Shader, Shader) LoadShaders(string name)

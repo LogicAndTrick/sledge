@@ -10,6 +10,7 @@ using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives;
 using Sledge.BspEditor.Primitives.MapObjects;
+using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Components;
@@ -277,9 +278,9 @@ namespace Sledge.BspEditor.Tools.Clip
             }
         }
 
-        public override void Render(BufferBuilder builder)
+        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
-            base.Render(builder);
+            base.Render(builder, resourceCollector);
 
             if (_state != ClipState.None && _clipPlanePoint1 != null && _clipPlanePoint2 != null && _clipPlanePoint3 != null)
             {
