@@ -10,6 +10,7 @@ using Sledge.Common.Logging;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;
+using Sledge.Common.Threading;
 
 namespace Sledge.Shell.Registers
 {
@@ -21,7 +22,27 @@ namespace Sledge.Shell.Registers
     [Export]
     public class DocumentRegister : IStartupHook, ISettingsContainer
     {
-        [ImportMany] private IEnumerable<Lazy<IDocumentLoader>> _documentLoaders;
+        private readonly IEnumerable<Lazy<IDocumentLoader>> _documentLoaders;
+
+        private readonly ThreadSafeList<IDocument> _openDocuments;
+        public IReadOnlyCollection<IDocument> OpenDocuments => _openDocuments;
+
+        private readonly List<IDocumentLoader> _loaders;
+
+        private readonly string _programId;
+        private readonly string _programIdVer = "1";
+
+        [ImportingConstructor]
+        public DocumentRegister([ImportMany] IEnumerable<Lazy<IDocumentLoader>> documentLoaders)
+        {
+            _documentLoaders = documentLoaders;
+            _loaders = new List<IDocumentLoader>();
+
+            var assembly = Assembly.GetEntryAssembly()?.GetName().Name ?? "Sledge.Shell";
+            _programId = assembly.Replace(".", "");
+
+            _openDocuments = new ThreadSafeList<IDocument>();
+        }
 
         public Task OnStartup()
         {
@@ -44,33 +65,17 @@ namespace Sledge.Shell.Registers
 
             return Task.FromResult(0);
         }
-        
-        private readonly List<IDocument> _openDocuments;
-        public IReadOnlyCollection<IDocument> OpenDocuments => _openDocuments;
 
-        private async Task OpenDocument(IDocument doc)
+        private Task OpenDocument(IDocument doc)
         {
             _openDocuments.Add(doc);
+            return Task.CompletedTask;
         }
 
-        private async Task CloseDocument(IDocument doc)
+        private Task CloseDocument(IDocument doc)
         {
             _openDocuments.Remove(doc);
-        }
-
-        private readonly List<IDocumentLoader> _loaders;
-        
-        private readonly string _programId;
-        private readonly string _programIdVer = "1";
-
-        public DocumentRegister()
-        {
-            _loaders = new List<IDocumentLoader>();
-            
-            var assembly = Assembly.GetEntryAssembly()?.GetName().Name ?? "Sledge.Shell";
-            _programId = assembly.Replace(".", "");
-
-            _openDocuments = new List<IDocument>();
+            return Task.CompletedTask;
         }
 
         /// <summary>

@@ -32,7 +32,7 @@ namespace Sledge.Rendering.Resources
                 TextureUsage.Sampled | TextureUsage.GenerateMipmaps
             ));
 
-            Task.Factory.StartNew(async () =>
+            Task.Run(async () =>
             {
                 try
                 {

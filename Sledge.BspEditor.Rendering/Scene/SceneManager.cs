@@ -11,6 +11,7 @@ using Sledge.BspEditor.Rendering.Converters;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Rendering.Engine;
+using Sledge.Shell.Registers;
 
 namespace Sledge.BspEditor.Rendering.Scene
 {
@@ -21,11 +22,26 @@ namespace Sledge.BspEditor.Rendering.Scene
     [Export(typeof(IStartupHook))]
     public class SceneManager : IStartupHook
     {
-        [Import] private Lazy<MapObjectConverter> _converter;
-        [Import] private Lazy<EngineInterface> _engine;
+        private readonly Lazy<MapObjectConverter> _converter;
+        private readonly Lazy<EngineInterface> _engine;
+        private readonly DocumentRegister _documentRegister;
 
         private readonly object _lock = new object();
         private SceneBuilder _sceneBuilder;
+
+        private WeakReference<MapDocument> _activeDocument = new WeakReference<MapDocument>(null);
+
+        [ImportingConstructor]
+        public SceneManager(
+            [Import] Lazy<MapObjectConverter> converter,
+            [Import] Lazy<EngineInterface> engine,
+            [Import] DocumentRegister documentRegister
+        )
+        {
+            _converter = converter;
+            _engine = engine;
+            _documentRegister = documentRegister;
+        }
 
         /// <inheritdoc />
         public Task OnStartup()
@@ -37,8 +53,6 @@ namespace Sledge.BspEditor.Rendering.Scene
 
             return Task.FromResult(0);
         }
-
-        private WeakReference<MapDocument> _activeDocument = new WeakReference<MapDocument>(null);
 
         // Document events
 

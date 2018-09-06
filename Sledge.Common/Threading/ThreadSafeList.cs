@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Sledge.Common.Threading
 {
-    public class ThreadSafeList<T> : IList<T>
+    public class ThreadSafeList<T> : IList<T>, IReadOnlyCollection<T>
     {
         private readonly object _lock;
         private readonly List<T> _list;
