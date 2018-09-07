@@ -1,6 +1,8 @@
 Sledge
 ======
 
+[![Discord](https://img.shields.io/badge/chat-on%20discord-brightgreen.svg?logo=discord&style=flat-square)](https://discord.gg/Bj5bzjk)
+
 **Pull requests are welcome!** Also, please submit an issue if you encounter a problem, you can also contact me via email (see GitHub profile).
 
 *[Sledge alpha has been released! It's ready!][1]*
