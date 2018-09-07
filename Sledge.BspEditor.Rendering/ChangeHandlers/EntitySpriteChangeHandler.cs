@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.ChangeHandling;
 using Sledge.BspEditor.Primitives.MapObjects;
@@ -20,17 +21,24 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
         public async Task Changed(Change change)
         {
             var gd = await change.Document.Environment.GetGameData();
+            var tc = await change.Document.Environment.GetTextureCollection();
             foreach (var entity in change.Added.Union(change.Updated).OfType<Entity>())
             {
                 var sn = GetSpriteName(entity, gd);
-                if (sn == null) entity.Data.Remove(x => x is EntitySprite);
-                else entity.Data.Replace(await CreateSpriteData(entity, change.Document, gd, sn));
+                var sd = sn == null ? null : await CreateSpriteData(entity, change.Document, gd, tc, sn);
+                if (sd == null) entity.Data.Remove(x => x is EntitySprite);
+                else entity.Data.Replace(sd);
                 entity.DescendantsChanged();
             }
         }
 
-        private static async Task<EntitySprite> CreateSpriteData(Entity entity, MapDocument doc, GameData gd, string name)
+        private static async Task<EntitySprite> CreateSpriteData(Entity entity, MapDocument doc, GameData gd, TextureCollection tc, string name)
         {
+            if (!tc.HasTexture(name)) return null;
+
+            var texture = await tc.GetTextureItem(name);
+            if (texture == null) return null;
+
             var cls = gd?.GetClass(entity.EntityData.Name);
             var scale = 1f;
             var color = Color.White;
@@ -54,12 +62,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
                 if (cls.Behaviours.Any(x => string.Equals(x.Name, "sprite", StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    var tc = await doc.Environment.GetTextureCollection();
-                    var texture = await tc.GetTextureItem(name);
-                    if (texture != null)
-                    {
-                        size = texture.Size;
-                    }
+                    size = texture.Size;
                 }
             }
 
