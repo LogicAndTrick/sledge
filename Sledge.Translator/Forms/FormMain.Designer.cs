@@ -57,7 +57,8 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(622, 28);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(626, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -68,13 +69,13 @@
             this.saveTranslationFileToolStripMenuItem,
             this.quitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openTranslationFileToolStripMenuItem
             // 
             this.openTranslationFileToolStripMenuItem.Name = "openTranslationFileToolStripMenuItem";
-            this.openTranslationFileToolStripMenuItem.Size = new System.Drawing.Size(219, 26);
+            this.openTranslationFileToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.openTranslationFileToolStripMenuItem.Text = "Open translation file";
             this.openTranslationFileToolStripMenuItem.Click += new System.EventHandler(this.openTranslationFileToolStripMenuItem_Click);
             // 
@@ -82,14 +83,14 @@
             // 
             this.saveTranslationFileToolStripMenuItem.Enabled = false;
             this.saveTranslationFileToolStripMenuItem.Name = "saveTranslationFileToolStripMenuItem";
-            this.saveTranslationFileToolStripMenuItem.Size = new System.Drawing.Size(219, 26);
+            this.saveTranslationFileToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.saveTranslationFileToolStripMenuItem.Text = "Save translation file";
             this.saveTranslationFileToolStripMenuItem.Click += new System.EventHandler(this.saveTranslationFileToolStripMenuItem_Click);
             // 
             // quitToolStripMenuItem
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(219, 26);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -100,27 +101,27 @@
             this.reportABugToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // wikiPageAboutTranslationsToolStripMenuItem
             // 
             this.wikiPageAboutTranslationsToolStripMenuItem.Name = "wikiPageAboutTranslationsToolStripMenuItem";
-            this.wikiPageAboutTranslationsToolStripMenuItem.Size = new System.Drawing.Size(274, 26);
+            this.wikiPageAboutTranslationsToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
             this.wikiPageAboutTranslationsToolStripMenuItem.Text = "Wiki page about translations";
             this.wikiPageAboutTranslationsToolStripMenuItem.Click += new System.EventHandler(this.wikiPageAboutTranslationsToolStripMenuItem_Click);
             // 
             // reportABugToolStripMenuItem
             // 
             this.reportABugToolStripMenuItem.Name = "reportABugToolStripMenuItem";
-            this.reportABugToolStripMenuItem.Size = new System.Drawing.Size(274, 26);
+            this.reportABugToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
             this.reportABugToolStripMenuItem.Text = "Report a bug";
             this.reportABugToolStripMenuItem.Click += new System.EventHandler(this.reportABugToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(274, 26);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -137,12 +138,13 @@
             this.English,
             this.Translation});
             this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView.Location = new System.Drawing.Point(0, 28);
+            this.dataGridView.Location = new System.Drawing.Point(0, 24);
+            this.dataGridView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataGridView.RowTemplate.Height = 24;
             this.dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView.Size = new System.Drawing.Size(622, 225);
+            this.dataGridView.Size = new System.Drawing.Size(626, 363);
             this.dataGridView.TabIndex = 1;
             this.dataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellClick);
             this.dataGridView.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridView_CurrentCellDirtyStateChanged);
@@ -178,9 +180,10 @@
             this.statusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 231);
+            this.statusStrip.Location = new System.Drawing.Point(0, 365);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(622, 22);
+            this.statusStrip.Padding = new System.Windows.Forms.Padding(1, 0, 10, 0);
+            this.statusStrip.Size = new System.Drawing.Size(626, 22);
             this.statusStrip.TabIndex = 2;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -191,16 +194,17 @@
             // 
             // FormMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 253);
+            this.ClientSize = new System.Drawing.Size(626, 387);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(640, 300);
+            this.MinimumSize = new System.Drawing.Size(484, 251);
             this.Name = "FormMain";
             this.Text = "Sledge Translator";
             this.menuStrip1.ResumeLayout(false);
