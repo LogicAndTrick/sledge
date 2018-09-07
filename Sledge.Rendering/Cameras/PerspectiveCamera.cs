@@ -41,6 +41,10 @@ namespace Sledge.Rendering.Cameras
                 var norm = value.LengthSquared() <= 0.01f ? Vector3.UnitY : Vector3.Normalize(value);
                 _angles.Y = (float) (Math.Asin(norm.Z) + Math.PI / 2);
                 _angles.X = (float) (Math.Atan2(-norm.Y, -norm.X) + Math.PI / 2);
+
+                // Try and stop invalid values from getting in
+                if (float.IsInfinity(_angles.X) || float.IsNaN(_angles.X)) _angles.X = 0;
+                if (float.IsInfinity(_angles.Y) || float.IsNaN(_angles.Y)) _angles.Y = 0;
             }
         }
 
