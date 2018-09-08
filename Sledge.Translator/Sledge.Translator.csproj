@@ -116,6 +116,7 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)Build\InsertIcons.exe" "$(TargetPath)" "$(ProjectDir)Resources\embedded_icons.txt"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
