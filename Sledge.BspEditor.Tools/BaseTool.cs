@@ -200,7 +200,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.MouseEnter(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseEnter(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseEnter(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -208,7 +208,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.MouseLeave(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseLeave(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseLeave(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -216,7 +216,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void MouseDown(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.MouseDown(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseDown(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseDown(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -224,7 +224,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void MouseClick(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.MouseClick(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseClick(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseClick(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -232,7 +232,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.MouseDoubleClick(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseDoubleClick(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseDoubleClick(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -240,7 +240,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void MouseUp(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.MouseUp(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseUp(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseUp(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -248,7 +248,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.MouseWheel(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseWheel(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseWheel(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -256,7 +256,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void MouseMove(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.MouseMove(vp, ev), viewport, e)) return;
             if (viewport.Is2D) MouseMove(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) MouseMove(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -264,7 +264,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void DragStart(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.DragStart(vp, ev), viewport, e)) return;
             if (viewport.Is2D) DragStart(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) DragStart(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -272,7 +272,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void DragMove(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.DragMove(vp, ev), viewport, e)) return;
             if (viewport.Is2D) DragMove(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) DragMove(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -280,7 +280,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void DragEnd(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.DragEnd(vp, ev), viewport, e)) return;
             if (viewport.Is2D) DragEnd(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) DragEnd(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -288,7 +288,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void KeyPress(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.KeyPress(vp, ev), viewport, e)) return;
             if (viewport.Is2D) KeyPress(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) KeyPress(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -296,7 +296,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void KeyDown(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.KeyDown(vp, ev), viewport, e)) return;
             if (viewport.Is2D) KeyDown(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) KeyDown(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -304,7 +304,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void KeyUp(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.KeyUp(vp, ev), viewport, e)) return;
             if (viewport.Is2D) KeyUp(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
             if (viewport.Is3D) KeyUp(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
@@ -312,7 +312,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void UpdateFrame(MapViewport viewport, long frame)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             foreach (var child in Children) child.UpdateFrame(viewport, frame);
 
             if (viewport.Is2D) UpdateFrame(viewport, viewport.Viewport.Camera as OrthographicCamera, frame);
@@ -321,14 +321,14 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void PositionChanged(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.PositionChanged(vp, ev), viewport, e)) return;
             if (viewport.Is2D) PositionChanged(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
         }
 
         public virtual void ZoomChanged(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             if (ChildAction((w, vp, ev) => w.ZoomChanged(vp, ev), viewport, e)) return;
             if (viewport.Is2D) ZoomChanged(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
         }
@@ -383,7 +383,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             foreach (var c in Children.Where(x => x.Active))
             {
                 c.Render(builder, resourceCollector);
@@ -392,7 +392,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             foreach (var c in Children.Where(x => x.Active))
             {
                 c.Render(viewport, camera, worldMin, worldMax, graphics);
@@ -401,7 +401,7 @@ namespace Sledge.BspEditor.Tools
 
         public virtual void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
         {
-            if (!Active) return;
+            if (!Active || Document == null) return;
             foreach (var c in Children.Where(x => x.Active))
             {
                 c.Render(viewport, camera, graphics);
