@@ -142,20 +142,6 @@ namespace Sledge.BspEditor.Tools.Texture
         public string SelectedTexture { get; set; }
         private readonly List<string> _textures;
 
-        private void SetMemory<T>(string name, T value)
-        {
-            name = GetType().Name + '.' + name;
-            // todo post-beta: texture browser memory
-        }
-
-        private T GetMemory<T>(string name, T def = default(T))
-        {
-            name = GetType().Name + '.' + name;
-            return def;
-            // todo post-beta: texture browser memory
-            // return _document != null ? _document.GetMemory(name, def) : def;
-        }
-
         private void TextureSelected(object sender, string item)
         {
             SelectedTexture = item;
@@ -523,6 +509,49 @@ namespace Sledge.BspEditor.Tools.Texture
             MapDocumentOperation.Perform(_document, transaction);
 
             Close();
+        }
+
+        private static readonly Dictionary<string, Memory> _memory = new Dictionary<string, Memory>();
+
+        private class Memory
+        {
+            public Dictionary<string, object> Values { get; } = new Dictionary<string, object>();
+
+            public void Set<T>(string name, T value)
+            {
+                Values[GetType().Name + '.' + name] = value;
+            }
+
+            public T Get<T>(string name, T def = default(T))
+            {
+                if (!Values.TryGetValue(GetType().Name + '.' + name, out var v)) return def;
+
+                try
+                {
+                    return (T)Convert.ChangeType(v, typeof(T));
+                }
+                catch
+                {
+                    return def;
+                }
+
+            }
+        }
+
+        private void SetMemory<T>(string name, T value)
+        {
+            var id = _document?.Environment?.ID;
+            if (id == null) return;
+            if (!_memory.TryGetValue(id, out var m)) _memory[id] = m = new Memory();
+            m.Set(name, value);
+        }
+
+        private T GetMemory<T>(string name, T def = default(T))
+        {
+            var id = _document?.Environment?.ID;
+            if (id == null) return def;
+            if (_memory.TryGetValue(id, out var m)) return m.Get(name, def);
+            return def;
         }
     }
 }
