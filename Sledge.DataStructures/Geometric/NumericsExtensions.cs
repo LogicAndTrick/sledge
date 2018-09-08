@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Globalization;
 using System.Numerics;
 
 namespace Sledge.DataStructures.Geometric
@@ -17,7 +18,11 @@ namespace Sledge.DataStructures.Geometric
             return xd < delta && yd < delta && zd < delta;
         }
 
-        public static Vector3 Parse(string x, string y, string z) => new Vector3(float.Parse(x), float.Parse(y), float.Parse(z));
+        public static Vector3 Parse(string x, string y, string z, NumberStyles ns, IFormatProvider provider)
+        {
+            return new Vector3(float.Parse(x, ns, provider), float.Parse(y, ns, provider), float.Parse(z, ns, provider));
+        }
+
         public static Vector3 Normalise(this Vector3 self) => Vector3.Normalize(self);
         public static Vector3 Absolute(this Vector3 self) => Vector3.Abs(self);
         public static float Dot(this Vector3 self, Vector3 other) => Vector3.Dot(self, other);

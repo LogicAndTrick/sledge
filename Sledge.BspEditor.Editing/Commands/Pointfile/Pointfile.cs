@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.Serialization;
@@ -53,10 +54,10 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
             foreach (var line in list)
             {
                 var split = line.Split(' ');
-                var point = NumericsExtensions.Parse(split[0], split[1], split[2]);
+                var point = NumericsExtensions.Parse(split[0], split[1], split[2], NumberStyles.Float, CultureInfo.InvariantCulture);
                 if (lin)
                 {
-                    var point2 = NumericsExtensions.Parse(split[4], split[5], split[6]);
+                    var point2 = NumericsExtensions.Parse(split[4], split[5], split[6], NumberStyles.Float, CultureInfo.InvariantCulture);
                     pf.Lines.Add(new Line(point2, point));
                 }
                 else // pts

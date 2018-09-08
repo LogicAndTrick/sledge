@@ -494,13 +494,14 @@ namespace Sledge.Providers
                 case "Colour":
                     return Color.FromArgb(int.Parse(spl[3]), int.Parse(spl[0]), int.Parse(spl[1]), int.Parse(spl[2]));
                 case "Vector3":
-                    return NumericsExtensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')'));
+                    return NumericsExtensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')'), NumberStyles.Float, CultureInfo.InvariantCulture);
                 case "Box":
                     return new Box(
-                        NumericsExtensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')),
-                        NumericsExtensions.Parse(spl[3].TrimStart('('), spl[4], spl[5].TrimEnd(')')));
+                        NumericsExtensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')'), NumberStyles.Float, CultureInfo.InvariantCulture),
+                        NumericsExtensions.Parse(spl[3].TrimStart('('), spl[4], spl[5].TrimEnd(')'), NumberStyles.Float, CultureInfo.InvariantCulture)
+                    );
                 case "Plane":
-                    return new Plane(NumericsExtensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')')), float.Parse(spl[3]));
+                    return new Plane(NumericsExtensions.Parse(spl[0].TrimStart('('), spl[1], spl[2].TrimEnd(')'), NumberStyles.Float, CultureInfo.InvariantCulture), float.Parse(spl[3]));
                 case "Rectangle":
                     return new Rectangle(int.Parse(spl[0]), int.Parse(spl[1]), int.Parse(spl[2]), int.Parse(spl[3]));
                 default:

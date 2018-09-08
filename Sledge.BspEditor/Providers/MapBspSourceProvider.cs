@@ -132,9 +132,9 @@ namespace Sledge.BspEditor.Providers
             var face = new Face(generator.Next("Face"))
             {
                 Plane = new Plane(
-                    NumericsExtensions.Parse(parts[1], parts[2], parts[3]),
-                    NumericsExtensions.Parse(parts[6], parts[7], parts[8]),
-                    NumericsExtensions.Parse(parts[11], parts[12], parts[13])
+                    NumericsExtensions.Parse(parts[1], parts[2], parts[3], ns, CultureInfo.InvariantCulture),
+                    NumericsExtensions.Parse(parts[6], parts[7], parts[8], ns, CultureInfo.InvariantCulture),
+                    NumericsExtensions.Parse(parts[11], parts[12], parts[13], ns, CultureInfo.InvariantCulture)
                 ),
                 Texture = {Name = parts[15]}
             };
@@ -165,9 +165,9 @@ namespace Sledge.BspEditor.Providers
                 Assert(parts[22] == "[");
                 Assert(parts[27] == "]");
 
-                face.Texture.UAxis = NumericsExtensions.Parse(parts[17], parts[18], parts[19]);
+                face.Texture.UAxis = NumericsExtensions.Parse(parts[17], parts[18], parts[19], ns, CultureInfo.InvariantCulture);
                 face.Texture.XShift = float.Parse(parts[20], ns, CultureInfo.InvariantCulture);
-                face.Texture.VAxis = NumericsExtensions.Parse(parts[23], parts[24], parts[25]);
+                face.Texture.VAxis = NumericsExtensions.Parse(parts[23], parts[24], parts[25], ns, CultureInfo.InvariantCulture);
                 face.Texture.YShift = float.Parse(parts[26], ns, CultureInfo.InvariantCulture);
                 face.Texture.Rotation = float.Parse(parts[28], ns, CultureInfo.InvariantCulture);
                 face.Texture.XScale = float.Parse(parts[29], ns, CultureInfo.InvariantCulture);
@@ -249,7 +249,7 @@ namespace Sledge.BspEditor.Providers
             else if (key == "origin")
             {
                 var osp = val.Split(' ');
-                ent.Origin = NumericsExtensions.Parse(osp[0], osp[1], osp[2]);
+                ent.Origin = NumericsExtensions.Parse(osp[0], osp[1], osp[2], NumberStyles.Float, CultureInfo.InvariantCulture);
             }
             else if (!ExcludedKeys.Contains(key.ToLower()))
             {
