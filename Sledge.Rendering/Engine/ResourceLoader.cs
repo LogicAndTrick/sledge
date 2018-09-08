@@ -53,7 +53,7 @@ namespace Sledge.Rendering.Engine
             MissingTexture = new Lazy<Texture>(() => UploadTexture("", 1, 1, new byte[] { 255, 255, 255, 255 }, TextureSampleType.Standard));
         }
 
-        private readonly ConcurrentDictionary<string, Texture> _textures = new ConcurrentDictionary<string, Texture>();
+        private readonly ConcurrentDictionary<string, Texture> _textures = new ConcurrentDictionary<string, Texture>(StringComparer.InvariantCultureIgnoreCase);
 
         internal Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
         {
