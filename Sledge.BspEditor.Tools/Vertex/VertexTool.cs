@@ -260,11 +260,13 @@ namespace Sledge.BspEditor.Tools.Vertex
             var displayFlags = document.Map.Data.GetOne<DisplayFlags>();
             var hideNull = displayFlags?.HideNullTextures == true;
 
+            var faces = solid.Faces.Where(x => x.Vertices.Count > 2).ToList();
+
             // Pack the vertices like this [ f1v1 ... f1vn ] ... [ fnv1 ... fnvn ]
-            var numVertices = (uint)solid.Faces.Sum(x => x.Vertices.Count);
+            var numVertices = (uint)faces.Sum(x => x.Vertices.Count);
 
             // Pack the indices like this [ solid1 ... solidn ] [ wireframe1 ... wireframe n ]
-            var numSolidIndices = (uint)solid.Faces.Sum(x => (x.Vertices.Count - 2) * 3);
+            var numSolidIndices = (uint)faces.Sum(x => (x.Vertices.Count - 2) * 3);
             var numWireframeIndices = numVertices * 2;
 
             var points = new VertexStandard[numVertices];
@@ -281,7 +283,7 @@ namespace Sledge.BspEditor.Tools.Vertex
             var vi = 0u;
             var si = 0u;
             var wi = numSolidIndices;
-            foreach (var face in solid.Faces)
+            foreach (var face in faces)
             {
                 var opacity = tc.GetOpacity(face.Texture.Name);
                 var t = await tc.GetTextureItem(face.Texture.Name);
@@ -328,7 +330,7 @@ namespace Sledge.BspEditor.Tools.Vertex
             var groups = new List<BufferGroup>();
 
             uint texOffset = 0;
-            foreach (var f in solid.Faces)
+            foreach (var f in faces)
             {
                 var texInd = (uint)(f.Vertices.Count - 2) * 3;
 

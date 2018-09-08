@@ -40,6 +40,8 @@ namespace Sledge.BspEditor.Rendering.Converters
 
         internal static async Task ConvertFaces(BufferBuilder builder, MapDocument document, IMapObject obj, List<Face> faces, ResourceCollector resourceCollector)
         {
+            faces = faces.Where(x => x.Vertices.Count > 2).ToList();
+
             var displayFlags = document.Map.Data.GetOne<DisplayFlags>();
             var hideNull = displayFlags?.HideNullTextures == true;
 

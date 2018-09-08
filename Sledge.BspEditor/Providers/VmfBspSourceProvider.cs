@@ -17,7 +17,10 @@ using Sledge.Common;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Transport;
 using Sledge.DataStructures.Geometric;
-using Plane = Sledge.DataStructures.Geometric.Plane;
+using Plane = Sledge.DataStructures.Geometric.Precision.Plane;
+using Polygon = Sledge.DataStructures.Geometric.Precision.Polygon;
+using Polyhedron = Sledge.DataStructures.Geometric.Precision.Polyhedron;
+using PVector3 = Sledge.DataStructures.Geometric.Precision.Vector3;
 
 namespace Sledge.BspEditor.Providers
 {
@@ -419,12 +422,12 @@ namespace Sledge.BspEditor.Providers
             return d.ToString("0.00####", CultureInfo.InvariantCulture);
         }
 
-        private static bool ParseDecimalArray(string input, char[] splitChars, int expected, out float[] array)
+        private static bool ParseFloatArray(string input, char[] splitChars, int expected, out float[] array)
         {
             var spl = input.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
             if (spl.Length == expected)
             {
-                var parsed = spl.Select(x => float.TryParse(x, NumberStyles.Float, CultureInfo.InvariantCulture, out float o) ? (float?)o : null).ToList();
+                var parsed = spl.Select(x => float.TryParse(x, NumberStyles.Float, CultureInfo.InvariantCulture, out var o) ? (float?) o : null).ToList();
                 if (parsed.All(x => x.HasValue))
                 {
                     // ReSharper disable once PossibleInvalidOperationException
@@ -433,6 +436,23 @@ namespace Sledge.BspEditor.Providers
                 }
             }
             array = new float[expected];
+            return false;
+        }
+
+        private static bool ParseDoubleArray(string input, char[] splitChars, int expected, out double[] array)
+        {
+            var spl = input.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
+            if (spl.Length == expected)
+            {
+                var parsed = spl.Select(x => double.TryParse(x, NumberStyles.Float, CultureInfo.InvariantCulture, out var o) ? (double?) o : null).ToList();
+                if (parsed.All(x => x.HasValue))
+                {
+                    // ReSharper disable once PossibleInvalidOperationException
+                    array = parsed.Select(x => x.Value).ToArray();
+                    return true;
+                }
+            }
+            array = new double[expected];
             return false;
         }
 
@@ -675,8 +695,13 @@ namespace Sledge.BspEditor.Providers
                         {
                             continue;
                         }
-                        side.Vertices.AddRange(pg.Vertices);
+                        side.Vertices.AddRange(pg.Vertices.Select(x => x.ToStandardVector3()));
                     }
+                }
+
+                foreach (var emptySide in sides.Where(x => !x.Vertices.Any()))
+                {
+                    Console.WriteLine(emptySide.ID);
                 }
 
                 // We know the vertices, now create the faces
@@ -684,11 +709,11 @@ namespace Sledge.BspEditor.Providers
                 {
                     var face = new Face(generator.Next("Face"))
                     {
-                        Plane = side.Plane,
+                        Plane = side.Plane.ToStandardPlane(),
                         Texture = side.Texture
                     };
                     face.Vertices.AddRange(side.Vertices);
-                    solid.Data.Add(face);
+                    if (face.Vertices.Any()) solid.Data.Add(face);
                 }
 
                 solid.DescendantsChanged();
@@ -740,16 +765,17 @@ namespace Sledge.BspEditor.Providers
                 LightmapScale = obj.Get("lightmapscale", 0);
                 SmoothingGroups = obj.Get("smoothing_groups", "");
 
-                if (ParseDecimalArray(obj.Get("plane", ""), new[] {' ', '(', ')'}, 9, out float[] pl))
+                if (ParseDoubleArray(obj.Get("plane", ""), new[] {' ', '(', ')'}, 9, out double[] pl))
                 {
                     Plane = new Plane(
-                        new Vector3(pl[0], pl[1], pl[2]).Round(),
-                        new Vector3(pl[3], pl[4], pl[5]).Round(),
-                        new Vector3(pl[6], pl[7], pl[8]).Round());
+                        new PVector3(pl[0], pl[1], pl[2]).Round(),
+                        new PVector3(pl[3], pl[4], pl[5]).Round(),
+                        new PVector3(pl[6], pl[7], pl[8]).Round()
+                    );
                 }
                 else
                 {
-                    Plane = new Plane(Vector3.UnitZ, 0);
+                    Plane = new Plane(PVector3.UnitZ, 0);
                 }
 
                 Texture = new Texture
@@ -757,13 +783,13 @@ namespace Sledge.BspEditor.Providers
                     Name = obj.Get("material", ""),
                     Rotation = obj.Get("rotation", 0f)
                 };
-                if (ParseDecimalArray(obj.Get("uaxis", ""), new[] {' ', '[', ']'}, 5, out float[] ua))
+                if (ParseFloatArray(obj.Get("uaxis", ""), new[] {' ', '[', ']'}, 5, out float[] ua))
                 {
                     Texture.UAxis = new Vector3(ua[0], ua[1], ua[2]);
                     Texture.XShift = ua[3];
                     Texture.XScale = ua[4];
                 }
-                if (ParseDecimalArray(obj.Get("vaxis", ""), new[] {' ', '[', ']'}, 5, out float[] va))
+                if (ParseFloatArray(obj.Get("vaxis", ""), new[] {' ', '[', ']'}, 5, out float[] va))
                 {
                     Texture.VAxis = new Vector3(va[0], va[1], va[2]);
                     Texture.YShift = va[3];
@@ -791,7 +817,7 @@ namespace Sledge.BspEditor.Providers
             public VmfSide(Face face)
             {
                 ID = face.ID;
-                Plane = face.Plane;
+                Plane = face.Plane.ToPrecisionPlane();
                 Texture = face.Texture;
                 Vertices = face.Vertices.ToList();
             }

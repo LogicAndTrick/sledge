@@ -146,7 +146,7 @@ namespace Sledge.DataStructures.Geometric.Precision
                 if (sd <= 0) backVerts.Add(s);
                 if (sd >= 0) frontVerts.Add(s);
 
-                if (sd <= 0 != ed <= 0)
+                if ((sd < 0 && ed > 0) || (ed < 0 && sd > 0))
                 {
                     var t = sd / (sd - ed);
                     var intersect = s * (1 - t) + e * t;
