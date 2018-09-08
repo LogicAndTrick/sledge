@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -16,18 +17,19 @@ namespace Sledge.BspEditor.Rendering.Resources
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class ResourceCollection
     {
-        private readonly Dictionary<string, HashSet<string>> _textures;
-        private readonly Dictionary<string, List<IResource>> _resources;
+        private readonly ConcurrentDictionary<string, HashSet<string>> _textures;
+        private readonly ConcurrentDictionary<string, List<IResource>> _resources;
 
         [ImportingConstructor]
         public ResourceCollection()
         {
-            _textures = new Dictionary<string, HashSet<string>>();
-            _resources = new Dictionary<string, List<IResource>>();
+            _textures = new ConcurrentDictionary<string, HashSet<string>>();
+            _resources = new ConcurrentDictionary<string, List<IResource>>();
         }
 
         public async Task Upload(IEnvironment environment, ResourceCollector collector, EngineInterface engine)
         {
+            if (environment?.ID == null) return;
             EnsureEnvironment(environment);
 
             var rlist = _resources[environment.ID];
@@ -51,8 +53,8 @@ namespace Sledge.BspEditor.Rendering.Resources
 
         private void EnsureEnvironment(IEnvironment environment)
         {
-            if (!_textures.ContainsKey(environment.ID)) _textures.Add(environment.ID, new HashSet<string>());
-            if (!_resources.ContainsKey(environment.ID)) _resources.Add(environment.ID, new List<IResource>());
+            if (!_textures.ContainsKey(environment.ID)) _textures.TryAdd(environment.ID, new HashSet<string>());
+            if (!_resources.ContainsKey(environment.ID)) _resources.TryAdd(environment.ID, new List<IResource>());
         }
 
         private async Task<IResource> UploadTexture(EngineInterface engine, IEnvironment environment, TextureItem item, ITextureStreamSource source)
@@ -72,12 +74,12 @@ namespace Sledge.BspEditor.Rendering.Resources
         {
             foreach (var dt in _textures.Keys.Except(usedEnvironments.Select(x => x.ID)).ToList())
             {
-                _textures.Remove(dt);
+                _textures.TryRemove(dt, out _);
             }
             foreach (var dr in _resources.Keys.Except(usedEnvironments.Select(x => x.ID)).ToList())
             {
                 var list = _resources[dr];
-                _resources.Remove(dr);
+                _resources.TryRemove(dr, out _);
                 foreach (var res in list) engine.DestroyResource(res);
             }
         }

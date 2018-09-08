@@ -41,8 +41,7 @@ namespace Sledge.BspEditor.Rendering.Dynamic
         {
             var builder = _engine.Value.CreateBufferBuilder(BufferSize.Small);
             var renderable = new BufferBuilderRenderable(builder);
-
-
+            
             if (_activeDocument.TryGetTarget(out var md))
             {
                 var resourceCollector = new ResourceCollector();
@@ -57,7 +56,8 @@ namespace Sledge.BspEditor.Rendering.Dynamic
                     ddr.Render(md, builder, resourceCollector);
                 }
 
-                Task.Run(() => _resourceCollection.Upload(md.Environment, resourceCollector, _engine.Value)).Wait();
+                var env = md.Environment;
+                if (env != null) Task.Run(() => _resourceCollection.Upload(env, resourceCollector, _engine.Value)).Wait();
             }
 
             builder.Complete();

@@ -83,7 +83,7 @@ namespace Sledge.BspEditor.Documents
                 if (result != DialogResult.OK) return null;
             }
 
-            if (chosenEnvironment != null) return _environments.Value.GetEnvironment(chosenEnvironment.ID);
+            if (chosenEnvironment?.ID != null) return _environments.Value.GetEnvironment(chosenEnvironment.ID);
             return new EmptyEnvironment();
         }
 
@@ -205,7 +205,7 @@ namespace Sledge.BspEditor.Documents
             if (String.IsNullOrWhiteSpace(fileName) || String.IsNullOrWhiteSpace(envId)) return null;
             
             var env = _environments.Value.GetEnvironment(envId);
-            if (env == null) return null;
+            if (env?.ID == null) return null;
 
             if (!File.Exists(fileName)) return null;
 
