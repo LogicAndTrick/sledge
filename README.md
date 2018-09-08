@@ -5,7 +5,7 @@ Sledge
 
 **Pull requests are welcome!** Also, please submit an issue if you encounter a problem, you can also contact me via email (see GitHub profile).
 
-*[Sledge alpha has been released! It's ready!][1]*
+*[Sledge beta has been released! It's ready!][1]*
 
 Sledge is an open-source alternative to Valve's Hammer Editor for the Goldsource engine (and hopefully soon for Source too).
 It is written in .NET and uses [Veldrid][2] for rendering, with DirectX 11.
