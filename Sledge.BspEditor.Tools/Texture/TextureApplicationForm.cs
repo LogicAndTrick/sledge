@@ -402,7 +402,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 var t = textures[0];
                 var tc = await d.Environment.GetTextureCollection();
                 var ti = await tc.GetTextureItem(t);
-                labelText = $"{ti.Name} ({ti.Width} x {ti.Height})";
+                labelText = ti == null ? $"{t}" : $"{ti.Name} ({ti.Width} x {ti.Height})";
             }
             
             this.InvokeLater(() => {
