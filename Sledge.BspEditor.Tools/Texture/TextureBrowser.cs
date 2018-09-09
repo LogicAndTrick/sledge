@@ -42,20 +42,20 @@ namespace Sledge.BspEditor.Tools.Texture
             SortDescendingCheckbox.Checked = GetMemory("SortDescending", false);
             
             _textureList.TextureSelected += TextureSelected;
-            _textureList.SelectionChanged += SelectionChanged;
+            _textureList.HighlightedTexturesChanged += HighlightedTexturesChanged;
             SizeCombo.SelectedIndex = 1;
             _textures = new List<string>();
             SelectedTexture = null;
 
-            SelectionChanged(null, _textureList.GetSelectedTextures());
+            HighlightedTexturesChanged(null, _textureList.GetHighlightedTextures());
         }
 
         private void InitialiseTextureList()
         {
             _textureList = new TextureListPanel
             {
-                AllowMultipleSelection = true,
-                AllowSelection = true,
+                AllowMultipleHighlighting = true,
+                AllowHighlighting = true,
                 AutoScroll = true,
                 BackColor = Color.Black,
                 Dock = DockStyle.Fill,
@@ -111,7 +111,7 @@ namespace Sledge.BspEditor.Tools.Texture
             base.OnLoad(e);
         }
 
-        private void SelectionChanged(object sender, IEnumerable<string> selection)
+        private void HighlightedTexturesChanged(object sender, IEnumerable<string> selection)
         {
             TextureNameLabel.Text = "";
             TextureSizeLabel.Text = "";
@@ -163,7 +163,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         public void SetSelectedTextures(IEnumerable<string> items)
         {
-            _textureList.SetSelectedTextures(items);
+            _textureList.SetHighlightedTextures(items);
         }
 
         public void SetFilterText(string text)
@@ -266,8 +266,8 @@ namespace Sledge.BspEditor.Tools.Texture
             var sel = _document?.Map.Data.GetOne<ActiveTexture>()?.Name;
             if (sel != null)
             {
-                _textureList.SetSelectedTextures(new[] { sel });
-                _textureList.ScrollToItem(sel);
+                _textureList.SetHighlightedTextures(new[] { sel });
+                _textureList.ScrollToTexture(sel);
             }
         }
 
@@ -369,7 +369,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void SelectButtonClicked(object sender, EventArgs e)
         {
-            var textures = _textureList.GetSelectedTextures().ToHashSet(StringComparer.InvariantCultureIgnoreCase);
+            var textures = _textureList.GetHighlightedTextures().ToHashSet(StringComparer.InvariantCultureIgnoreCase);
             if (!textures.Any()) return;
 
             var sel = _document.Map.Root.Find(x => x.Data.OfType<ITextured>().Any(t => textures.Contains(t.Texture.Name))).ToList();
@@ -502,7 +502,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void RemoveFavouriteItemButtonClicked(object sender, EventArgs e)
         {
-            //var selection = _textureList.GetSelectedTextures().Select(x => x);
+            //var selection = _textureList.GetHighlightedTextures().Select(x => x);
 
             //var folder = FavouritesTree.SelectedNode;
             //var node = folder == null ? null : folder.Tag as FavouriteTextureFolder;

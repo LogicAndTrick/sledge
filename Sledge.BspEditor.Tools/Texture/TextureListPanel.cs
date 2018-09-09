@@ -1,48 +1,52 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Environment.Empty;
+using Sledge.Common.Threading;
 using Sledge.Providers.Texture;
 using Sledge.Shell;
 using Sledge.Shell.Input;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Sledge.BspEditor.Tools.Texture
 {
+    /// <summary>
+    /// A list of textures, rendered from a stream source.
+    /// </summary>
     public sealed class TextureListPanel : Panel
     {
+        /// <summary>
+        /// Occurs when the user has chosen a single texture by double clicking or pressing enter
+        /// </summary>
         public event EventHandler<string> TextureSelected;
-        public event EventHandler<List<string>> SelectionChanged;
-        private event EventHandler DebouncedInvalidate;
 
-        private void OnTextureSelected(string item)
-        {
-            TextureSelected?.Invoke(this, item);
-        }
-
-        private void OnSelectionChanged(IEnumerable<string> selection)
-        {
-            SelectionChanged?.Invoke(this, selection.ToList());
-        }
-
-        private readonly VScrollBar _scrollBar;
-        private List<string> _textures;
-
+        /// <summary>
+        /// Occurs when the list of highlighted textures has been changed
+        /// </summary>
+        public event EventHandler<List<string>> HighlightedTexturesChanged;
+        
         private string _lastSelectedItem;
-        private readonly HashSet<string> _selection;
+        private string _scrollToItem;
+        private ITextureStreamSource _streamSource;
 
-        private readonly IDisposable _observable;
-
-        private readonly object _lock = new object();
-        private readonly Dictionary<string, TextureControl> _controls = new Dictionary<string, TextureControl>();
+        private readonly Timer _updateTimer;
+        private readonly VScrollBar _scrollBar;
+        private readonly ThreadSafeList<string> _textures;
+        private readonly ThreadSafeSet<string> _selection;
+        private readonly ConcurrentDictionary<string, TextureControl> _controls;
 
         #region Properties
 
         private TextureCollection _collection;
+
+        /// <summary>
+        /// The texture collection that this list is showing textures from
+        /// </summary>
         public TextureCollection Collection
         {
             get => _collection;
@@ -58,14 +62,18 @@ namespace Sledge.BspEditor.Tools.Texture
             }
         }
 
-        private bool _allowSelection;
-        public bool AllowSelection
+        private bool _allowHighlighting;
+
+        /// <summary>
+        /// True to allow highlighting of textures
+        /// </summary>
+        public bool AllowHighlighting
         {
-            get => _allowSelection;
+            get => _allowHighlighting;
             set
             {
-                _allowSelection = value;
-                if (!_allowSelection && _selection.Count > 0)
+                _allowHighlighting = value;
+                if (!_allowHighlighting && _selection.Count > 0)
                 {
                     _selection.Clear();
                     Invalidate();
@@ -73,14 +81,18 @@ namespace Sledge.BspEditor.Tools.Texture
             }
         }
 
-        private bool _allowMultipleSelection;
-        public bool AllowMultipleSelection
+        private bool _allowMultipleHighlighting;
+
+        /// <summary>
+        /// True to allow multiple textures to be highlighted
+        /// </summary>
+        public bool AllowMultipleHighlighting
         {
-            get => _allowMultipleSelection;
+            get => _allowMultipleHighlighting;
             set
             {
-                _allowMultipleSelection = value;
-                if (!_allowMultipleSelection && _selection.Count > 0)
+                _allowMultipleHighlighting = value;
+                if (!_allowMultipleHighlighting && _selection.Count > 0)
                 {
                     var first = _selection.First();
                     _selection.Clear();
@@ -91,23 +103,24 @@ namespace Sledge.BspEditor.Tools.Texture
         }
 
         private int _imageSize;
+
+        /// <summary>
+        /// The size of the image thumbnails
+        /// </summary>
         public int ImageSize
         {
             get => _imageSize;
             set
             {
                 _imageSize = value;
-                lock (_lock)
-                {
-                    foreach (var kv in _controls)
-                    {
-                        kv.Value.ImageSize = ImageSize;
-                    }
-                }
+                foreach (var kv in _controls.Values.ToList()) kv.ImageSize = ImageSize;
                 ControlInvalidated();
             }
         }
 
+        /// <summary>
+        /// True to enable textures to be dragged using WinForms drag and drop
+        /// </summary>
         public bool EnableDrag { get; set; }
 
         #endregion
@@ -121,52 +134,58 @@ namespace Sledge.BspEditor.Tools.Texture
             AutoScroll = true;
             DoubleBuffered = true;
 
-            AllowSelection = true;
-            AllowMultipleSelection = true;
+            AllowHighlighting = true;
+            AllowMultipleHighlighting = true;
 
             _scrollBar = new VScrollBar { Dock = DockStyle.Right };
             _scrollBar.ValueChanged += (sender, e) => Invalidate();
-            _textures = new List<string>();
-            _selection = new HashSet<string>();
-            _imageSize = 128;
-
             Controls.Add(_scrollBar);
 
+            _updateTimer = new Timer {Enabled = false, Interval = 100};
+            _updateTimer.Tick += (s, e) =>
+            {
+                _updateTimer.Stop();
+                UpdateTexturePanels();
+                if (IsHandleCreated) Invalidate();
+            };
+        
+            _textures = new ThreadSafeList<string>();
+            _selection = new ThreadSafeSet<string>();
+            _controls = new ConcurrentDictionary<string, TextureControl>();
+            _imageSize = 128;
+
             UpdateTextureList();
-
-            _observable = Observable.FromEventPattern(x => DebouncedInvalidate += x, x => DebouncedInvalidate -= x)
-                .Throttle(TimeSpan.FromMilliseconds(100))
-                .Subscribe(x =>
-                {
-                    UpdateTexturePanels();
-                    if (IsHandleCreated) Invalidate();
-                });
-        }
-
-        #region Selection
-
-        public void SetSelectedTextures(IEnumerable<string> items)
-        {
-            _selection.Clear();
-            _selection.UnionWith(items);
             ControlInvalidated();
         }
 
-        private int _scrollToValue = -1;
-
-        public void ScrollToItem(string item)
+        private void ControlInvalidated()
         {
-            lock (_lock)
-            {
-                if (!_controls.ContainsKey(item)) return;
-                var con = _controls[item];
-
-                var rec = new Rectangle(con.Point, con.Size);
-                _scrollToValue = rec.Top;
-
-                ControlInvalidated();
-            }
+            this.InvokeLater(() => _updateTimer.Start());
         }
+
+        /// <summary>
+        /// Set the list of textures which are highlighted
+        /// </summary>
+        /// <param name="items">The list of texture names</param>
+        public void SetHighlightedTextures(IEnumerable<string> items)
+        {
+            _selection.Clear();
+            _selection.UnionWith(items);
+
+            ControlInvalidated();
+        }
+
+        /// <summary>
+        /// Scroll to a particular item in the list, if it exists
+        /// </summary>
+        /// <param name="item"></param>
+        public void ScrollToTexture(string item)
+        {
+            _scrollToItem = item;
+            ControlInvalidated();
+        }
+
+        #region Highlighting
 
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
@@ -179,10 +198,7 @@ namespace Sledge.BspEditor.Tools.Texture
             var clickedIndex = GetIndexAt(x, y);
 
             var item = _textures.ElementAt(clickedIndex);
-            if (_selection.Contains(item))
-            {
-                OnTextureSelected(item);
-            }
+            if (_selection.Contains(item)) TextureSelected?.Invoke(this, item);
         }
 
         private bool _down;
@@ -192,8 +208,8 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             base.OnMouseDown(e);
 
-            if (!AllowSelection) return;
-            if (!AllowMultipleSelection || !KeyboardState.Ctrl) _selection.Clear();
+            if (!AllowHighlighting) return;
+            if (!AllowMultipleHighlighting || !KeyboardState.Ctrl) _selection.Clear();
 
             if (e.Button == MouseButtons.Left)
             {
@@ -214,12 +230,12 @@ namespace Sledge.BspEditor.Tools.Texture
             {
                 _selection.Clear();
             }
-            else if (AllowMultipleSelection && KeyboardState.Ctrl && _selection.Contains(item))
+            else if (AllowMultipleHighlighting && KeyboardState.Ctrl && _selection.Contains(item))
             {
                 _selection.Remove(item);
                 _lastSelectedItem = null;
             }
-            else if (AllowMultipleSelection && KeyboardState.Shift && _lastSelectedItem != null)
+            else if (AllowMultipleHighlighting && KeyboardState.Shift && _lastSelectedItem != null)
             {
                 var bef = _textures.ToList().IndexOf(_lastSelectedItem);
                 var start = Math.Min(bef, clickedIndex);
@@ -231,8 +247,8 @@ namespace Sledge.BspEditor.Tools.Texture
                 _selection.Add(item);
                 _lastSelectedItem = item;
             }
-            OnSelectionChanged(_selection);
 
+            HighlightedTexturesChanged?.Invoke(this, _selection.ToList());
             Invalidate();
         }
 
@@ -255,18 +271,14 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private int GetIndexAt(int x, int y)
         {
-            lock (_lock)
+            for (var i = 0; i < _textures.Count; i++)
             {
-                for (var i = 0; i < _textures.Count; i++)
-                {
-                    var tex = _textures[i];
+                var tex = _textures[i];
 
-                    if (!_controls.ContainsKey(tex)) continue;
-                    var con = _controls[tex];
+                if (!_controls.TryGetValue(tex, out var con)) continue;
 
-                    var rec = new Rectangle(con.Point, con.Size);
-                    if (rec.Contains(x, y)) return i;
-                }
+                var rec = new Rectangle(con.Point, con.Size);
+                if (rec.Contains(x, y)) return i;
             }
             return -1;
         }
@@ -275,64 +287,75 @@ namespace Sledge.BspEditor.Tools.Texture
 
         #region Add/Remove/Get Textures
 
+        /// <summary>
+        /// Change the sort order of the textures in this list
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sortFunc">Function to sort by</param>
+        /// <param name="descending">True to sort in descending order</param>
         public void SortTextureList<T>(Func<string, T> sortFunc, bool descending)
         {
-            lock (_lock)
-            {
-                _textures = descending
-                    ? _textures.OrderByDescending(sortFunc).ToList()
-                    : _textures.OrderBy(sortFunc).ToList();
-            }
+            var newList = descending
+                ? _textures.OrderByDescending(sortFunc).ToList()
+                : _textures.OrderBy(sortFunc).ToList();
+
+            _textures.Clear();
+            _textures.AddRange(newList);
+
             ControlInvalidated();
         }
 
-        public IEnumerable<string> GetSelectedTextures()
+        /// <summary>
+        /// Get the list of textures which are currently highlighted
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> GetHighlightedTextures()
         {
             return _selection;
         }
 
-        private ITextureStreamSource _streamSource;
-
-        public async Task<Bitmap> GetTextureBitmap(string name, int maxWidth, int maxHeight)
+        /// <summary>
+        /// Set the list of textures visible in this list
+        /// </summary>
+        /// <param name="textures"></param>
+        /// <returns></returns>
+        public Task SetTextureList(IEnumerable<string> textures)
         {
-            if (_streamSource == null) return null;
-            return await _streamSource.GetImage(name, maxWidth, maxHeight);
-        }
-
-        public async Task SetTextureList(IEnumerable<string> textures)
-        {
-            lock (_lock)
-            {
-                _textures.Clear();
-                _lastSelectedItem = null;
-                _selection.Clear();
-                _textures.AddRange(textures);
-            }
+            _textures.Clear();
+            _lastSelectedItem = null;
+            _selection.Clear();
+            _textures.AddRange(textures);
 
             if (_streamSource == null) _streamSource = _collection.GetStreamSource();
             
             UpdateTextureList();
+            ControlInvalidated();
 
-            UpdateTexturePanels();
-            Invalidate();
+            return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Get the list of textures visible in this list
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<string> GetTextureList()
         {
             return _textures.ToList();
         }
 
+        /// <summary>
+        /// Remove all textures from this list
+        /// </summary>
         public void Clear()
         {
-            lock (_lock)
-            {
-                _textures.Clear();
-                _lastSelectedItem = null;
-                _selection.Clear();
-            }
+            _textures.Clear();
+            _lastSelectedItem = null;
+            _selection.Clear();
 
             _streamSource?.Dispose();
             _streamSource = null;
+
+            ControlInvalidated();
         }
 
         protected override void Dispose(bool disposing)
@@ -340,7 +363,7 @@ namespace Sledge.BspEditor.Tools.Texture
             if (disposing)
             {
                 Clear();
-                _observable.Dispose();
+                _updateTimer.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -380,7 +403,7 @@ namespace Sledge.BspEditor.Tools.Texture
                     ScrollByAmount(-int.MaxValue);
                     break;
                 case Keys.Enter:
-                    if (_selection.Count > 0) OnTextureSelected(_selection.First());
+                    if (_selection.Count > 0) TextureSelected?.Invoke(this, _selection.First());
                     break;
             }
             base.OnKeyDown(e);
@@ -402,30 +425,26 @@ namespace Sledge.BspEditor.Tools.Texture
             ControlInvalidated();
         }
 
-        private void ControlInvalidated()
+        private Task<Bitmap> GetTextureBitmap(string name, int maxWidth, int maxHeight)
         {
-            DebouncedInvalidate?.Invoke(this, EventArgs.Empty);
+            if (_streamSource == null) return Task.FromResult<Bitmap>(null);
+            return _streamSource.GetImage(name, maxWidth, maxHeight);
         }
 
         private void UpdateTextureList()
         {
-            lock (_lock)
+            foreach (var rem in _controls.Keys.Except(_textures).ToList())
             {
-                foreach (var rem in _controls.Keys.Except(_textures).ToList())
-                {
-                    var r = _controls[rem];
-                    _controls.Remove(rem);
-                    r.Dispose();
-                }
+                if (_controls.TryRemove(rem, out var r)) r.Dispose();
+            }
 
-                foreach (var add in _textures.Except(_controls.Keys).ToList())
+            foreach (var add in _textures.Except(_controls.Keys).ToList())
+            {
+                var ctrl = new TextureControl(add, GetTextureBitmap, Invalidate)
                 {
-                    var ctrl = new TextureControl(add, GetTextureBitmap, ControlInvalidated)
-                    {
-                        ImageSize = ImageSize
-                    };
-                    _controls[add] = ctrl;
-                }
+                    ImageSize = ImageSize
+                };
+                _controls.TryAdd(add, ctrl);
             }
         }
 
@@ -436,45 +455,42 @@ namespace Sledge.BspEditor.Tools.Texture
                 currentY = 0,
                 maxHeight = 0;
 
-            lock (_lock)
+            foreach (var tex in _textures)
             {
-                foreach (var tex in _textures)
+                if (!_controls.TryGetValue(tex, out var con)) continue;
+
+                var cw = con.Size.Width;
+                var ch = con.Size.Height;
+
+                if (currentX > 0 && currentX + cw > viewportWidth)
                 {
-                    if (!_controls.ContainsKey(tex)) continue;
-                    var con = _controls[tex];
-
-                    var cw = con.Size.Width;
-                    var ch = con.Size.Height;
-
-                    if (currentX > 0 && currentX + cw > viewportWidth)
-                    {
-                        currentX = 0;
-                        currentY += maxHeight;
-                        maxHeight = 0;
-                    }
-
-                    con.Point = new Point(currentX, currentY);
-
-                    currentX += cw;
-                    maxHeight = Math.Max(maxHeight, ch);
+                    currentX = 0;
+                    currentY += maxHeight;
+                    maxHeight = 0;
                 }
+
+                con.Point = new Point(currentX, currentY);
+                con.Positioned = true;
+
+                currentX += cw;
+                maxHeight = Math.Max(maxHeight, ch);
             }
 
-            _scrollBar.InvokeLater(() =>
+            _scrollBar.Maximum = currentY + maxHeight;
+            _scrollBar.SmallChange = _imageSize > 0 ? _imageSize : 128;
+            _scrollBar.LargeChange = ClientRectangle.Height;
+            if (_scrollToItem != null)
             {
-                _scrollBar.Maximum = currentY + maxHeight;
-                _scrollBar.SmallChange = _imageSize > 0 ? _imageSize : 128;
-                _scrollBar.LargeChange = ClientRectangle.Height;
-                if (_scrollToValue >= 0)
+                if (_controls.TryGetValue(_scrollToItem, out var con))
                 {
-                    _scrollBar.Value = Math.Max(0, Math.Min(_scrollToValue, _scrollBar.Maximum - ClientRectangle.Height));
-                    _scrollToValue = -1;
+                    _scrollBar.Value = Math.Max(0, Math.Min(con.Point.Y, _scrollBar.Maximum - ClientRectangle.Height));
                 }
-                if (_scrollBar.Value > _scrollBar.Maximum - ClientRectangle.Height)
-                {
-                    _scrollBar.Value = Math.Max(0, _scrollBar.Maximum - ClientRectangle.Height);
-                }
-            });
+                _scrollToItem = null;
+            }
+            if (_scrollBar.Value > _scrollBar.Maximum - ClientRectangle.Height)
+            {
+                _scrollBar.Value = Math.Max(0, _scrollBar.Maximum - ClientRectangle.Height);
+            }
         }
 
         #endregion
@@ -490,42 +506,52 @@ namespace Sledge.BspEditor.Tools.Texture
         private void RenderTextures(Graphics g)
         {
             if (_textures.Count == 0 || _streamSource == null) return;
+            
+            var y = _scrollBar.Value;
+            var height = ClientRectangle.Height;
 
-            lock (_lock)
+            var done = false;
+            foreach (var tex in _textures)
             {
-                var y = _scrollBar.Value;
-                var height = ClientRectangle.Height;
+                if (!_controls.TryGetValue(tex, out var con)) continue;
+                if (!con.Positioned) continue;
 
-                var done = false;
-                foreach (var tex in _textures)
+                var rec = new Rectangle(con.Point, con.Size);
+                if (rec.Top > y + height)
                 {
-                    if (!_controls.ContainsKey(tex)) continue;
-                    var con = _controls[tex];
-
-                    var rec = new Rectangle(con.Point, con.Size);
-                    if (rec.Top > y + height)
-                    {
-                        done = true;
-                    }
-                    if (done || rec.Bottom < y)
-                    {
-                        con.Release();
-                        continue;
-                    }
-                    con.Paint(g, rec.X, rec.Y - y, _selection.Contains(tex));
+                    done = true;
                 }
+
+                if (done || rec.Bottom < y)
+                {
+                    con.Release();
+                    continue;
+                }
+
+                con.Paint(g, rec.X, rec.Y - y, _selection.Contains(tex));
             }
         }
 
         #endregion
+
+        protected override void CreateHandle()
+        {
+            base.CreateHandle();
+            ControlInvalidated();
+        }
 
         protected override void DestroyHandle()
         {
             base.DestroyHandle();
             _streamSource?.Dispose();
             _streamSource = null;
+            _updateTimer.Stop();
         }
 
+        /// <summary>
+        /// A virtual control which holds the location and size of a texture.
+        /// The texture itself can be created and released from memory on demand.
+        /// </summary>
         private class TextureControl : IDisposable
         {
             private readonly Func<string, int, int, Task<Bitmap>> _getTextureBitmap;
@@ -556,6 +582,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 }
             }
 
+            public bool Positioned { get; set; }
             public Point Point { get; set; }
 
             private Size _size;
@@ -570,8 +597,8 @@ namespace Sledge.BspEditor.Tools.Texture
             }
 
             private const int Padding = 3;
-            private static Font Font = SystemFonts.MessageBoxFont;
-            private static int FontHeight = SystemFonts.MessageBoxFont.Height;
+            private static readonly Font Font = SystemFonts.MessageBoxFont;
+            private static readonly int FontHeight = SystemFonts.MessageBoxFont.Height;
 
             private void SetSize(int imageWidth, int imageHeight)
             {
@@ -587,12 +614,14 @@ namespace Sledge.BspEditor.Tools.Texture
 
             public void Paint(Graphics g, int x, int y, bool selected)
             {
+                // If we get a request to paint, the image needs to be loaded if it's not already
                 if (_bitmapTask == null)
                 {
                     _bitmapTask = _getTextureBitmap(TextureName, 256, 256);
-                    _bitmapTask.ContinueWith(b => _invalidated());
+                    _bitmapTask.ContinueWith(b => _invalidated()); // Make sure the parent repaints once the bitmap is done loading
                 }
 
+                // Draw the border
                 if (selected)
                 {
                     g.DrawRectangle(Pens.Red, new Rectangle(x + 1, y + 1, Size.Width - 2, Size.Height - 2));
@@ -602,8 +631,11 @@ namespace Sledge.BspEditor.Tools.Texture
                 {
                     g.DrawRectangle(Pens.Gray, new Rectangle(x + 1, y + 1, Size.Width - 2, Size.Height - 2));
                 }
+
+                // Draw the texture name
                 g.DrawString(TextureName, Font, Brushes.White, x + 1, y + Size.Height - FontHeight - Padding);
 
+                // Draw the image (if it's loaded)
                 if (_bitmapTask != null && _bitmapTask.IsCompleted)
                 {
                     var img = _bitmapTask.Result;
@@ -635,13 +667,12 @@ namespace Sledge.BspEditor.Tools.Texture
 
             public void Dispose()
             {
-                _bitmapTask?.ContinueWith(x =>
-                {
-                    x.Result?.Dispose();
-                    x.Dispose();
-                });
+                Release();
             }
 
+            /// <summary>
+            /// Release the bitmap held by this control, but ensure it can be re-created if required.
+            /// </summary>
             public void Release()
             {
                 _bitmapTask?.ContinueWith(x =>

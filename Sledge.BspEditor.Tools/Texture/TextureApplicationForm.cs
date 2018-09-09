@@ -75,8 +75,8 @@ namespace Sledge.BspEditor.Tools.Texture
             InitializeComponent();
             InitialiseTextureLists();
 
-            SelectedTexturesList.SelectionChanged += TextureListSelectionChanged;
-            RecentTexturesList.SelectionChanged += TextureListSelectionChanged;
+            SelectedTexturesList.HighlightedTexturesChanged += TextureListHighlightedTexturesChanged;
+            RecentTexturesList.HighlightedTexturesChanged += TextureListHighlightedTexturesChanged;
 
             _freeze = false;
 
@@ -182,8 +182,8 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             RecentTexturesList = new TextureListPanel
             {
-                AllowMultipleSelection = false,
-                AllowSelection = true,
+                AllowMultipleHighlighting = false,
+                AllowHighlighting = true,
                 Dock = DockStyle.Fill,
                 AutoScroll = true,
                 BackColor = Color.Black,
@@ -193,8 +193,8 @@ namespace Sledge.BspEditor.Tools.Texture
 
             SelectedTexturesList = new TextureListPanel
             {
-                AllowMultipleSelection = false,
-                AllowSelection = true,
+                AllowMultipleHighlighting = false,
+                AllowHighlighting = true,
                 Dock = DockStyle.Fill,
                 AutoScroll = true,
                 BackColor = Color.Black,
@@ -266,16 +266,16 @@ namespace Sledge.BspEditor.Tools.Texture
         private string GetFirstSelectedTexture()
         {
             return RecentTexturesList
-                .GetSelectedTextures()
-                .Union(SelectedTexturesList.GetSelectedTextures())
+                .GetHighlightedTextures()
+                .Union(SelectedTexturesList.GetHighlightedTextures())
                 .FirstOrDefault();
         }
 
         private IEnumerable<string> GetSelectedTextures()
         {
             return RecentTexturesList
-                .GetSelectedTextures()
-                .Union(SelectedTexturesList.GetSelectedTextures());
+                .GetHighlightedTextures()
+                .Union(SelectedTexturesList.GetHighlightedTextures());
         }
 
         public FaceSelection GetFaceSelection()
@@ -289,7 +289,7 @@ namespace Sledge.BspEditor.Tools.Texture
             return fs;
         }
 
-        private async void TextureListSelectionChanged(object sender, IEnumerable<string> sel)
+        private async void TextureListHighlightedTexturesChanged(object sender, IEnumerable<string> sel)
         {
             if (_freeze) return;
 
@@ -300,14 +300,14 @@ namespace Sledge.BspEditor.Tools.Texture
 
             if (selection.Any())
             {
-                if (sender == SelectedTexturesList) RecentTexturesList.SetSelectedTextures(new string[0]);
-                if (sender == RecentTexturesList) SelectedTexturesList.SetSelectedTextures(new string[0]);
+                if (sender == SelectedTexturesList) RecentTexturesList.SetHighlightedTextures(new string[0]);
+                if (sender == RecentTexturesList) SelectedTexturesList.SetHighlightedTextures(new string[0]);
             }
             else
             {
                 item = RecentTexturesList
-                    .GetSelectedTextures()
-                    .Union(SelectedTexturesList.GetSelectedTextures())
+                    .GetHighlightedTextures()
+                    .Union(SelectedTexturesList.GetHighlightedTextures())
                     .FirstOrDefault();
             }
 
@@ -345,7 +345,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
             if (item == null)
             {
-                SelectedTexturesList.SetSelectedTextures(new string[0]);
+                SelectedTexturesList.SetHighlightedTextures(new string[0]);
                 return;
             }
 
@@ -358,14 +358,14 @@ namespace Sledge.BspEditor.Tools.Texture
             var sl = SelectedTexturesList.GetTextureList();
             if (sl.Any(x => String.Equals(x, item, StringComparison.InvariantCultureIgnoreCase)))
             {
-                SelectedTexturesList.SetSelectedTextures(new[] { item });
-                SelectedTexturesList.ScrollToItem(item);
+                SelectedTexturesList.SetHighlightedTextures(new[] { item });
+                SelectedTexturesList.ScrollToTexture(item);
             }
             else if (RecentTexturesList.GetTextureList().Contains(item))
             {
                 // Otherwise, select the texture in the recent list
-                RecentTexturesList.SetSelectedTextures(new[] {item});
-                RecentTexturesList.ScrollToItem(item);
+                RecentTexturesList.SetHighlightedTextures(new[] {item});
+                RecentTexturesList.ScrollToTexture(item);
             }
         }
 
@@ -429,8 +429,8 @@ namespace Sledge.BspEditor.Tools.Texture
 
                 TextureDetailsLabel.Text = labelText;
                 SelectedTexturesList.SetTextureList(textures);
-                SelectedTexturesList.SetSelectedTextures(textures);
-                RecentTexturesList.SetSelectedTextures(new string[0]);
+                SelectedTexturesList.SetHighlightedTextures(textures);
+                RecentTexturesList.SetHighlightedTextures(new string[0]);
                 HideMaskCheckbox.Checked = Document.Map.Data.GetOne<HideFaceMask>()?.Hidden == true;
 
                 _freeze = false;

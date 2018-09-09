@@ -32,7 +32,7 @@ namespace Sledge.Common.Threading
             lock (_lock) _set.Add(item);
         }
 
-        bool ISet<T>.Add(T item)
+        public bool Add(T item)
         {
             lock (_lock) return _set.Add(item);
         }

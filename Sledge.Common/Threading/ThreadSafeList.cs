@@ -90,6 +90,11 @@ namespace Sledge.Common.Threading
             lock (_lock) _list.CopyTo(array, arrayIndex);
         }
 
+        public List<T> GetRange(int start, int count)
+        {
+            lock (_lock) return _list.GetRange(start, count);
+        }
+
         public IEnumerator<T> GetEnumerator()
         {
             lock (_lock) return _list.ToList().GetEnumerator();
