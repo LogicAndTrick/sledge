@@ -65,6 +65,9 @@
     <Compile Include="Compile\BatchCallback.cs" />
     <Compile Include="Compile\BatchProcess.cs" />
     <Compile Include="Compile\BatchStep.cs" />
+    <Compile Include="Components\MapDocumentContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\FileSystem\FileSystemBrowserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -78,6 +81,21 @@
       <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\FileSystem\FileSystemIcons.cs" />
+    <Compile Include="Controls\Layout\CreateLayoutWindow.cs" />
+    <Compile Include="Controls\Layout\LayoutSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\Layout\LayoutSettings.designer.cs">
+      <DependentUpon>LayoutSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Layout\MapDocumentControlWindowConfiguration.cs" />
+    <Compile Include="Controls\Layout\OpenWindowSettings.cs" />
+    <Compile Include="Controls\Layout\ViewportWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\Layout\ViewportWindow.designer.cs">
+      <DependentUpon>ViewportWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Documents\BspSourceDocumentLoader.cs" />
     <Compile Include="Commands\Clipboard\Copy.cs" />
     <Compile Include="Commands\Clipboard\Cut.cs" />
@@ -142,6 +160,7 @@
     <Compile Include="Grid\NoGridFactory.cs" />
     <Compile Include="Grid\SquareGrid.cs" />
     <Compile Include="Grid\SquareGridFactory.cs" />
+    <Compile Include="MenuDataProvider.cs" />
     <Compile Include="Modification\ChangeHandling\ChangeHandler.cs" />
     <Compile Include="Modification\ChangeHandling\CordonHandler.cs" />
     <Compile Include="Modification\ChangeHandling\IMapDocumentChangeHandler.cs" />
@@ -269,6 +288,12 @@
     <EmbeddedResource Include="Controls\FileSystem\FileSystemBrowserDialog.resx">
       <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Layout\LayoutSettings.resx">
+      <DependentUpon>LayoutSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Layout\ViewportWindow.resx">
+      <DependentUpon>ViewportWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Environment\Controls\EnvironmentCollectionEditor.resx">
       <DependentUpon>EnvironmentCollectionEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -290,12 +315,14 @@
     <Content Include="Resources\DottedGrid.png" />
     <Content Include="Resources\Menu_Delete.png" />
     <Content Include="Resources\Menu_Group.png" />
+    <Content Include="Resources\Menu_NewWindow.png" />
     <Content Include="Resources\Menu_SelectNone.png" />
     <Content Include="Resources\Menu_Copy.png" />
     <Content Include="Resources\Menu_Cut.png" />
     <Content Include="Resources\Menu_Paste.png" />
     <Content Include="Resources\Menu_SelectAll.png" />
     <Content Include="Resources\Menu_Ungroup.png" />
+    <Content Include="Resources\Menu_WindowSettings.png" />
     <Content Include="Translations\Sledge.BspEditor.en.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

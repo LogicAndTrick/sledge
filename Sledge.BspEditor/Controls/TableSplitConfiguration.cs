@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace Sledge.BspEditor.Controls
 {
@@ -33,6 +34,16 @@ namespace Sledge.BspEditor.Controls
                 }
             }
             return set == Columns * Rows;
+        }
+
+        public TableSplitConfiguration Clone()
+        {
+            return new TableSplitConfiguration
+            {
+                Columns = Columns,
+                Rows = Rows,
+                Rectangles = Rectangles.ToList()
+            };
         }
 
         public static TableSplitConfiguration Default()

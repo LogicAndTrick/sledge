@@ -59,6 +59,27 @@
             "Title": "Clipboard"
         }
     },
+    "Controls": {
+        "Layout": {
+            "OpenWindowSettings": {
+                "Name": "Modify window layout...",
+                "Details": "Open the window layout settings dialog"
+            },
+            "CreateLayoutWindow": {
+                "Name": "New window",
+                "Details": "Create a new window"
+            },
+            "LayoutSettings": {
+                "Window": "Window",
+                "Rows": "Rows",
+                "Columns": "Columns",
+                "Apply": "Apply",
+                "Cancel": "Cancel",
+                "Instructions": "Each rectangle represents a viewport.\nClick and drag rectangles to combine viewports.\nClick a combined viewport to un-combine it.",
+                "ClickAPreset": "Click to try a preset layout:"
+            }
+        }
+    },
     "Documents": {
         "BspSourceDocumentLoader": {
             "FileTypeDescription": "BSP Source File",
@@ -111,5 +132,8 @@
                 "NumObjectsSelected": "{0} objects selected"
             }
         }
+    },
+    "MenuDataProvider": {
+        "Window": "Window"
     } 
 }

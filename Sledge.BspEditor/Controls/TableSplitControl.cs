@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -13,13 +14,13 @@ namespace Sledge.BspEditor.Controls
         private bool _resizing;
 
         public int MinimumViewSize { get; set; }
-        private int MaximumViewSize { get { return 100 - MinimumViewSize; } }
+        private int MaximumViewSize => 100 - MinimumViewSize;
 
         private TableSplitConfiguration _configuration;
 
         public TableSplitConfiguration Configuration
         {
-            get { return _configuration; }
+            get => _configuration;
             set
             {
                 if (!value.IsValid()) return;
@@ -34,7 +35,7 @@ namespace Sledge.BspEditor.Controls
             set
             {
                 var vals = value.ToList();
-                while (vals.Count < RowCount) vals.Add(RowStyles[vals.Count - 1].Height);
+                while (vals.Count < RowStyles.Count) vals.Add(RowStyles[vals.Count].Height);
                 var total = vals.Aggregate(0f, (a, b) => a + b);
                 vals = vals.Select(x => x / total * 100).ToList();
                 for (var i = 0; i < vals.Count; i++)
@@ -50,7 +51,7 @@ namespace Sledge.BspEditor.Controls
             set
             {
                 var vals = value.ToList();
-                while (vals.Count < RowCount) vals.Add(ColumnStyles[vals.Count - 1].Width);
+                while (vals.Count < ColumnStyles.Count) vals.Add(ColumnStyles[vals.Count].Width);
                 var total = vals.Aggregate(0f, (a, b) => a + b);
                 vals = vals.Select(x => x / total * 100).ToList();
                 for (var i = 0; i < vals.Count; i++)
@@ -62,12 +63,41 @@ namespace Sledge.BspEditor.Controls
 
         private void ResetLayout()
         {
+            SuspendLayout();
+
+            // Remove any controls that aren't in the layout anymore
+            var recs = _configuration.Rectangles.ToList();
+            foreach (var cc in Controls.OfType<Control>().ToList())
+            {
+                var pos = GetPositionFromControl(cc);
+                if (recs.Any(x => x.Y == pos.Row && x.X == pos.Column)) continue;
+
+                Controls.Remove(cc);
+                cc.Dispose();
+            }
+
+            // Set the new layout
             RowCount = _configuration.Rows;
             ColumnCount = _configuration.Columns;
             ColumnStyles.Clear();
             RowStyles.Clear();
             for (var i = 0; i < ColumnCount; i++) ColumnStyles.Add(new ColumnStyle(SizeType.Percent, (int)(100m / ColumnCount)));
             for (var i = 0; i < RowCount; i++) RowStyles.Add(new RowStyle(SizeType.Percent, (int)(100m / RowCount)));
+
+            // Make sure there's at least an empty control in every cell
+            foreach (var rec in recs)
+            {
+                var i = rec.X;
+                var j = rec.Y;
+                var c = GetControlFromPosition(i, j);
+                if (c == null) Controls.Add(c = new Panel {BackColor = SystemColors.ControlDark, Dock = DockStyle.Fill});
+                SetRow(c, rec.Y);
+                SetColumn(c, rec.X);
+                SetRowSpan(c, rec.Height);
+                SetColumnSpan(c, rec.Width);
+            }
+
+            ResumeLayout();
             ResetViews();
         }
 

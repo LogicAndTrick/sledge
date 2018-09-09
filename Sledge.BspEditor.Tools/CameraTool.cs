@@ -37,6 +37,16 @@ namespace Sledge.BspEditor.Tools
         private State _state;
         private Camera _stateCamera;
 
+        private readonly Lazy<MapDocumentControlHost> _controlHost;
+
+        [ImportingConstructor]
+        public CameraTool(
+            [Import] Lazy<MapDocumentControlHost> controlHost
+        )
+        {
+            _controlHost = controlHost;
+        }
+        
         protected override IEnumerable<Subscription> Subscribe()
         {
             yield return Oy.Subscribe<object>("BspEditor:CameraNext", CameraNext);
@@ -103,7 +113,7 @@ namespace Sledge.BspEditor.Tools
 
         private Tuple<Vector3, Vector3> GetViewportCamera()
         {
-            var cam = MapDocumentControlHost.Instance.GetControls().OfType<ViewportMapDocumentControl>().Select(x => x.Camera).OfType<PerspectiveCamera>().FirstOrDefault();
+            var cam = _controlHost.Value.GetControls().OfType<ViewportMapDocumentControl>().Select(x => x.Camera).OfType<PerspectiveCamera>().FirstOrDefault();
             if (cam == null) return null;
 
             var pos = cam.Position;
@@ -115,7 +125,7 @@ namespace Sledge.BspEditor.Tools
 
         private void SetViewportCamera(Vector3 position, Vector3 look)
         {
-            var cam = MapDocumentControlHost.Instance.GetControls().OfType<ViewportMapDocumentControl>().Select(x => x.Camera).OfType<PerspectiveCamera>().FirstOrDefault();
+            var cam = _controlHost.Value.GetControls().OfType<ViewportMapDocumentControl>().Select(x => x.Camera).OfType<PerspectiveCamera>().FirstOrDefault();
             if (cam == null) return;
 
             look = (look - position).Normalise() + position;
