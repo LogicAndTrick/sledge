@@ -107,12 +107,12 @@
             // SortByLabel
             // 
             this.SortByLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.SortByLabel.AutoSize = true;
-            this.SortByLabel.Location = new System.Drawing.Point(774, 12);
+            this.SortByLabel.Location = new System.Drawing.Point(680, 9);
             this.SortByLabel.Name = "SortByLabel";
-            this.SortByLabel.Size = new System.Drawing.Size(41, 13);
+            this.SortByLabel.Size = new System.Drawing.Size(135, 21);
             this.SortByLabel.TabIndex = 8;
             this.SortByLabel.Text = "Sort By";
+            this.SortByLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // SizeCombo
             // 
@@ -123,7 +123,7 @@
             "128",
             "256",
             "512"});
-            this.SizeCombo.Location = new System.Drawing.Point(47, 32);
+            this.SizeCombo.Location = new System.Drawing.Point(85, 34);
             this.SizeCombo.Name = "SizeCombo";
             this.SizeCombo.Size = new System.Drawing.Size(179, 21);
             this.SizeCombo.TabIndex = 7;
@@ -132,7 +132,7 @@
             // TextureSizeLabel
             // 
             this.TextureSizeLabel.AutoSize = true;
-            this.TextureSizeLabel.Location = new System.Drawing.Point(379, 36);
+            this.TextureSizeLabel.Location = new System.Drawing.Point(427, 38);
             this.TextureSizeLabel.Name = "TextureSizeLabel";
             this.TextureSizeLabel.Size = new System.Drawing.Size(27, 13);
             this.TextureSizeLabel.TabIndex = 6;
@@ -141,7 +141,7 @@
             // TextureNameLabel
             // 
             this.TextureNameLabel.AutoSize = true;
-            this.TextureNameLabel.Location = new System.Drawing.Point(379, 9);
+            this.TextureNameLabel.Location = new System.Drawing.Point(427, 11);
             this.TextureNameLabel.Name = "TextureNameLabel";
             this.TextureNameLabel.Size = new System.Drawing.Size(35, 13);
             this.TextureNameLabel.TabIndex = 6;
@@ -149,9 +149,9 @@
             // 
             // SelectButton
             // 
-            this.SelectButton.Location = new System.Drawing.Point(232, 32);
+            this.SelectButton.Location = new System.Drawing.Point(270, 34);
             this.SelectButton.Name = "SelectButton";
-            this.SelectButton.Size = new System.Drawing.Size(57, 20);
+            this.SelectButton.Size = new System.Drawing.Size(92, 20);
             this.SelectButton.TabIndex = 5;
             this.SelectButton.Text = "Select";
             this.SelectButton.UseVisualStyleBackColor = true;
@@ -160,7 +160,7 @@
             // UsedTexturesOnlyBox
             // 
             this.UsedTexturesOnlyBox.AutoSize = true;
-            this.UsedTexturesOnlyBox.Location = new System.Drawing.Point(232, 9);
+            this.UsedTexturesOnlyBox.Location = new System.Drawing.Point(270, 11);
             this.UsedTexturesOnlyBox.Name = "UsedTexturesOnlyBox";
             this.UsedTexturesOnlyBox.Size = new System.Drawing.Size(113, 17);
             this.UsedTexturesOnlyBox.TabIndex = 4;
@@ -170,17 +170,17 @@
             // 
             // SizeLabel
             // 
-            this.SizeLabel.AutoSize = true;
-            this.SizeLabel.Location = new System.Drawing.Point(14, 35);
+            this.SizeLabel.Location = new System.Drawing.Point(3, 34);
             this.SizeLabel.Name = "SizeLabel";
-            this.SizeLabel.Size = new System.Drawing.Size(27, 13);
+            this.SizeLabel.Size = new System.Drawing.Size(76, 21);
             this.SizeLabel.TabIndex = 2;
             this.SizeLabel.Text = "Size";
+            this.SizeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // FilterTextbox
             // 
             this.FilterTextbox.HideSelection = false;
-            this.FilterTextbox.Location = new System.Drawing.Point(47, 6);
+            this.FilterTextbox.Location = new System.Drawing.Point(85, 8);
             this.FilterTextbox.Name = "FilterTextbox";
             this.FilterTextbox.Size = new System.Drawing.Size(179, 20);
             this.FilterTextbox.TabIndex = 1;
@@ -188,12 +188,12 @@
             // 
             // FilterLabel
             // 
-            this.FilterLabel.AutoSize = true;
-            this.FilterLabel.Location = new System.Drawing.Point(12, 9);
+            this.FilterLabel.Location = new System.Drawing.Point(3, 8);
             this.FilterLabel.Name = "FilterLabel";
-            this.FilterLabel.Size = new System.Drawing.Size(29, 13);
+            this.FilterLabel.Size = new System.Drawing.Size(76, 20);
             this.FilterLabel.TabIndex = 0;
             this.FilterLabel.Text = "Filter";
+            this.FilterLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // FavouritesTree
             // 
@@ -229,9 +229,9 @@
             // DeleteFavouriteFolderButton
             // 
             this.DeleteFavouriteFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.DeleteFavouriteFolderButton.Location = new System.Drawing.Point(104, 446);
+            this.DeleteFavouriteFolderButton.Location = new System.Drawing.Point(113, 446);
             this.DeleteFavouriteFolderButton.Name = "DeleteFavouriteFolderButton";
-            this.DeleteFavouriteFolderButton.Size = new System.Drawing.Size(86, 23);
+            this.DeleteFavouriteFolderButton.Size = new System.Drawing.Size(110, 23);
             this.DeleteFavouriteFolderButton.TabIndex = 3;
             this.DeleteFavouriteFolderButton.Text = "Delete Folder";
             this.DeleteFavouriteFolderButton.UseVisualStyleBackColor = true;
@@ -242,7 +242,7 @@
             this.RemoveFavouriteItemButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RemoveFavouriteItemButton.Location = new System.Drawing.Point(3, 469);
             this.RemoveFavouriteItemButton.Name = "RemoveFavouriteItemButton";
-            this.RemoveFavouriteItemButton.Size = new System.Drawing.Size(187, 23);
+            this.RemoveFavouriteItemButton.Size = new System.Drawing.Size(220, 23);
             this.RemoveFavouriteItemButton.TabIndex = 3;
             this.RemoveFavouriteItemButton.Text = "Remove Selection From Folder";
             this.RemoveFavouriteItemButton.UseVisualStyleBackColor = true;
@@ -253,7 +253,7 @@
             this.AddFavouriteFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AddFavouriteFolderButton.Location = new System.Drawing.Point(3, 446);
             this.AddFavouriteFolderButton.Name = "AddFavouriteFolderButton";
-            this.AddFavouriteFolderButton.Size = new System.Drawing.Size(100, 23);
+            this.AddFavouriteFolderButton.Size = new System.Drawing.Size(110, 23);
             this.AddFavouriteFolderButton.TabIndex = 3;
             this.AddFavouriteFolderButton.Text = "Add Folder";
             this.AddFavouriteFolderButton.UseVisualStyleBackColor = true;

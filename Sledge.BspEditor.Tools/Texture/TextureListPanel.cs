@@ -152,6 +152,8 @@ namespace Sledge.BspEditor.Tools.Texture
             ControlInvalidated();
         }
 
+        private int _scrollToValue = -1;
+
         public void ScrollToItem(string item)
         {
             lock (_lock)
@@ -160,8 +162,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 var con = _controls[item];
 
                 var rec = new Rectangle(con.Point, con.Size);
-                var yscroll = Math.Max(0, Math.Min(rec.Top, _scrollBar.Maximum - ClientRectangle.Height));
-                _scrollBar.Value = yscroll;
+                _scrollToValue = rec.Top;
 
                 ControlInvalidated();
             }
@@ -464,7 +465,11 @@ namespace Sledge.BspEditor.Tools.Texture
                 _scrollBar.Maximum = currentY + maxHeight;
                 _scrollBar.SmallChange = _imageSize > 0 ? _imageSize : 128;
                 _scrollBar.LargeChange = ClientRectangle.Height;
-
+                if (_scrollToValue >= 0)
+                {
+                    _scrollBar.Value = Math.Max(0, Math.Min(_scrollToValue, _scrollBar.Maximum - ClientRectangle.Height));
+                    _scrollToValue = -1;
+                }
                 if (_scrollBar.Value > _scrollBar.Maximum - ClientRectangle.Height)
                 {
                     _scrollBar.Value = Math.Max(0, _scrollBar.Maximum - ClientRectangle.Height);

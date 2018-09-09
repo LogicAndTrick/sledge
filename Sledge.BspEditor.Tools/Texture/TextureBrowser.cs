@@ -8,6 +8,7 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Translations;
 using Sledge.Shell;
@@ -22,17 +23,12 @@ namespace Sledge.BspEditor.Tools.Texture
         public TextureBrowser(MapDocument document)
         {
             _document = document;
-            var sz = GetMemory("SizeMode", 1);
-            var so = GetMemory("SortBy", 0);
-
             InitializeComponent();
             InitialiseTextureList();
 
-            _textureList.TextureSelected += TextureSelected;
-            _textureList.SelectionChanged += SelectionChanged;
-            SizeCombo.SelectedIndex = 1;
-            _textures = new List<string>();
-            SelectedTexture = null;
+            // Setup memory & other controls
+            var sz = GetMemory("SizeMode", 1);
+            var so = GetMemory("SortBy", 0);
 
             SortOrderCombo.Items.Clear();
             SortOrderCombo.Items.Add("Name");
@@ -44,6 +40,12 @@ namespace Sledge.BspEditor.Tools.Texture
             SizeCombo.SelectedIndex = sz;
             SortOrderCombo.SelectedIndex = so;
             SortDescendingCheckbox.Checked = GetMemory("SortDescending", false);
+            
+            _textureList.TextureSelected += TextureSelected;
+            _textureList.SelectionChanged += SelectionChanged;
+            SizeCombo.SelectedIndex = 1;
+            _textures = new List<string>();
+            SelectedTexture = null;
 
             SelectionChanged(null, _textureList.GetSelectedTextures());
         }
@@ -95,10 +97,10 @@ namespace Sledge.BspEditor.Tools.Texture
 
             _textures.Clear();
             _textures.AddRange(_textureList.Collection.GetBrowsableTextures());
-
-            _textureList.SetTextureList(_textures);
-            _textureList.SortTextureList(x => x, GetMemory("SortDescending", false));
+            
             UpdatePackageList();
+            UpdateTextureList();
+            _textureList.SortTextureList(x => x, GetMemory("SortDescending", false));
 
             translation.Translate(this);
         }
@@ -126,8 +128,8 @@ namespace Sledge.BspEditor.Tools.Texture
                     {
                         this.InvokeLater(() =>
                         {
-                            TextureNameLabel.Text = ti.Result.Name;
-                            TextureSizeLabel.Text = $@"{ti.Result.Width} x {ti.Result.Height}";
+                            TextureNameLabel.Text = ti == null ? t : ti.Result.Name;
+                            TextureSizeLabel.Text = ti == null ? "" : $@"{ti.Result.Width} x {ti.Result.Height}";
                         });
                     });
                 });
@@ -191,7 +193,7 @@ namespace Sledge.BspEditor.Tools.Texture
         {
             PackageTree.SelectedNode = null;
             var favourite = FavouritesTree.SelectedNode;
-            var key = favourite == null ? null : favourite.Name;
+            var key = favourite?.Name;
             if (String.IsNullOrWhiteSpace(key)) key = null;
             SetMemory("SelectedFavourite", key);
             SetMemory("SelectedPackage", (string)null);
@@ -222,6 +224,17 @@ namespace Sledge.BspEditor.Tools.Texture
             PackageTree.ExpandAll();
         }
 
+        private IEnumerable<string> GetPackageTextures()
+        {
+            var package = PackageTree.SelectedNode;
+            var key = package?.Name;
+            if (String.IsNullOrWhiteSpace(key)) key = null;
+            var p = _textureList.Collection.Packages.FirstOrDefault(x => x.ToString() == key);
+            var set = new HashSet<string>(_textures);
+            if (p != null) set.IntersectWith(p.Textures);
+            return set;
+        }
+
         private void UpdateFavouritesList()
         {
             //var selected = FavouritesTree.SelectedNode;
@@ -235,34 +248,33 @@ namespace Sledge.BspEditor.Tools.Texture
             //FavouritesTree.ExpandAll();
         }
 
-        //private void AddFavouriteTextureFolders(TreeNode parent, IEnumerable<FavouriteTextureFolder> folders, string selectedKey, out TreeNode reselect)
-        //{
-        //    reselect = null;
-        //    foreach (var fav in folders)
-        //    {
-        //        var items = GetTexturesInFavourite(fav);
-        //        var node = parent.Nodes.Add(parent.Tag + "/" + fav.Name, fav.Name + " (" + items.Count + ")");
-        //        AddFavouriteTextureFolders(node, fav.Children, selectedKey, out reselect);
-        //        if (selectedKey == node.Name) reselect = node;
-        //        node.Tag = fav;
-        //    }
-        //}
+        private async Task UpdateTextureList()
+        {
+            var list = FavouritesTree.SelectedNode != null ? GetFavouriteFolderTextures() : GetPackageTextures();
+            if (!String.IsNullOrEmpty(FilterTextbox.Text))
+            {
+                list = list.Where(x => x.ToLower().Contains(FilterTextbox.Text.ToLower()));
+            }
+            if (UsedTexturesOnlyBox.Checked && _document != null)
+            {
+                var textureNames = new HashSet<string>(_document.Map.Root.FindAll().SelectMany(x => x.Data.OfType<ITextured>()).Select(x => x.Texture.Name).Distinct());
+                list = list.Where(x => textureNames.Contains(x, StringComparer.InvariantCultureIgnoreCase));
+            }
+            var l = list.ToList();
+            await _textureList.SetTextureList(l);
+
+            var sel = _document?.Map.Data.GetOne<ActiveTexture>()?.Name;
+            if (sel != null)
+            {
+                _textureList.SetSelectedTextures(new[] { sel });
+                _textureList.ScrollToItem(sel);
+            }
+        }
 
         //private List<string> GetTexturesInFavourite(FavouriteTextureFolder fav)
         //{
         //    return _textures.Where(x => InFavouriteList(fav.Items, x)).ToList();
         //}
-
-        private IEnumerable<string> GetPackageTextures()
-        {
-            var package = PackageTree.SelectedNode;
-            var key = package?.Name;
-            if (String.IsNullOrWhiteSpace(key)) key = null;
-            var p = _textureList.Collection.Packages.FirstOrDefault(x => x.ToString() == key);
-            var set = new HashSet<string>(_textures);
-            if (p != null) set.IntersectWith(p.Textures);
-            return set;
-        }
 
         private IEnumerable<string> GetFavouriteFolderTextures()
         {
@@ -288,30 +300,7 @@ namespace Sledge.BspEditor.Tools.Texture
         //        favs.Add(f);
         //        CollectNodes(favs, f.Children);
         //    }
-        //} 
-
-        private async Task UpdateTextureList()
-        {
-            var list = FavouritesTree.SelectedNode != null ? GetFavouriteFolderTextures() : GetPackageTextures();
-            if (!String.IsNullOrEmpty(FilterTextbox.Text))
-            {
-                list = list.Where(x => x.ToLower().Contains(FilterTextbox.Text.ToLower()));
-            }
-            if (UsedTexturesOnlyBox.Checked && _document != null)
-            {
-                var textureNames = new HashSet<string>(_document.Map.Root.FindAll().SelectMany(x => x.Data.OfType<ITextured>()).Select(x => x.Texture.Name).Distinct());
-                list = list.Where(x => textureNames.Contains(x, StringComparer.InvariantCultureIgnoreCase));
-            }
-            var l = list.ToList();
-            await _textureList.SetTextureList(l);
-
-            //var sel = _document?.TextureCollection.SelectedTexture;
-            //if (sel != null)
-            //{
-            //    _textureList.SetSelectedTextures(new[] { sel });
-            //    _textureList.ScrollToItem(sel);
-            //}
-        }
+        //}
 
         private void SizeValueChanged(object sender, EventArgs e)
         {
@@ -369,7 +358,7 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void SortOrderComboIndexChanged(object sender, EventArgs e)
         {
-
+            // Nothing, for now
         }
 
         private void SortDescendingCheckboxChanged(object sender, EventArgs e)
@@ -377,6 +366,35 @@ namespace Sledge.BspEditor.Tools.Texture
             SetMemory("SortDescending", SortDescendingCheckbox.Checked);
             _textureList.SortTextureList(x => x, SortDescendingCheckbox.Checked);
         }
+
+        private void SelectButtonClicked(object sender, EventArgs e)
+        {
+            var textures = _textureList.GetSelectedTextures().ToHashSet(StringComparer.InvariantCultureIgnoreCase);
+            if (!textures.Any()) return;
+
+            var sel = _document.Map.Root.Find(x => x.Data.OfType<ITextured>().Any(t => textures.Contains(t.Texture.Name))).ToList();
+            var des = _document.Selection.Except(sel).ToList();
+
+            var transaction = new Transaction(new Select(sel), new Deselect(des));
+            MapDocumentOperation.Perform(_document, transaction);
+
+            Close();
+        }
+
+        // Favourite list management
+
+        //private void AddFavouriteTextureFolders(TreeNode parent, IEnumerable<FavouriteTextureFolder> folders, string selectedKey, out TreeNode reselect)
+        //{
+        //    reselect = null;
+        //    foreach (var fav in folders)
+        //    {
+        //        var items = GetTexturesInFavourite(fav);
+        //        var node = parent.Nodes.Add(parent.Tag + "/" + fav.Name, fav.Name + " (" + items.Count + ")");
+        //        AddFavouriteTextureFolders(node, fav.Children, selectedKey, out reselect);
+        //        if (selectedKey == node.Name) reselect = node;
+        //        node.Tag = fav;
+        //    }
+        //}
 
         private void DeleteFavouriteFolderButtonClicked(object sender, EventArgs e)
         {
@@ -497,19 +515,7 @@ namespace Sledge.BspEditor.Tools.Texture
             //UpdateTextureList();
         }
 
-        private void SelectButtonClicked(object sender, EventArgs e)
-        {
-            var textures = _textureList.GetSelectedTextures().ToHashSet(StringComparer.InvariantCultureIgnoreCase);
-            if (!textures.Any()) return;
-
-            var sel = _document.Map.Root.Find(x => x.Data.OfType<ITextured>().Any(t => textures.Contains(t.Texture.Name))).ToList();
-            var des = _document.Selection.Except(sel).ToList();
-
-            var transaction = new Transaction(new Select(sel), new Deselect(des));
-            MapDocumentOperation.Perform(_document, transaction);
-
-            Close();
-        }
+        // Memory (per environment; transient)
 
         private static readonly Dictionary<string, Memory> _memory = new Dictionary<string, Memory>();
 
