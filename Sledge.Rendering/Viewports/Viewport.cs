@@ -16,13 +16,25 @@ namespace Sledge.Rendering.Viewports
 
         public int ID { get; }
         public Swapchain Swapchain { get; }
-        public ICamera Camera { get; set; }
+
+        public ICamera Camera
+        {
+            get => _camera;
+            set
+            {
+                _camera = value;
+                _camera.Width = Width;
+                _camera.Height = Height;
+            }
+        }
+
         public Control Control => this;
         public ViewportOverlay Overlay { get; }
         public bool IsFocused => _isFocused;
 
         private bool _isFocused;
         private int _unfocusedCounter = 0;
+        private ICamera _camera;
 
         public event EventHandler<long> OnUpdate;
 

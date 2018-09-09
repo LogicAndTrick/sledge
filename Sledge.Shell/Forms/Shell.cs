@@ -213,10 +213,10 @@ namespace Sledge.Shell.Forms
             // Unsubscribe the event (no infinite loops!) and close for good
             Closing -= CancelClose;
             Enabled = false;
+            await _bootstrapper.Value.Shutdown();
             this.InvokeSync(() => { 
                 _bootstrapper.Value.UIShutdown();
             });
-            await _bootstrapper.Value.Shutdown();
             Close();
         }
 

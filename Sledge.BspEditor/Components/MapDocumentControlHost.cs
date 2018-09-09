@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
@@ -8,6 +9,7 @@ using Sledge.BspEditor.Controls;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;
 using Sledge.Shell;
+using Message = System.Windows.Forms.Message;
 
 namespace Sledge.BspEditor.Components
 {
@@ -24,7 +26,8 @@ namespace Sledge.BspEditor.Components
     {
         private readonly IEnumerable<Lazy<IMapDocumentControlFactory>> _controlFactories;
         private readonly Form _shell;
-        
+        private ContextMenuStrip _contextMenu;
+
         public static MapDocumentControlHost Instance { get; private set; }
 
         private TableSplitControl Table { get; set; }
@@ -54,7 +57,51 @@ namespace Sledge.BspEditor.Components
             Controls.Add(Table);
             CreateHandle();
 
+            Application.AddMessageFilter(new LeftClickMessageFilter(this));
+
             Oy.Subscribe("BspEditor:SplitView:Autosize", () => this.InvokeLater(() => Table.ResetViews()));
+        }
+
+        private IMapDocumentControl _contextControl;
+        private void CreateContextMenu()
+        {
+            if (_contextMenu != null) return;
+
+            _contextMenu = new ContextMenuStrip();
+            foreach (var cf in _controlFactories.Select(x => x.Value))
+            {
+                if (_contextMenu.Items.Count > 0) _contextMenu.Items.Add(new ToolStripSeparator());
+                foreach (var kv in cf.GetStyles())
+                {
+                    _contextMenu.Items.Add(new ContextMenuItem(kv.Value, cf.Type, kv.Key));
+                }
+            }
+            
+            _contextMenu.Closed += (s, e) => _contextControl = null;
+            _contextMenu.ItemClicked += SetContextControl;
+        }
+
+        private void SetContextControl(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (_contextControl == null || !(e.ClickedItem is ContextMenuItem mi)) return;
+
+            var position = Table.GetPositionFromControl(_contextControl.Control);
+            if (position.Row < 0 || position.Column < 0) return;
+
+            var hc = new HostedControl
+            {
+                Row = position.Row, 
+                Column = position.Column, 
+                Type = mi.Type, 
+                Serialised = mi.Style
+            };
+
+            _shell.InvokeSync(() =>
+            {
+                if (UpdateControl(hc)) return;
+                var ctrl = MakeControl(hc.Type, hc.Serialised);
+                if (ctrl != null) SetControl(ctrl, hc.Column, hc.Row);
+            });
         }
 
         public void OnUIShutdown()
@@ -98,6 +145,24 @@ namespace Sledge.BspEditor.Components
             });
         }
 
+        public void StoreValues(ISettingsStore store)
+        {
+            var config = Table.Configuration ?? TableSplitConfiguration.Default();
+            store.Set("TableConfiguration", config);
+            store.Set("RowSizes", Table.RowSizes);
+            store.Set("ColumnSizes", Table.ColumnSizes);
+
+            var controls = new List<HostedControl>();
+
+            foreach (var mdc in MapDocumentControls)
+            {
+                controls.Add(new HostedControl { Row = mdc.Row, Column = mdc.Column, Type = mdc.Control.Type, Serialised = mdc.Control.GetSerialisedSettings() });
+            }
+            store.Set("Controls", controls);
+        }
+
+        // Create and update controls
+
         private bool UpdateControl(HostedControl hc)
         {
             // Try and find the control in the same slot
@@ -138,26 +203,74 @@ namespace Sledge.BspEditor.Components
             MapDocumentControls.Add(new CellReference(control, column, row));
             Table.Controls.Add(control.Control, column, row);
         }
-
+        
         public IEnumerable<IMapDocumentControl> GetControls()
         {
             return MapDocumentControls.Select(x => x.Control);
         }
 
-        public void StoreValues(ISettingsStore store)
+        private bool InterceptRightClick()
         {
-            var config = Table.Configuration ?? TableSplitConfiguration.Default();
-            store.Set("TableConfiguration", config);
-            store.Set("RowSizes", Table.RowSizes);
-            store.Set("ColumnSizes", Table.ColumnSizes);
-
-            var controls = new List<HostedControl>();
+            var client = PointToClient(MousePosition);
+            if (!ClientRectangle.Contains(client)) return false;
 
             foreach (var mdc in MapDocumentControls)
             {
-                controls.Add(new HostedControl { Row = mdc.Row, Column = mdc.Column, Type = mdc.Control.Type, Serialised = mdc.Control.GetSerialisedSettings()});
+                var control = mdc.Control;
+                var mapped = control.Control.PointToClient(MousePosition);
+
+                if (mapped.X >= 0 && mapped.X < 40 && mapped.Y >= 0 && mapped.Y < FontHeight + 2)
+                {
+                    ShowContextMenu(control, mapped);
+                    return true;
+                }
             }
-            store.Set("Controls", controls);
+
+            return false;
+        }
+
+        private void ShowContextMenu(IMapDocumentControl control, Point point)
+        {
+            CreateContextMenu();
+            foreach (var cmi in _contextMenu.Items.OfType<ContextMenuItem>())
+            {
+                var f = _controlFactories.Select(x => x.Value).FirstOrDefault(x => x.Type == cmi.Type);
+                cmi.Checked = f != null && f.IsStyle(control, cmi.Style);
+            }
+
+            _contextControl = control;
+            _contextMenu.Show(control.Control, point);
+        }
+
+        private class LeftClickMessageFilter : IMessageFilter
+        {
+            private readonly MapDocumentControlHost _self;
+
+            public LeftClickMessageFilter(MapDocumentControlHost self)
+            {
+                _self = self;
+            }
+
+            public bool PreFilterMessage(ref Message objMessage)
+            {
+                if (objMessage.Msg == 0x0204) // WM_RBUTTONDOWN
+                {
+                    if (_self.InterceptRightClick()) return true;
+                }
+                return false;
+            }
+        }
+
+        private class ContextMenuItem : ToolStripMenuItem
+        {
+            public string Type { get; set; }
+            public string Style { get; set; }
+
+            public ContextMenuItem(string text, string type, string style) : base(text)
+            {
+                Type = type;
+                Style = style;
+            }
         }
 
         private class HostedControl
