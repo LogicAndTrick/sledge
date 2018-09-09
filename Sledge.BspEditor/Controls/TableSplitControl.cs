@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -24,6 +25,38 @@ namespace Sledge.BspEditor.Controls
                 if (!value.IsValid()) return;
                 _configuration = value;
                 ResetLayout();
+            }
+        }
+
+        public IEnumerable<float> RowSizes
+        {
+            get => RowStyles.OfType<RowStyle>().Select(x => x.Height);
+            set
+            {
+                var vals = value.ToList();
+                while (vals.Count < RowCount) vals.Add(RowStyles[vals.Count - 1].Height);
+                var total = vals.Aggregate(0f, (a, b) => a + b);
+                vals = vals.Select(x => x / total * 100).ToList();
+                for (var i = 0; i < vals.Count; i++)
+                {
+                    if (i < RowStyles.Count) RowStyles[i].Height = vals[i];
+                }
+            }
+        }
+
+        public IEnumerable<float> ColumnSizes
+        {
+            get => ColumnStyles.OfType<ColumnStyle>().Select(x => x.Width);
+            set
+            {
+                var vals = value.ToList();
+                while (vals.Count < RowCount) vals.Add(ColumnStyles[vals.Count - 1].Width);
+                var total = vals.Aggregate(0f, (a, b) => a + b);
+                vals = vals.Select(x => x / total * 100).ToList();
+                for (var i = 0; i < vals.Count; i++)
+                {
+                    if (i < ColumnStyles.Count) ColumnStyles[i].Width = vals[i];
+                }
             }
         }
 

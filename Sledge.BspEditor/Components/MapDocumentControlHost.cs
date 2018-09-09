@@ -77,6 +77,9 @@ namespace Sledge.BspEditor.Components
             var newConfig = store.Get("TableConfiguration", Table.Configuration);
             if (newConfig.IsValid()) Table.Configuration = newConfig;
 
+            Table.RowSizes = store.Get("RowSizes", Table.RowSizes);
+            Table.ColumnSizes = store.Get("ColumnSizes", Table.ColumnSizes);
+
             var controls = store.Get<List<HostedControl>>("Controls");
             if (controls == null || !controls.Any())
             {
@@ -145,6 +148,8 @@ namespace Sledge.BspEditor.Components
         {
             var config = Table.Configuration ?? TableSplitConfiguration.Default();
             store.Set("TableConfiguration", config);
+            store.Set("RowSizes", Table.RowSizes);
+            store.Set("ColumnSizes", Table.ColumnSizes);
 
             var controls = new List<HostedControl>();
 
