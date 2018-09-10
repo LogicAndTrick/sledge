@@ -374,6 +374,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
         {
             if (CursorVisible) return;
+            if (Viewport.Viewport != viewport) return;
 
             var x = viewport.Width / 2;
             var y = viewport.Height / 2;
