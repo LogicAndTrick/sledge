@@ -67,7 +67,12 @@ namespace Sledge.Shell.Forms
         {
             if (Visible)
             {
-                _keys = _settingsContainers.ToDictionary(x => x.Value, x => x.Value.GetKeys().ToList());
+                _keys = _settingsContainers.ToDictionary(x => x.Value, x =>
+                {
+                    var keys = x.Value.GetKeys().ToList();
+                    keys.ForEach(k => k.Container = x.Value.Name);
+                    return keys;
+                });
                 _values = _settingsContainers.ToDictionary(x => x.Value, x =>
                 {
                     var fss = new JsonSettingsStore();
@@ -185,7 +190,7 @@ namespace Sledge.Shell.Forms
         private void OnValueChanged(object sender, SettingKey key)
         {
             var se = sender as ISettingEditor;
-            var store = _values.Where(x => x.Value.Contains(key.Key)).Select(x => x.Value).FirstOrDefault();
+            var store = _values.Where(x => x.Key.Name == key.Container).Select(x => x.Value).FirstOrDefault();
             if (store != null && se != null)
             {
                 store.Set(key.Key, se.Value);

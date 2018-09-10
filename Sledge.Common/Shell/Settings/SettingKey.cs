@@ -4,6 +4,7 @@ namespace Sledge.Common.Shell.Settings
 {
     public class SettingKey
     {
+        public string Container { get; set; }
         public string Group { get; set; }
         public string Key { get; private set; }
         public Type Type { get; private set; }
