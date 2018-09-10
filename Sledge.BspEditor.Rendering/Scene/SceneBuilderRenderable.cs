@@ -44,7 +44,7 @@ namespace Sledge.BspEditor.Rendering.Scene
                     foreach (var bg in groups)
                     {
                         pipeline.Bind(context, cl, bg.Binding);
-                        cl.DrawIndexedIndirect(buffer.IndirectBuffers[i], bg.Offset * IndSize, bg.Count, 20);
+                        buffer.IndirectBuffers[i].DrawIndexed(cl, bg.Offset * IndSize, bg.Count, 20);
                     }
                 }
             }
@@ -79,7 +79,7 @@ namespace Sledge.BspEditor.Rendering.Scene
                 cl.SetVertexBuffer(0, buffer.VertexBuffers[i]);
                 cl.SetIndexBuffer(buffer.IndexBuffers[i], IndexFormat.UInt32);
                 pipeline.Bind(context, cl, bg.Binding);
-                cl.DrawIndexedIndirect(buffer.IndirectBuffers[i], bg.Offset * IndSize, bg.Count, 20);
+                buffer.IndirectBuffers[i].DrawIndexed(cl, bg.Offset * IndSize, bg.Count, 20);
             }
         }
 

@@ -39,7 +39,7 @@ namespace Sledge.Rendering.Renderables
                 foreach (var bg in groups)
                 {
                     pipeline.Bind(context, cl, bg.Binding);
-                    cl.DrawIndexedIndirect(_buffer.IndirectBuffers[i], bg.Offset * IndSize, bg.Count, 20);
+                    _buffer.IndirectBuffers[i].DrawIndexed(cl, bg.Offset * IndSize, bg.Count, 20);
                 }
             }
         }
@@ -58,7 +58,7 @@ namespace Sledge.Rendering.Renderables
                 foreach (var bg in groups.OrderByDescending(x => (location - x.Location).LengthSquared()))
                 {
                     pipeline.Bind(context, cl, bg.Binding);
-                    cl.DrawIndexedIndirect(_buffer.IndirectBuffers[i], bg.Offset * IndSize, bg.Count, 20);
+                    _buffer.IndirectBuffers[i].DrawIndexed(cl, bg.Offset * IndSize, bg.Count, 20);
                 }
             }
         }

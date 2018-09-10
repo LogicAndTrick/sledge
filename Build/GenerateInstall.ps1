@@ -35,6 +35,10 @@ $log = './Out/Build.log'
 
 $outputPath = Resolve-Path './Out/Build'
 
+# Compile the shaders
+$content = & "..\Sledge.Rendering\Shaders\compile-shaders.ps1"
+$content | Add-Content $log
+
 # Build the project
 echo 'Building Solution...'
 (& $msbuild '../Sledge.sln' '/p:Configuration=Release' "/p:OutputPath=$outputPath") | Add-Content $log

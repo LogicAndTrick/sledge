@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
+using Sledge.Common.Logging;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Shaders;
 using Veldrid;
@@ -92,13 +94,25 @@ namespace Sledge.Rendering.Engine
         private static readonly Assembly ResourceAssembly = Assembly.GetExecutingAssembly();
         private static byte[] GetEmbeddedShader(string name)
         {
-            using (var s = ResourceAssembly.GetManifestResourceStream(typeof(Scope), name))
-            using (var ms = new MemoryStream())
+            var names = new[] {name + ".bytes", name};
+#if DEBUG
+            // Compiling shaders manually is a pain!
+            if (!Features.DirectX11OrHigher) Log.Debug("ResourceLoader", "If you're debugging on DX10 you'll need to manually compile shaders.");
+            else names = new[] {name};
+#endif
+            foreach (var n in names)
             {
-                if (s == null) throw new FileNotFoundException($"The `{name}` shader could not be found.", name);
-                s.CopyTo(ms);
-                return ms.ToArray();
+                using (var s = ResourceAssembly.GetManifestResourceStream(typeof(Scope), n))
+                {
+                    if (s == null) continue;
+                    using (var ms = new MemoryStream())
+                    {
+                        s.CopyTo(ms);
+                        return ms.ToArray();
+                    }
+                }
             }
+            throw new FileNotFoundException($"The `{name}` shader could not be found.", name);
         }
     }
 }

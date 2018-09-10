@@ -35,7 +35,7 @@ namespace Sledge.Rendering.Resources
 
         public List<DeviceBuffer> VertexBuffers { get; }
         public List<DeviceBuffer> IndexBuffers { get; }
-        public List<DeviceBuffer> IndirectBuffers { get; }
+        public List<IndirectIndirectBuffer> IndirectBuffers { get; }
         public List<List<BufferGroup>> IndirectBufferGroups { get; }
 
         public int NumBuffers => VertexBuffers.Count;
@@ -48,7 +48,7 @@ namespace Sledge.Rendering.Resources
             _device = device;
             VertexBuffers = new List<DeviceBuffer>();
             IndexBuffers = new List<DeviceBuffer>();
-            IndirectBuffers = new List<DeviceBuffer>();
+            IndirectBuffers = new List<IndirectIndirectBuffer>();
             IndirectBufferGroups = new List<List<BufferGroup>>();
 
             // Vertex buffer being about 4 times the size of the index buffer is about right.
@@ -107,7 +107,7 @@ namespace Sledge.Rendering.Resources
             }
 
             var bufferGroups = new List<BufferGroup>();
-            var indirectBuffer = _device.ResourceFactory.CreateBuffer(new BufferDescription((uint) (numInd * indSize), BufferUsage.IndirectBuffer));
+            var indirectBuffer = new IndirectIndirectBuffer(_device, numInd * indSize);
             uint indirOffset = 0;
             foreach (var g in _currentIndirectArguments.GroupBy(x => new { x.Pipeline, x.Camera, x.HasTransparency, x.Binding }))
             {
@@ -115,7 +115,7 @@ namespace Sledge.Rendering.Resources
                 {
                     foreach (var ia in g)
                     {
-                        _device.UpdateBuffer(indirectBuffer, (uint) (indirOffset * indSize), ia.Arguments);
+                        indirectBuffer.Update(indirOffset * indSize, ia.Arguments);
                         var bg = new BufferGroup(ia.Pipeline, ia.Camera, true, ia.Location, ia.Binding, indirOffset, 1);
                         bufferGroups.Add(bg);
                         indirOffset += 1;
@@ -126,7 +126,7 @@ namespace Sledge.Rendering.Resources
                     var indir = g.Select(x => x.Arguments).ToArray();
                     var indirCount = (uint) indir.Length;
 
-                    _device.UpdateBuffer(indirectBuffer, (uint) (indirOffset * indSize), indir);
+                    indirectBuffer.Update(indirOffset * indSize, indir);
 
                     var bg = new BufferGroup(g.Key.Pipeline, g.Key.Camera, false, Vector3.Zero, g.Key.Binding, indirOffset, indirCount);
                     bufferGroups.Add(bg);

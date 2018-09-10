@@ -68,9 +68,11 @@
     <Compile Include="Cameras\PerspectiveCamera.cs" />
     <Compile Include="Engine\Engine.cs" />
     <Compile Include="Engine\EngineInterface.cs" />
+    <Compile Include="Engine\Features.cs" />
     <Compile Include="Engine\RenderContext.cs" />
     <Compile Include="Engine\ResourceLoader.cs" />
     <Compile Include="Engine\Scene.cs" />
+    <Compile Include="Resources\IndirectIndirectBuffer.cs" />
     <Compile Include="Resources\TextureSampleType.cs" />
     <Compile Include="Overlay\IOverlayRenderable.cs" />
     <Compile Include="Overlay\OverlayBuilder.cs" />
@@ -125,6 +127,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Shaders\FlatColourGeneric.frag.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\FlatColourGeneric.vert.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\Overlay.frag.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\Overlay.vert.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\TexturedBillboard.frag.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\TexturedBillboard.geom.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\TexturedBillboard.vert.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\TexturedGeneric.frag.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\TexturedGeneric.vert.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\WireframeGeneric.frag.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\WireframeGeneric.vert.hlsl.bytes" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Diagnostics.DiagnosticSource">
