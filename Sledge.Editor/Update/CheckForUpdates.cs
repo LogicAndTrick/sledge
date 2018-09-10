@@ -40,6 +40,7 @@ namespace Sledge.Editor.Update
         {
             _shell = shell;
             _translation = translation;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
 
         public bool IsInContext(IContext context)
