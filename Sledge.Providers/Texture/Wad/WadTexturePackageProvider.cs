@@ -13,7 +13,8 @@ namespace Sledge.Providers.Texture.Wad
     {
         public IEnumerable<TexturePackageReference> GetPackagesInFile(IFile file)
         {
-            if (!file.Exists || !file.IsContainer) return new TexturePackageReference[0];
+            if (!file.Exists) return new TexturePackageReference[0];
+            if (!file.IsContainer) return file.Extension == "wad" ? new[] {new TexturePackageReference(file.Name, file)} : new TexturePackageReference[0];
             return file.GetFilesWithExtension("wad").Select(x => new TexturePackageReference(x.Name, x));
         }
 

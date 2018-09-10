@@ -83,6 +83,12 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.lblTexturePackageExclusions = new System.Windows.Forms.Label();
             this.cklTexturePackages = new System.Windows.Forms.CheckedListBox();
             this.chkToggleAllTextures = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lstAdditionalTextures = new System.Windows.Forms.ListView();
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.btnRemoveTextures = new System.Windows.Forms.Button();
+            this.btnAddTextures = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.nudDefaultTextureScale)).BeginInit();
             this.grpDirectories.SuspendLayout();
             this.grpFgds.SuspendLayout();
@@ -658,6 +664,10 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             // grpTextures
             // 
+            this.grpTextures.Controls.Add(this.lstAdditionalTextures);
+            this.grpTextures.Controls.Add(this.btnRemoveTextures);
+            this.grpTextures.Controls.Add(this.btnAddTextures);
+            this.grpTextures.Controls.Add(this.label2);
             this.grpTextures.Controls.Add(this.lblTexturePackageExclusions);
             this.grpTextures.Controls.Add(this.cklTexturePackages);
             this.grpTextures.Controls.Add(this.chkToggleAllTextures);
@@ -665,7 +675,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.grpTextures.Controls.Add(this.nudDefaultTextureScale);
             this.grpTextures.Location = new System.Drawing.Point(6, 792);
             this.grpTextures.Name = "grpTextures";
-            this.grpTextures.Size = new System.Drawing.Size(459, 233);
+            this.grpTextures.Size = new System.Drawing.Size(459, 407);
             this.grpTextures.TabIndex = 49;
             this.grpTextures.TabStop = false;
             this.grpTextures.Text = "Textures";
@@ -701,6 +711,59 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.chkToggleAllTextures.UseVisualStyleBackColor = true;
             this.chkToggleAllTextures.CheckedChanged += new System.EventHandler(this.ToggleAllTextures);
             // 
+            // label2
+            // 
+            this.label2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label2.Location = new System.Drawing.Point(6, 231);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(222, 20);
+            this.label2.TabIndex = 34;
+            this.label2.Text = "Additional texture packages:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lstAdditionalTextures
+            // 
+            this.lstAdditionalTextures.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2,
+            this.columnHeader3});
+            this.lstAdditionalTextures.FullRowSelect = true;
+            this.lstAdditionalTextures.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstAdditionalTextures.Location = new System.Drawing.Point(9, 254);
+            this.lstAdditionalTextures.Name = "lstAdditionalTextures";
+            this.lstAdditionalTextures.ShowItemToolTips = true;
+            this.lstAdditionalTextures.Size = new System.Drawing.Size(364, 147);
+            this.lstAdditionalTextures.TabIndex = 45;
+            this.lstAdditionalTextures.UseCompatibleStateImageBehavior = false;
+            this.lstAdditionalTextures.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Name";
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Path";
+            // 
+            // btnRemoveTextures
+            // 
+            this.btnRemoveTextures.Location = new System.Drawing.Point(379, 283);
+            this.btnRemoveTextures.Name = "btnRemoveTextures";
+            this.btnRemoveTextures.Size = new System.Drawing.Size(74, 23);
+            this.btnRemoveTextures.TabIndex = 44;
+            this.btnRemoveTextures.Text = "Remove";
+            this.btnRemoveTextures.UseVisualStyleBackColor = true;
+            this.btnRemoveTextures.Click += new System.EventHandler(this.RemoveWad);
+            // 
+            // btnAddTextures
+            // 
+            this.btnAddTextures.Location = new System.Drawing.Point(379, 254);
+            this.btnAddTextures.Name = "btnAddTextures";
+            this.btnAddTextures.Size = new System.Drawing.Size(74, 23);
+            this.btnAddTextures.TabIndex = 43;
+            this.btnAddTextures.Text = "Add...";
+            this.btnAddTextures.UseVisualStyleBackColor = true;
+            this.btnAddTextures.Click += new System.EventHandler(this.BrowseWad);
+            // 
             // GoldsourceEnvironmentEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -710,7 +773,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.Controls.Add(this.grpFgds);
             this.Controls.Add(this.grpDirectories);
             this.Name = "GoldsourceEnvironmentEditor";
-            this.Size = new System.Drawing.Size(472, 1029);
+            this.Size = new System.Drawing.Size(472, 1202);
             ((System.ComponentModel.ISupportInitialize)(this.nudDefaultTextureScale)).EndInit();
             this.grpDirectories.ResumeLayout(false);
             this.grpDirectories.PerformLayout();
@@ -779,5 +842,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
         private System.Windows.Forms.CheckBox chkAskRunGame;
         private System.Windows.Forms.CheckBox chkRunGame;
         private System.Windows.Forms.CheckBox chkToggleAllTextures;
+        private System.Windows.Forms.ListView lstAdditionalTextures;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.Button btnRemoveTextures;
+        private System.Windows.Forms.Button btnAddTextures;
+        private System.Windows.Forms.Label label2;
     }
 }

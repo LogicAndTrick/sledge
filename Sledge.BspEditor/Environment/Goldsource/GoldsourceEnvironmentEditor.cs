@@ -83,14 +83,10 @@ namespace Sledge.BspEditor.Environment.Goldsource
             lstFgds.Items.Clear();
             foreach (var fileName in env.FgdFiles)
             {
-                lstFgds.Items.Add(new ListViewItem(new[]
-                    {
-                        Path.GetFileName(fileName),
-                        fileName
-                    })
-                    {ToolTipText = fileName});
-                UpdateFgdList();
+                lstFgds.Items.Add(new ListViewItem(new[] { Path.GetFileName(fileName), fileName }) {ToolTipText = fileName});
             }
+            UpdateFgdList();
+
             cmbDefaultPointEntity.SelectedItem = env.DefaultPointEntity;
             cmbDefaultBrushEntity.SelectedItem = env.DefaultBrushEntity;
             chkOverrideMapSize.Checked = env.OverrideMapSize;
@@ -123,6 +119,13 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 cklTexturePackages.Items.Add(exc, false); // all wads not in this list will be excluded
             }
             UpdateTexturePackages();
+
+            lstAdditionalTextures.Items.Clear();
+            foreach (var fileName in env.AdditionalTextureFiles)
+            {
+                lstAdditionalTextures.Items.Add(new ListViewItem(new[] { Path.GetFileName(fileName), fileName }) { ToolTipText = fileName });
+            }
+            UpdateWadList();
         }
 
         public GoldsourceEnvironment GetEnvironment()
@@ -161,7 +164,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 MapCopyRes = chkCopyRes.Checked,
 
                 DefaultTextureScale = nudDefaultTextureScale.Value,
-                ExcludedWads = GetTexturePackageSelection().Where(x => !x.Value).Select(x => x.Key).ToList()
+                ExcludedWads = GetTexturePackageSelection().Where(x => !x.Value).Select(x => x.Key).ToList(),
+                AdditionalTextureFiles = lstAdditionalTextures.Items.OfType<ListViewItem>().Select(x => x.SubItems[1].Text).Where(File.Exists).ToList()
             };
         }
 
@@ -456,6 +460,42 @@ namespace Sledge.BspEditor.Environment.Goldsource
             {
                 cklTexturePackages.SetItemChecked(i, on);
             }
+        }
+
+        public string WadFilesLabel { get; set; } = "WAD texture packages";
+
+        private void BrowseWad(object sender, EventArgs e)
+        {
+            using (var ofd = new OpenFileDialog { Filter = WadFilesLabel + @" (*.wad)|*.wad", Multiselect = true })
+            {
+                if (ofd.ShowDialog() != DialogResult.OK) return;
+
+                foreach (var fileName in ofd.FileNames)
+                {
+                    lstAdditionalTextures.Items.Add(new ListViewItem(new[] { Path.GetFileName(fileName), fileName }) { ToolTipText = fileName });
+                }
+
+                UpdateWadList();
+                OnEnvironmentChanged(this, EventArgs.Empty);
+            }
+        }
+
+        private void RemoveWad(object sender, EventArgs e)
+        {
+            if (lstAdditionalTextures.SelectedItems.Count > 0)
+            {
+                foreach (var i in lstAdditionalTextures.SelectedItems.OfType<ListViewItem>().ToList())
+                {
+                    lstAdditionalTextures.Items.Remove(i);
+                }
+                UpdateWadList();
+                OnEnvironmentChanged(this, EventArgs.Empty);
+            }
+        }
+
+        private void UpdateWadList()
+        {
+            lstAdditionalTextures.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
     }
 }

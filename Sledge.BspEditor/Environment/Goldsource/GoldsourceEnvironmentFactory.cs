@@ -17,7 +17,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
         private T GetVal<T>(Dictionary<string, string> dictionary, string key, T def = default(T))
         {
-            if (dictionary.TryGetValue(key, out string val))
+            if (dictionary.TryGetValue(key, out var val))
             {
                 try
                 {
@@ -25,7 +25,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 }
                 catch
                 {
-                    
+                    //
                 }
             }
             return def;
@@ -70,6 +70,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
                 DefaultTextureScale = GetVal(environment.Properties, "DefaultTextureScale", 1m),
                 ExcludedWads = GetVal(environment.Properties, "ExcludedWads", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
+                AdditionalTextureFiles = GetVal(environment.Properties, "AdditionalTextureFiles", "").Split(';').Where(x => !String.IsNullOrWhiteSpace(x)).ToList(),
             };
             return gse;
         }
@@ -117,7 +118,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
                     { "DefaultTextureScale", Convert.ToString(env.DefaultTextureScale, CultureInfo.InvariantCulture) },
 
-                    { "ExcludedWads", String.Join(";", env.ExcludedWads) }
+                    { "ExcludedWads", String.Join(";", env.ExcludedWads) },
+                    { "AdditionalTextureFiles", String.Join(";", env.AdditionalTextureFiles) }
                 }
             };
             return se;

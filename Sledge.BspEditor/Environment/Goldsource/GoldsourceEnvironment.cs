@@ -72,6 +72,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
         public bool MapCopyRes { get; set; }
 
         public List<string> ExcludedWads { get; set; }
+        public List<string> AdditionalTextureFiles { get; set; }
 
         private IFile _root;
 
@@ -141,6 +142,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             _gameData = new Lazy<Task<GameData>>(MakeGameDataAsync);
             _data = new List<IEnvironmentData>();
             FgdFiles = new List<string>();
+            AdditionalTextureFiles = new List<string>();
             ExcludedWads = new List<string>();
             IncludeToolsDirectoryInEnvironment = IncludeToolsDirectoryInEnvironment = true;
         }
@@ -148,7 +150,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
         private async Task<TextureCollection> MakeTextureCollectionAsync()
         {
             var wadRefs = _wadProvider.GetPackagesInFile(Root).Where(x => !ExcludedWads.Contains(x.Name, StringComparer.InvariantCultureIgnoreCase));
-            var wads = await _wadProvider.GetTexturePackages(wadRefs);
+            var extraWads = AdditionalTextureFiles.SelectMany(x => _wadProvider.GetPackagesInFile(new NativeFile(x)));
+            var wads = await _wadProvider.GetTexturePackages(wadRefs.Union(extraWads));
 
             var spriteRefs = _spriteProvider.GetPackagesInFile(Root);
             var sprites = await _spriteProvider.GetTexturePackages(spriteRefs);
@@ -156,9 +159,9 @@ namespace Sledge.BspEditor.Environment.Goldsource
             return new GoldsourceTextureCollection(wads.Union(sprites));
         }
 
-        private async Task<GameData> MakeGameDataAsync()
+        private Task<GameData> MakeGameDataAsync()
         {
-            return _fgdProvider.GetGameDataFromFiles(FgdFiles);
+            return Task.FromResult(_fgdProvider.GetGameDataFromFiles(FgdFiles));
         }
 
         public Task<TextureCollection> GetTextureCollection()
@@ -221,7 +224,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             return _data.OfType<T>();
         }
 
-        public async Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments)
+        public Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments)
         {
             var args = arguments.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.First().Arguments);
 
@@ -283,7 +286,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             }));
 
             // Copy resulting files around
-            batch.Steps.Add(new BatchCallback(async (b, d) =>
+            batch.Steps.Add(new BatchCallback((b, d) =>
             {
                 var mapDir = Path.GetDirectoryName(d.FileName);
                 var gameMapDir = Path.Combine(BaseDirectory, ModDirectory, "maps");
@@ -312,20 +315,23 @@ namespace Sledge.BspEditor.Environment.Goldsource
 
                     File.Copy(file, Path.Combine(directory, Path.GetFileName(file)), true);
                 }
+
+                return Task.CompletedTask;
             }));
 
             // Delete temp directory
-            batch.Steps.Add(new BatchCallback(async (b, d) =>
+            batch.Steps.Add(new BatchCallback((b, d) =>
             {
                 var workingDir = b.Variables["WorkingDirectory"];
                 if (Directory.Exists(workingDir)) Directory.Delete(workingDir, true);
+                return Task.CompletedTask;
             }));
 
             if (GameRun)
             {
-                batch.Steps.Add(new BatchCallback(async (b, d) =>
+                batch.Steps.Add(new BatchCallback((b, d) =>
                 {
-                    if (!b.Successful) return;
+                    if (!b.Successful) return Task.CompletedTask;
 
                     if (GameAsk)
                     {
@@ -335,7 +341,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
                             MessageBoxButtons.YesNo,
                             MessageBoxIcon.Question
                         );
-                        if (ask != DialogResult.Yes) return;
+                        if (ask != DialogResult.Yes) return Task.CompletedTask;
                     }
 
                     var exe = Path.Combine(BaseDirectory, GameExe);
@@ -347,7 +353,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Error
                         );
-                        return;
+                        return Task.CompletedTask;
                     }
 
                     var gameArg = ModDirectory == "valve" ? "" : $"-game {ModDirectory} ";
@@ -362,10 +368,12 @@ namespace Sledge.BspEditor.Environment.Goldsource
                     {
                         MessageBox.Show("Launching game failed: " + ex.Message, "Failed to launch!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+
+                    return Task.CompletedTask;
                 }));
             }
 
-            return batch;
+            return Task.FromResult(batch);
         }
 
         private static readonly string AutoVisgroupPrefix = typeof(GoldsourceEnvironment).Namespace + ".AutomaticVisgroups";
