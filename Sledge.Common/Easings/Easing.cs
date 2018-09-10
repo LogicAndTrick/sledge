@@ -2,6 +2,11 @@ using System;
 
 namespace Sledge.Common.Easings
 {
+    /// <summary>
+    /// Easing functions specify the rate of change of a parameter over time.
+    /// This class represents a number of commonly used easings.
+    /// </summary>
+    /// <remarks>https://easings.net/</remarks>
     public class Easing
     {
         private Func<double, double> Function { get; set; }

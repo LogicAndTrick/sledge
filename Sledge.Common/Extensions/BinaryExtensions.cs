@@ -5,16 +5,33 @@ using System.Text;
 
 namespace Sledge.Common.Extensions
 {
+    /// <summary>
+    /// Common binary reader/write extension methods
+    /// </summary>
     public static class BinaryExtensions
     {
         // Strings
 
+        /// <summary>
+        /// Read a fixed number of bytes from the reader and parse out an optionally null-terminated string
+        /// </summary>
+        /// <param name="br">Binary reader</param>
+        /// <param name="encoding">The text encoding to use</param>
+        /// <param name="length">The number of bytes to read</param>
+        /// <returns>The string that was read</returns>
         public static string ReadFixedLengthString(this BinaryReader br, Encoding encoding, int length)
         {
             var bstr = br.ReadBytes(length).TakeWhile(b => b != 0).ToArray();
             return encoding.GetString(bstr);
         }
 
+        /// <summary>
+        /// Write a string to the writer and pad the width with nulls to reach a fixed number of bytes.
+        /// </summary>
+        /// <param name="bw">Binary writer</param>
+        /// <param name="encoding">The text encoding to use</param>
+        /// <param name="length">The number of bytes to write</param>
+        /// <param name="str">The string to write</param>
         public static void WriteFixedLengthString(this BinaryWriter bw, Encoding encoding, int length, string str)
         {
             var arr = new byte[length];
@@ -22,6 +39,11 @@ namespace Sledge.Common.Extensions
             bw.Write(arr, 0, length);
         }
 
+        /// <summary>
+        /// Read a variable number of bytes into a string until a null terminator is reached.
+        /// </summary>
+        /// <param name="br">Binary reader</param>
+        /// <returns>The string that was read</returns>
         public static string ReadNullTerminatedString(this BinaryReader br)
         {
             var str = "";
@@ -33,12 +55,22 @@ namespace Sledge.Common.Extensions
             return str;
         }
 
+        /// <summary>
+        /// Write a string followed by a null terminator.
+        /// </summary>
+        /// <param name="bw">Binary writer</param>
+        /// <param name="str">The string to write</param>
         public static void WriteNullTerminatedString(this BinaryWriter bw, string str)
         {
             bw.Write(str.ToCharArray());
             bw.Write((char) 0);
         }
 
+        /// <summary>
+        /// Read a length-prefixed string from the reader.
+        /// </summary>
+        /// <param name="br">Binary reader</param>
+        /// <returns>String that was read</returns>
         public static string ReadCString(this BinaryReader br)
         {
             // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
@@ -48,6 +80,13 @@ namespace Sledge.Common.Extensions
             return new string(chars).Trim('\0');
         }
 
+
+        /// <summary>
+        /// Write a length-prefixed string to the writer.
+        /// </summary>
+        /// <param name="bw">Binary writer</param>
+        /// <param name="str">The string to write</param>
+        /// <param name="maximumLength">The maximum length of the string</param>
         public static void WriteCString(this BinaryWriter bw, string str, int maximumLength)
         {
             // GH#87: RMF strings aren't prefixed in the same way .NET's BinaryReader expects
@@ -62,13 +101,12 @@ namespace Sledge.Common.Extensions
 
         // Arrays
 
-        public static byte[] ReadByteArray(this BinaryReader br, int num)
-        {
-            var arr = new byte[num];
-            for (var i = 0; i < num; i++) arr[i] = br.ReadByte();
-            return arr;
-        }
-
+        /// <summary>
+        /// Read an array of short integers
+        /// </summary>
+        /// <param name="br">Binary reader</param>
+        /// <param name="num">The number of values to read</param>
+        /// <returns>The resulting array</returns>
         public static short[] ReadShortArray(this BinaryReader br, int num)
         {
             var arr = new short[num];
@@ -76,6 +114,12 @@ namespace Sledge.Common.Extensions
             return arr;
         }
 
+        /// <summary>
+        /// Read an array of integers
+        /// </summary>
+        /// <param name="br">Binary reader</param>
+        /// <param name="num">The number of values to read</param>
+        /// <returns>The resulting array</returns>
         public static int[] ReadIntArray(this BinaryReader br, int num)
         {
             var arr = new int[num];
@@ -83,6 +127,12 @@ namespace Sledge.Common.Extensions
             return arr;
         }
 
+        /// <summary>
+        /// Read an array of floats and cast them to decimals
+        /// </summary>
+        /// <param name="br">Binary reader</param>
+        /// <param name="num">The number of values to read</param>
+        /// <returns>The resulting array</returns>
         public static decimal[] ReadSingleArrayAsDecimal(this BinaryReader br, int num)
         {
             var arr = new decimal[num];
@@ -90,6 +140,12 @@ namespace Sledge.Common.Extensions
             return arr;
         }
 
+        /// <summary>
+        /// Read an array of floats
+        /// </summary>
+        /// <param name="br">Binary reader</param>
+        /// <param name="num">The number of values to read</param>
+        /// <returns>The resulting array</returns>
         public static float[] ReadSingleArray(this BinaryReader br, int num)
         {
             var arr = new float[num];
@@ -99,11 +155,21 @@ namespace Sledge.Common.Extensions
 
         // Decimal <-> Single
         
+        /// <summary>
+        /// Read a float and cast it to decimal
+        /// </summary>
+        /// <param name="br">Binary reader</param>
+        /// <returns>Value that was read</returns>
         public static decimal ReadSingleAsDecimal(this BinaryReader br)
         {
             return (decimal) br.ReadSingle();
         }
 
+        /// <summary>
+        /// Write a decimal as a float
+        /// </summary>
+        /// <param name="bw">Binary writer</param>
+        /// <param name="dec">Value to write</param>
         public static void WriteDecimalAsSingle(this BinaryWriter bw, decimal dec)
         {
             bw.Write((float) dec);
@@ -111,11 +177,21 @@ namespace Sledge.Common.Extensions
 
         // Colours
 
+        /// <summary>
+        /// Read an RGB colour as 3 bytes
+        /// </summary>
+        /// <param name="br">Binary reader</param>
+        /// <returns>The colour which was read</returns>
         public static Color ReadRGBColour(this BinaryReader br)
         {
             return Color.FromArgb(255, br.ReadByte(), br.ReadByte(), br.ReadByte());
         }
 
+        /// <summary>
+        /// Write an RGB colour as 3 bytes
+        /// </summary>
+        /// <param name="bw">Binary writer</param>
+        /// <param name="c">The colour to write</param>
         public static void WriteRGBColour(this BinaryWriter bw, Color c)
         {
             bw.Write(c.R);
@@ -123,6 +199,11 @@ namespace Sledge.Common.Extensions
             bw.Write(c.B);
         }
 
+        /// <summary>
+        /// Read an RGBA colour as 4 bytes
+        /// </summary>
+        /// <param name="br">Binary reader</param>
+        /// <returns>The colour which was read</returns>
         public static Color ReadRGBAColour(this BinaryReader br)
         {
             var r = br.ReadByte();
@@ -132,6 +213,11 @@ namespace Sledge.Common.Extensions
             return Color.FromArgb(a, r, g, b);
         }
 
+        /// <summary>
+        /// Write an RGBA colour as 4 bytes
+        /// </summary>
+        /// <param name="bw">Binary writer</param>
+        /// <param name="c">The colour to write</param>
         public static void WriteRGBAColour(this BinaryWriter bw, Color c)
         {
             bw.Write(c.R);

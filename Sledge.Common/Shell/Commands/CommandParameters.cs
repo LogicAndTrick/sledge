@@ -2,6 +2,9 @@
 
 namespace Sledge.Common.Shell.Commands
 {
+    /// <summary>
+    /// A collection of parameters for a command.
+    /// </summary>
     public class CommandParameters
     {
         private readonly Dictionary<string, object> _parameters;

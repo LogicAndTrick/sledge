@@ -2,6 +2,9 @@
 
 namespace Sledge.Common.Logging
 {
+    /// <summary>
+    /// A simple log message object.
+    /// </summary>
     public class LogMessage
     {
         public const string Fatal = "Fatal";
@@ -10,11 +13,11 @@ namespace Sledge.Common.Logging
         public const string Info = "Info";
         public const string Debug = "Debug";
 
-        public string Type { get; private set; }
-        public string Source { get; private set; }
-        public string Message { get; private set; }
+        public string Type { get; }
+        public string Source { get; }
+        public string Message { get; }
         public Exception Exception { get; }
-
+        
         public LogMessage(string type, string source, string message, Exception exception)
         {
             Type = type;

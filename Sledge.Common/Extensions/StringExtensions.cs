@@ -2,8 +2,18 @@
 
 namespace Sledge.Common.Extensions
 {
+    /// <summary>
+    /// Common string extension methods
+    /// </summary>
     public static class StringExtensions
     {
+        /// <summary>
+        /// Split a string by a delimiter without splitting sequences within quotes.
+        /// </summary>
+        /// <param name="line">The string to split</param>
+        /// <param name="splitCharacters">The characters to split by. Defaults to space and tab characters if not specified.</param>
+        /// <param name="quoteChar">The character which indicates the start or end of a quote</param>
+        /// <returns>The split result, with split characters removed</returns>
         public static string[] SplitWithQuotes(this string line, char[] splitCharacters = null, char quoteChar = '"')
         {
             if (splitCharacters == null) splitCharacters = new[] { ' ', '\t' };

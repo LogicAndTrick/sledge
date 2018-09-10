@@ -1,5 +1,8 @@
 namespace Sledge.Common.Easings
 {
+    /// <summary>
+    /// Enum representing the type of an easing function.
+    /// </summary>
     public enum EasingType
     {
         Constant,
