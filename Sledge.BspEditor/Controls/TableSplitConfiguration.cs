@@ -17,6 +17,9 @@ namespace Sledge.BspEditor.Controls
         
         public bool IsValid()
         {
+            if (Rows <= 0 || Columns <= 0) return false;
+            if (Rows > 4 || Columns > 4) return false;
+
             var cells = new bool[Rows, Columns];
             var set = 0;
             foreach (var r in Rectangles)
