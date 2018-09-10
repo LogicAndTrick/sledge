@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Sledge.Common.Translations;
 using Sledge.DataStructures.GameData;
 using Sledge.FileSystem;
 using Sledge.Providers.GameData;
@@ -17,8 +18,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
         public event EventHandler EnvironmentChanged;
         public Control Control => this;
 
-        private IGameDataProvider _fgdProvider = Common.Container.Get<IGameDataProvider>("Fgd");
-        private ITexturePackageProvider _wadProvider = Common.Container.Get<ITexturePackageProvider>("Wad3");
+        private readonly IGameDataProvider _fgdProvider = Common.Container.Get<IGameDataProvider>("Fgd");
+        private readonly ITexturePackageProvider _wadProvider = Common.Container.Get<ITexturePackageProvider>("Wad3");
 
         public IEnvironment Environment
         {
@@ -63,6 +64,49 @@ namespace Sledge.BspEditor.Environment.Goldsource
             nudDefaultTextureScale.ValueChanged += OnEnvironmentChanged;
 
             cklTexturePackages.ItemCheck += (s, e) => this.InvokeLater(() => OnEnvironmentChanged(s, e)); // So it happens after the checkstate has changed, not before
+        }
+
+        public void Translate(TranslationStringsCollection strings)
+        {
+            CreateHandle();
+            var prefix = GetType().FullName;
+
+            grpDirectories.Text = strings.GetString(prefix, "Directories");
+            grpFgds.Text = strings.GetString(prefix, "GameDataFiles");
+            grpBuildTools.Text = strings.GetString(prefix, "BuildTools");
+            grpTextures.Text = strings.GetString(prefix, "Textures");
+
+            btnBuildToolsBrowse.Text = btnGameDirBrowse.Text = strings.GetString(prefix, "Browse");
+            btnAddFgd.Text = btnAddTextures.Text = strings.GetString(prefix, "Add");
+            btnRemoveFgd.Text = btnRemoveTextures.Text = strings.GetString(prefix, "Remove");
+
+            colFgdName.Text = colWadName.Text = strings.GetString(prefix, "Name");
+            colFgdPath.Text = colWadPath.Text = strings.GetString(prefix, "Path");
+
+            lblGameDir.Text = strings.GetString(prefix, "GameDirectory");
+            lblBaseGame.Text = strings.GetString(prefix, "BaseDirectory");
+            lblGameMod.Text = strings.GetString(prefix, "ModDirectory");
+            lblGameExe.Text = strings.GetString(prefix, "GameExecutable");
+            chkLoadHdModels.Text = strings.GetString(prefix, "LoadHDModels");
+            
+            lblDefaultPointEntity.Text = strings.GetString(prefix, "DefaultPointEntity");
+            lblDefaultBrushEntity.Text = strings.GetString(prefix, "DefaultBrushEntity");
+            lblMapSizeOverrideLow.Text = strings.GetString(prefix, "Low");
+            lblMapSizeOverrideHigh.Text = strings.GetString(prefix, "High");
+            chkOverrideMapSize.Text = strings.GetString(prefix, "OverrideMapSize");
+            chkIncludeFgdDirectories.Text = strings.GetString(prefix, "IncludeFgdDirectories");
+
+            lblBuildExeFolder.Text = strings.GetString(prefix, "BuildDirectory");
+            chkIncludeToolsDirectory.Text = strings.GetString(prefix, "IncludeToolsDirectory");
+            chkCopyBsp.Text = strings.GetString(prefix, "CopyBspToGameFolder");
+            chkRunGame.Text = strings.GetString(prefix, "RunGame");
+            chkAskRunGame.Text = strings.GetString(prefix, "AskToRunGame");
+            lblCopyToMapFolder.Text = strings.GetString(prefix, "CopyToMapFolder");
+
+            lblDefaultTextureScale.Text = strings.GetString(prefix, "DefaultTextureScale");
+            lblTexturePackageExclusions.Text = strings.GetString(prefix, "TexturePackagesToInclude");
+            chkToggleAllTextures.Text = strings.GetString(prefix, "ToggleAll");
+            lblAdditionalTexturePackages.Text = strings.GetString(prefix, "AdditionalTexturePackages");
         }
 
         private void OnEnvironmentChanged(object sender, EventArgs e)

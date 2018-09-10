@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Sledge.Common.Shell.Settings;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Environment.Controls
 {
-    public partial class EnvironmentCollectionEditor : UserControl, ISettingEditor
+    public partial class EnvironmentCollectionEditor : UserControl, ISettingEditor, IManualTranslate
     {
         private readonly List<IEnvironmentFactory> _factories;
         private EnvironmentCollection _value;
@@ -51,6 +52,17 @@ namespace Sledge.BspEditor.Environment.Controls
                     ctxEnvironmentMenu.Items.Add(mi);
                 }
             }
+            
+            var translate = Common.Container.Get<ITranslationStringProvider>();
+            translate.Translate(this);
+        }
+
+        public void Translate(TranslationStringsCollection strings)
+        {
+            var prefix = GetType().FullName;
+            btnAdd.Text = strings.GetString(prefix, "Add");
+            btnRemove.Text = strings.GetString(prefix, "Remove");
+            _nameLabel.Text = strings.GetString(prefix, "Name");
         }
 
         private void UpdateTreeNodes()
@@ -111,6 +123,8 @@ namespace Sledge.BspEditor.Environment.Controls
         {
             if (_currentEditor != null) _currentEditor.EnvironmentChanged -= UpdateEnvironment;
 
+            var translate = Common.Container.Get<ITranslationStringProvider>();
+
             _currentEditor = null;
             pnlSettings.Controls.Clear();
 
@@ -135,6 +149,7 @@ namespace Sledge.BspEditor.Environment.Controls
 
                     var des = factory.Deserialise(node);
                     _currentEditor = factory.CreateEditor();
+                    translate.Translate(_currentEditor);
                     pnlSettings.Controls.Add(_currentEditor.Control);
                     _currentEditor.Environment = des;
                     _currentEditor.EnvironmentChanged += UpdateEnvironment;

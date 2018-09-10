@@ -38,8 +38,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.cmbGameExe = new System.Windows.Forms.ComboBox();
             this.cmbGameMod = new System.Windows.Forms.ComboBox();
             this.lstFgds = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colFgdName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colFgdPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnAddFgd = new System.Windows.Forms.Button();
             this.lblDefaultBrushEntity = new System.Windows.Forms.Label();
             this.btnRemoveFgd = new System.Windows.Forms.Button();
@@ -58,7 +58,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.grpDirectories = new System.Windows.Forms.GroupBox();
             this.grpFgds = new System.Windows.Forms.GroupBox();
             this.grpBuildTools = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblCopyToMapFolder = new System.Windows.Forms.Label();
             this.chkCopyBsp = new System.Windows.Forms.CheckBox();
             this.chkCopyRes = new System.Windows.Forms.CheckBox();
             this.chkCopyErr = new System.Windows.Forms.CheckBox();
@@ -81,11 +81,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.btnBuildToolsBrowse = new System.Windows.Forms.Button();
             this.grpTextures = new System.Windows.Forms.GroupBox();
             this.lstAdditionalTextures = new System.Windows.Forms.ListView();
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colWadName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colWadPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnRemoveTextures = new System.Windows.Forms.Button();
             this.btnAddTextures = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblAdditionalTexturePackages = new System.Windows.Forms.Label();
             this.lblTexturePackageExclusions = new System.Windows.Forms.Label();
             this.cklTexturePackages = new System.Windows.Forms.CheckedListBox();
             this.chkToggleAllTextures = new System.Windows.Forms.CheckBox();
@@ -120,9 +120,9 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             // txtGameDir
             // 
-            this.txtGameDir.Location = new System.Drawing.Point(75, 16);
+            this.txtGameDir.Location = new System.Drawing.Point(107, 16);
             this.txtGameDir.Name = "txtGameDir";
-            this.txtGameDir.Size = new System.Drawing.Size(288, 20);
+            this.txtGameDir.Size = new System.Drawing.Size(256, 20);
             this.txtGameDir.TabIndex = 13;
             this.txtGameDir.Text = "example: C:\\Sierra\\Half-Life";
             this.txtGameDir.TextChanged += new System.EventHandler(this.GameDirectoryTextChanged);
@@ -131,7 +131,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.lblGameDir.Location = new System.Drawing.Point(6, 16);
             this.lblGameDir.Name = "lblGameDir";
-            this.lblGameDir.Size = new System.Drawing.Size(63, 20);
+            this.lblGameDir.Size = new System.Drawing.Size(95, 20);
             this.lblGameDir.TabIndex = 14;
             this.lblGameDir.Text = "Game Dir";
             this.lblGameDir.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -190,8 +190,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // lstFgds
             // 
             this.lstFgds.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader4});
+            this.colFgdName,
+            this.colFgdPath});
             this.lstFgds.FullRowSelect = true;
             this.lstFgds.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lstFgds.Location = new System.Drawing.Point(6, 19);
@@ -202,13 +202,13 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.lstFgds.UseCompatibleStateImageBehavior = false;
             this.lstFgds.View = System.Windows.Forms.View.Details;
             // 
-            // columnHeader1
+            // colFgdName
             // 
-            this.columnHeader1.Text = "Name";
+            this.colFgdName.Text = "Name";
             // 
-            // columnHeader4
+            // colFgdPath
             // 
-            this.columnHeader4.Text = "Path";
+            this.colFgdPath.Text = "Path";
             // 
             // btnAddFgd
             // 
@@ -282,7 +282,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             0,
             0,
             131072});
-            this.nudDefaultTextureScale.Location = new System.Drawing.Point(129, 16);
+            this.nudDefaultTextureScale.Location = new System.Drawing.Point(198, 16);
             this.nudDefaultTextureScale.Name = "nudDefaultTextureScale";
             this.nudDefaultTextureScale.Size = new System.Drawing.Size(51, 20);
             this.nudDefaultTextureScale.TabIndex = 38;
@@ -296,7 +296,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.lblDefaultTextureScale.Location = new System.Drawing.Point(6, 16);
             this.lblDefaultTextureScale.Name = "lblDefaultTextureScale";
-            this.lblDefaultTextureScale.Size = new System.Drawing.Size(117, 20);
+            this.lblDefaultTextureScale.Size = new System.Drawing.Size(186, 20);
             this.lblDefaultTextureScale.TabIndex = 36;
             this.lblDefaultTextureScale.Text = "Default Texture Scale";
             this.lblDefaultTextureScale.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -425,7 +425,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             // grpBuildTools
             // 
-            this.grpBuildTools.Controls.Add(this.label1);
+            this.grpBuildTools.Controls.Add(this.lblCopyToMapFolder);
             this.grpBuildTools.Controls.Add(this.chkCopyBsp);
             this.grpBuildTools.Controls.Add(this.chkCopyRes);
             this.grpBuildTools.Controls.Add(this.chkCopyErr);
@@ -453,14 +453,14 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.grpBuildTools.TabStop = false;
             this.grpBuildTools.Text = "Build Tools";
             // 
-            // label1
+            // lblCopyToMapFolder
             // 
-            this.label1.Location = new System.Drawing.Point(6, 277);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(148, 20);
-            this.label1.TabIndex = 43;
-            this.label1.Text = "Copy to map folder:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblCopyToMapFolder.Location = new System.Drawing.Point(6, 277);
+            this.lblCopyToMapFolder.Name = "lblCopyToMapFolder";
+            this.lblCopyToMapFolder.Size = new System.Drawing.Size(148, 20);
+            this.lblCopyToMapFolder.TabIndex = 43;
+            this.lblCopyToMapFolder.Text = "Copy to map folder:";
+            this.lblCopyToMapFolder.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // chkCopyBsp
             // 
@@ -668,7 +668,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.grpTextures.Controls.Add(this.lstAdditionalTextures);
             this.grpTextures.Controls.Add(this.btnRemoveTextures);
             this.grpTextures.Controls.Add(this.btnAddTextures);
-            this.grpTextures.Controls.Add(this.label2);
+            this.grpTextures.Controls.Add(this.lblAdditionalTexturePackages);
             this.grpTextures.Controls.Add(this.lblTexturePackageExclusions);
             this.grpTextures.Controls.Add(this.cklTexturePackages);
             this.grpTextures.Controls.Add(this.chkToggleAllTextures);
@@ -684,8 +684,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // lstAdditionalTextures
             // 
             this.lstAdditionalTextures.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2,
-            this.columnHeader3});
+            this.colWadName,
+            this.colWadPath});
             this.lstAdditionalTextures.FullRowSelect = true;
             this.lstAdditionalTextures.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lstAdditionalTextures.Location = new System.Drawing.Point(9, 254);
@@ -696,13 +696,13 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.lstAdditionalTextures.UseCompatibleStateImageBehavior = false;
             this.lstAdditionalTextures.View = System.Windows.Forms.View.Details;
             // 
-            // columnHeader2
+            // colWadName
             // 
-            this.columnHeader2.Text = "Name";
+            this.colWadName.Text = "Name";
             // 
-            // columnHeader3
+            // colWadPath
             // 
-            this.columnHeader3.Text = "Path";
+            this.colWadPath.Text = "Path";
             // 
             // btnRemoveTextures
             // 
@@ -724,22 +724,22 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.btnAddTextures.UseVisualStyleBackColor = true;
             this.btnAddTextures.Click += new System.EventHandler(this.BrowseWad);
             // 
-            // label2
+            // lblAdditionalTexturePackages
             // 
-            this.label2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label2.Location = new System.Drawing.Point(6, 231);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(222, 20);
-            this.label2.TabIndex = 34;
-            this.label2.Text = "Additional texture packages:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblAdditionalTexturePackages.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblAdditionalTexturePackages.Location = new System.Drawing.Point(6, 231);
+            this.lblAdditionalTexturePackages.Name = "lblAdditionalTexturePackages";
+            this.lblAdditionalTexturePackages.Size = new System.Drawing.Size(357, 20);
+            this.lblAdditionalTexturePackages.TabIndex = 34;
+            this.lblAdditionalTexturePackages.Text = "Additional texture packages:";
+            this.lblAdditionalTexturePackages.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lblTexturePackageExclusions
             // 
             this.lblTexturePackageExclusions.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblTexturePackageExclusions.Location = new System.Drawing.Point(14, 36);
+            this.lblTexturePackageExclusions.Location = new System.Drawing.Point(12, 36);
             this.lblTexturePackageExclusions.Name = "lblTexturePackageExclusions";
-            this.lblTexturePackageExclusions.Size = new System.Drawing.Size(176, 20);
+            this.lblTexturePackageExclusions.Size = new System.Drawing.Size(322, 20);
             this.lblTexturePackageExclusions.TabIndex = 34;
             this.lblTexturePackageExclusions.Text = "Texture packages to include:";
             this.lblTexturePackageExclusions.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -798,8 +798,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
         private System.Windows.Forms.ComboBox cmbGameExe;
         private System.Windows.Forms.ComboBox cmbGameMod;
         private System.Windows.Forms.ListView lstFgds;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader colFgdName;
+        private System.Windows.Forms.ColumnHeader colFgdPath;
         private System.Windows.Forms.Button btnAddFgd;
         private System.Windows.Forms.Label lblDefaultBrushEntity;
         private System.Windows.Forms.Button btnRemoveFgd;
@@ -833,7 +833,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
         private System.Windows.Forms.GroupBox grpTextures;
         private System.Windows.Forms.CheckedListBox cklTexturePackages;
         private System.Windows.Forms.Label lblTexturePackageExclusions;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblCopyToMapFolder;
         private System.Windows.Forms.CheckBox chkCopyBsp;
         private System.Windows.Forms.CheckBox chkCopyRes;
         private System.Windows.Forms.CheckBox chkCopyErr;
@@ -844,10 +844,10 @@ namespace Sledge.BspEditor.Environment.Goldsource
         private System.Windows.Forms.CheckBox chkRunGame;
         private System.Windows.Forms.CheckBox chkToggleAllTextures;
         private System.Windows.Forms.ListView lstAdditionalTextures;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader colWadName;
+        private System.Windows.Forms.ColumnHeader colWadPath;
         private System.Windows.Forms.Button btnRemoveTextures;
         private System.Windows.Forms.Button btnAddTextures;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblAdditionalTexturePackages;
     }
 }
