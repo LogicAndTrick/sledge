@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using SharpDX.Direct3D;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
@@ -44,6 +45,7 @@ namespace Sledge.Rendering.Engine
             };
 
             Device = GraphicsDevice.CreateD3D11(_options);
+            AssertD3D11(Device);
             Scene = new Scene();
 
             _commandList = Device.ResourceFactory.CreateCommandList();
@@ -70,6 +72,18 @@ namespace Sledge.Rendering.Engine
             AddPipeline(new OverlayPipeline());
 
             Application.ApplicationExit += Shutdown;
+        }
+
+        private void AssertD3D11(GraphicsDevice device)
+        {
+            var dev = device.GetType().GetProperty("Device");
+            var dxd = dev?.GetValue(device) as SharpDX.Direct3D11.Device;
+            var fl = dxd?.FeatureLevel ?? FeatureLevel.Level_10_0;
+            if (fl < FeatureLevel.Level_11_0)
+            {
+                MessageBox.Show($"Sledge requires DirectX 11, but your computer only has version {fl}.", "Unsupported graphics card!");
+                Environment.Exit(1);
+            }
         }
 
         internal void SetClearColour(CameraType type, RgbaFloat colour)
