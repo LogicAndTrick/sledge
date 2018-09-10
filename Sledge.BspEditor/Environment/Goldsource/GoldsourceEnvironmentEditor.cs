@@ -399,6 +399,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
             UpdateTexturePackages();
         }
 
+        private void IncludeBuildToolsChanged(object sender, EventArgs e)
+        {
+            UpdateTexturePackages();
+        }
+
         private void UpdateTexturePackages()
         {
             var state = GetTexturePackageSelection();
@@ -422,6 +427,12 @@ namespace Sledge.BspEditor.Environment.Goldsource
                     Path.Combine(txtGameDir.Text, sgm + "_addon"),
                 });
             }
+
+            if (chkIncludeToolsDirectory.Checked)
+            {
+                directories.Add(txtBuildToolsDirectory.Text);
+            }
+
             directories = directories.Distinct().Where(Directory.Exists).ToList();
 
             if (directories.Any())
@@ -435,6 +446,11 @@ namespace Sledge.BspEditor.Environment.Goldsource
                     foreach (var pr in packages)
                     {
                         if (!state.ContainsKey(pr.Name)) state[pr.Name] = true;
+                    }
+
+                    foreach (var key in state.Keys.ToList())
+                    {
+                        if (packages.All(x => !string.Equals(x.Name, key, StringComparison.InvariantCultureIgnoreCase))) state.Remove(key);
                     }
                 }
                 catch

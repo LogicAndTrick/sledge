@@ -80,15 +80,15 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.lblBuildRAD = new System.Windows.Forms.Label();
             this.btnBuildToolsBrowse = new System.Windows.Forms.Button();
             this.grpTextures = new System.Windows.Forms.GroupBox();
-            this.lblTexturePackageExclusions = new System.Windows.Forms.Label();
-            this.cklTexturePackages = new System.Windows.Forms.CheckedListBox();
-            this.chkToggleAllTextures = new System.Windows.Forms.CheckBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.lstAdditionalTextures = new System.Windows.Forms.ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnRemoveTextures = new System.Windows.Forms.Button();
             this.btnAddTextures = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lblTexturePackageExclusions = new System.Windows.Forms.Label();
+            this.cklTexturePackages = new System.Windows.Forms.CheckedListBox();
+            this.chkToggleAllTextures = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudDefaultTextureScale)).BeginInit();
             this.grpDirectories.SuspendLayout();
             this.grpFgds.SuspendLayout();
@@ -560,6 +560,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.chkIncludeToolsDirectory.TabIndex = 33;
             this.chkIncludeToolsDirectory.Text = "Automatically include textures found in this directory";
             this.chkIncludeToolsDirectory.UseVisualStyleBackColor = true;
+            this.chkIncludeToolsDirectory.CheckedChanged += new System.EventHandler(this.IncludeBuildToolsChanged);
             // 
             // lblBuildExeFolder
             // 
@@ -680,47 +681,6 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.grpTextures.TabStop = false;
             this.grpTextures.Text = "Textures";
             // 
-            // lblTexturePackageExclusions
-            // 
-            this.lblTexturePackageExclusions.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblTexturePackageExclusions.Location = new System.Drawing.Point(14, 36);
-            this.lblTexturePackageExclusions.Name = "lblTexturePackageExclusions";
-            this.lblTexturePackageExclusions.Size = new System.Drawing.Size(176, 20);
-            this.lblTexturePackageExclusions.TabIndex = 34;
-            this.lblTexturePackageExclusions.Text = "Texture packages to include:";
-            this.lblTexturePackageExclusions.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // cklTexturePackages
-            // 
-            this.cklTexturePackages.CheckOnClick = true;
-            this.cklTexturePackages.FormattingEnabled = true;
-            this.cklTexturePackages.Location = new System.Drawing.Point(9, 59);
-            this.cklTexturePackages.Name = "cklTexturePackages";
-            this.cklTexturePackages.Size = new System.Drawing.Size(444, 169);
-            this.cklTexturePackages.TabIndex = 39;
-            // 
-            // chkToggleAllTextures
-            // 
-            this.chkToggleAllTextures.Checked = true;
-            this.chkToggleAllTextures.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkToggleAllTextures.Location = new System.Drawing.Point(372, 41);
-            this.chkToggleAllTextures.Name = "chkToggleAllTextures";
-            this.chkToggleAllTextures.Size = new System.Drawing.Size(81, 18);
-            this.chkToggleAllTextures.TabIndex = 42;
-            this.chkToggleAllTextures.Text = "Toggle all";
-            this.chkToggleAllTextures.UseVisualStyleBackColor = true;
-            this.chkToggleAllTextures.CheckedChanged += new System.EventHandler(this.ToggleAllTextures);
-            // 
-            // label2
-            // 
-            this.label2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label2.Location = new System.Drawing.Point(6, 231);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(222, 20);
-            this.label2.TabIndex = 34;
-            this.label2.Text = "Additional texture packages:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // lstAdditionalTextures
             // 
             this.lstAdditionalTextures.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -763,6 +723,47 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.btnAddTextures.Text = "Add...";
             this.btnAddTextures.UseVisualStyleBackColor = true;
             this.btnAddTextures.Click += new System.EventHandler(this.BrowseWad);
+            // 
+            // label2
+            // 
+            this.label2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label2.Location = new System.Drawing.Point(6, 231);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(222, 20);
+            this.label2.TabIndex = 34;
+            this.label2.Text = "Additional texture packages:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblTexturePackageExclusions
+            // 
+            this.lblTexturePackageExclusions.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblTexturePackageExclusions.Location = new System.Drawing.Point(14, 36);
+            this.lblTexturePackageExclusions.Name = "lblTexturePackageExclusions";
+            this.lblTexturePackageExclusions.Size = new System.Drawing.Size(176, 20);
+            this.lblTexturePackageExclusions.TabIndex = 34;
+            this.lblTexturePackageExclusions.Text = "Texture packages to include:";
+            this.lblTexturePackageExclusions.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cklTexturePackages
+            // 
+            this.cklTexturePackages.CheckOnClick = true;
+            this.cklTexturePackages.FormattingEnabled = true;
+            this.cklTexturePackages.Location = new System.Drawing.Point(9, 59);
+            this.cklTexturePackages.Name = "cklTexturePackages";
+            this.cklTexturePackages.Size = new System.Drawing.Size(444, 169);
+            this.cklTexturePackages.TabIndex = 39;
+            // 
+            // chkToggleAllTextures
+            // 
+            this.chkToggleAllTextures.Checked = true;
+            this.chkToggleAllTextures.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkToggleAllTextures.Location = new System.Drawing.Point(372, 41);
+            this.chkToggleAllTextures.Name = "chkToggleAllTextures";
+            this.chkToggleAllTextures.Size = new System.Drawing.Size(81, 18);
+            this.chkToggleAllTextures.TabIndex = 42;
+            this.chkToggleAllTextures.Text = "Toggle all";
+            this.chkToggleAllTextures.UseVisualStyleBackColor = true;
+            this.chkToggleAllTextures.CheckedChanged += new System.EventHandler(this.ToggleAllTextures);
             // 
             // GoldsourceEnvironmentEditor
             // 
