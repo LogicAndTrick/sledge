@@ -321,7 +321,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
             "8192",
             "16384",
             "32768",
-            "65536"});
+            "65536",
+            "131072"});
             this.cmbMapSizeOverrideHigh.Location = new System.Drawing.Point(305, 239);
             this.cmbMapSizeOverrideHigh.Name = "cmbMapSizeOverrideHigh";
             this.cmbMapSizeOverrideHigh.Size = new System.Drawing.Size(57, 21);
@@ -345,7 +346,8 @@ namespace Sledge.BspEditor.Environment.Goldsource
             "-8192",
             "-16384",
             "-32768",
-            "-65536"});
+            "-65536",
+            "-131072"});
             this.cmbMapSizeOverrideLow.Location = new System.Drawing.Point(201, 239);
             this.cmbMapSizeOverrideLow.Name = "cmbMapSizeOverrideLow";
             this.cmbMapSizeOverrideLow.Size = new System.Drawing.Size(57, 21);
