@@ -6,11 +6,13 @@ using System.Windows.Forms;
 using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Editing.Components.Compile.Profiles;
 using Sledge.BspEditor.Editing.Components.Compile.Specification;
+using Sledge.Common.Translations;
 using Sledge.QuickForms;
+using Sledge.Shell;
 
 namespace Sledge.BspEditor.Editing.Components.Compile
 {
-    public sealed partial class CompileDialog : Form
+    public sealed partial class CompileDialog : Form, IManualTranslate
     {
         private CompileSpecification _specification;
         private readonly BuildProfileRegister _buildProfileRegister;
@@ -44,6 +46,39 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             PopulatePresets();
             PopulateTabs();
             PopulateProfiles();
+
+            var translate = Sledge.Common.Container.Get<ITranslationStringProvider>();
+            translate.Translate(this);
+        }
+
+        public string ProfileName { get; set; }
+        public string OK { get; set; }
+        public string Cancel { get; set; }
+        public string DeleteProfile { get; set; }
+        public string DeleteAreYouSure { get; set; }
+
+        public void Translate(ITranslationStringProvider strings)
+        {
+            CreateHandle();
+            var prefix = GetType().FullName;
+            this.InvokeLater(() =>
+            {
+                Text = strings.GetString(prefix, "Title");
+                btnAdvancedMode.Text = strings.GetString(prefix, "AdvancedMode");
+                lblProfile.Text = strings.GetString(prefix, "Profile");
+                tabSteps.Text = strings.GetString(prefix, "StepsToRun");
+                btnSimpleMode.Text = strings.GetString(prefix, "SimpleMode");
+                btnSaveProfile.Text = strings.GetString(prefix, "SaveProfile");
+                btnSaveProfileAs.Text = strings.GetString(prefix, "SaveProfileAs");
+                btnCancel.Text = strings.GetString(prefix, "Cancel");
+                btnGo.Text = strings.GetString(prefix, "Compile");
+
+                ProfileName = strings.GetString(prefix, "ProfileName");
+                OK = strings.GetString(prefix, "OK");
+                Cancel = strings.GetString(prefix, "Cancel");
+                DeleteProfile = strings.GetString(prefix, "DeleteProfile");
+                DeleteAreYouSure = strings.GetString(prefix, "DeleteAreYouSure");
+            });
         }
 
         public IEnumerable<BatchArgument> SelectedBatchArguments
@@ -227,13 +262,13 @@ namespace Sledge.BspEditor.Editing.Components.Compile
 
         private string PromptName(string name)
         {
-            var qf = new QuickForm("Profile name") {UseShortcutKeys = true};
-            qf.TextBox("Name", name);
-            qf.OkCancel("OK", "Cancel");
+            var qf = new QuickForm(ProfileName) {UseShortcutKeys = true};
+            qf.TextBox(ProfileName, name);
+            qf.OkCancel(OK, Cancel);
 
             if (qf.ShowDialog() != DialogResult.OK) return null;
 
-            var n = qf.String("Name");
+            var n = qf.String(ProfileName);
             return String.IsNullOrEmpty(n) ? null : n;
         }
 
@@ -256,7 +291,7 @@ namespace Sledge.BspEditor.Editing.Components.Compile
             if (!(cmbProfile.SelectedItem is ProfileWrapper profile)) return;
             if (profile.Profile == null) return;
 
-            if (MessageBox.Show($"Delete profile '{profile.GetName()}'?", "Delete profile?", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            if (MessageBox.Show(DeleteAreYouSure, DeleteProfile, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 _buildProfileRegister.Remove(profile.Profile);
                 PopulateProfiles();

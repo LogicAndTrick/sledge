@@ -333,7 +333,19 @@
                 "CompileFailed": "Compile failed. Check the message log for more details."
             },
             "CompileDialog": {
-                
+                "Title": "Compile Map",
+                "AdvancedMode": "Advanced mode",
+                "Profile": "Profile:",
+                "StepsToRun": "Steps to run",
+                "SimpleMode": "Simple mode",
+                "SaveProfile": "Save profile",
+                "SaveProfileAs": "Save profile as...",
+                "OK": "OK",
+                "Cancel": "Cancel",
+                "Compile": "Compile",
+                "ProfileName": "Profile name",
+                "DeleteProfile": "Delete Profile",
+                "DeleteAreYouSure": "Are you sure you want to delete this profile?" 
             } 
         },
         "EntityReportDialog": {

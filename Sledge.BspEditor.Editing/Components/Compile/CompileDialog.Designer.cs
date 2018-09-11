@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.cmbProfile = new System.Windows.Forms.ComboBox();
-            this.label40 = new System.Windows.Forms.Label();
+            this.lblProfile = new System.Windows.Forms.Label();
             this.ToolTabs = new System.Windows.Forms.TabControl();
             this.tabSteps = new System.Windows.Forms.TabPage();
             this.pnlSteps = new System.Windows.Forms.FlowLayoutPanel();
@@ -54,20 +54,20 @@
             // 
             this.cmbProfile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbProfile.FormattingEnabled = true;
-            this.cmbProfile.Location = new System.Drawing.Point(46, 5);
+            this.cmbProfile.Location = new System.Drawing.Point(105, 5);
             this.cmbProfile.Name = "cmbProfile";
             this.cmbProfile.Size = new System.Drawing.Size(121, 21);
             this.cmbProfile.TabIndex = 24;
             this.cmbProfile.SelectedIndexChanged += new System.EventHandler(this.ProfileSelected);
             // 
-            // label40
+            // lblProfile
             // 
-            this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(3, 8);
-            this.label40.Name = "label40";
-            this.label40.Size = new System.Drawing.Size(36, 13);
-            this.label40.TabIndex = 23;
-            this.label40.Text = "Profile";
+            this.lblProfile.Location = new System.Drawing.Point(7, 5);
+            this.lblProfile.Name = "lblProfile";
+            this.lblProfile.Size = new System.Drawing.Size(92, 21);
+            this.lblProfile.TabIndex = 23;
+            this.lblProfile.Text = "Profile";
+            this.lblProfile.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // ToolTabs
             // 
@@ -124,9 +124,9 @@
             // 
             // btnRename
             // 
-            this.btnRename.Location = new System.Drawing.Point(173, 3);
+            this.btnRename.Location = new System.Drawing.Point(232, 5);
             this.btnRename.Name = "btnRename";
-            this.btnRename.Size = new System.Drawing.Size(56, 23);
+            this.btnRename.Size = new System.Drawing.Size(78, 21);
             this.btnRename.TabIndex = 27;
             this.btnRename.Text = "Rename";
             this.btnRename.UseVisualStyleBackColor = true;
@@ -134,9 +134,9 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(235, 3);
+            this.btnDelete.Location = new System.Drawing.Point(316, 5);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(56, 23);
+            this.btnDelete.Size = new System.Drawing.Size(78, 21);
             this.btnDelete.TabIndex = 28;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
@@ -167,7 +167,7 @@
             // AdvancedPanel
             // 
             this.AdvancedPanel.Controls.Add(this.btnSimpleMode);
-            this.AdvancedPanel.Controls.Add(this.label40);
+            this.AdvancedPanel.Controls.Add(this.lblProfile);
             this.AdvancedPanel.Controls.Add(this.ToolTabs);
             this.AdvancedPanel.Controls.Add(this.btnRename);
             this.AdvancedPanel.Controls.Add(this.cmbProfile);
@@ -268,7 +268,6 @@
             this.ToolTabs.ResumeLayout(false);
             this.tabSteps.ResumeLayout(false);
             this.AdvancedPanel.ResumeLayout(false);
-            this.AdvancedPanel.PerformLayout();
             this.SimplePanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -277,7 +276,7 @@
         #endregion
 
         private System.Windows.Forms.ComboBox cmbProfile;
-        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.Label lblProfile;
         private System.Windows.Forms.TabControl ToolTabs;
         private System.Windows.Forms.Button btnGo;
         private System.Windows.Forms.Button btnCancel;
