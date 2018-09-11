@@ -31,7 +31,7 @@ namespace Sledge.BspEditor.Tools.Texture
             return Task.FromResult(0);
         }
 
-        public string Title => "Texture";
+        public string Title { get; set; } = "Texture";
         public object Control => this;
 
         private string _currentTexture;

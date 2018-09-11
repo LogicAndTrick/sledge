@@ -7,25 +7,21 @@ using LogicAndTrick.Oy;
 using Sledge.BspEditor.Tools.Vertex.Tools;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Translations;
 using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
     [Export(typeof(ISidebarComponent))]
     [OrderHint("F")]
-    public partial class VertexSidebarPanel : UserControl, ISidebarComponent
+    [AutoTranslate]
+    public partial class VertexSidebarPanel : UserControl, ISidebarComponent, IManualTranslate
     {
         [Import] private VertexTool _tool;
         [ImportMany] private IEnumerable<Lazy<VertexSubtool>> _subTools;
 
-        public string Title => "Vertex Tool";
+        public string Title { get; set; } = "Vertex Tool";
         public object Control => this;
-        #region Translations
-        
-        public string DeselectAll { set => this.InvokeLater(() => DeselectAllButton.Text = value); }
-        public string ResetToOriginal { set => this.InvokeLater(() => ResetButton.Text = value); }
-
-        #endregion
 
         public VertexSidebarPanel()
         {
@@ -39,8 +35,18 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
             {
                 SetSelectedTool(t);
             });
+        }
 
+        public void Translate(ITranslationStringProvider strings)
+        {
             CreateHandle();
+            var prefix = GetType().FullName;
+            this.InvokeLater(() =>
+            {
+                Title = strings.GetString(prefix, "Title");
+                DeselectAllButton.Text = strings.GetString(prefix, "DeselectAll");
+                ResetButton.Text = strings.GetString(prefix, "ResetToOriginal");
+            });
         }
 
         public bool IsInContext(IContext context)

@@ -37,6 +37,10 @@
             "Copy": {
                 "Name": "Copy",
                 "Details": "Copy the current selection."
+            },
+            "Delete": {
+                "Name": "Delete",
+                "Details": "Delete the current selection."
             }
         },
         "Grouping": {
@@ -70,6 +74,7 @@
                 "Details": "Create a new window"
             },
             "LayoutSettings": {
+                "Title": "Layout settings",
                 "Window": "Window",
                 "Rows": "Rows",
                 "Columns": "Columns",

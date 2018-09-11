@@ -22,7 +22,7 @@ namespace Sledge.BspEditor.Tools.Texture
     {
         [Import] private TextureTool _tool;
         
-        public string Title => "Texture Power Tools";
+        public string Title { get; set; } = "Texture Power Tools";
         public object Control => this;
 
         #region Translations

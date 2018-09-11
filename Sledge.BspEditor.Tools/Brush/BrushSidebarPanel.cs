@@ -26,7 +26,7 @@ namespace Sledge.BspEditor.Tools.Brush
         private IBrush _selectedBrush;
         private readonly List<BrushControl> _currentControls;
 
-        public string Title => "Brush";
+        public string Title { get; set; } = "Brush";
         public object Control => this;
         
         #region Translations

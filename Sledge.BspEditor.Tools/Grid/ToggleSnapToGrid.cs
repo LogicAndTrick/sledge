@@ -9,6 +9,7 @@ using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Tools.Grid
 {
@@ -17,10 +18,11 @@ namespace Sledge.BspEditor.Tools.Grid
     [DefaultHotkey("Shift+W")]
     [MenuItem("Map", "", "Grid", "B")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_SnapToGrid))]
+    [AutoTranslate]
     public class ToggleSnapToGrid : ICommand
     {
-        public string Name => "Snap to Grid";
-        public string Details => "Toggle grid snapping";
+        public string Name { get; set; } = "Snap to Grid";
+        public string Details { get; set; } = "Toggle grid snapping";
         public bool IsInContext(IContext context)
         {
             return context.TryGet("ActiveDocument", out MapDocument _);

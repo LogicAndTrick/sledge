@@ -38,6 +38,7 @@
             "CreateObject": "Create {0}"
         },
         "BrushSidebarPanel": {
+            "Title": "Brush Tool",
             "BrushType": "Brush type:",
             "RoundVertices": "Round created vertices"
         },
@@ -105,9 +106,19 @@
             }
         }
     },
+    "Cordon": {
+        "ToggleCordon": {
+            "Name": "Cordon bounds",
+            "Details": "Toggle cordon bounds"
+        }
+    },
     "Entity": {
         "EntityTool": {
             "CreateObject": "Create {0}"
+        },
+        "EntitySidebarPanel": {
+            "Title": "Entity Tool",
+            "EntityTypeLabelText": "Entity type:"
         }
     },
     "Grid": {
@@ -127,6 +138,10 @@
         "SwitchGrid": {
             "Name": "Cycle through grids",
             "Details": "Cycle through grid types"
+        },
+        "ToggleSnapToGrid": {
+            "Name": "Grid snapping",
+            "Details": "Toggle grid snapping"
         }
     }, 
     "Selection": {
@@ -142,6 +157,21 @@
             "Horizontally": "Horizontally",
             "Clockwise": "90° clockwise",
             "AntiClockwise": "90° anti-clockwise"
+        },
+        "SelectToolSidebarPanel": {
+            "Title": "Selection Tool",
+            "Mode": "Manipuation mode:",
+            "Translate": "Translate",
+            "Rotate": "Rotate",
+            "Skew": "Skew",
+            "Show3DWidgets": "Show 3D widgets",
+            "Actions": "Actions:",
+            "MoveToWorld": "Move to world",
+            "TieToEntity": "Tie to entity"
+        },
+        "ToggleIgnoreGroupingCommand": {
+            "Name": "Ignore grouping",
+            "Details": "Toggle ignore grouping on and off"
         }
     },
     "Texture": {
@@ -157,6 +187,7 @@
             "Browse": "Browse..."
         },
         "TextureApplicationForm": {
+            "Title": "Texture Application",
             "Scale": "Scale",
             "Shift": "Shift",
             "Browse": "Browse...",
@@ -214,11 +245,13 @@
             "Cancel": "Cancel"
         },
         "TextureSidebarPanel": {
+            "Title": "Texture",
             "Apply": "Apply",
             "Browse": "Browse...",
             "Replace": "Replace..." 
         },
         "TextureToolSidebarPanel": {
+            "Title": "Texture Power Tools",
             "RandomiseShiftValues": "Randomise shift values",
             "Min": "Min",
             "Max": "Max",
@@ -243,8 +276,12 @@
         },
         "Controls": {
             "VertexSidebarPanel": {
+                "Title": "Vertex Tool",
                 "DeselectAll": "Deselect all",
                 "ResetToOriginal": "Reset to original"
+            },
+            "VertexErrorsSidebarPanel": {
+                "Title": "Vertex Tool Errors"
             },
             "VertexPointControl": {
                 "MergeOverlappingVertices": "Merge overlapping vertices",
@@ -259,7 +296,7 @@
                 "Reset": "Reset",
                 "ResetOrigin": "Reset origin"
             },
-            "VertexFaceEditControl": {
+            "VertexEditFaceControl": {
                 "WithSelectedFaces": "With selected faces:",
                 "Units": "units",
                 "PokeBy": "Poke by",

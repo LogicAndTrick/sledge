@@ -36,10 +36,10 @@
             // 
             this.EntityTypeLabel.Location = new System.Drawing.Point(3, 0);
             this.EntityTypeLabel.Name = "EntityTypeLabel";
-            this.EntityTypeLabel.Size = new System.Drawing.Size(68, 17);
+            this.EntityTypeLabel.Size = new System.Drawing.Size(108, 17);
             this.EntityTypeLabel.TabIndex = 9;
             this.EntityTypeLabel.Text = "Entity Type:";
-            this.EntityTypeLabel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.EntityTypeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // EntityTypeList
             // 

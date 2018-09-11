@@ -53,6 +53,12 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             });
         }
 
+        public string Title
+        {
+            get => Text;
+            set => this.InvokeLater(() => Text = value);
+        }
+
         public string Apply
         {
             get => btnApply.Text;

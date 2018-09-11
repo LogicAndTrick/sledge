@@ -16,7 +16,8 @@ namespace Sledge.Shell.Registers
     /// The bottom register controls bottom tabs
     /// </summary>
     [Export(typeof(IStartupHook))]
-    public class BottomTabRegister : IStartupHook
+    [Export(typeof(IInitialiseHook))]
+    public class BottomTabRegister : IStartupHook, IInitialiseHook
     {
         // The bottom tab register needs direct access to the shell
         private readonly Lazy<Forms.Shell> _shell;
@@ -53,6 +54,20 @@ namespace Sledge.Shell.Registers
             return Task.CompletedTask;
         }
 
+        public Task OnInitialise()
+        {
+            _shell.Value.InvokeLater(() =>
+            {
+                foreach (var tab in _shell.Value.BottomTabs.TabPages.OfType<TabPage>())
+                {
+                    if (!(tab.Tag is IBottomTabComponent btc)) continue;
+                    tab.Text = btc.Title;
+                }
+            });
+
+            return Task.CompletedTask;
+        }
+
         private void Initialise()
         {
             _shell.Value.Invoke((MethodInvoker)delegate
@@ -79,6 +94,7 @@ namespace Sledge.Shell.Registers
 
                     var iic = btc.IsInContext(context);
                     var vis = tab.Visible;
+                    tab.Text = btc.Title;
 
                     if (iic != vis) tab.Visible = iic;
                 }

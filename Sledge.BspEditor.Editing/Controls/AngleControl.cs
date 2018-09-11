@@ -34,24 +34,14 @@ namespace Sledge.BspEditor.Editing.Controls
         private bool _draggedinside;
         private string _anglestring;
 
-        public int Degrees
-        {
-            get { return (int)(_angle * 180 / Math.PI); }
-        }
+        public int Degrees => (int)(_angle * 180 / Math.PI);
 
-        public override string Text
-        {
-            get { return _anglestring; }
-        }
+        public override string Text => _anglestring;
 
         private bool _showTextBox;
-
         public bool ShowTextBox
         {
-            get
-            {
-                return _showTextBox;
-            }
+            get => _showTextBox;
             set
             {
                 _showTextBox = value;
@@ -62,8 +52,14 @@ namespace Sledge.BspEditor.Editing.Controls
 
         public bool ShowLabel
         {
-            get { return lblAngle.Visible; }
-            set { lblAngle.Visible = value; }
+            get => lblAngle.Visible;
+            set => lblAngle.Visible = value;
+        }
+
+        public string LabelText
+        {
+            get => lblAngles.Text;
+            set => lblAngles.Text = value;
         }
 
         public AngleControl()

@@ -22,8 +22,9 @@ namespace Sledge.BspEditor.Tools.Grid
     [AutoTranslate]
     public class IncreaseGrid : ICommand
     {
-        public string Name => "Bigger Grid";
-        public string Details => "Increase the grid size";
+        public string Name { get; set; } = "Bigger Grid";
+        public string Details { get; set; } = "Increase the grid size";
+
         public bool IsInContext(IContext context)
         {
             return context.TryGet("ActiveDocument", out MapDocument _);

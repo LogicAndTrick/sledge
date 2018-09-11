@@ -215,6 +215,7 @@ namespace Sledge.BspEditor.Controls.Layout
             var prefix = GetType().FullName;
             this.InvokeLater(() =>
             {
+                Text = strings.GetString(prefix, "Title");
                 lblWindow.Text = strings.GetString(prefix, "Window");
                 lblRows.Text = strings.GetString(prefix, "Rows");
                 lblColumns.Text = strings.GetString(prefix, "Columns");

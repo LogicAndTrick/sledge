@@ -53,6 +53,12 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             set => this.InvokeLater(() => lblClass.Text = value);
         }
 
+        public string AnglesLabel
+        {
+            get => angAngles.LabelText;
+            set => this.InvokeLater(() => angAngles.LabelText = value);
+        }
+
         public string KeyValuesLabel
         {
             get => lblKeyValues.Text;

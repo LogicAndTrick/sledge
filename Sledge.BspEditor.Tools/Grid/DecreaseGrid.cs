@@ -21,8 +21,9 @@ namespace Sledge.BspEditor.Tools.Grid
     [AutoTranslate]
     public class DecreaseGrid : ICommand
     {
-        public string Name => "Smaller Grid";
-        public string Details => "Decrease the grid size";
+        public string Name { get; set; } = "Smaller Grid";
+        public string Details { get; set; } = "Decrease the grid size";
+
         public bool IsInContext(IContext context)
         {
             return context.TryGet("ActiveDocument", out MapDocument _);

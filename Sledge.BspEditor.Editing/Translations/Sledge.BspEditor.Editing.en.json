@@ -12,9 +12,21 @@
             "Name": "Edit visgroups",
             "Details": "View and edit map visgroups."
         },
+        "MoveToWorld": {
+            "Name": "Move to world",
+            "Details": "Delete all selected solid entities and move their brushes back to the world."
+        },
         "OpenAboutWindow": {
             "Name": "About Sledge",
             "Details": "View information about this application."
+        },
+        "OpenCheckForProblemsDialog": {
+            "Name": "Check for problems",
+            "Details": "Open the check for problems window."
+        },
+        "OpenCompileWindow": {
+            "Name": "Run...",
+            "Details": "Open the compile dialog"
         },
         "OpenSledgeWebsite": {
             "Name": "Sledge Website",
@@ -126,12 +138,16 @@
         },
         "Toggles": {
             "ToggleTextureLock": {
-                "Name": "Texture Lock",
+                "Name": "Texture lock",
                 "Details": "Toggle texture locking for uniform operations (transform, rotate)."
             },
             "ToggleTextureScalingLock": {
-                "Name": "Texture Scaling Lock",
+                "Name": "Texture scaling lock",
                 "Details": "Toggle texture locking for scale operations."
+            },
+            "ToggleHideNullTextures": {
+                "Name": "Hide null textures",
+                "Details": "Toggle null texture display."
             }
         },
         "Pointfile": {
@@ -203,6 +219,7 @@
     "Components": {
         "Properties": {
             "ObjectPropertiesDialog": {
+                "Title": "Object properties",
                 "Apply": "Apply",
                 "OK": "OK",
                 "Cancel": "Cancel",
@@ -222,6 +239,7 @@
                 "ClassInfoTab": {
                     "Name": "Class Info",
                     "ClassLabel": "Class:",
+                    "AnglesLabel": "Angles:",
                     "KeyValuesLabel": "Keyvalues:",
                     "PropertyNameLabel": "Property Name",
                     "PropertyValueLabel": "Value",
@@ -258,6 +276,7 @@
                 "CancelButton": "Cancel"
             },
             "VisgroupSidebarPanel": {
+                "Title": "Visgroups",
                 "EditButton": "Edit",
                 "SelectButton": "Select",
                 "ShowAllButton": "Show all",
@@ -353,6 +372,16 @@
         },
         "MapTreeWindow": {
             "Title": "Map Logical Tree"
+        }
+    },
+    "History": {
+        "UndoCommand": {
+            "Name": "Undo",
+            "Details": "Undo the last operation"
+        },
+        "RedoCommand": {
+            "Name": "Redo",
+            "Details": "Redo the last undone operation"
         }
     },
     "MenuDataProvider": {

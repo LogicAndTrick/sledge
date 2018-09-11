@@ -18,14 +18,32 @@ namespace Sledge.Shell.Registers
     /// The sidebar register controls sidebar components, positioning, and visibility
     /// </summary>
     [Export(typeof(IStartupHook))]
+    [Export(typeof(IInitialiseHook))]
     [Export(typeof(ISettingsContainer))]
-    public class SidebarRegister : IStartupHook, ISettingsContainer
+    public class SidebarRegister : IStartupHook, IInitialiseHook, ISettingsContainer
     {
-        // The sidebar register needs direct access to the shell
-        [Import] private Forms.Shell _shell;
-        [ImportMany] private IEnumerable<Lazy<ISidebarComponent>> _sidebarComponents;
+        private readonly Lazy<Form> _shell;
+        private readonly IEnumerable<Lazy<ISidebarComponent>> _sidebarComponents;
 
-        public async Task OnStartup()
+        private List<SidebarComponent> _left;
+        private List<SidebarComponent> _right;
+
+        private Forms.Shell Shell => (Forms.Shell) _shell.Value;
+
+        [ImportingConstructor]
+        public SidebarRegister(
+            [Import("Shell")] Lazy<Form> shell,
+            [ImportMany] IEnumerable<Lazy<ISidebarComponent>> sidebarComponents
+        )
+        {
+            _shell = shell;
+            _sidebarComponents = sidebarComponents;
+
+            _left = new List<SidebarComponent>();
+            _right = new List<SidebarComponent>();
+        }
+
+        public Task OnStartup()
         {
             // Register the exported sidebar components
             foreach (var export in _sidebarComponents)
@@ -38,15 +56,14 @@ namespace Sledge.Shell.Registers
 
             // Subscribe to context changes
             Oy.Subscribe<IContext>("Context:Changed", ContextChanged);
+            return Task.CompletedTask;
         }
 
-        private List<SidebarComponent> _left;
-        private List<SidebarComponent> _right;   
-
-        public SidebarRegister()
+        public Task OnInitialise()
         {
-            _left = new List<SidebarComponent>();
-            _right = new List<SidebarComponent>();
+            _left.ForEach(x => x.UpdateTitle());
+            _right.ForEach(x => x.UpdateTitle());
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -59,15 +76,17 @@ namespace Sledge.Shell.Registers
             var sc = new SidebarComponent(component, orderHint);
             _right.Add(sc);
             _right = _right.OrderBy(x => x.OrderHint).ToList();
-            _shell.RightSidebarContainer.Insert(sc.Panel, _right.IndexOf(sc));
+            Shell.RightSidebarContainer.Insert(sc.Panel, _right.IndexOf(sc));
         }
 
-        private async Task ContextChanged(IContext context)
+        private Task ContextChanged(IContext context)
         {
             foreach (var sc in _left.Union(_right))
             {
                 sc.ContextChanged(context);
             }
+
+            return Task.CompletedTask;
         }
 
         // Settings provider
@@ -83,7 +102,7 @@ namespace Sledge.Shell.Registers
 
         public void LoadValues(ISettingsStore store)
         {
-            _shell.Invoke((MethodInvoker) delegate
+            _shell.Value.Invoke((MethodInvoker) delegate
             {
                 var controls = _left.Union(_right).ToDictionary(x => x.ID, x => x);
                 foreach (var sv in store.GetKeys())
@@ -175,14 +194,24 @@ namespace Sledge.Shell.Registers
                 Panel.AddControl((Control) component.Control);
             }
 
+            public void UpdateTitle()
+            {
+                Panel.InvokeLater(() =>
+                {
+                    Panel.Text = Component.Title;
+                });
+            }
+
             /// <summary>
             /// Update the component visibility based on the current context
             /// </summary>
             /// <param name="context">The current context</param>
             public void ContextChanged(IContext context)
             {
-                Panel.InvokeLater(() => {
+                Panel.InvokeLater(() =>
+                {
                     var iic = Component.IsInContext(context);
+                    Panel.Text = Component.Title;
                     if (iic != Panel.Visible) Panel.Visible = iic;
                 });
             }

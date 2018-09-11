@@ -5,14 +5,17 @@ using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Context;
+using Sledge.Common.Translations;
+using Sledge.Shell;
 
 namespace Sledge.BspEditor.Tools.Selection
 {
     [Export(typeof(ISidebarComponent))]
     [OrderHint("F")]
-    public partial class SelectToolSidebarPanel : UserControl, ISidebarComponent
+    [AutoTranslate]
+    public partial class SelectToolSidebarPanel : UserControl, ISidebarComponent, IManualTranslate
     {
-        public string Title => "Selection Tool";
+        public string Title { get; set; } = "Selection Tool";
         public object Control => this;
 
         public SelectToolSidebarPanel()
@@ -30,6 +33,24 @@ namespace Sledge.BspEditor.Tools.Selection
             Oy.Subscribe<String>("SelectTool:SetShow3DWidgets", x =>
             {
                 Show3DWidgetsCheckbox.Checked = x == "1";
+            });
+        }
+
+        public void Translate(ITranslationStringProvider strings)
+        {
+            CreateHandle();
+            var prefix = GetType().FullName;
+            this.InvokeLater(() =>
+            {
+                Title = strings.GetString(prefix, "Title");
+                lblMode.Text = strings.GetString(prefix, "Mode");
+                TranslateModeCheckbox.Text = strings.GetString(prefix, "Translate");
+                RotateModeCheckbox.Text = strings.GetString(prefix, "Rotate");
+                SkewModeCheckbox.Text = strings.GetString(prefix, "Skew");
+                Show3DWidgetsCheckbox.Text = strings.GetString(prefix, "Show3DWidgets");
+                lblActions.Text = strings.GetString(prefix, "Actions");
+                MoveToWorldButton.Text = strings.GetString(prefix, "MoveToWorld");
+                MoveToEntityButton.Text = strings.GetString(prefix, "TieToEntity");
             });
         }
 

@@ -15,12 +15,13 @@ namespace Sledge.BspEditor.Tools.Vertex.Controls
 {
     [Export(typeof(ISidebarComponent))]
     [OrderHint("G")]
+    [AutoTranslate]
     public partial class VertexErrorsSidebarPanel : UserControl, ISidebarComponent
     {
         private readonly IEnumerable<Lazy<IVertexErrorCheck>> _errorChecks;
         private readonly Lazy<ITranslationStringProvider> _translator;
         
-        public string Title => "Vertex Errors";
+        public string Title { get; set; } = "Vertex Errors";
         public object Control => this;
 
         [ImportingConstructor]

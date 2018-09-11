@@ -9,6 +9,7 @@ using Sledge.BspEditor.Tools.Properties;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Menu;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Tools.Cordon
 {
@@ -16,10 +17,12 @@ namespace Sledge.BspEditor.Tools.Cordon
     [CommandID("BspEditor:Cordon:ToggleCordon")]
     [MenuItem("Tools", "", "Cordon", "B")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Cordon))]
+    [AutoTranslate]
     public class ToggleCordon : ICommand
     {
-        public string Name => "Cordon Bounds";
-        public string Details => "Toggle cordon bounds";
+        public string Name { get; set; } = "Cordon Bounds";
+        public string Details { get; set; } = "Toggle cordon bounds";
+
         public bool IsInContext(IContext context)
         {
             return context.TryGet("ActiveDocument", out MapDocument _);
