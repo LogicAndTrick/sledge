@@ -65,7 +65,11 @@ namespace Sledge.Rendering.Cameras
         public float Zoom
         {
             get => _zoom;
-            set => _zoom = Math.Min(256, Math.Max(0.001f, value));
+            set
+            {
+                if (float.IsNaN(value) || float.IsInfinity(value)) return;
+                _zoom = Math.Min(256, Math.Max(0.001f, value));
+            }
         }
 
         public OrthographicType ViewType { get; set; }
@@ -91,6 +95,9 @@ namespace Sledge.Rendering.Cameras
             if (float.TryParse(tags[1], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) x = p;
             if (float.TryParse(tags[2], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) y = p;
             if (float.TryParse(tags[3], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) z = p;
+            if (float.IsNaN(x) || float.IsInfinity(x)) x = 0;
+            if (float.IsNaN(y) || float.IsInfinity(y)) y = 0;
+            if (float.IsNaN(z) || float.IsInfinity(z)) z = 0;
             Position = new Vector3(x, y, z);
 
             if (tags.Length < 5) return;

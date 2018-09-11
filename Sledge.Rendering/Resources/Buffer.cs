@@ -25,6 +25,7 @@ namespace Sledge.Rendering.Resources
 
         public void Bind(CommandList cl, uint slot)
         {
+            if (!_created) return;
             cl.SetVertexBuffer(slot, VertexBuffer);
             cl.SetIndexBuffer(IndexBuffer, IndexFormat.UInt32);
         }
@@ -33,6 +34,8 @@ namespace Sledge.Rendering.Resources
         {
             var verts = vertices.ToArray();
             var index = indices.ToArray();
+
+            if (verts.Length == 0 || index.Length == 0) return;
 
             var vsize = (uint) (verts.Length * Unsafe.SizeOf<T>());
             var isize = (uint) index.Length * sizeof(uint);

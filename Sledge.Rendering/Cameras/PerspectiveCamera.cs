@@ -20,13 +20,25 @@ namespace Sledge.Rendering.Cameras
         public Vector3 Position
         {
             get => _position;
-            set => _position = value;
+            set
+            {
+                if (float.IsNaN(value.X) || float.IsInfinity(value.X)) value.X = _position.X;
+                if (float.IsNaN(value.Y) || float.IsInfinity(value.Y)) value.Y = _position.Y;
+                if (float.IsNaN(value.Z) || float.IsInfinity(value.Z)) value.Z = _position.Z;
+                _position = value;
+            }
         }
 
         public Vector3 Angles
         {
             get => _angles;
-            set => _angles = value;
+            set
+            {
+                if (float.IsNaN(value.X) || float.IsInfinity(value.X)) value.X = _angles.X;
+                if (float.IsNaN(value.Y) || float.IsInfinity(value.Y)) value.Y = _angles.Y;
+                if (float.IsNaN(value.Z) || float.IsInfinity(value.Z)) value.Z = _angles.Z;
+                _angles = value;
+            }
         }
 
         public Vector3 Direction
@@ -75,6 +87,9 @@ namespace Sledge.Rendering.Cameras
             if (float.TryParse(tags[0], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) x = p;
             if (float.TryParse(tags[1], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) y = p;
             if (float.TryParse(tags[2], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) z = p;
+            if (float.IsNaN(x) || float.IsInfinity(x)) x = 0;
+            if (float.IsNaN(y) || float.IsInfinity(y)) y = 0;
+            if (float.IsNaN(z) || float.IsInfinity(z)) z = 0;
             _position = new Vector3(x, y, z);
 
             if (tags.Length < 6) return;
@@ -83,6 +98,9 @@ namespace Sledge.Rendering.Cameras
             if (float.TryParse(tags[3], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) x = p;
             if (float.TryParse(tags[4], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) y = p;
             if (float.TryParse(tags[5], NumberStyles.Float, CultureInfo.InvariantCulture, out p)) z = p;
+            if (float.IsNaN(x) || float.IsInfinity(x)) x = 0;
+            if (float.IsNaN(y) || float.IsInfinity(y)) y = 0;
+            if (float.IsNaN(z) || float.IsInfinity(z)) z = 0;
             _angles = new Vector3(x, y, z);
 
             if (tags.Length < 8) return;
@@ -201,24 +219,28 @@ namespace Sledge.Rendering.Cameras
 
         public void Advance(float units)
         {
+            if (float.IsNaN(units) || float.IsInfinity(units)) return;
             var add = Direction * units;
             _position += add;
         }
 
         public void Strafe(float units)
         {
+            if (float.IsNaN(units) || float.IsInfinity(units)) return;
             var add = GetRight() * units;
             _position += add;
         }
 
         public void Ascend(float units)
         {
+            if (float.IsNaN(units) || float.IsInfinity(units)) return;
             var add = GetUp() * units;
             _position += add;
         }
 
         public void AscendAbsolute(float units)
         {
+            if (float.IsNaN(units) || float.IsInfinity(units)) return;
             _position += Vector3.UnitZ * units;
         }
 
@@ -233,9 +255,12 @@ namespace Sledge.Rendering.Cameras
         {
             var temp = Direction;
             temp.Z = 0;
+            if (temp.Length() < 0.01f) temp = Vector3.UnitY;
             temp = Vector3.Normalize(temp);
+
             var normal = Vector3.Cross(temp, Vector3.UnitZ);
             normal = Vector3.Normalize(normal);
+
             return normal;
         }
 

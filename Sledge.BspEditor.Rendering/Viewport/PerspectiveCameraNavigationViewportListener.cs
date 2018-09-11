@@ -96,6 +96,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
             if (KeyboardState.Shift) units *= 2;
 
+            if (float.IsNaN(units) || float.IsInfinity(units) || units < 0.001f) units = 0;
+
             var move = units;
             var tilt = 2f;
 
