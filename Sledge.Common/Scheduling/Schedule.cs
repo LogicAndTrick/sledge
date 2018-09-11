@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Sledge.Common.Scheduling
 {
+    /// <summary>
+    /// Represents a schedule that may run once or on an interval.
+    /// </summary>
     public class Schedule
     {
         public Schedule(ScheduleType type)
@@ -37,31 +40,63 @@ namespace Sledge.Common.Scheduling
             return new Schedule(ScheduleType.Once) { ScheduleTime = time };
         }
 
+        /// <summary>
+        /// Create an interval schedule with a given start time.
+        /// </summary>
+        /// <param name="time">The time to run the task the first time</param>
+        /// <param name="interval">The interval between executions. Note that this must be over 10 seconds.</param>
+        /// <returns>The resulting schedule</returns>
         public static Schedule Interval(DateTime time, TimeSpan interval)
         {
             return new Schedule(ScheduleType.Interval) { ScheduleTime = time, TimeInterval = interval };
         }
 
+        /// <summary>
+        /// Create an interval schedule.
+        /// </summary>
+        /// <param name="interval">The interval between executions. Note that this must be over 10 seconds.</param>
+        /// <returns>The resulting schedule</returns>
         public static Schedule Interval(TimeSpan interval)
         {
             return new Schedule(ScheduleType.Interval) { ScheduleTime = DateTime.Now, TimeInterval = interval };
         }
 
+        /// <summary>
+        /// Create a schedule that runs once a day.
+        /// </summary>
+        /// <param name="timeToRun">The time of the day to run this schedule.</param>
+        /// <returns>The resulting schedule</returns>
         public static Schedule Daily(TimeSpan timeToRun)
         {
             return new Schedule(ScheduleType.Daily) { TimeToRun = timeToRun };
         }
 
+        /// <summary>
+        /// Create a schedule that runs once a week.
+        /// </summary>
+        /// <param name="timeToRun">The time of the day to run this schedule.</param>
+        /// <param name="daysToRun">The days of the week to run this schedule</param>
+        /// <returns>The resulting schedule</returns>
         public static Schedule Weekly(TimeSpan timeToRun, IEnumerable<DayOfWeek> daysToRun)
         {
             return new Schedule(ScheduleType.Weekly) { TimeToRun = timeToRun, WeekDaysToRun = daysToRun.ToList() };
         }
 
+        /// <summary>
+        /// Create a schedule that runs once a month.
+        /// </summary>
+        /// <param name="timeToRun">The time of the day to run this schedule.</param>
+        /// <param name="daysToRun">The days of the month to run this schedule</param>
+        /// <returns>The resulting schedule</returns>
         public static Schedule Monthly(TimeSpan timeToRun, IEnumerable<int> daysToRun)
         {
             return new Schedule(ScheduleType.Monthly) { TimeToRun = timeToRun, MonthDaysToRun = daysToRun.ToList() };
         }
 
+        /// <summary>
+        /// Get the next time that this schedule is due to run.
+        /// </summary>
+        /// <returns>Next run time or null if the schedule won't run again</returns>
         public DateTime? NextScheduleTime()
         {
             var now = DateTime.Now;

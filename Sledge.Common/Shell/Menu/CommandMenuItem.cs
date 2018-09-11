@@ -6,6 +6,9 @@ using Sledge.Common.Shell.Context;
 
 namespace Sledge.Common.Shell.Menu
 {
+    /// <summary>
+    /// A menu item that invokes a command.
+    /// </summary>
     public class CommandMenuItem : IMenuItem
     {
         private readonly ICommand _command;

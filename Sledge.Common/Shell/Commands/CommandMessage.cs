@@ -5,10 +5,26 @@
     /// </summary>
     public class CommandMessage
     {
+        /// <summary>
+        /// The ID of the command
+        /// </summary>
         public string CommandID { get; }
+
+        /// <summary>
+        /// The parameters of the command
+        /// </summary>
         public CommandParameters Parameters { get; }
+
+        /// <summary>
+        /// Set to true to mark this command as intercepted, the command will not be processed any further.
+        /// </summary>
         public bool Intercepted { get; set; }
 
+        /// <summary>
+        /// Construct a new command message
+        /// </summary>
+        /// <param name="commandID">The command ID</param>
+        /// <param name="parameters">The command parameters</param>
         public CommandMessage(string commandID, object parameters = null)
         {
             CommandID = commandID;

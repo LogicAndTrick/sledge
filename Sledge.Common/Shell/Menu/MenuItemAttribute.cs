@@ -2,6 +2,9 @@
 
 namespace Sledge.Common.Shell.Menu
 {
+    /// <summary>
+    /// An attribute that can be attached to a class to indicate that it should have a menu item.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class MenuItemAttribute : Attribute
     {

@@ -1,8 +1,10 @@
-using System;
 using System.Collections.Generic;
 
 namespace Sledge.Common.Translations
 {
+    /// <summary>
+    /// A collection of translation strings and settings.
+    /// </summary>
     internal class TranslationStringsCollection
     {
         public Dictionary<string, string> Settings { get; set; }

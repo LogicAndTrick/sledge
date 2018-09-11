@@ -5,6 +5,9 @@ using System.Timers;
 
 namespace Sledge.Common.Scheduling
 {
+    /// <summary>
+    /// A simple timer-based scheduled task runner.
+    /// </summary>
     public static class Scheduler
     {
         private static readonly List<ScheduledCallback> Callbacks;
@@ -19,6 +22,13 @@ namespace Sledge.Common.Scheduling
             Timer.Elapsed += (s, e) => TimerCallback();
         }
 
+        /// <summary>
+        /// Schedule a task to run after a number of milliseconds
+        /// </summary>
+        /// <typeparam name="T">Context type</typeparam>
+        /// <param name="context">Context</param>
+        /// <param name="callback">The task to run</param>
+        /// <param name="milliseconds">The number of milliseconds to run after</param>
         public static void Schedule<T>(T context, Action callback, long milliseconds)
         {
             Schedule(context, callback, DateTime.Now.AddMilliseconds(milliseconds));

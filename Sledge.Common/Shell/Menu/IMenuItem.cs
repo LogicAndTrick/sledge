@@ -4,14 +4,34 @@ using Sledge.Common.Shell.Context;
 
 namespace Sledge.Common.Shell.Menu
 {
+    /// <summary>
+    /// An item that is added to the shell's menu.
+    /// </summary>
     public interface IMenuItem : IContextAware, IMenuItemExtendedProperties
     {
+        /// <summary>
+        /// The ID of the menu item
+        /// </summary>
         string ID { get; }
+
+        /// <summary>
+        /// The name to display in the menu item
+        /// </summary>
         string Name { get; }
+
+        /// <summary>
+        /// A description of the menu item
+        /// </summary>
         string Description { get; }
         
+        /// <summary>
+        /// The icon for the menu item. Can be null.
+        /// </summary>
         Image Icon { get; }
         
+        /// <summary>
+        /// True if this item should be shown in the toolbar.
+        /// </summary>
         bool AllowedInToolbar { get; }
 
         /// <summary>
@@ -42,6 +62,11 @@ namespace Sledge.Common.Shell.Menu
         /// </summary>
         string ShortcutText { get; }
 
+        /// <summary>
+        /// Invoke this menu item's action.
+        /// </summary>
+        /// <param name="context">The current context</param>
+        /// <returns>Completion task</returns>
         Task Invoke(IContext context);
     }
 }

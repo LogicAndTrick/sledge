@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace Sledge.Common.Scheduling
 {
+    /// <summary>
+    /// A serialised schedule for persistance to a data store.
+    /// </summary>
     public class SerialisedSchedule
     {
         public ScheduleType Type { get; set; }
@@ -12,6 +15,11 @@ namespace Sledge.Common.Scheduling
         public string WeekDaysToRun { get; set; }
         public string MonthDaysToRun { get; set; }
 
+        /// <summary>
+        /// Serialise a schedule
+        /// </summary>
+        /// <param name="schedule">The schedule to serialise</param>
+        /// <returns>Serialised schedule</returns>
         public static SerialisedSchedule Serialise(Schedule schedule)
         {
             return new SerialisedSchedule
@@ -25,6 +33,11 @@ namespace Sledge.Common.Scheduling
             };
         }
 
+        /// <summary>
+        /// Deserialise a schedule
+        /// </summary>
+        /// <param name="schedule">The schedule to deserialise</param>
+        /// <returns>Deserialised schedule</returns>
         public static Schedule Deserialise(SerialisedSchedule schedule)
         {
             return new Schedule(schedule.Type)

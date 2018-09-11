@@ -8,14 +8,27 @@ using Sledge.Common.Extensions;
 
 namespace Sledge.Common.Transport
 {
+    /// <summary>
+    /// Handles serialisation of objects using Valve's common definition format.
+    /// </summary>
     [Export]
     public class SerialisedObjectFormatter
     {
+        /// <summary>
+        /// Serialise an array of objects
+        /// </summary>
+        /// <param name="serializationStream">The stream to serialise into</param>
+        /// <param name="objects">The objects to serialise</param>
         public void Serialize(Stream serializationStream, params SerialisedObject[] objects)
         {
             Serialize(serializationStream, objects.AsEnumerable());
         }
 
+        /// <summary>
+        /// Serialise an array of objects
+        /// </summary>
+        /// <param name="serializationStream">The stream to serialise into</param>
+        /// <param name="objects">The objects to serialise</param>
         public void Serialize(Stream serializationStream, IEnumerable<SerialisedObject> objects)
         {
             using (var writer = new StreamWriter(serializationStream, Encoding.UTF8, 1024, true))
@@ -27,6 +40,11 @@ namespace Sledge.Common.Transport
             }
         }
 
+        /// <summary>
+        /// Deserialise an array of objects from a stream
+        /// </summary>
+        /// <param name="serializationStream">The stream to deserialise from</param>
+        /// <returns>The deserialised objects</returns>
         public IEnumerable<SerialisedObject> Deserialize(Stream serializationStream)
         {
             using (var reader = new StreamReader(serializationStream, Encoding.UTF8, true, 1024, true))
@@ -36,12 +54,25 @@ namespace Sledge.Common.Transport
         }
 
         #region Printer
+        
+        /// <summary>
+        /// Ensure a string doesn't exceed a length limit.
+        /// </summary>
+        /// <param name="str">The string to check</param>
+        /// <param name="limit">The length limit</param>
+        /// <returns>The string, truncated to the limit if it was exceeded</returns>
         private static string LengthLimit(string str, int limit)
         {
             return str.Length >= limit ? str.Substring(0, limit - 1) : str;
         }
 
-        private void Print(SerialisedObject obj, TextWriter tw, int tabs = 0)
+        /// <summary>
+        /// Print the structure to a stream
+        /// </summary>
+        /// <param name="obj">The object to print</param>
+        /// <param name="tw">The output stream to write to</param>
+        /// <param name="tabs">The number of tabs to indent this value to</param>
+        private static void Print(SerialisedObject obj, TextWriter tw, int tabs = 0)
         {
             var preTabStr = new string(' ', tabs * 4);
             var postTabStr = new string(' ', (tabs + 1) * 4);

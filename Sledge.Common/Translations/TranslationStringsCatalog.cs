@@ -8,6 +8,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Sledge.Common.Translations
 {
+    /// <summary>
+    /// A catalog which loads and stores all languages and translation strings.
+    /// </summary>
     [Export]
     public class TranslationStringsCatalog
     {

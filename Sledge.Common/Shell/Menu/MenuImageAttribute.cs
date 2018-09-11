@@ -4,6 +4,9 @@ using System.Reflection;
 
 namespace Sledge.Common.Shell.Menu
 {
+    /// <summary>
+    /// An attribute that can be attached to a class to indicate the class' menu item.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class MenuImageAttribute : Attribute
     {

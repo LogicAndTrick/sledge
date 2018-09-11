@@ -5,6 +5,9 @@ using Sledge.Common.Shell.Context;
 
 namespace Sledge.Common.Shell.Hotkeys
 {
+    /// <summary>
+    /// A simple hotkey that runs a command.
+    /// </summary>
     public class CommandHotkey : IHotkey
     {
         private readonly ICommand _command;

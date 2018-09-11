@@ -1,5 +1,8 @@
 ﻿namespace Sledge.Common.Shell.Documents
 {
+    /// <summary>
+    /// A document which is hosted in the main tabbed are of the shell.
+    /// </summary>
     public interface IDocument
     {
         /// <summary>
