@@ -1,0 +1,280 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.BspEditor.Tools",
+        "Language": "it",
+        "LanguageDescription":  "Italiano / Italian",
+        "Inherit": "en"
+    },
+    "@Settings": {
+        "@Group.Tools": "Strumenti",
+        "@Group.Tools/Brush": "Strumento Brush",
+        "@Group.Tools/Entity": "Strumento Entità",
+        "@Group.Tools/Selection": "Strumento Selezione",
+        "BrushTool": {
+            "SelectionBoxBackgroundOpacity": "Opacità dello sfondo del riquadro selezione",
+            "SelectCreatedBrush": "Seleziona il brush dopo la creazione",
+            "SwitchToSelectAfterBrushCreation": "Passa allo strumento di selezione dopo la creazione del brush",
+            "ResetBrushTypeOnCreation": "Reimposta il tipo di brush predefinito dopo la creazione del brush"
+        },
+        "EntityTool": {
+            "SelectCreatedEntity": "Seleziona l'entità dopo la creazione",
+            "SwitchToSelectAfterEntityCreation": "Passa allo strumento di selezione dopo la creazione dell'entità",
+            "ResetEntityTypeOnCreation": "Reimposta il tipo di entità predefinita dopo la creazione dell'entità"
+        },
+        "SelectTool": {
+            "SelectionBoxBackgroundOpacity": "Opacità dello sfondo del riquadro selezione",
+            "SelectionBoxStippled": "Disegna il riquadro di selezione con un contorno tratteggiato",
+            "AutoSelectBox": "Seleziona automaticamente dopo aver disegnato il riquadro di selezione",
+            "Show3DWidgets": "Mostra il congegno della trasformazione 3D",
+            "SelectByCenterHandles": "Abilita la selezione mediante gli appigli centrali",
+            "OnlySelectByCenterHandles": "Permetti la selezione solo mediante gli appigli centrali",
+            "KeepVisgroupsWhenCloning": "Mantieni i visgroups dopo la clonazione"
+        } 
+    },
+    "MenuDataProvider": {
+        "Map": "Mappa"
+    },
+    "Brush": {
+        "BrushTool": {
+            "CreateObject": "Crea {0}"
+        },
+        "BrushSidebarPanel": {
+            "BrushType": "Tipologia Brush:",
+            "RoundVertices": "Arrotonda i vertici creati"
+        },
+        "Brushes": {
+            "ArchBrush": {
+                "Name": "Arcata",
+                "NumberOfSides": "Numero di lati",
+                "WallWidth": "Larghezza muro",
+                "Arc": "Arco",
+                "StartAngle": "Angolo d'inizio",
+                "AddHeight": "Aggiungi altezza",
+                "CurvedRamp": "Rampa curva",
+                "TiltAngle": "Inclinazione angolo",
+                "TiltInterpolation": "Interpolazione dell'inclinazione"
+            },
+            "BlockBrush": {
+                "Name": "Blocco"
+            },
+            "ConeBrush": {
+                "Name": "Cono",
+                "NumberOfSides": "Numero di lati"
+            },
+            "CylinderBrush": {
+                "Name": "Cilindro",
+                "NumberOfSides": "Numero di lati"
+            },
+            "PipeBrush": {
+                "Name": "Tubo",
+                "NumberOfSides": "Numero di lati",
+                "WallWidth": "Larghezza muro"
+            },
+            "PyramidBrush": {
+                "Name": "Piramide"
+            },
+            "SphereBrush": {
+                "Name": "Sfera",
+                "NumberOfSides": "Numero di lati"
+            },
+            "TetrahedronBrush": {
+                "Name": "Tetraedro",
+                "TopVertexAtCentroid": "Vertice sopra il baricentro"
+            },
+            "TextBrush": {
+                "Name": "Testo",
+                "Font": "Carattere",
+                "AliasingFactor": "Fattore di alias" ,
+                "EnteredText": "Scrivi il testo qui",
+                "Text": "Testo"
+            },
+            "TorusBrush": {
+                "Name": "Toroide",
+                "CrossSectionSides": "Lati sez. trasversale",
+                "RingWidth": "Larghezza anello",
+                "CrossSectionStart": "Inizio sez. trasversale",
+                "MakeHollow": "Crea cavità",
+                "CrossSectionArc": "Arco sez. trasversale",
+                "HollowWallWidth": "Larghezza cavità",
+                "RingSides": "Lati anello",
+                "RingArc": "Anello ad arco",
+                "RingStart": "Inizio anello",
+                "RotationHeight": "Altezza rotazione"
+            },
+            "WedgeBrush": {
+                "Name": "Cuneo"
+            }
+        }
+    },
+    "Entity": {
+        "EntityTool": {
+            "CreateObject": "Crea {0}"
+        }
+    },
+    "Grid": {
+        "GridStatusItem": {
+            "Snap": "Agganciato",
+            "NoSnap": "Non agganciato",
+            "Grid": "Griglia"
+        },
+        "IncreaseGrid": {
+            "Name": "Griglia più grande",
+            "Details": "Aumenta grandezza griglia"
+        },
+        "DecreaseGrid": {
+            "Name": "Griglia più piccola",
+            "Details": "Diminuisci grandezza griglia"
+        },
+        "SwitchGrid": {
+            "Name": "Scorrimento griglie",
+            "Details": "Scorri tra le tipologie di griglia"
+        }
+    }, 
+    "Selection": {
+        "SelectTool": {
+            "Align": "Allinea a...",
+            "Flip": "Capovolgi...",
+            "Rotate": "Ruota...",
+            "Left": "Sinistra",
+            "Right": "Destra",
+            "Top": "In alto",
+            "Bottom": "In basso",
+            "Vertically": "Verticalmente",
+            "Horizontally": "Orizzontalmente",
+            "Clockwise": "90° in senso orario",
+            "AntiClockwise": "90° in senso anti-orario"
+        }
+    },
+    "Texture": {
+        "BrowseActiveTexture": {
+            "Name": "Sfoglia texture",
+            "Details": "Apri la ricerca delle texture"
+        },
+        "ReplaceTextures": {
+            "Name": "Rimpiazza texture...",
+            "Details": "Rimpiazza texture nella mappa"
+        },
+        "SmartEditTextureBrowser": {
+            "Browse": "Sfoglia..."
+        },
+        "TextureApplicationForm": {
+            "Scale": "Scalo",
+            "Shift": "Spostamento",
+            "Browse": "Sfoglia...",
+            "Replace": "Rimpiazza...",
+            "Apply": "Applica",
+            "Rotation": "Rotazione",
+            "Lightmap": "Lightmap",
+            "SmoothingGroups": "Smoothing groups",
+            "Align": "Allinea",
+            "World": "Globale",
+            "Face": "Faccia",
+            "Justify": "Giustifica",
+            "Fit": "Adatta",
+            "TreatAsOne": "Tratta come singola",
+            "HideMask": "Nascondi maschera",
+            "FilterRecent:": "Filtra recente",
+            "LeftClick": "Sinistra",
+            "RightClick": "Destra",
+            "ActionLift": "Solleva",
+            "ActionSelect": "Seleziona",
+            "ActionApply": "Applica",
+            "ActionValues": "Valori",
+            "ActionAxis": "Assi",
+            "ActionAlignToView": "Allinea alla vista"
+        },
+        "TextureBrowser": {
+            "Title": "Lista texture",
+            "FavouriteTextures": "Texture preferite (trascina e lascia)",
+            "AddFolder": "Aggiungi cartella",
+            "DeleteFolder": "Cancella cartella",
+            "RemoveSelected": "Rimuovi selezionati dalla cartella",
+            "Filter": "Filtra",
+            "Size": "Grandezza",
+            "UsedTexturesOnly": "Solo texture usate",
+            "Select": "Seleziona",
+            "SortBy": "Ordina per",
+            "SortDescending": "Ordine decrescente"
+        },
+        "TextureReplaceDialog": {
+            "Title": "Rimpiazza texture",
+            "Find": "Trova:",
+            "Replace": "Rimpiazza:",
+            "Browse": "Sfoglia...",
+            "ReplaceIn": "Rimpiazza in:",
+            "ReplaceSelection": "Selezione",
+            "ReplaceVisible": "Tutti i solidi visibili",
+            "ReplaceEverything": "Tutto",
+            "RescaleTextures": "Riscala coordinate texture",
+            "Action": "Azione:",
+            "ActionExact": "Rimpiazza abbinamenti esatti",
+            "ActionPartial": "Rimpiazza abbinamenti parziali",
+            "ActionSubstitute": "Sostituisci abbinamenti parziali",
+            "ActionSelect": "Seleziona abbinamenti (non rimpiazzare)",
+            "OK": "OK",
+            "Cancel": "Cancella"
+        },
+        "TextureSidebarPanel": {
+            "Apply": "Applica",
+            "Browse": "Sfoglia...",
+            "Replace": "Rimpiazza..." 
+        },
+        "TextureToolSidebarPanel": {
+            "RandomiseShiftValues": "Randomizza valori spostamento",
+            "Min": "Min",
+            "Max": "Max",
+            "RandomiseX": "Randomizzare X",
+            "RandomiseY": "Randomizzare Y",
+            "FitToMultipleTiles": "Adatta ad affiancamenti multipli",
+            "TimesToTile": "Quantità di volte da affiancare alla faccia:",
+            "Fit": "Adatta"
+        } 
+    },
+    "Vertex": {
+        "Tools": {
+            "VertexPointTool": {
+                "Title": "Standard"
+            },
+            "VertexScaleTool": {
+                "Title": "Scala"
+            },
+            "VertexFaceEditTool": {
+                "Title": "Modifica faccia"
+            }
+        },
+        "Controls": {
+            "VertexSidebarPanel": {
+                "DeselectAll": "Deseleziona tutto",
+                "ResetToOriginal": "Reimposta originale"
+            },
+            "VertexPointControl": {
+                "MergeOverlappingVertices": "Unisci vertici sovrapposti",
+                "MergeAutomatically": "Unisci automaticamente",
+                "SplitFace": "Dividi facce",
+                "ShowPoints": "Mostra punti",
+                "ShowMidpoints": "Mostra punti centrali",
+                "MergeResults": "Rimossi: {0} punto/i, {1} faccia/e"
+            },
+            "VertexScaleControl": {
+                "ScaleDistance": "Scala distanza (%)",
+                "Reset": "Reimposta",
+                "ResetOrigin": "Reimposta origine"
+            },
+            "VertexEditFaceControl": {
+                "WithSelectedFaces": "Con le facce selezionate:",
+                "Units": "unità",
+                "PokeBy": "Sporgi da",
+                "BevelBy": "Smussa da",
+                "Poke": "Sporgi",
+                "Bevel": "Smussa"
+            } 
+        },
+        "Errors": {
+            "BackwardsFace": "Faccia all'indietro",
+            "ConcaveFace": "Faccia concava",
+            "CoplanarFaces": "Vertici complanari",
+            "NonPlanarVertices": "Vertici non planari",
+            "OverlappingVertices": "Vertici sovrapposti"
+        }
+    } 
+}

@@ -2,7 +2,8 @@
     "@Meta": {
         "Base": "Sledge.BspEditor.Tools",
         "Language": "fr",
-        "Inherit": ""
+        "LanguageDescription": "Français / French",
+        "Inherit": "en"
     },
     "@Settings": {
         "@Group.Brush": "Outil blocs",
@@ -209,7 +210,7 @@
                 "Reset": "Réinitialiser",
                 "ResetOrigin": "Réinitialiser l'origine"
             },
-            "VertexFaceEditControl": {
+            "VertexEditFaceControl": {
                 "WithSelectedFaces": "Avec les faces sélectionnées :",
                 "Units": "unités",
                 "PokeBy": "Pousser par",

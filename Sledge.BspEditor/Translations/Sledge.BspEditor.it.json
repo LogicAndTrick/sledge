@@ -1,0 +1,116 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.BspEditor", 
+        "Language": "it",
+        "LanguageDescription":  "Italiano / Italian",
+        "Inherit": "en"
+    },
+    "@Settings": {
+        "Grid": {
+            "SquareGridFactory": {
+                "GridHideSmallerThan": "Nascondi le linee della griglia quando sono più vicine di questa quantità di pixel insieme",
+                "GridHideFactor": "Fattore da saltare da quando si nascondono le linee della griglia vicine",
+                "GridSecondaryHighlight": "Evidenzia le linee della griglia ogni X unità (0 disabilitato)", 
+                "GridPrimaryHighlight": "Evidenzia ogni X della linea della griglia (0 disabilita)"
+            }
+        } 
+    },
+    "Commands": {
+        "Modification": {
+            "SelectNone": {
+                "Name": "Selezione nulla",
+                "Details": "Toglie dalla selezione corrente."
+            },
+            "SelectAll": {
+                "Name": "Seleziona Tutto",
+                "Details": "Seleziona tutti gli oggetti nel documento."
+            }
+        },
+        "Clipboard": {
+            "Paste": {
+                "Name": "Incolla",
+                "Details": "Incolla il contenuto corrente degli appunti."
+            },
+            "Cut": {
+                "Name": "Taglia",
+                "Details": "Copia la selezione corrente e la rimuove."
+            },
+            "Copy": {
+                "Name": "Copia",
+                "Details": "Copia la selezione corrente."
+            }
+        },
+        "Grouping": {
+            "Group": {
+                "Name": "Raggruppa",
+                "Details": "Raggruppa gli oggetti selezionati."
+            },
+            "Ungroup": {
+                "Name": "Separa",
+                "Details": "Separa il gruppo selezionato"
+            }
+        }
+    },
+    "Components": {
+        "ClipboardManager": {
+            "NothingSelected": "Nulla",
+            "NumSelected": "{0} oggetti"
+        },
+        "ClipboardSidebarPanel": {
+            "Title": "Appunti"
+        }
+    },
+    "Documents": {
+        "BspSourceDocumentLoader": {
+            "FileTypeDescription": "File sorgente del BSP",
+            "UntitledDocumentName": "Senza nome {0}" 
+        }
+    },
+    "Environment": {
+        "Goldsource": {
+            "AutomaticVisgroups": {
+                "Entities": "Entità",
+                "ToolBrushes": "Strumenti brush",
+                "WorldGeometry": "Geometria del mondo",
+
+                "BrushEntities": "Entità brush",
+                "PointEntities": "Entità punto",
+                "Lights": "Luci",
+                "Triggers": "Triggers",
+                "Nodes": "Nodi",
+
+                "Bevel": "Bevel",
+                "Hint": "Hint",
+                "Origin": "Origin",
+                "Skip": "Skip",
+                "Trigger": "Trigger",
+
+                "Brushes": "Brushes",
+                "Null": "Null",
+                "Sky": "Cielo",
+                "Water": "Acqua"
+            },
+            "GoldsourceEnvironmentFactory": {
+                "Description": "Goldsource (HL1)"
+            }
+        }
+    },
+    "Grid": {
+        "NoGridFactory": {
+            "Name": "Nessuna griglia",
+            "Details": "Non mostra alcuna griglia."
+        },
+        "SquareGridFactory": {
+            "Name": "Griglia standard",
+            "Details": "Una normale griglia quadrata basata su potenze di due."
+        }
+    },
+    "Modification": {
+        "ChangeHandling": {
+            "SelectionHandler": {
+                "NoObjectsSelected": "Nessun oggetto selezionato",
+                "NumObjectsSelected": "{0} oggetti selezionati"
+            }
+        }
+    } 
+}

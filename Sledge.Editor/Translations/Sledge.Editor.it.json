@@ -1,0 +1,35 @@
+﻿{
+    "@Meta": {
+        "Base": "Sledge.Editor", 
+        "Language": "it",
+        "LanguageDescription":  "Italiano / Italian",
+        "Inherit": "en"
+    },
+    "@Settings": {
+        "UpdateChecker": {
+            "CheckForUpdates": "Controlla aggiornamenti all'avvio"
+        }
+    },
+    "ShellSetup": {
+        "Title": "Sledge Editor"
+    },
+    "Update": {
+        "UpdaterForm": {
+            "Title": "Aggiornamento disponibile!",
+            "UpdateAvailable": "È disponibile una nuova versione di Sledge!\nVuoi scaricarla adesso?",
+            "Downloading": "Sto scaricando..."
+        },
+        "CheckForUpdates": {
+            "Name": "Controlla aggiornamenti",
+            "Details": "Controlla online per aggiornamenti",
+            "NoUpdatesTitle": "Nessun aggiornamento trovato",
+            "NoUpdatesMessage": "Questa versione di Sledge è attualmente aggiornata",
+            "UpdateErrorTitle": "Errore di aggiornamento",
+            "UpdateErrorMessage": "C'è stato un problema nello scaricare i dettagli dell'aggiornamento, per favore riprova più tardi o visita il sito web di Sledge e controlla la nuova versione."
+        },
+        "UpdateChecker": {
+            "UpdateDownloadedTitle": "L'aggiornamento è pronto per essere installato",
+            "UpdateDownloadedMessage": "Un aggiornamento è stato scaricato, vuoi scaricarlo ora? Selezionando 'No' verrà installato più tardi."
+        }
+    }
+}

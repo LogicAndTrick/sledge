@@ -466,6 +466,9 @@
     <Content Include="Translations\Sledge.BspEditor.Editing.fr.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Translations\Sledge.BspEditor.Editing.it.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\sledge_large.png" />
