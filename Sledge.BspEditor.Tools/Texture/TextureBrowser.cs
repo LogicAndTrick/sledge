@@ -69,7 +69,7 @@ namespace Sledge.BspEditor.Tools.Texture
             TextureListPanel.Controls.Add(_textureList);
         }
 
-        public void Translate(TranslationStringsCollection strings)
+        public void Translate(ITranslationStringProvider strings)
         {
             CreateHandle();
             var prefix = GetType().FullName;

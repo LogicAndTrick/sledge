@@ -11,61 +11,52 @@ namespace Sledge.Common.Translations
     [Export]
     public class TranslationStringsCatalog
     {
-        private readonly IEnumerable<Lazy<object>> _autoTranslate;
         private readonly List<string> _loaded;
-        public Dictionary<string, Language> Languages { get; set; }
+        public Dictionary<string, Language> Languages { get; }
 
         [ImportingConstructor]
-        public TranslationStringsCatalog([ImportMany("AutoTranslate")] IEnumerable<Lazy<object>> autoTranslate)
+        public TranslationStringsCatalog()
         {
-            _autoTranslate = autoTranslate;
             Languages = new Dictionary<string, Language>();
             _loaded = new List<string>();
+
+#if DEBUG
+            Languages["debug_en"] = new Language("debug_en") { Description = "Debug (english fallback)", Inherit = "en" };
+            Languages["debug_keys"] = new Language("debug_keys") { Description = "Debug (keys)" };
+            Languages["debug_keys_long"] = new Language("debug_keys_long") { Description = "Debug (long keys)" };
+            Languages["debug_blank"] = new Language("debug_blank") { Description = "Debug (no fallback)" };
+#endif
         }
-        
-        public void Initialise(string language)
+
+        public string GetString(string language, string key)
         {
-            foreach (var at in _autoTranslate)
+            // Basic loop prevention
+            for (var i = 0; i < 4; i++)
             {
-                Translate(language, at.Value);
+                if (!Languages.ContainsKey(language)) break;
+                var lang = Languages[language];
+                if (lang.Collection.Strings.ContainsKey(key)) return lang.Collection.Strings[key];
+                if (String.IsNullOrWhiteSpace(lang.Inherit)) break;
+                language = lang.Inherit;
             }
+            return null;
         }
 
-        public void Translate(string language, object target)
+        public string GetSetting(string language, string key)
         {
-            if (target is IManualTranslate mt)
+            // Basic loop prevention
+            for (var i = 0; i < 4; i++)
             {
-                if (!Languages.ContainsKey(language)) return;
-                var strings = Languages[language];
-                mt.Translate(strings.Collection);
+                if (!Languages.ContainsKey(language)) break;
+                var lang = Languages[language];
+                if (lang.Collection.Settings.ContainsKey(key)) return lang.Collection.Settings[key];
+                if (String.IsNullOrWhiteSpace(lang.Inherit)) break;
+                language = lang.Inherit;
             }
-            else
-            {
-                Inject(language, target);
-            }
+            return null;
         }
 
-        private void Inject(string language, object target)
-        {
-            if (target == null) return;
-            var ty = target.GetType();
-            Load(ty);
-
-            if (!Languages.ContainsKey(language)) return;
-            var strings = Languages[language];
-
-            var props = ty.GetProperties().Where(x => x.CanWrite);
-            foreach (var prop in props)
-            {
-                var path = ty.FullName + '.' + prop.Name;
-                if (strings.Collection.Strings.ContainsKey(path))
-                {
-                    prop.SetValue(target, strings.Collection.Strings[path]);
-                }
-            }
-        }
-
-        private void Load(Type type)
+        public void Load(Type type)
         {
             var loc = type.Assembly.Location ?? "";
             if (_loaded.Contains(loc)) return;
@@ -107,17 +98,24 @@ namespace Sledge.Common.Translations
             var langDesc = Convert.ToString(meta["LanguageDescription"]);
             if (!string.IsNullOrWhiteSpace(langDesc) && string.IsNullOrWhiteSpace(language.Description)) language.Description = langDesc;
 
+            var inherit = Convert.ToString(meta["Inherit"]);
+            if (!string.IsNullOrWhiteSpace(inherit) && string.IsNullOrWhiteSpace(language.Inherit)) language.Inherit = inherit;
+
             var strings = obj.Descendants()
                 .OfType<JProperty>()
                 .Where(x => x.Path[0] != '@')
                 .Where(x => x.Value.Type == JTokenType.String);
             foreach (var st in strings)
             {
+#if DEBUG
+                Languages["debug_blank"].Collection.Strings[basePath + st.Path] = "--";
+                Languages["debug_keys"].Collection.Strings[basePath + st.Path] = "[" + (basePath + st.Path).Split('.').LastOrDefault() + "]";
+                Languages["debug_keys_long"].Collection.Strings[basePath + st.Path] = "[" + (basePath + st.Path) + "]";
+#endif
                 language.Collection.Strings[basePath + st.Path] = st.Value?.ToString();
             }
 
-            var settingsNode = obj["@Settings"] as JObject;
-            if (settingsNode != null)
+            if (obj["@Settings"] is JObject settingsNode)
             {
                 var settings = settingsNode.Descendants()
                     .OfType<JProperty>()

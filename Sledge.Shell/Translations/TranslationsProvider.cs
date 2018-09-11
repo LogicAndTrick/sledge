@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using LogicAndTrick.Oy;
 using Newtonsoft.Json;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;
@@ -10,15 +12,25 @@ using Sledge.Common.Translations;
 
 namespace Sledge.Shell.Translations
 {
-    [AutoTranslate]
     [Export(typeof(IStartupHook))]
     [Export(typeof(ISettingsContainer))]
     [Export(typeof(ITranslationStringProvider))]
     public class TranslationsProvider : IStartupHook, ISettingsContainer, ITranslationStringProvider
     {
-        [Import] private TranslationStringsCatalog _catalog;
+        private readonly TranslationStringsCatalog _catalog;
+        private readonly IEnumerable<Lazy<object>> _autoTranslate;
 
-        public string Language { get; set; } = "en";
+        private string Language { get; set; } = "en";
+
+        [ImportingConstructor]
+        public TranslationsProvider(
+            [Import] TranslationStringsCatalog catalog,
+            [ImportMany("AutoTranslate")] IEnumerable<Lazy<object>> autoTranslate
+        )
+        {
+            _catalog = catalog;
+            _autoTranslate = autoTranslate;
+        }
 
         public Task OnStartup()
         {
@@ -40,31 +52,57 @@ namespace Sledge.Shell.Translations
             {
                 Language = data["Language"] ?? "en";
             }
-            _catalog.Initialise(Language);
+
+            foreach (var at in _autoTranslate)
+            {
+                try
+                {
+                    Translate(at.Value);
+                }
+                catch (Exception e)
+                {
+                    Oy.Publish("Shell:UnhandledException", e);
+                }
+            }
+
             return Task.FromResult(0);
         }
 
         public void Translate(object target)
         {
-            if (!_catalog.Languages.ContainsKey(Language)) return;
-            _catalog.Translate(Language, target);
+            if (target == null) return;
+
+            var ty = target.GetType();
+            _catalog.Load(ty);
+
+            if (target is IManualTranslate mt) mt.Translate(this);
+            else Inject(ty, target);
         }
 
-        public string GetString(string key)
+        private void Inject(Type type, object target)
         {
-            if (!_catalog.Languages.ContainsKey(Language)) return null;
-            var lang = _catalog.Languages[Language].Collection;
-            if (!lang.Strings.ContainsKey(key)) return null;
-            return lang.Strings[key];
+            var props = type.GetProperties().Where(x => x.PropertyType == typeof(string) && x.CanWrite);
+            foreach (var prop in props)
+            {
+                var path = type.FullName + '.' + prop.Name;
+                var val = _catalog.GetString(Language, path);
+                if (val != null) prop.SetValue(target, val);
+            }
         }
 
-        public string GetSetting(string key)
+        public string GetString(params string[] path)
         {
-            if (!_catalog.Languages.ContainsKey(Language)) return null;
-            var lang = _catalog.Languages[Language].Collection;
-            if (!lang.Settings.ContainsKey(key)) return null;
-            return lang.Settings[key];
+            var key = String.Join(".", path);
+            return _catalog.GetString(Language, key);
         }
+
+        public string GetSetting(params string[] path)
+        {
+            var key = String.Join(".", path);
+            return _catalog.GetSetting(Language, key);
+        }
+
+        // Settings container
 
         public string Name => "Sledge.Shell.Translations";
 

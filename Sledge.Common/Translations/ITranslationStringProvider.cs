@@ -3,7 +3,7 @@
     public interface ITranslationStringProvider
     {
         void Translate(object target);
-        string GetString(string key);
-        string GetSetting(string key);
+        string GetString(params string[] path);
+        string GetSetting(params string[] path);
     }
 }

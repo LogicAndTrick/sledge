@@ -106,7 +106,7 @@ namespace Sledge.BspEditor.Tools.Texture
         public string ActionAxis { get; set; }
         public string ActionAlignToView { get; set; }
 
-        public void Translate(TranslationStringsCollection strings)
+        public void Translate(ITranslationStringProvider strings)
         {
             CreateHandle();
             var prefix = GetType().FullName;

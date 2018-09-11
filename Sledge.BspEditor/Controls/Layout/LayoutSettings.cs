@@ -209,7 +209,7 @@ namespace Sledge.BspEditor.Controls.Layout
             DialogResult = DialogResult.Cancel;
         }
 
-        public void Translate(TranslationStringsCollection strings)
+        public void Translate(ITranslationStringProvider strings)
         {
             CreateHandle();
             var prefix = GetType().FullName;

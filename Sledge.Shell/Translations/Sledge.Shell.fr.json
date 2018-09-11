@@ -3,7 +3,7 @@
         "Base": "Sledge.Shell",
         "Language": "fr",
         "LanguageDescription": "Français / French",
-        "Inherit": ""
+        "Inherit": "en"
     },
     "@Settings": {
         "@Group.FileAssociations": "Associations des fichiers",

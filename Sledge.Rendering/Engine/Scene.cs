@@ -47,9 +47,12 @@ namespace Sledge.Rendering.Engine
             }
         }
 
-        public IList<IOverlayRenderable> GetOverlayRenderables()
+        public IEnumerable<IOverlayRenderable> GetOverlayRenderables()
         {
-            return _overlayRenderables.ToList();
+            for (var r = _overlayRenderables.First; r != null; r = r?.Next)
+            {
+                yield return r.Value;
+            }
         }
     }
 }

@@ -57,7 +57,7 @@ namespace Sledge.BspEditor.Environment.Controls
             translate.Translate(this);
         }
 
-        public void Translate(TranslationStringsCollection strings)
+        public void Translate(ITranslationStringProvider strings)
         {
             var prefix = GetType().FullName;
             btnAdd.Text = strings.GetString(prefix, "Add");

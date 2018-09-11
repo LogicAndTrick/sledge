@@ -2,6 +2,6 @@
 {
     public interface IManualTranslate
     {
-        void Translate(TranslationStringsCollection strings);
+        void Translate(ITranslationStringProvider strings);
     }
 }

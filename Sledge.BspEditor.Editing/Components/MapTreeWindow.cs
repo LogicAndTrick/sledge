@@ -60,7 +60,7 @@ namespace Sledge.BspEditor.Editing.Components
             });
         }
 
-        public void Translate(TranslationStringsCollection strings)
+        public void Translate(ITranslationStringProvider strings)
         {
             CreateHandle();
             var prefix = GetType().FullName;

@@ -66,7 +66,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             cklTexturePackages.ItemCheck += (s, e) => this.InvokeLater(() => OnEnvironmentChanged(s, e)); // So it happens after the checkstate has changed, not before
         }
 
-        public void Translate(TranslationStringsCollection strings)
+        public void Translate(ITranslationStringProvider strings)
         {
             CreateHandle();
             var prefix = GetType().FullName;

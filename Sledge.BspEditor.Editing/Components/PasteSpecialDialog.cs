@@ -162,7 +162,7 @@ namespace Sledge.BspEditor.Editing.Components
             RotationZ.Value = _lastZRotation;
         }
 
-        public void Translate(TranslationStringsCollection strings)
+        public void Translate(ITranslationStringProvider strings)
         {
             CreateHandle();
             var prefix = GetType().FullName;

@@ -24,7 +24,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
             UpdateVisgroups();
         }
 
-        public void Translate(TranslationStringsCollection strings)
+        public void Translate(ITranslationStringProvider strings)
         {
             CreateHandle();
             var prefix = GetType().FullName;

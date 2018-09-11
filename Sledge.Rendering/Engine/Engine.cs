@@ -195,7 +195,7 @@ namespace Sledge.Rendering.Engine
             lock (_lock)
             {
                 Scene.Update(frame);
-                var overlays = Scene.GetOverlayRenderables();
+                var overlays = Scene.GetOverlayRenderables().ToList();
 
                 foreach (var rt in _renderTargets)
                 {
