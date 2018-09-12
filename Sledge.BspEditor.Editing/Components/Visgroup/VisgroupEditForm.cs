@@ -74,6 +74,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
                 var visgroup = (Vg) visgroupItem.Tag;
                 GroupName.Text = visgroup.Name;
                 ColourPanel.BackColor = visgroup.Colour;
+                ColourPanel.ForeColor = visgroup.Colour.GetIdealForegroundColour();
             }
             else
             {
@@ -136,6 +137,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
                 if (cp.ShowDialog() != DialogResult.OK) return;
 
                 ColourPanel.BackColor = visgroup.Colour = vg.Colour = cp.Color;
+                ColourPanel.ForeColor = vg.Colour.GetIdealForegroundColour();
                 VisgroupPanel.UpdateVisgroupState(visgroup);
             }
         }

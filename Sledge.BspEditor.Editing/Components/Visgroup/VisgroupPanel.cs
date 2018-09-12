@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using Sledge.Common;
 
 namespace Sledge.BspEditor.Editing.Components.Visgroup
 {
@@ -91,6 +92,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
             {
                 StateImageKey = CastCheckState(visgroup.CheckState) + (visgroup.Disabled ? "Disabled" : ""),
                 BackColor = visgroup.Colour,
+                ForeColor = visgroup.Colour.GetIdealForegroundColour(),
                 Tag = visgroup
             };
 
@@ -229,6 +231,7 @@ namespace Sledge.BspEditor.Editing.Components.Visgroup
             node.Text = visgroup.Text;
             node.StateImageKey = CastCheckState(visgroup.CheckState);
             node.BackColor = visgroup.Colour;
+            node.ForeColor = visgroup.Colour.GetIdealForegroundColour();
             if (node.Tag is VisgroupItem i) i.Tag = visgroup.Tag;
             
             VisgroupTree.Invalidate();
