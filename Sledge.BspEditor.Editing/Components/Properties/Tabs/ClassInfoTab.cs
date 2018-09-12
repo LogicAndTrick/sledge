@@ -202,8 +202,13 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             // Update the keyvalues
             _tableValues = new ClassValues(_gameData, objects);
 
+            var solidTypes = objects.FindAll(x => x is Entity && x.Hierarchy.HasChildren).Any();
+            var pointTypes = objects.FindAll(x => x is Entity && !x.Hierarchy.HasChildren).Any();
+
             var gameDataClasses = _gameData.Classes
                 .Where(x => x.ClassType != ClassType.Base)
+                .Where(x => solidTypes || x.ClassType != ClassType.Solid)
+                .Where(x => pointTypes || x.ClassType == ClassType.Solid)
                 .OrderBy(x => x.Name, StringComparer.InvariantCultureIgnoreCase)
                 .Select(x => x.Name)
                 .OfType<object>()
