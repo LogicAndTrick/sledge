@@ -5,7 +5,7 @@ namespace Sledge.Common.Translations
     /// <summary>
     /// A collection of translation strings and settings.
     /// </summary>
-    internal class TranslationStringsCollection
+    public class TranslationStringsCollection
     {
         public Dictionary<string, string> Settings { get; set; }
         public Dictionary<string, string> Strings { get; set; }

@@ -60,6 +60,7 @@
     <Compile Include="Commands\Exit.cs" />
     <Compile Include="Commands\Export.cs" />
     <Compile Include="Commands\IActivatorProvider.cs" />
+    <Compile Include="Commands\OpenTranslator.cs" />
     <Compile Include="Commands\OpenDocument.cs" />
     <Compile Include="Commands\NewFile.cs" />
     <Compile Include="Commands\OpenSettingsForm.cs" />
@@ -101,6 +102,12 @@
     <Compile Include="Controls\SidebarContainer.Designer.cs">
       <DependentUpon>SidebarContainer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\AddLanguageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddLanguageForm.Designer.cs">
+      <DependentUpon>AddLanguageForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -122,6 +129,12 @@
     </Compile>
     <Compile Include="Forms\SaveChangesForm.Designer.cs">
       <DependentUpon>SaveChangesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TranslationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TranslationForm.Designer.cs">
+      <DependentUpon>TranslationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings\Editors\DefaultSettingEditor.cs">
       <SubType>UserControl</SubType>
@@ -238,6 +251,9 @@
     <EmbeddedResource Include="Controls\SidebarContainer.resx">
       <DependentUpon>SidebarContainer.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddLanguageForm.resx">
+      <DependentUpon>AddLanguageForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\CommandBox.resx">
       <DependentUpon>CommandBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -252,6 +268,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Shell.resx">
       <DependentUpon>Shell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TranslationForm.resx">
+      <DependentUpon>TranslationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

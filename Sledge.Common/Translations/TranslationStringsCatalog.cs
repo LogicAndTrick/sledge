@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using Sledge.Common.Shell;
 
 namespace Sledge.Common.Translations
 {
@@ -14,12 +15,17 @@ namespace Sledge.Common.Translations
     [Export]
     public class TranslationStringsCatalog
     {
+        private readonly IApplicationInfo _appInfo;
         private readonly List<string> _loaded;
+
         public Dictionary<string, Language> Languages { get; }
 
         [ImportingConstructor]
-        public TranslationStringsCatalog()
+        public TranslationStringsCatalog(
+            [Import(AllowDefault = true)] IApplicationInfo appInfo
+        )
         {
+            _appInfo = appInfo;
             Languages = new Dictionary<string, Language>();
             _loaded = new List<string>();
 
@@ -63,40 +69,83 @@ namespace Sledge.Common.Translations
         {
             var loc = type.Assembly.Location ?? "";
             if (_loaded.Contains(loc)) return;
-
             _loaded.Add(loc);
-            if (!File.Exists(loc)) return;
 
-            var dir = Path.Combine(Path.GetDirectoryName(loc) ?? "", "Translations");
-            if (!Directory.Exists(dir)) return;
-
-            foreach (var file in Directory.GetFiles(dir, "*.json", SearchOption.TopDirectoryOnly))
+            // Load from the translations sub-directory of the assembly's directory first
+            if (File.Exists(loc))
             {
-                LoadFile(file);
+                var dir = Path.Combine(Path.GetDirectoryName(loc) ?? "", "Translations");
+                if (Directory.Exists(dir))
+                {
+                    foreach (var file in Directory.GetFiles(dir, "*.json", SearchOption.TopDirectoryOnly))
+                    {
+                        LoadFile(file);
+                    }
+                }
+            }
+
+            // Override these values with translations from the appdata directory
+            var appdataTranslations = _appInfo?.GetApplicationSettingsFolder("Translations");
+            if (appdataTranslations != null && Directory.Exists(appdataTranslations))
+            {
+                foreach (var file in Directory.GetFiles(appdataTranslations, "*.json", SearchOption.TopDirectoryOnly))
+                {
+                    LoadFile(file);
+                }
             }
         }
 
         private void LoadFile(string file)
         {
+            var data = LoadLanguageFromFile(file);
+            if (data == null) return;
+
+            if (!Languages.ContainsKey(data.Code))
+            {
+                Languages.Add(data.Code, data);
+                return;
+            }
+
+            var language = Languages[data.Code];
+
+            foreach (var kv in data.Collection.Settings)
+            {
+                if (!String.IsNullOrWhiteSpace(kv.Value)) language.Collection.Settings[kv.Key] = kv.Value;
+#if DEBUG
+                Languages["debug_blank"].Collection.Settings[kv.Key] = "--";
+                Languages["debug_keys"].Collection.Settings[kv.Key] = "[" + kv.Key.Split('.').LastOrDefault() + "]";
+                Languages["debug_keys_long"].Collection.Settings[kv.Key] = "[" + kv.Key + "]";
+#endif
+            }
+
+            foreach (var kv in data.Collection.Strings)
+            {
+                if (!String.IsNullOrWhiteSpace(kv.Value)) language.Collection.Strings[kv.Key] = kv.Value;
+#if DEBUG
+                Languages["debug_blank"].Collection.Strings[kv.Key] = "--";
+                Languages["debug_keys"].Collection.Strings[kv.Key] = "[" + kv.Key.Split('.').LastOrDefault() + "]";
+                Languages["debug_keys_long"].Collection.Strings[kv.Key] = "[" + kv.Key + "]";
+#endif
+            }
+        }
+
+        public static Language LoadLanguageFromFile(string file)
+        {
+            if (!File.Exists(file)) return null;
+
             var text = File.ReadAllText(file, Encoding.UTF8);
             var obj = JObject.Parse(text);
 
             var meta = obj["@Meta"];
-            if (meta == null) return;
+            if (meta == null) return null;
 
             var lang = Convert.ToString(meta["Language"]);
-            if (String.IsNullOrWhiteSpace(lang)) return;
+            if (String.IsNullOrWhiteSpace(lang)) return null;
 
             var basePath = Convert.ToString(meta["Base"]) ?? "";
             if (!String.IsNullOrWhiteSpace(basePath)) basePath += ".";
             
-            Language language;
-            if (!Languages.ContainsKey(lang))
-            {
-                language = new Language(lang);
-                Languages[lang] = language;
-            }
-            language = Languages[lang];
+            var language = new Language(lang);
             
             var langDesc = Convert.ToString(meta["LanguageDescription"]);
             if (!string.IsNullOrWhiteSpace(langDesc) && string.IsNullOrWhiteSpace(language.Description)) language.Description = langDesc;
@@ -108,14 +157,10 @@ namespace Sledge.Common.Translations
                 .OfType<JProperty>()
                 .Where(x => x.Path[0] != '@')
                 .Where(x => x.Value.Type == JTokenType.String);
+
             foreach (var st in strings)
             {
-#if DEBUG
-                Languages["debug_blank"].Collection.Strings[basePath + st.Path] = "--";
-                Languages["debug_keys"].Collection.Strings[basePath + st.Path] = "[" + (basePath + st.Path).Split('.').LastOrDefault() + "]";
-                Languages["debug_keys_long"].Collection.Strings[basePath + st.Path] = "[" + (basePath + st.Path) + "]";
-#endif
-                language.Collection.Strings[basePath + st.Path] = st.Value?.ToString();
+                language.Collection.Strings[basePath + FixedPath(st)] = st.Value?.ToString();
             }
 
             if (obj["@Settings"] is JObject settingsNode)
@@ -129,9 +174,11 @@ namespace Sledge.Common.Translations
                     else language.Collection.Settings[basePath + GetSettingPath(se)] = se.Value?.ToString();
                 }
             }
+
+            return language;
         }
 
-        private string GetSettingPath(JToken token)
+        private static string GetSettingPath(JToken token)
         {
             var l = new List<string>();
             while (token != null)
@@ -143,6 +190,19 @@ namespace Sledge.Common.Translations
                     l.Add(name);
                 }
                 token = token.Parent;
+            }
+            l.Reverse();
+            return String.Join(".", l);
+        }
+
+        private static string FixedPath(JToken tok)
+        {
+            var l = new List<string>();
+            var par = tok;
+            while (par != null)
+            {
+                if (par is JProperty p) l.Add(p.Name);
+                par = par.Parent;
             }
             l.Reverse();
             return String.Join(".", l);

@@ -59,6 +59,10 @@
         "OpenSettingsForm": {
             "Name": "Settings",
             "Details": "Open the settings window."
+        },
+        "OpenTranslator": {
+            "Name": "Sledge translator...",
+            "Details": "Open the translator."
         }
     },
     "Components": {

@@ -65,6 +65,7 @@
     <Compile Include="Shell\Hooks\IUIShutdownHook.cs" />
     <Compile Include="Shell\Hooks\IUIStartupHook.cs" />
     <Compile Include="Shell\Hotkeys\IHotkeyProvider.cs" />
+    <Compile Include="Shell\IApplicationInfo.cs" />
     <Compile Include="Shell\InternalAttribute.cs" />
     <Compile Include="Shell\Components\IDialog.cs" />
     <Compile Include="Shell\Components\IStatusItem.cs" />

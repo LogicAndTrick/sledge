@@ -24,7 +24,7 @@ namespace Sledge.Common.Translations
         /// <summary>
         /// The string collection for this language
         /// </summary>
-        internal TranslationStringsCollection Collection { get; }
+        public TranslationStringsCollection Collection { get; }
 
         public Language(string code)
         {

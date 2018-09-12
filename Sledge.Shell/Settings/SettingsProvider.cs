@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.Common.Logging;
+using Sledge.Common.Shell;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;
 
@@ -18,14 +19,19 @@ namespace Sledge.Shell.Settings
     public class SettingsProvider : IInitialiseHook, IShutdownHook
     {
         private readonly IEnumerable<Lazy<ISettingsContainer>> _settingsContainers;
+        private readonly IApplicationInfo _appInfo;
 
         private readonly Dictionary<string, JsonSettingsStore> _values;
         private readonly List<ISettingsContainer> _containers;
 
         [ImportingConstructor]
-        public SettingsProvider([ImportMany] IEnumerable<Lazy<ISettingsContainer>> settingsContainers)
+        public SettingsProvider(
+            [ImportMany] IEnumerable<Lazy<ISettingsContainer>> settingsContainers,
+            [Import(AllowDefault = true)] IApplicationInfo appInfo
+        )
         {
             _settingsContainers = settingsContainers;
+            _appInfo = appInfo;
             _values = new Dictionary<string, JsonSettingsStore>();
             _containers = new List<ISettingsContainer>();
         }
@@ -72,7 +78,9 @@ namespace Sledge.Shell.Settings
             if (name == null) _values.Clear();
             else if (_values.ContainsKey(name)) _values.Remove(name);
 
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Sledge", "Shell");
+            var path = _appInfo?.GetApplicationSettingsFolder("Shell");
+            if (path == null) return Task.CompletedTask;
+
             if (Directory.Exists(path))
             {
                 foreach (var file in Directory.GetFiles(path, "*.json"))
@@ -112,7 +120,9 @@ namespace Sledge.Shell.Settings
         /// <returns>A task that complete when the operation is complete</returns>
         private Task SaveSettings(string name)
         {
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Sledge", "Shell");
+            var path = _appInfo?.GetApplicationSettingsFolder("Shell");
+            if (path == null) return Task.CompletedTask;
+
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             foreach (var container in _containers)

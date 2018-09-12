@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Newtonsoft.Json;
+using Sledge.Common.Shell;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
@@ -19,23 +20,29 @@ namespace Sledge.Shell.Translations
     {
         private readonly TranslationStringsCatalog _catalog;
         private readonly IEnumerable<Lazy<object>> _autoTranslate;
+        private readonly IApplicationInfo _appInfo;
 
         private string Language { get; set; } = "en";
 
         [ImportingConstructor]
         public TranslationsProvider(
             [Import] TranslationStringsCatalog catalog,
-            [ImportMany("AutoTranslate")] IEnumerable<Lazy<object>> autoTranslate
-        )
+            [ImportMany("AutoTranslate")] IEnumerable<Lazy<object>> autoTranslate,
+            [Import(AllowDefault = true)] IApplicationInfo appInfo)
         {
             _catalog = catalog;
             _autoTranslate = autoTranslate;
+            _appInfo = appInfo;
         }
 
         public Task OnStartup()
         {
             // Load language setting early, as most settings are loaded on initialise
-            var file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Sledge", "Shell", Name + ".json");
+            var path = _appInfo?.GetApplicationSettingsFolder("Shell");
+            if (path == null) return Task.CompletedTask;
+
+            var file = Path.Combine(path, Name + ".json");
+
             Dictionary<string, string> data = null;
             if (File.Exists(file))
             {

@@ -15,7 +15,7 @@ namespace Sledge.Shell.Commands
     [AutoTranslate]
     [Export(typeof(ICommand))]
     [CommandID("Tools:Settings")]
-    [MenuItem("Tools", "", "Settings", "B")]
+    [MenuItem("Tools", "", "Settings", "D")]
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Options))]
     public class OpenSettingsForm : ICommand
     {
