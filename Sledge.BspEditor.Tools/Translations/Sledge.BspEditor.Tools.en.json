@@ -2,6 +2,7 @@
     "@Meta": {
         "Base": "Sledge.BspEditor.Tools",
         "Language": "en",
+        "LanguageDescription":  "English",
         "Inherit": ""
     },
     "@Settings": {
