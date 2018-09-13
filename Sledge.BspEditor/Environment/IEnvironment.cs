@@ -13,10 +13,19 @@ namespace Sledge.BspEditor.Environment
     /// </summary>
     public interface IEnvironment
     {
+        /// <summary>
+        /// The name of the engine
+        /// </summary>
         string Engine { get; }
 
+        /// <summary>
+        /// The unique ID for this environment
+        /// </summary>
         string ID { get; }
 
+        /// <summary>
+        /// The name of this environment
+        /// </summary>
         string Name { get; }
 
         /// <summary>
@@ -74,11 +83,20 @@ namespace Sledge.BspEditor.Environment
         /// </summary>
         /// <returns>A list of automatic visgroups</returns>
         IEnumerable<AutomaticVisgroup> GetAutomaticVisgroups();
-
+        
+        /// <summary>
+        /// The name of the default brush entity for this environment
+        /// </summary>
         string DefaultBrushEntity { get; }
 
+        /// <summary>
+        /// The name of the default point entity for this environment
+        /// </summary>
         string DefaultPointEntity { get; }
 
+        /// <summary>
+        /// The name of the default texture scale for this environment
+        /// </summary>
         decimal DefaultTextureScale { get; }
     }
 }
