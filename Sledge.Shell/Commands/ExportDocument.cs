@@ -16,7 +16,7 @@ namespace Sledge.Shell.Commands
     /// </summary>
     [Export(typeof(ICommand))]
     [CommandID("Internal:ExportDocument")]
-    [Internal]
+    [InternalCommand]
     public class ExportDocument : ICommand
     {
         private readonly IEnumerable<Lazy<IDocumentLoader>> _loaders;

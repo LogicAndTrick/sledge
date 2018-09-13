@@ -18,7 +18,7 @@ namespace Sledge.Shell.Commands
     /// </summary>
     [Export(typeof(ICommand))]
     [CommandID("Internal:OpenDocument")]
-    [Internal]
+    [InternalCommand]
     public class OpenDocument : ICommand
     {
         private readonly IEnumerable<Lazy<IDocumentLoader>> _loaders;

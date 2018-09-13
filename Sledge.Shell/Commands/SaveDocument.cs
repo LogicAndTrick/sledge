@@ -16,7 +16,7 @@ namespace Sledge.Shell.Commands
     /// </summary>
     [Export(typeof(ICommand))]
     [CommandID("Internal:SaveDocument")]
-    [Internal]
+    [InternalCommand]
     public class SaveDocument : ICommand
     {
         private readonly IEnumerable<Lazy<IDocumentLoader>> _loaders;

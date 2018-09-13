@@ -13,7 +13,7 @@ namespace Sledge.Shell.Commands
     /// </summary>
     [Export(typeof(ICommand))]
     [CommandID("Internal:CloseDocument")]
-    [Internal]
+    [InternalCommand]
     public class CloseDocument : ICommand
     {
         public string Name { get; set; } = "Close";

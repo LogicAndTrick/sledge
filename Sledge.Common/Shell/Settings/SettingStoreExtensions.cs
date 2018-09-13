@@ -2,8 +2,16 @@ using System.Reflection;
 
 namespace Sledge.Common.Shell.Settings
 {
+    /// <summary>
+    /// Common extensions for settings stores
+    /// </summary>
     public static class SettingStoreExtensions
     {
+        /// <summary>
+        /// Store fields and properties from an instance marked with <see cref="SettingAttribute" /> into the store.
+        /// </summary>
+        /// <param name="store">The settings store</param>
+        /// <param name="instance">The instance to store</param>
         public static void StoreInstance(this ISettingsStore store, object instance)
         {
             if (instance == null) return;
@@ -23,6 +31,11 @@ namespace Sledge.Common.Shell.Settings
             }
         }
 
+        /// <summary>
+        /// Load values from the store into fields and properties in an instance marked with <see cref="SettingAttribute" />.
+        /// </summary>
+        /// <param name="store">The settings store</param>
+        /// <param name="instance">The instance to load</param>
         public static void LoadInstance(this ISettingsStore store, object instance)
         {
             if (instance == null) return;

@@ -5,6 +5,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Sledge.Common.Shell.Settings
 {
+    /// <summary>
+    /// A setting store that saves to a JSON format
+    /// </summary>
     public class JsonSettingsStore : ISettingsStore
     {
         private readonly Dictionary<string, JProperty> _keys;

@@ -66,7 +66,7 @@
     <Compile Include="Shell\Hooks\IUIStartupHook.cs" />
     <Compile Include="Shell\Hotkeys\IHotkeyProvider.cs" />
     <Compile Include="Shell\IApplicationInfo.cs" />
-    <Compile Include="Shell\InternalAttribute.cs" />
+    <Compile Include="Shell\Commands\InternalCommandAttribute.cs" />
     <Compile Include="Shell\Components\IDialog.cs" />
     <Compile Include="Shell\Components\IStatusItem.cs" />
     <Compile Include="Shell\Components\IBottomTabComponent.cs" />
@@ -113,7 +113,6 @@
     <Compile Include="Shell\Settings\SettingAttribute.cs" />
     <Compile Include="Shell\Settings\SettingKey.cs" />
     <Compile Include="Shell\Settings\SettingStoreExtensions.cs" />
-    <Compile Include="Shell\Settings\SettingValue.cs" />
     <Compile Include="SubStream.cs" />
     <Compile Include="Threading\TaskQueue.cs" />
     <Compile Include="Threading\ThreadSafeList.cs" />
