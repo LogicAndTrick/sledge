@@ -8,7 +8,7 @@ Sledge
 *[Sledge beta has been released! It's ready!][1]*
 
 Sledge is an open-source alternative to Valve's Hammer Editor for the Goldsource engine (and hopefully soon for Source too).
-It is written in .NET and uses [Veldrid][2] for rendering, with DirectX 11.
+It is written in .NET and uses [Veldrid][2] for rendering, with DirectX 10.
 
 Currently, Sledge supports Goldsource mapping and will be extended to support other BSP-based engines such as Source and Quake.
 
