@@ -347,7 +347,7 @@ namespace Sledge.BspEditor.Tools.Entity
                 
                 var groups = new[]
                 {
-                    new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, vec, 0, numWireframeIndices)
+                    new BufferGroup(PipelineType.Wireframe, CameraType.Both, 0, numWireframeIndices)
                 };
 
                 builder.Append(points, indices, groups);

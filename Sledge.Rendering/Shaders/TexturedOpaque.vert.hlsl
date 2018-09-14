@@ -15,6 +15,7 @@ struct FragmentIn
     float4 fColour : COLOR0;
     float2 fTexture : TEXCOORD0;
     float4 fTint : COLOR1;
+    uint1 fFlags : POSITION1;
 };
 
 cbuffer Projection
@@ -51,6 +52,7 @@ FragmentIn main(VertexIn input)
     output.fColour = input.Colour;
     output.fTexture = input.Texture;
     output.fTint = input.Tint;
+    output.fFlags = input.Flags;
 
     return output;
 }

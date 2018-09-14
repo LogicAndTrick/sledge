@@ -271,12 +271,8 @@ namespace Sledge.BspEditor.Tools.Vertex
 
             var points = new VertexStandard[numVertices];
             var indices = new uint[numSolidIndices + numWireframeIndices];
-
-            var c = Color.Red;
-            var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
-
-            c = Color.Green;
-            var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
+            
+            var tint = Color.FromArgb(128, 255, 128).ToVector4();
 
             var tc = await document.Environment.GetTextureCollection();
 
@@ -290,7 +286,7 @@ namespace Sledge.BspEditor.Tools.Vertex
                 var w = t?.Width ?? 0;
                 var h = t?.Height ?? 0;
 
-                var tintModifier = new Vector4(0, 0, 0, 1 - opacity);
+                var tintModifier = new Vector4(1, 1, 1, opacity);
 
                 var offs = vi;
                 var numFaceVerts = (uint)face.Vertices.Count;
@@ -304,10 +300,11 @@ namespace Sledge.BspEditor.Tools.Vertex
                     points[vi++] = new VertexStandard
                     {
                         Position = v.Position,
-                        Colour = colour,
+                        Colour = Vector4.One,
                         Normal = normal,
                         Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
-                        Tint = tint - tintModifier
+                        Tint = tint * tintModifier,
+                        Flags = VertexFlags.None
                     };
                 }
 
@@ -344,15 +341,19 @@ namespace Sledge.BspEditor.Tools.Vertex
                 var t = await tc.GetTextureItem(f.Texture.Name);
                 var transparent = opacity < 0.95f || t?.Flags.HasFlag(TextureFlags.Transparent) == true;
 
-                var texture = $"{document.Environment.ID}::{f.Texture.Name}";
-                groups.Add(new BufferGroup(t == null ? PipelineType.FlatColourGeneric : PipelineType.TexturedGeneric, CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd));
+                var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
+
+                groups.Add(transparent
+                    ? new BufferGroup(PipelineType.TexturedAlpha, CameraType.Perspective, f.Origin, texture, texOffset, texInd)
+                    : new BufferGroup(PipelineType.TexturedOpaque, CameraType.Perspective, texture, texOffset, texInd)
+                );
+
                 texOffset += texInd;
 
                 if (t != null) resourceCollector.RequireTexture(t.Name);
             }
 
-            // groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));
-            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, solid.BoundingBox.Center, numSolidIndices, numWireframeIndices));
+            groups.Add(new BufferGroup(PipelineType.Wireframe, CameraType.Both, numSolidIndices, numWireframeIndices));
 
             builder.Append(points, indices, groups);
         }

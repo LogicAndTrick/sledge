@@ -2,11 +2,14 @@
 {
     public enum PipelineType
     {
-        WireframeGeneric,
-        FlatColourGeneric,
-        TexturedGeneric,
+        Wireframe,
 
-        TexturedBillboard,
+        TexturedOpaque,
+        BillboardOpaque,
+        
+        TexturedAlpha,
+        TexturedAdditive,
+        BillboardAlpha,
 
         // WireframeModel,
         // TexturedModel

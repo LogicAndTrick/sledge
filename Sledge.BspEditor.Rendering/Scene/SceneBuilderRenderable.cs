@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
@@ -16,8 +17,6 @@ namespace Sledge.BspEditor.Rendering.Scene
         private static readonly uint IndSize = (uint) Unsafe.SizeOf<IndirectDrawIndexedArguments>();
 
         private readonly SceneBuilder _sceneBuilder;
-
-        public float Order { get; set; }
 
         public SceneBuilderRenderable(SceneBuilder sceneBuilder)
         {
@@ -50,42 +49,54 @@ namespace Sledge.BspEditor.Rendering.Scene
             }
         }
 
-        public void RenderTransparent(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
+        public IEnumerable<ILocation> GetLocationObjects(IPipeline pipeline, IViewport viewport)
         {
-            var location = viewport.Camera.Location;
-
-            var allGroups = new List<(BufferBuilder, int, BufferGroup)>();
-
-            var builders = _sceneBuilder.BufferBuilders.ToList();
-            foreach (var buffer in builders)
+            foreach (var buffer in _sceneBuilder.BufferBuilders)
             {
                 for (var i = 0; i < buffer.NumBuffers; i++)
                 {
-                    var groups = buffer.IndirectBufferGroups[i].Where(x => x.Pipeline == pipeline.Type && x.HasTransparency).Where(x => x.Camera == CameraType.Both || x.Camera == viewport.Camera.Type).ToList();
-
-                    foreach (var bufferGroup in groups)
+                    foreach (var group in buffer.IndirectBufferGroups[i])
                     {
-                        allGroups.Add((buffer, i, bufferGroup));
+                        if (group.Pipeline != pipeline.Type || !group.HasTransparency) continue;
+                        if (group.Camera != CameraType.Both && group.Camera != viewport.Camera.Type) continue;
+                        yield return new GroupLocation(buffer, i, group);
                     }
                 }
             }
+        }
 
-            foreach (var grp in allGroups.OrderByDescending(x => (location - x.Item3.Location).LengthSquared()))
-            {
-                var buffer = grp.Item1;
-                var i = grp.Item2;
-                var bg = grp.Item3;
+        public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl, ILocation locationObject)
+        {
+            var groupLocation = (GroupLocation) locationObject;
 
-                cl.SetVertexBuffer(0, buffer.VertexBuffers[i]);
-                cl.SetIndexBuffer(buffer.IndexBuffers[i], IndexFormat.UInt32);
-                pipeline.Bind(context, cl, bg.Binding);
-                buffer.IndirectBuffers[i].DrawIndexed(cl, bg.Offset * IndSize, bg.Count, 20);
-            }
+            var buffer = groupLocation.Builder;
+            var i = groupLocation.Index;
+            var bg = groupLocation.Group;
+
+            cl.SetVertexBuffer(0, buffer.VertexBuffers[i]);
+            cl.SetIndexBuffer(buffer.IndexBuffers[i], IndexFormat.UInt32);
+            pipeline.Bind(context, cl, bg.Binding);
+            buffer.IndirectBuffers[i].DrawIndexed(cl, bg.Offset * IndSize, bg.Count, 20);
         }
 
         public void Dispose()
         {
             //
+        }
+
+        private class GroupLocation : ILocation
+        {
+            public Vector3 Location => Group.Location;
+            public BufferBuilder Builder { get; }
+            public int Index { get; }
+            public BufferGroup Group { get; }
+
+            public GroupLocation(BufferBuilder builder, int index, BufferGroup group)
+            {
+                Builder = builder;
+                Index = index;
+                Group = group;
+            }
         }
     }
 }

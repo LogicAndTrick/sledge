@@ -116,7 +116,7 @@ namespace Sledge.Rendering.Resources
                     foreach (var ia in g)
                     {
                         indirectBuffer.Update(indirOffset * indSize, ia.Arguments);
-                        var bg = new BufferGroup(ia.Pipeline, ia.Camera, true, ia.Location, ia.Binding, indirOffset, 1);
+                        var bg = new BufferGroup(ia.Pipeline, ia.Camera, ia.Location, ia.Binding, indirOffset, 1);
                         bufferGroups.Add(bg);
                         indirOffset += 1;
                     }
@@ -128,7 +128,7 @@ namespace Sledge.Rendering.Resources
 
                     indirectBuffer.Update(indirOffset * indSize, indir);
 
-                    var bg = new BufferGroup(g.Key.Pipeline, g.Key.Camera, false, Vector3.Zero, g.Key.Binding, indirOffset, indirCount);
+                    var bg = new BufferGroup(g.Key.Pipeline, g.Key.Camera, g.Key.Binding, indirOffset, indirCount);
                     bufferGroups.Add(bg);
 
                     indirOffset += indirCount;

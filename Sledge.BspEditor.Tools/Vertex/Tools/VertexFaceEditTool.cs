@@ -214,15 +214,22 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             var indices = new List<int>();
             var groups = new List<BufferGroup>();
 
-            var col = Color.FromArgb(128, Color.White).ToVector4();
-            var tintCol = Color.OrangeRed.ToVector4();
+            var col = Vector4.One;
+            var tintCol = Color.FromArgb(128, Color.OrangeRed).ToVector4();
 
             foreach (var face in _selectedFaces)
             {
                 var vo = verts.Count;
                 var io = indices.Count;
 
-                verts.AddRange(face.Face.Vertices.Select(x => new VertexStandard { Position = x.Position, Colour = col, Tint = tintCol }));
+                verts.AddRange(face.Face.Vertices.Select(x => new VertexStandard
+                {
+                    Position = x.Position,
+                    Colour = col,
+                    Tint = tintCol,
+                    Flags = VertexFlags.FlatColour
+                }));
+
                 for (var i = 2; i < face.Face.Vertices.Count; i++)
                 {
                     indices.Add(vo);
@@ -230,7 +237,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                     indices.Add(vo + i);
                 }
 
-                groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, true, face.Face.Origin, (uint) io, (uint)(indices.Count - io)));
+                groups.Add(new BufferGroup(PipelineType.TexturedAlpha, CameraType.Perspective, face.Face.Origin, (uint) io, (uint)(indices.Count - io)));
             }
 
             builder.Append(verts, indices.Select(x => (uint) x), groups);

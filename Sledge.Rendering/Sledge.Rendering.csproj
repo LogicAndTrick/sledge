@@ -72,23 +72,26 @@
     <Compile Include="Engine\RenderContext.cs" />
     <Compile Include="Engine\ResourceLoader.cs" />
     <Compile Include="Engine\Scene.cs" />
+    <Compile Include="Pipelines\PipelineGroup.cs" />
+    <Compile Include="Pipelines\TexturedAdditivePipeline.cs" />
+    <Compile Include="Pipelines\TexturedAlphaPipeline.cs" />
+    <Compile Include="Pipelines\BillboardAlphaPipeline.cs" />
     <Compile Include="Resources\IndirectIndirectBuffer.cs" />
     <Compile Include="Resources\TextureSampleType.cs" />
     <Compile Include="Overlay\IOverlayRenderable.cs" />
     <Compile Include="Overlay\OverlayBuilder.cs" />
     <Compile Include="Pipelines\OverlayPipeline.cs" />
-    <Compile Include="Pipelines\TexturedBillboardPipeline.cs" />
+    <Compile Include="Pipelines\BillboardOpaquePipeline.cs" />
     <Compile Include="Primitives\VertexFlags.cs" />
     <Compile Include="Resources\BufferSize.cs" />
     <Compile Include="Renderables\FpsMonitor.cs" />
     <Compile Include="Resources\IResource.cs" />
     <Compile Include="MathFunctions.cs" />
     <Compile Include="Interfaces\IUpdateable.cs" />
-    <Compile Include="Pipelines\TexturedGenericPipeline.cs" />
+    <Compile Include="Pipelines\TexturedOpaquePipeline.cs" />
     <Compile Include="Pipelines\IPipeline.cs" />
     <Compile Include="Pipelines\PipelineType.cs" />
-    <Compile Include="Pipelines\FlatColourGenericPipeline.cs" />
-    <Compile Include="Pipelines\WireframeGenericPipeline.cs" />
+    <Compile Include="Pipelines\WireframePipeline.cs" />
     <Compile Include="Primitives\UniformProjection.cs" />
     <Compile Include="Primitives\VertexModel3.cs" />
     <Compile Include="Primitives\VertexStandard.cs" />
@@ -127,17 +130,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Shaders\FlatColourGeneric.frag.hlsl.bytes" />
-    <EmbeddedResource Include="Shaders\FlatColourGeneric.vert.hlsl.bytes" />
     <EmbeddedResource Include="Shaders\Overlay.frag.hlsl.bytes" />
     <EmbeddedResource Include="Shaders\Overlay.vert.hlsl.bytes" />
-    <EmbeddedResource Include="Shaders\TexturedBillboard.frag.hlsl.bytes" />
-    <EmbeddedResource Include="Shaders\TexturedBillboard.geom.hlsl.bytes" />
-    <EmbeddedResource Include="Shaders\TexturedBillboard.vert.hlsl.bytes" />
-    <EmbeddedResource Include="Shaders\TexturedGeneric.frag.hlsl.bytes" />
-    <EmbeddedResource Include="Shaders\TexturedGeneric.vert.hlsl.bytes" />
-    <EmbeddedResource Include="Shaders\WireframeGeneric.frag.hlsl.bytes" />
-    <EmbeddedResource Include="Shaders\WireframeGeneric.vert.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\Billboard.frag.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\Billboard.geom.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\Billboard.vert.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\TexturedOpaque.frag.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\TexturedOpaque.vert.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\Wireframe.frag.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\Wireframe.vert.hlsl.bytes" />
+    <None Include="Shaders\TexturedAlpha.frag.hlsl.bytes" />
+    <None Include="Shaders\TexturedAlpha.vert.hlsl.bytes" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Diagnostics.DiagnosticSource">
@@ -151,20 +154,8 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Shaders\WireframeGeneric.frag.hlsl" />
-    <EmbeddedResource Include="Shaders\WireframeGeneric.vert.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Shaders\FlatColourGeneric.frag.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Shaders\FlatColourGeneric.vert.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Shaders\TexturedGeneric.frag.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Shaders\TexturedGeneric.vert.hlsl" />
+    <EmbeddedResource Include="Shaders\Wireframe.frag.hlsl" />
+    <EmbeddedResource Include="Shaders\Wireframe.vert.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sledge.Common\Sledge.Common.csproj">
@@ -179,13 +170,25 @@
     <EmbeddedResource Include="Shaders\Overlay.frag.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Shaders\TexturedBillboard.frag.hlsl" />
+    <EmbeddedResource Include="Shaders\Billboard.frag.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Shaders\TexturedBillboard.vert.hlsl" />
+    <EmbeddedResource Include="Shaders\Billboard.vert.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Shaders\TexturedBillboard.geom.hlsl" />
+    <EmbeddedResource Include="Shaders\Billboard.geom.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders\TexturedOpaque.vert.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders\TexturedOpaque.frag.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders\TexturedAlpha.frag.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders\TexturedAlpha.vert.hlsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

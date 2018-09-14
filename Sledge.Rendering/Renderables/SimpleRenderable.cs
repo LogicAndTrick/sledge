@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Pipelines;
@@ -9,7 +10,7 @@ using Buffer = Sledge.Rendering.Resources.Buffer;
 
 namespace Sledge.Rendering.Renderables
 {
-    public class SimpleRenderable : IRenderable
+    public class SimpleRenderable : IRenderable, ILocation
     {
         public float Order { get; set; }
 
@@ -23,6 +24,7 @@ namespace Sledge.Rendering.Renderables
         public bool OrthographicOnly { get; set; }
 
         public bool HasTransparency { get; set; }
+        public Vector3 Location { get; set; }
 
         public SimpleRenderable(Buffer buffer, PipelineType pipeline, int indexOffset, int indexCount) : this(buffer, new [] { pipeline}, indexOffset, indexCount)
         {
@@ -51,9 +53,13 @@ namespace Sledge.Rendering.Renderables
             Draw(pipeline, viewport, cl);
         }
 
-        public void RenderTransparent(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
+        public IEnumerable<ILocation> GetLocationObjects(IPipeline pipeline, IViewport viewport)
         {
-            if (!HasTransparency) return;
+            if (HasTransparency) yield return this;
+        }
+
+        public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl, ILocation locationObject)
+        {
             cl.SetVertexBuffer(0, _buffer.VertexBuffer);
             cl.SetIndexBuffer(_buffer.IndexBuffer, IndexFormat.UInt32);
             Draw(pipeline, viewport, cl);

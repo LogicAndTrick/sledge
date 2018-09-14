@@ -135,7 +135,12 @@ namespace Sledge.Rendering.Overlay
             cl.DrawIndexed(6, 1, 0, 0, 0);
         }
 
-        public void RenderTransparent(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
+        public IEnumerable<ILocation> GetLocationObjects(IPipeline pipeline, IViewport viewport)
+        {
+            yield break;
+        }
+
+        public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl, ILocation locationObject)
         {
             //
         }

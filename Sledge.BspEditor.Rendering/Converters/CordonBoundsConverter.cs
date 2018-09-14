@@ -76,7 +76,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             var groups = new[]
             {
-                new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, c.Box.Center, 0, numWireframeIndices)
+                new BufferGroup(PipelineType.Wireframe, CameraType.Both, 0, numWireframeIndices)
             };
 
             builder.Append(points, indices, groups);

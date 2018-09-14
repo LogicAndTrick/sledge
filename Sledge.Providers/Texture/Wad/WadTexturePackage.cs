@@ -24,7 +24,9 @@ namespace Sledge.Providers.Texture.Wad
 
         private TextureFlags GetFlags(WadEntry entry)
         {
-            return entry.Name.StartsWith("{") ? TextureFlags.Transparent : TextureFlags.None;
+            return _file.NameWithoutExtension.IndexOf("decal", StringComparison.CurrentCultureIgnoreCase) >= 0 && entry.Name.StartsWith("{")
+                ? TextureFlags.Transparent
+                : TextureFlags.None;
         }
 
         public override async Task<IEnumerable<TextureItem>> GetTextures(IEnumerable<string> names)

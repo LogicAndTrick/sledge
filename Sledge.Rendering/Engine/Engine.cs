@@ -29,7 +29,7 @@ namespace Sledge.Rendering.Engine
         private readonly Stopwatch _timer;
         private readonly object _lock = new object();
         private readonly List<IViewport> _renderTargets;
-        private readonly List<IPipeline> _pipelines;
+        private readonly Dictionary<PipelineGroup, List<IPipeline>> _pipelines;
         private readonly CommandList _commandList;
 
         private RgbaFloat _clearColourPerspective;
@@ -56,7 +56,7 @@ namespace Sledge.Rendering.Engine
             _token = new CancellationTokenSource();
 
             _renderTargets = new List<IViewport>();
-            _pipelines = new List<IPipeline>();
+            _pipelines = new Dictionary<PipelineGroup, List<IPipeline>>();
             Context = new RenderContext(Device);
             Scene.Add(Context);
 #if DEBUG
@@ -65,10 +65,18 @@ namespace Sledge.Rendering.Engine
 
             RenderThread = new Thread(Loop);
 
-            AddPipeline(new WireframeGenericPipeline());
-            AddPipeline(new FlatColourGenericPipeline());
-            AddPipeline(new TexturedGenericPipeline());
-            AddPipeline(new TexturedBillboardPipeline());
+            _pipelines.Add(PipelineGroup.Opaque, new List<IPipeline>());
+            _pipelines.Add(PipelineGroup.Transparent, new List<IPipeline>());
+            _pipelines.Add(PipelineGroup.Overlay, new List<IPipeline>());
+
+            AddPipeline(new WireframePipeline());
+            AddPipeline(new TexturedOpaquePipeline());
+            AddPipeline(new BillboardOpaquePipeline());
+
+            AddPipeline(new TexturedAlphaPipeline());
+            AddPipeline(new TexturedAdditivePipeline());
+            AddPipeline(new BillboardAlphaPipeline());
+
             AddPipeline(new OverlayPipeline());
 
             Application.ApplicationExit += Shutdown;
@@ -84,27 +92,32 @@ namespace Sledge.Rendering.Engine
                 MessageBox.Show($"Sledge requires DirectX 10, but your computer only has version {fl}.", "Unsupported graphics card!");
                 Environment.Exit(1);
             }
-
             Features.FeatureLevel = fl;
-            Features.IndirectBuffers = fl >= FeatureLevel.Level_11_0;
         }
 
         internal void SetClearColour(CameraType type, RgbaFloat colour)
         {
-            if (type == CameraType.Both) _clearColourOrthographic = _clearColourPerspective = colour;
-            else if (type == CameraType.Orthographic) _clearColourOrthographic = colour;
-            else _clearColourPerspective = colour;
+            lock (_lock)
+            {
+                if (type == CameraType.Both) _clearColourOrthographic = _clearColourPerspective = colour;
+                else if (type == CameraType.Orthographic) _clearColourOrthographic = colour;
+                else _clearColourPerspective = colour;
+            }
         }
 
         public void AddPipeline(IPipeline pipeline)
         {
             pipeline.Create(Context);
-            _pipelines.Add(pipeline);
+            lock (_lock)
+            {
+                _pipelines[pipeline.Group].Add(pipeline);
+                _pipelines[pipeline.Group].Sort((a, b) => a.Order.CompareTo(b.Order));
+            }
         }
 
         public void Dispose()
         {
-            _pipelines.ForEach(x => x.Dispose());
+            _pipelines.SelectMany(x => x.Value).ToList().ForEach(x => x.Dispose());
             _pipelines.Clear();
 
             _renderTargets.ForEach(x => x.Dispose());
@@ -220,26 +233,64 @@ namespace Sledge.Rendering.Engine
                 : _clearColourOrthographic;
             _commandList.ClearColorTarget(0, cc);
 
-            foreach (var pipeline in _pipelines.OrderBy(x => x.Order))
+            //foreach (var group in _pipelines.OrderBy(x => (int) x.Key))
+            //{
+            //    foreach (var pipeline in group.Value.OrderBy(x => x.Order))
+            //    {
+            //        pipeline.SetupFrame(Context, renderTarget);
+            //    }
+            //}
+
+            //var renderables = _pipelines.ToDictionary(x => x, x => Scene.GetRenderables(x, renderTarget).OrderBy(r => r.Order).ToList());
+
+            // foreach (var pg in _pipelines.GroupBy(x => x.Group).OrderBy(x => x.Key))
+            // {
+            //     foreach (var pipeline in pg.OrderBy(x => x.Order))
+            //     {
+            //         if (!renderables.ContainsKey(pipeline)) continue;
+            //         pipeline.Render(Context, renderTarget, _commandList, renderables[pipeline]);
+            //     }
+            // 
+            //     foreach (var pipeline in pg.OrderBy(x => x.Order))
+            //     {
+            //         if (!renderables.ContainsKey(pipeline)) continue;
+            //         pipeline.RenderTransparent(Context, renderTarget, _commandList, renderables[pipeline]);
+            //     }
+            // }
+
+            foreach (var opaque in _pipelines[PipelineGroup.Opaque])
             {
-                pipeline.SetupFrame(Context, renderTarget);
+                opaque.SetupFrame(Context, renderTarget);
+                opaque.Render(Context, renderTarget, _commandList, Scene.GetRenderables(opaque, renderTarget));
             }
 
-            var renderables = _pipelines.ToDictionary(x => x, x => Scene.GetRenderables(x, renderTarget).OrderBy(r => r.Order).ToList());
-
-            foreach (var pg in _pipelines.GroupBy(x => x.Group).OrderBy(x => x.Key))
             {
-                foreach (var pipeline in pg.OrderBy(x => x.Order))
+                var cameraLocation = renderTarget.Camera.Location;
+                var transparentPipelines = _pipelines[PipelineGroup.Transparent];
+
+                foreach (var transparent in transparentPipelines)
                 {
-                    if (!renderables.ContainsKey(pipeline)) continue;
-                    pipeline.Render(Context, renderTarget, _commandList, renderables[pipeline]);
+                    transparent.SetupFrame(Context, renderTarget);
                 }
 
-                foreach (var pipeline in pg.OrderBy(x => x.Order))
+                // Get the location objects and sort them by distance from the camera
+                var locationObjects =
+                    from t in transparentPipelines
+                    from renderable in Scene.GetRenderables(t, renderTarget)
+                    from location in renderable.GetLocationObjects(t, renderTarget)
+                    orderby (cameraLocation - location.Location).LengthSquared() descending
+                    select new {Pipeline = t, Renderable = renderable, Location = location};
+
+                foreach (var lo in locationObjects)
                 {
-                    if (!renderables.ContainsKey(pipeline)) continue;
-                    pipeline.RenderTransparent(Context, renderTarget, _commandList, renderables[pipeline]);
+                    lo.Pipeline.Render(Context, renderTarget, _commandList, lo.Renderable, lo.Location);
                 }
+            }
+
+            foreach (var overlay in _pipelines[PipelineGroup.Overlay])
+            {
+                overlay.SetupFrame(Context, renderTarget);
+                overlay.Render(Context, renderTarget, _commandList, Scene.GetRenderables(overlay, renderTarget));
             }
             
             _commandList.End();

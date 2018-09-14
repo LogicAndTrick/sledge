@@ -299,7 +299,7 @@ namespace Sledge.BspEditor.Tools.Clip
                     new uint [] { 0, 1, 1, 2, 2, 0 },
                     new []
                     {
-                        new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, p1, 0, 6)
+                        new BufferGroup(PipelineType.Wireframe, CameraType.Both, 0, 6)
                     }
                 );
 
@@ -338,7 +338,7 @@ namespace Sledge.BspEditor.Tools.Clip
 
                     builder.Append(
                         verts, indices.Select(x => (uint) x),
-                        new[] { new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, p1, 0, (uint) indices.Count) }
+                        new[] { new BufferGroup(PipelineType.Wireframe, CameraType.Both, 0, (uint) indices.Count) }
                     );
 
                     // Draw the clipping plane
@@ -365,7 +365,14 @@ namespace Sledge.BspEditor.Tools.Clip
                     foreach (var p in polies)
                     {
                         var offs = verts.Count;
-                        verts.AddRange(p.Select(x => new VertexStandard { Position = x, Colour = colour, Tint = Vector4.One }));
+                        verts.AddRange(p.Select(x => new VertexStandard
+                        {
+                            Position = x,
+                            Colour = colour,
+                            Tint = Vector4.One,
+                            Flags = VertexFlags.FlatColour
+                        }));
+
                         for (var i = 2; i < clipPoly.Vertices.Count; i++)
                         {
                             indices.Add(offs);
@@ -376,7 +383,7 @@ namespace Sledge.BspEditor.Tools.Clip
 
                     builder.Append(
                         verts, indices.Select(x => (uint)x),
-                        new[] { new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, true, p1, 0, (uint)indices.Count) }
+                        new[] { new BufferGroup(PipelineType.TexturedAlpha, CameraType.Perspective, p1, 0, (uint)indices.Count) }
                     );
                 }
             }

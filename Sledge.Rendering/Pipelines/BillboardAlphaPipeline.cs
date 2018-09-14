@@ -9,13 +9,14 @@ using Veldrid;
 
 namespace Sledge.Rendering.Pipelines
 {
-    public class FlatColourGenericPipeline : IPipeline
+    public class BillboardAlphaPipeline : IPipeline
     {
-        public PipelineType Type => PipelineType.FlatColourGeneric;
-        public int Group => 1;
-        public float Order => 1;
+        public PipelineType Type => PipelineType.BillboardAlpha;
+        public PipelineGroup Group => PipelineGroup.Transparent;
+        public float Order => 6;
 
         private Shader _vertex;
+        private Shader _geometry;
         private Shader _fragment;
         private Pipeline _pipeline;
         private DeviceBuffer _projectionBuffer;
@@ -23,16 +24,16 @@ namespace Sledge.Rendering.Pipelines
 
         public void Create(RenderContext context)
         {
-            (_vertex, _fragment) = context.ResourceLoader.LoadShaders(Type.ToString());
+            (_vertex, _geometry, _fragment) = context.ResourceLoader.LoadShadersGeometry("Billboard");
 
             var pDesc = new GraphicsPipelineDescription
             {
                 BlendState = BlendStateDescription.SingleAlphaBlend,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerState = RasterizerStateDescription.Default,
-                PrimitiveTopology = PrimitiveTopology.TriangleList,
-                ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout },
-                ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _fragment }),
+                PrimitiveTopology = PrimitiveTopology.PointList,
+                ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout },
+                ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _geometry, _fragment }),
                 Outputs = new OutputDescription
                 {
                     ColorAttachments = new[] { new OutputAttachmentDescription(PixelFormat.B8_G8_R8_A8_UNorm) },
@@ -54,12 +55,15 @@ namespace Sledge.Rendering.Pipelines
 
         public void SetupFrame(RenderContext context, IViewport target)
         {
+            var view = target.Camera.View;
+            if (!Matrix4x4.Invert(view, out var invView)) invView = Matrix4x4.Identity;
+
             context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
             {
                 Selective = context.SelectiveTransform,
-                Model = Matrix4x4.Identity,
-                View = target.Camera.View,
-                Projection = target.Camera.Projection,
+                Model = invView,
+                View = view,
+                Projection = target.Camera.Projection
             });
         }
 
@@ -74,20 +78,18 @@ namespace Sledge.Rendering.Pipelines
             }
         }
 
-        public void RenderTransparent(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
+        public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)
         {
             cl.SetPipeline(_pipeline);
             cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 
-            foreach (var r in renderables)
-            {
-                r.RenderTransparent(context, this, target, cl);
-            }
+            renderable.Render(context, this, target, cl, locationObject);
         }
 
         public void Bind(RenderContext context, CommandList cl, string binding)
         {
-            //
+            var tex = context.ResourceLoader.GetTexture(binding);
+            tex?.BindTo(cl, 1);
         }
 
         public void Dispose()
@@ -96,6 +98,7 @@ namespace Sledge.Rendering.Pipelines
             _projectionBuffer?.Dispose();
             _pipeline?.Dispose();
             _vertex?.Dispose();
+            _geometry?.Dispose();
             _fragment?.Dispose();
         }
     }

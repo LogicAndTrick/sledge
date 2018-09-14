@@ -73,7 +73,7 @@ namespace Sledge.BspEditor.Editing.Commands.Pointfile
 
             builder.Append(verts, index, new []
             {
-                new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, Vector3.Zero, 0, (uint) index.Count)
+                new BufferGroup(PipelineType.Wireframe, CameraType.Both, 0, (uint) index.Count)
             });
 
             return Task.FromResult(0);

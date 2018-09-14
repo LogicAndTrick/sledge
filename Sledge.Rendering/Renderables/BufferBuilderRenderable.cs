@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
@@ -44,28 +46,48 @@ namespace Sledge.Rendering.Renderables
             }
         }
 
-        public void RenderTransparent(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
+        public IEnumerable<ILocation> GetLocationObjects(IPipeline pipeline, IViewport viewport)
         {
-            var location = viewport.Camera.Location;
-
             for (var i = 0; i < _buffer.NumBuffers; i++)
             {
-                var groups = _buffer.IndirectBufferGroups[i].Where(x => x.Pipeline == pipeline.Type && x.HasTransparency).Where(x => x.Camera == CameraType.Both || x.Camera == viewport.Camera.Type).ToList();
-                if (!groups.Any()) continue;
-
-                cl.SetVertexBuffer(0, _buffer.VertexBuffers[i]);
-                cl.SetIndexBuffer(_buffer.IndexBuffers[i], IndexFormat.UInt32);
-                foreach (var bg in groups.OrderByDescending(x => (location - x.Location).LengthSquared()))
+                foreach (var group in _buffer.IndirectBufferGroups[i])
                 {
-                    pipeline.Bind(context, cl, bg.Binding);
-                    _buffer.IndirectBuffers[i].DrawIndexed(cl, bg.Offset * IndSize, bg.Count, 20);
+                    if (group.Pipeline != pipeline.Type || !group.HasTransparency) continue;
+                    if (group.Camera != CameraType.Both && group.Camera != viewport.Camera.Type) continue;
+                    yield return new GroupLocation(i, group);
                 }
             }
+        }
+
+        public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl, ILocation locationObject)
+        {
+            var groupLocation = (GroupLocation)locationObject;
+
+            var i = groupLocation.Index;
+            var bg = groupLocation.Group;
+
+            cl.SetVertexBuffer(0, _buffer.VertexBuffers[i]);
+            cl.SetIndexBuffer(_buffer.IndexBuffers[i], IndexFormat.UInt32);
+            pipeline.Bind(context, cl, bg.Binding);
+            _buffer.IndirectBuffers[i].DrawIndexed(cl, bg.Offset * IndSize, bg.Count, 20);
         }
 
         public void Dispose()
         {
             _buffer.Dispose();
+        }
+
+        private class GroupLocation : ILocation
+        {
+            public Vector3 Location => Group.Location;
+            public int Index { get; }
+            public BufferGroup Group { get; }
+
+            public GroupLocation(int index, BufferGroup group)
+            {
+                Index = index;
+                Group = group;
+            }
         }
     }
 }

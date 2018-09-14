@@ -166,7 +166,7 @@ namespace Sledge.BspEditor.Tools.Draggable
 
                 var groups = new[]
                 {
-                    new BufferGroup(PipelineType.WireframeGeneric, CameraType.Perspective, false, c.Center, 0, numWireframeIndices)
+                    new BufferGroup(PipelineType.Wireframe, CameraType.Perspective, 0, numWireframeIndices)
                 };
 
                 builder.Append(points, indices, groups);

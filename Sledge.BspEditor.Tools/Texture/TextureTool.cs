@@ -300,17 +300,24 @@ namespace Sledge.BspEditor.Tools.Texture
             var groups = new List<BufferGroup>();
 
             var hideFaceMask = ShouldHideFaceMask;
+            var selectionColour = Color.FromArgb(32, Color.Red).ToVector4();
 
             // Add selection highlights
             if (!hideFaceMask)
             {
-                var selectionColour = Color.FromArgb(32, Color.Red).ToVector4();
                 foreach (var face in sel)
                 {
                     var indOffs = indices.Count;
                     var offs = verts.Count;
 
-                    verts.AddRange(face.Vertices.Select(x => new VertexStandard {Position = x, Colour = selectionColour, Tint = Vector4.One}));
+                    verts.AddRange(face.Vertices.Select(x => new VertexStandard
+                    {
+                        Position = x, 
+                        Colour = Vector4.One, 
+                        Tint = selectionColour,
+                        Flags = VertexFlags.FlatColour
+                    }));
+
                     for (var i = 2; i < face.Vertices.Count; i++)
                     {
                         indices.Add(offs);
@@ -318,7 +325,7 @@ namespace Sledge.BspEditor.Tools.Texture
                         indices.Add(offs + i);
                     }
 
-                    groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, true, face.Origin, (uint) indOffs, (uint) (indices.Count - indOffs)));
+                    groups.Add(new BufferGroup(PipelineType.TexturedAlpha, CameraType.Perspective, face.Origin, (uint) indOffs, (uint) (indices.Count - indOffs)));
                 }
 
                 builder.Append(verts, indices.Select(x => (uint) x), groups);
@@ -357,7 +364,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 indices.Add(offs + 3);
             }
 
-            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, CameraType.Perspective, false, Vector3.Zero, (uint)wfIndOffs, (uint)(indices.Count - wfIndOffs)));
+            groups.Add(new BufferGroup(PipelineType.Wireframe, CameraType.Perspective, (uint)wfIndOffs, (uint)(indices.Count - wfIndOffs)));
             builder.Append(verts, indices.Select(x => (uint)x), groups);
         }
     }

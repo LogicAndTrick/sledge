@@ -101,7 +101,7 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             builder.Append(verts, Enumerable.Range(0, verts.Count).Select(x => (uint) x), new[]
             {
-                new BufferGroup(PipelineType.TexturedBillboard, CameraType.Orthographic, false, Vector3.Zero, CenterHandleTextureDataSource.Name, 0, (uint) verts.Count)
+                new BufferGroup(PipelineType.BillboardOpaque, CameraType.Orthographic, CenterHandleTextureDataSource.Name, 0, (uint) verts.Count)
             });
 
             return Task.CompletedTask;

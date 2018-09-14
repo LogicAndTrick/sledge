@@ -59,7 +59,7 @@ namespace Sledge.BspEditor.Rendering.Grid
 
         public bool ShouldRender(IPipeline pipeline, IViewport viewport)
         {
-            return pipeline.Type == PipelineType.WireframeGeneric && viewport == _viewport && _grid != null && viewport.Camera.Type == CameraType.Orthographic;
+            return pipeline.Type == PipelineType.Wireframe && viewport == _viewport && _grid != null && viewport.Camera.Type == CameraType.Orthographic;
         }
 
         public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
@@ -70,7 +70,12 @@ namespace Sledge.BspEditor.Rendering.Grid
             cl.DrawIndexed(_indexCount, 1, 0, 0, 0);
         }
 
-        public void RenderTransparent(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
+        public IEnumerable<ILocation> GetLocationObjects(IPipeline pipeline, IViewport viewport)
+        {
+            yield break;
+        }
+
+        public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl, ILocation locationObject)
         {
             //
         }

@@ -312,8 +312,6 @@ namespace Sledge.BspEditor.Tools.Brush
 
             var tc = await document.Environment.GetTextureCollection();
 
-            var flags = solid.IsSelected ? VertexFlags.SelectiveTransformed : VertexFlags.None;
-
             var vi = 0u;
             var si = 0u;
             var wi = numSolidIndices;
@@ -339,7 +337,7 @@ namespace Sledge.BspEditor.Tools.Brush
                         Normal = normal,
                         Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
                         Tint = tint,
-                        Flags = flags
+                        Flags = t == null ? VertexFlags.FlatColour : VertexFlags.None
                     };
                 }
 
@@ -370,15 +368,19 @@ namespace Sledge.BspEditor.Tools.Brush
                 var t = await tc.GetTextureItem(f.Texture.Name);
                 var transparent = opacity < 0.95f || t?.Flags.HasFlag(TextureFlags.Transparent) == true;
 
-                var texture = $"{document.Environment.ID}::{f.Texture.Name}";
-                groups.Add(new BufferGroup(t == null ? PipelineType.FlatColourGeneric : PipelineType.TexturedGeneric, CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd));
+                var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
+
+                groups.Add(transparent
+                    ? new BufferGroup(PipelineType.TexturedAlpha, CameraType.Perspective, f.Origin, texture, texOffset, texInd)
+                    : new BufferGroup(PipelineType.TexturedOpaque, CameraType.Perspective, texture, texOffset, texInd)
+                );
+
                 texOffset += texInd;
 
                 if (t != null) resourceCollector.RequireTexture(t.Name);
             }
 
-            // groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));
-            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, solid.IsSelected ? CameraType.Both : CameraType.Orthographic, false, solid.BoundingBox.Center, numSolidIndices, numWireframeIndices));
+            groups.Add(new BufferGroup(PipelineType.Wireframe, solid.IsSelected ? CameraType.Both : CameraType.Orthographic, numSolidIndices, numWireframeIndices));
 
             builder.Append(points, indices, groups);
         }

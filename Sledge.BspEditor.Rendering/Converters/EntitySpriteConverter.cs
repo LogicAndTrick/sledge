@@ -64,7 +64,7 @@ namespace Sledge.BspEditor.Rendering.Converters
             builder.Append(
                 new [] { new VertexStandard { Position = entity.Origin, Normal = new Vector3(width, height, 0), Colour = Vector4.One, Tint = tint, Flags = flags } },
                 new [] { 0u },
-                new [] { new BufferGroup(PipelineType.TexturedBillboard, CameraType.Perspective, true, entity.BoundingBox.Center, texture, 0, 1) }
+                new [] { new BufferGroup(PipelineType.BillboardAlpha, CameraType.Perspective, entity.BoundingBox.Center, texture, 0, 1) }
             );
 
         }

@@ -9,11 +9,11 @@ using Veldrid;
 
 namespace Sledge.Rendering.Pipelines
 {
-    public class TexturedGenericPipeline : IPipeline
+    public class WireframePipeline : IPipeline
     {
-        public PipelineType Type => PipelineType.TexturedGeneric;
-        public int Group => 1;
-        public float Order => 5;
+        public PipelineType Type => PipelineType.Wireframe;
+        public PipelineGroup Group => PipelineGroup.Opaque;
+        public float Order => 10;
 
         private Shader _vertex;
         private Shader _fragment;
@@ -28,10 +28,10 @@ namespace Sledge.Rendering.Pipelines
             var pDesc = new GraphicsPipelineDescription
             {
                 BlendState = BlendStateDescription.SingleAlphaBlend,
-                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
+                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqualRead,
                 RasterizerState = RasterizerStateDescription.Default,
-                PrimitiveTopology = PrimitiveTopology.TriangleList,
-                ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout },
+                PrimitiveTopology = PrimitiveTopology.LineList,
+                ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout },
                 ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _fragment }),
                 Outputs = new OutputDescription
                 {
@@ -74,21 +74,17 @@ namespace Sledge.Rendering.Pipelines
             }
         }
 
-        public void RenderTransparent(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
+        public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)
         {
             cl.SetPipeline(_pipeline);
             cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 
-            foreach (var r in renderables)
-            {
-                r.RenderTransparent(context, this, target, cl);
-            }
+            renderable.Render(context, this, target, cl, locationObject);
         }
 
         public void Bind(RenderContext context, CommandList cl, string binding)
         {
-            var tex = context.ResourceLoader.GetTexture(binding);
-            tex?.BindTo(cl, 1);
+            //
         }
 
         public void Dispose()

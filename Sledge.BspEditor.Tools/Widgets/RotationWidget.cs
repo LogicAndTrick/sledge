@@ -347,7 +347,7 @@ namespace Sledge.BspEditor.Tools.Widgets
                     new uint[] { 0, 1 },
                     new[]
                     {
-                        new BufferGroup(PipelineType.WireframeGeneric, CameraType.Perspective, false, start + end / 2, 0, 2)
+                        new BufferGroup(PipelineType.Wireframe, CameraType.Perspective, 0, 2)
                     }
                 );
             }

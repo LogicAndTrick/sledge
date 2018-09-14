@@ -9,6 +9,7 @@ using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Resources;
+using Sledge.DataStructures.Geometric;
 using Sledge.Providers.Texture;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
@@ -54,16 +55,65 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             var points = new VertexStandard[numVertices];
             var indices = new uint[numSolidIndices + numWireframeIndices];
+            
+            var colour = (obj.IsSelected ? Color.Red : obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White).ToVector4();
 
-            var c = obj.IsSelected ? Color.Red : obj.Data.GetOne<ObjectColor>()?.Color ?? Color.White;
-            var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
-
-            c = obj.IsSelected ? Color.FromArgb(255, 128, 128) : Color.White;
-            var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
+            //var c = obj.IsSelected ? Color.FromArgb(255, 128, 128) : Color.White;
+            //var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
+            var tint = Vector4.One;
 
             var tc = await document.Environment.GetTextureCollection();
 
+            var pipeline = PipelineType.TexturedOpaque;
+            var entityHasTransparency = false;
             var flags = obj.IsSelected ? VertexFlags.SelectiveTransformed : VertexFlags.None;
+
+            // try and find the parent entity for render flags
+            // TODO: this code is extremely specific to Goldsource and should be abstracted away
+            var parentEntity = obj.FindClosestParent(x => x is Entity) as Entity;
+            if (parentEntity?.EntityData != null)
+            {
+                const int renderModeColor = 1;
+                const int renderModeTexture = 2;
+                const int renderModeGlow = 3; // same as texture for brushes
+                const int renderModeSolid = 4;
+                const int renderModeAdditive = 5;
+
+                var rendermode = parentEntity.EntityData.Get("rendermode", 0);
+                var renderamt = parentEntity.EntityData.Get("renderamt", 255f) / 255;
+                entityHasTransparency = renderamt < 0.99;
+
+                switch (rendermode)
+                {
+                    case renderModeColor:
+                        // Flat colour, use render colour
+                        var rendercolor = parentEntity.EntityData.GetVector3("rendercolor") / 255f ?? Vector3.One;
+                        tint = new Vector4(rendercolor, renderamt);
+                        flags |= VertexFlags.FlatColour | VertexFlags.AlphaTested;
+                        if (entityHasTransparency) pipeline = PipelineType.TexturedAlpha;
+                        break;
+                    case renderModeTexture:
+                    case renderModeGlow:
+                        tint = new Vector4(1, 1, 1, renderamt);
+                        flags |= VertexFlags.AlphaTested;
+                        if (entityHasTransparency) pipeline = PipelineType.TexturedAlpha;
+                        break;
+                    case renderModeSolid:
+                        flags |= VertexFlags.AlphaTested;
+                        entityHasTransparency = false;
+                        break;
+                    case renderModeAdditive:
+                        tint = new Vector4(renderamt, renderamt, renderamt, 1);
+                        pipeline = PipelineType.TexturedAdditive;
+                        entityHasTransparency = true;
+                        break;
+                    default:
+                        entityHasTransparency = false;
+                        break;
+                }
+            }
+
+            if (obj.IsSelected) tint *= new Vector4(1, 0.5f, 0.5f, 1);
 
             var vi = 0u;
             var si = 0u;
@@ -75,7 +125,8 @@ namespace Sledge.BspEditor.Rendering.Converters
                 var w = t?.Width ?? 0;
                 var h = t?.Height ?? 0;
 
-                var tintModifier = new Vector4(0, 0, 0, 1 - opacity);
+                var tintModifier = new Vector4(1, 1, 1, opacity);
+                var extraFlags = t == null ? VertexFlags.FlatColour : VertexFlags.None;
 
                 var offs = vi;
                 var numFaceVerts = (uint)face.Vertices.Count;
@@ -92,8 +143,8 @@ namespace Sledge.BspEditor.Rendering.Converters
                         Colour = colour,
                         Normal = normal,
                         Texture = new Vector2(textureCoords[i].Item2, textureCoords[i].Item3),
-                        Tint = tint - tintModifier,
-                        Flags = flags
+                        Tint = tint * tintModifier,
+                        Flags = flags | extraFlags
                     };
                 }
 
@@ -128,17 +179,22 @@ namespace Sledge.BspEditor.Rendering.Converters
 
                 var opacity = tc.GetOpacity(f.Texture.Name);
                 var t = await tc.GetTextureItem(f.Texture.Name);
-                var transparent = opacity < 0.95f || t?.Flags.HasFlag(TextureFlags.Transparent) == true;
+                var transparent = entityHasTransparency || opacity < 0.95f || t?.Flags.HasFlag(TextureFlags.Transparent) == true;
 
-                var texture = $"{document.Environment.ID}::{f.Texture.Name}";
-                groups.Add(new BufferGroup(t == null ? PipelineType.FlatColourGeneric : PipelineType.TexturedGeneric, CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd));
+                var texture = t == null ? string.Empty : $"{document.Environment.ID}::{f.Texture.Name}";
+
+                var group = new BufferGroup(
+                    pipeline == PipelineType.TexturedOpaque && transparent ? PipelineType.TexturedAlpha : pipeline,
+                    CameraType.Perspective, transparent, f.Origin, texture, texOffset, texInd
+                );
+                groups.Add(group);
+
                 texOffset += texInd;
 
                 if (t != null) resourceCollector.RequireTexture(t.Name);
             }
 
-            // groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, 0, numSolidIndices));
-            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, obj.IsSelected ? CameraType.Both : CameraType.Orthographic, false, obj.BoundingBox.Center, numSolidIndices, numWireframeIndices));
+            groups.Add(new BufferGroup(PipelineType.Wireframe, obj.IsSelected ? CameraType.Both : CameraType.Orthographic, numSolidIndices, numWireframeIndices));
             
             builder.Append(points, indices, groups);
 
@@ -149,7 +205,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 var untransformedIndices = indices.Skip((int) numSolidIndices);
                 builder.Append(points, untransformedIndices, new[]
                 {
-                    new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, obj.BoundingBox.Center, 0, numWireframeIndices)
+                    new BufferGroup(PipelineType.Wireframe, CameraType.Both, 0, numWireframeIndices)
                 });
             }
         }

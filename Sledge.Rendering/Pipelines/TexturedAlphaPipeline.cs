@@ -9,11 +9,11 @@ using Veldrid;
 
 namespace Sledge.Rendering.Pipelines
 {
-    public class OverlayPipeline : IPipeline
+    public class TexturedAlphaPipeline : IPipeline
     {
-        public PipelineType Type => PipelineType.Overlay;
-        public PipelineGroup Group => PipelineGroup.Overlay;
-        public float Order => 9999;
+        public PipelineType Type => PipelineType.TexturedAlpha;
+        public PipelineGroup Group => PipelineGroup.Transparent;
+        public float Order => 5;
 
         private Shader _vertex;
         private Shader _fragment;
@@ -28,7 +28,7 @@ namespace Sledge.Rendering.Pipelines
             var pDesc = new GraphicsPipelineDescription
             {
                 BlendState = BlendStateDescription.SingleAlphaBlend,
-                DepthStencilState = DepthStencilStateDescription.Disabled,
+                DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqualRead,
                 RasterizerState = RasterizerStateDescription.Default,
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
                 ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout },
@@ -47,14 +47,6 @@ namespace Sledge.Rendering.Pipelines
                 new BufferDescription((uint)Unsafe.SizeOf<UniformProjection>(), BufferUsage.UniformBuffer)
             );
 
-            context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
-            {
-                Selective = context.SelectiveTransform,
-                Model = Matrix4x4.Identity,
-                View = Matrix4x4.Identity,
-                Projection = Matrix4x4.CreateOrthographicOffCenter(0, 1, 1, 0, -1, 1)
-            });
-
             _projectionResourceSet = context.Device.ResourceFactory.CreateResourceSet(
                 new ResourceSetDescription(context.ResourceLoader.ProjectionLayout, _projectionBuffer)
             );
@@ -62,7 +54,13 @@ namespace Sledge.Rendering.Pipelines
 
         public void SetupFrame(RenderContext context, IViewport target)
         {
-            // 
+            context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
+            {
+                Selective = context.SelectiveTransform,
+                Model = Matrix4x4.Identity,
+                View = target.Camera.View,
+                Projection = target.Camera.Projection,
+            });
         }
 
         public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
@@ -78,12 +76,16 @@ namespace Sledge.Rendering.Pipelines
 
         public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)
         {
-            // 
+            cl.SetPipeline(_pipeline);
+            cl.SetGraphicsResourceSet(0, _projectionResourceSet);
+
+            renderable.Render(context, this, target, cl, locationObject);
         }
 
         public void Bind(RenderContext context, CommandList cl, string binding)
         {
-            //
+            var tex = context.ResourceLoader.GetTexture(binding);
+            tex?.BindTo(cl, 1);
         }
 
         public void Dispose()

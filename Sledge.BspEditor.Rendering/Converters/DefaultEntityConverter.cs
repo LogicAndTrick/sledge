@@ -52,10 +52,6 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             var c = obj.IsSelected ? Color.Red : obj.Data.GetOne<ObjectColor>()?.Color ?? Color.Magenta;
             var colour = new Vector4(c.R, c.G, c.B, c.A) / 255f;
-
-            //c = entity.IsSelected ? Color.FromArgb(255, 128, 128) : Color.White;
-            c = Color.White;
-            var tint = new Vector4(c.R, c.G, c.B, c.A) / 255f;
             
             var flags = obj.IsSelected ? VertexFlags.SelectiveTransformed : VertexFlags.None;
 
@@ -75,8 +71,8 @@ namespace Sledge.BspEditor.Rendering.Converters
                         Colour = colour,
                         Normal = normal,
                         Texture = Vector2.Zero,
-                        Tint = tint,
-                        Flags = flags
+                        Tint = Vector4.One,
+                        Flags = flags | VertexFlags.FlatColour
                     };
                 }
 
@@ -102,10 +98,10 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             if (!obj.Data.OfType<IContentsReplaced>().Any(x => x.ContentsReplaced))
             {
-                groups.Add(new BufferGroup(PipelineType.FlatColourGeneric, CameraType.Perspective, false, origin, 0, numSolidIndices));
+                groups.Add(new BufferGroup(PipelineType.TexturedOpaque, CameraType.Perspective, 0, numSolidIndices));
             }
             
-            groups.Add(new BufferGroup(PipelineType.WireframeGeneric, obj.IsSelected ? CameraType.Both : CameraType.Orthographic, false, origin, numSolidIndices, numWireframeIndices));
+            groups.Add(new BufferGroup(PipelineType.Wireframe, obj.IsSelected ? CameraType.Both : CameraType.Orthographic, numSolidIndices, numWireframeIndices));
 
             builder.Append(points, indices, groups);
             
@@ -116,7 +112,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 var untransformedIndices = indices.Skip((int)numSolidIndices);
                 builder.Append(points, untransformedIndices, new[]
                 {
-                    new BufferGroup(PipelineType.WireframeGeneric, CameraType.Both, false, obj.BoundingBox.Center, 0, numWireframeIndices)
+                    new BufferGroup(PipelineType.Wireframe, CameraType.Both, 0, numWireframeIndices)
                 });
             }
 

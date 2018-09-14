@@ -9,10 +9,10 @@ using Veldrid;
 
 namespace Sledge.Rendering.Pipelines
 {
-    public class TexturedBillboardPipeline : IPipeline
+    public class BillboardOpaquePipeline : IPipeline
     {
-        public PipelineType Type => PipelineType.TexturedBillboard;
-        public int Group => 1;
+        public PipelineType Type => PipelineType.BillboardOpaque;
+        public PipelineGroup Group => PipelineGroup.Opaque;
         public float Order => 6;
 
         private Shader _vertex;
@@ -24,7 +24,7 @@ namespace Sledge.Rendering.Pipelines
 
         public void Create(RenderContext context)
         {
-            (_vertex, _geometry, _fragment) = context.ResourceLoader.LoadShadersGeometry(Type.ToString());
+            (_vertex, _geometry, _fragment) = context.ResourceLoader.LoadShadersGeometry("Billboard");
 
             var pDesc = new GraphicsPipelineDescription
             {
@@ -78,15 +78,12 @@ namespace Sledge.Rendering.Pipelines
             }
         }
 
-        public void RenderTransparent(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
+        public void Render(RenderContext context, IViewport target, CommandList cl, IRenderable renderable, ILocation locationObject)
         {
             cl.SetPipeline(_pipeline);
             cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 
-            foreach (var r in renderables)
-            {
-                r.RenderTransparent(context, this, target, cl);
-            }
+            renderable.Render(context, this, target, cl, locationObject);
         }
 
         public void Bind(RenderContext context, CommandList cl, string binding)
