@@ -14,13 +14,15 @@ namespace Sledge.BspEditor.Compile
         public string Arguments { get; set; }
         public string WorkingDirectory { get; set; } = "{WorkingDirectory}";
         public bool InterceptOutput { get; set; } = true;
+        public override BatchStepType StepType { get; }
 
-        public BatchProcess(string process, string arguments)
+        public BatchProcess(BatchStepType stepType, string process, string arguments)
         {
             Process = process;
             Arguments = arguments;
+            StepType = stepType;
         }
-
+        
         public override async Task Run(Batch batch, MapDocument document)
         {
             var pcs = Process;

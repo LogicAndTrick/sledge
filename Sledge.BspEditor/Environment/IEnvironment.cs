@@ -75,8 +75,9 @@ namespace Sledge.BspEditor.Environment
         /// Create a batch from the selected arguments
         /// </summary>
         /// <param name="arguments">The list of batch arguments the user has selected</param>
+        /// <param name="options">The options to use for the batch</param>
         /// <returns>A batch to process this map</returns>
-        Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments);
+        Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments, BatchOptions options);
 
         /// <summary>
         /// Get a list of automatic visgroups provided by this environment

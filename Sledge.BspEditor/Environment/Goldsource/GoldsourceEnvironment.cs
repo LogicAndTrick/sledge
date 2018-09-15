@@ -224,16 +224,27 @@ namespace Sledge.BspEditor.Environment.Goldsource
             return _data.OfType<T>();
         }
 
-        public Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments)
+        private async Task ExportDocumentForBatch(MapDocument doc, string path, bool useCordon)
+        {
+            // todo: cordon
+            await Oy.Publish("Command:Run", new CommandMessage("Internal:ExportDocument", new
+            {
+                Document = doc,
+                Path = path,
+                LoaderHint = nameof(MapBspSourceProvider)
+            }));
+        }
+
+        public Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments, BatchOptions options)
         {
             var args = arguments.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.First().Arguments);
 
             var batch = new Batch();
 
             // Create the working directory
-            batch.Steps.Add(new BatchCallback(async (b, d) =>
+            batch.Steps.Add(new BatchCallback(BatchStepType.CreateWorkingDirectory, async (b, d) =>
             {
-                var workingDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+                var workingDir = options.WorkingDirectory ?? Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
                 if (!Directory.Exists(workingDir)) Directory.CreateDirectory(workingDir);
                 b.Variables["WorkingDirectory"] = workingDir;
 
@@ -241,34 +252,31 @@ namespace Sledge.BspEditor.Environment.Goldsource
             }));
 
             // Save the file to the working directory
-            batch.Steps.Add(new BatchCallback(async (b, d) =>
+            batch.Steps.Add(new BatchCallback(BatchStepType.ExportDocument, async (b, d) =>
             {
-                var fn = d.FileName;
+                var fn = options.MapFileName ?? d.FileName;
+                var ext = options.MapFileExtension ?? ".map";
                 if (String.IsNullOrWhiteSpace(fn) || fn.IndexOf('.') < 0) fn = Path.GetRandomFileName();
-                var mapFile = Path.GetFileNameWithoutExtension(fn) + ".map";
+                var mapFile = Path.GetFileNameWithoutExtension(fn) + "." + ext;
                 b.Variables["MapFileName"] = mapFile;
 
                 var path = Path.Combine(b.Variables["WorkingDirectory"], mapFile);
                 b.Variables["MapFile"] = path;
 
-                await Oy.Publish("Command:Run", new CommandMessage("Internal:ExportDocument", new
-                {
-                    Document = d,
-                    Path = path,
-                    LoaderHint = nameof(MapBspSourceProvider)
-                }));
+                if (options.ExportDocument != null) await options.ExportDocument(d, path);
+                else await ExportDocumentForBatch(d, path, options.UseCordonBounds.GetValueOrDefault(true));
 
                 await Oy.Publish("Compile:Debug", $"Map file is: {path}\r\n");
             }));
 
             // Run the compile tools
-            if (args.ContainsKey("CSG")) batch.Steps.Add(new BatchProcess(Path.Combine(ToolsDirectory, CsgExe), args["CSG"] + " \"{MapFile}\""));
-            if (args.ContainsKey("BSP")) batch.Steps.Add(new BatchProcess(Path.Combine(ToolsDirectory, BspExe), args["BSP"] + " \"{MapFile}\""));
-            if (args.ContainsKey("VIS")) batch.Steps.Add(new BatchProcess(Path.Combine(ToolsDirectory, VisExe), args["VIS"] + " \"{MapFile}\""));
-            if (args.ContainsKey("RAD")) batch.Steps.Add(new BatchProcess(Path.Combine(ToolsDirectory, RadExe), args["RAD"] + " \"{MapFile}\""));
+            if (args.ContainsKey("CSG")) batch.Steps.Add(new BatchProcess(BatchStepType.RunBuildExecutable, Path.Combine(ToolsDirectory, CsgExe), args["CSG"] + " \"{MapFile}\""));
+            if (args.ContainsKey("BSP")) batch.Steps.Add(new BatchProcess(BatchStepType.RunBuildExecutable, Path.Combine(ToolsDirectory, BspExe), args["BSP"] + " \"{MapFile}\""));
+            if (args.ContainsKey("VIS")) batch.Steps.Add(new BatchProcess(BatchStepType.RunBuildExecutable, Path.Combine(ToolsDirectory, VisExe), args["VIS"] + " \"{MapFile}\""));
+            if (args.ContainsKey("RAD")) batch.Steps.Add(new BatchProcess(BatchStepType.RunBuildExecutable, Path.Combine(ToolsDirectory, RadExe), args["RAD"] + " \"{MapFile}\""));
 
             // Check for errors
-            batch.Steps.Add(new BatchCallback(async (b, d) =>
+            batch.Steps.Add(new BatchCallback(BatchStepType.CheckIfSuccessful, async (b, d) =>
             {
                 var errFile = Path.ChangeExtension(b.Variables["MapFile"], "err");
                 if (errFile != null && File.Exists(errFile))
@@ -286,7 +294,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             }));
 
             // Copy resulting files around
-            batch.Steps.Add(new BatchCallback((b, d) =>
+            batch.Steps.Add(new BatchCallback(BatchStepType.ProcessBuildResults, (b, d) =>
             {
                 var mapDir = Path.GetDirectoryName(d.FileName);
                 var gameMapDir = Path.Combine(BaseDirectory, ModDirectory, "maps");
@@ -320,21 +328,26 @@ namespace Sledge.BspEditor.Environment.Goldsource
             }));
 
             // Delete temp directory
-            batch.Steps.Add(new BatchCallback((b, d) =>
+            batch.Steps.Add(new BatchCallback(BatchStepType.DeleteWorkingDirectory, (b, d) =>
             {
                 var workingDir = b.Variables["WorkingDirectory"];
                 if (Directory.Exists(workingDir)) Directory.Delete(workingDir, true);
                 return Task.CompletedTask;
             }));
 
-            if (GameRun)
+            if (options.RunGame ?? GameRun)
             {
-                batch.Steps.Add(new BatchCallback((b, d) =>
+                batch.Steps.Add(new BatchCallback(BatchStepType.RunGame, (b, d) =>
                 {
                     if (!b.Successful) return Task.CompletedTask;
+                    
+                    var silent = options.AllowUserInterruption.GetValueOrDefault(false);
 
-                    if (GameAsk)
+                    if (options.AskRunGame ?? GameAsk)
                     {
+                        // We can't ask to run the game if interruption isn't allowed
+                        if (silent) return Task.CompletedTask;
+
                         var ask = MessageBox.Show(
                             $"The compile of {d.Name} completed successfully.\nWould you like to run the game now?",
                             "Compile Successful!",
@@ -347,30 +360,46 @@ namespace Sledge.BspEditor.Environment.Goldsource
                     var exe = Path.Combine(BaseDirectory, GameExe);
                     if (!File.Exists(exe))
                     {
-                        MessageBox.Show(
-                            "The location of the game executable is incorrect. Please ensure that the game configuration has been set up correctly.",
-                            "Failed to launch!",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
-                        );
+                        if (!silent)
+                        {
+                            MessageBox.Show(
+                                "The location of the game executable is incorrect. Please ensure that the game configuration has been set up correctly.",
+                                "Failed to launch!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error
+                            );
+                        }
+
                         return Task.CompletedTask;
                     }
 
                     var gameArg = ModDirectory == "valve" ? "" : $"-game {ModDirectory} ";
                     var mapName = Path.GetFileNameWithoutExtension(b.Variables["MapFileName"]);
 
-                    var flags = String.Format("{0}-dev -console +map \"{1}\"", gameArg, mapName);
+                    var flags = $"{gameArg}-dev -console +map \"{mapName}\"";
                     try
                     {
                         Process.Start(exe, flags);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Launching game failed: " + ex.Message, "Failed to launch!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        if (!silent)
+                        {
+                            MessageBox.Show(
+                                "Launching game failed: " + ex.Message,
+                                "Failed to launch!",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error
+                            );
+                        }
                     }
 
                     return Task.CompletedTask;
                 }));
+            }
+
+            if (options.BatchSteps != null)
+            {
+                batch.Steps.RemoveAll(x => !options.BatchSteps.Contains(x.StepType));
             }
 
             return Task.FromResult(batch);

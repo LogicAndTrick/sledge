@@ -1,8 +1,10 @@
+using System;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sledge.BspEditor.Commands;
+using Sledge.BspEditor.Compile;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Editing.Components.Compile;
 using Sledge.BspEditor.Editing.Components.Compile.Profiles;
@@ -24,23 +26,32 @@ namespace Sledge.BspEditor.Editing.Commands
     [DefaultHotkey("F9")]
     public class OpenCompileWindow : BaseCommand
     {
-        [Import] private CompileSpecificationRegister _compileSpecificationRegister;
-        [Import] private BuildProfileRegister _buildProfileRegister;
+        private readonly Lazy<CompileSpecificationRegister> _compileSpecificationRegister;
+        private readonly Lazy<BuildProfileRegister> _buildProfileRegister;
+
+        public OpenCompileWindow(
+            [Import] Lazy<CompileSpecificationRegister> compileSpecificationRegister,
+            [Import] Lazy<BuildProfileRegister> buildProfileRegister
+        )
+        {
+            _compileSpecificationRegister = compileSpecificationRegister;
+            _buildProfileRegister = buildProfileRegister;
+        }
 
         public override string Name { get; set; } = "Run...";
         public override string Details { get; set; } = "Open the compile dialog";
 
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
-            var spec = _compileSpecificationRegister.GetCompileSpecificationsForEngine(document.Environment.Engine).FirstOrDefault();
+            var spec = _compileSpecificationRegister.Value.GetCompileSpecificationsForEngine(document.Environment.Engine).FirstOrDefault();
             if (spec == null) return;
 
-            using (var cd = new CompileDialog(spec, _buildProfileRegister))
+            using (var cd = new CompileDialog(spec, _buildProfileRegister.Value))
             {
                 if (await cd.ShowDialogAsync() == DialogResult.OK)
                 {
                     var arguments = cd.SelectedBatchArguments;
-                    var batch = await document.Environment.CreateBatch(arguments);
+                    var batch = await document.Environment.CreateBatch(arguments, new BatchOptions());
                     if (batch == null) return;
                     
                     await batch.Run(document);

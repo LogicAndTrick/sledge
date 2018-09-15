@@ -8,6 +8,7 @@ namespace Sledge.BspEditor.Compile
     /// </summary>
     public abstract class BatchStep
     {
+        public abstract BatchStepType StepType { get; }
         public abstract Task Run(Batch batch, MapDocument document);
     }
 }

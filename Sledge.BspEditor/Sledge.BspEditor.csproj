@@ -63,8 +63,10 @@
     <Compile Include="Commands\Grouping\Ungroup.cs" />
     <Compile Include="Compile\BatchArgument.cs" />
     <Compile Include="Compile\BatchCallback.cs" />
+    <Compile Include="Compile\BatchOptions.cs" />
     <Compile Include="Compile\BatchProcess.cs" />
     <Compile Include="Compile\BatchStep.cs" />
+    <Compile Include="Compile\BatchStepType.cs" />
     <Compile Include="Components\MapDocumentContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>

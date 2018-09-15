@@ -9,11 +9,14 @@ namespace Sledge.BspEditor.Compile
     /// </summary>
     public class BatchCallback : BatchStep
     {
+        public override BatchStepType StepType { get; }
+
         private readonly Func<Batch, MapDocument, Task> _callback;
 
-        public BatchCallback(Func<Batch, MapDocument, Task> callback)
+        public BatchCallback(BatchStepType stepType, Func<Batch, MapDocument, Task> callback)
         {
             _callback = callback;
+            StepType = stepType;
         }
 
         public override Task Run(Batch batch, MapDocument document)

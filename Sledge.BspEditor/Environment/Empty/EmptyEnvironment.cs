@@ -42,7 +42,7 @@ namespace Sledge.BspEditor.Environment.Empty
             return null;
         }
 
-        public Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments)
+        public Task<Batch> CreateBatch(IEnumerable<BatchArgument> arguments, BatchOptions options)
         {
             return Task.FromResult<Batch>(null);
         }
