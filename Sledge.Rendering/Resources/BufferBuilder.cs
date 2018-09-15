@@ -38,6 +38,12 @@ namespace Sledge.Rendering.Resources
         public List<IndirectIndirectBuffer> IndirectBuffers { get; }
         public List<List<BufferGroup>> IndirectBufferGroups { get; }
 
+        /// <summary>
+        /// Debug information about buffer allocations.
+        /// This will only contain data in debug mode.
+        /// </summary>
+        public List<BufferAllocation> AllocationInformation { get; }
+
         public int NumBuffers => VertexBuffers.Count;
 
         private readonly uint _vertexBufferSize;
@@ -55,6 +61,10 @@ namespace Sledge.Rendering.Resources
             // A vertex is ~16 times the size of an index, but there's ~4 indexes per vertex so it evens out.
             _indexBufferSize = Sizes[size];
             _vertexBufferSize = _indexBufferSize * 4;
+
+#if DEBUG
+            AllocationInformation = new List<BufferAllocation>();
+#endif
         }
 
         private void AllocateBuffer(uint vsize, uint isize)
@@ -139,6 +149,10 @@ namespace Sledge.Rendering.Resources
             IndexBuffers.Add(_currentIndexBuffer);
             IndirectBuffers.Add(indirectBuffer);
             IndirectBufferGroups.Add(bufferGroups);
+
+#if DEBUG
+            AllocationInformation.Add(new BufferAllocation(_currentVertexBuffer.SizeInBytes, _currentVertexOffset, _currentIndexBuffer.SizeInBytes, _currentIndexOffset));
+#endif
 
             _currentVertexMap = _currentIndexMap = default(MappedResource);
             _currentIndexBuffer = _currentVertexBuffer = null;
@@ -228,6 +242,22 @@ namespace Sledge.Rendering.Resources
                 Location = location;
                 Binding = binding;
                 Arguments = arguments;
+            }
+        }
+
+        public struct BufferAllocation
+        {
+            public readonly long VertexBufferTotalSize;
+            public readonly long VertexBufferAllocatedSize;
+            public readonly long IndexBufferTotalSize;
+            public readonly long IndexBufferAllocatedSize;
+
+            public BufferAllocation(long vertexBufferTotalSize, long vertexBufferAllocatedSize, long indexBufferTotalSize, long indexBufferAllocatedSize)
+            {
+                VertexBufferTotalSize = vertexBufferTotalSize;
+                VertexBufferAllocatedSize = vertexBufferAllocatedSize;
+                IndexBufferTotalSize = indexBufferTotalSize;
+                IndexBufferAllocatedSize = indexBufferAllocatedSize;
             }
         }
     }

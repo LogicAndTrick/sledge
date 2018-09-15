@@ -12,6 +12,7 @@ using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Rendering.Engine;
+using Sledge.Rendering.Resources;
 using Sledge.Shell.Registers;
 
 namespace Sledge.BspEditor.Rendering.Scene
@@ -21,6 +22,9 @@ namespace Sledge.BspEditor.Rendering.Scene
     /// Handles when map documents are opened and closed, changed, and activated.
     /// </summary>
     [Export(typeof(IStartupHook))]
+#if DEBUG_EXTRA
+    [Export]
+#endif
     public class SceneManager : IStartupHook
     {
         private readonly Lazy<MapObjectConverter> _converter;
@@ -56,6 +60,11 @@ namespace Sledge.BspEditor.Rendering.Scene
             Oy.Subscribe<Change>("MapDocument:Changed", DocumentChanged);
 
             return Task.FromResult(0);
+        }
+
+        public List<List<BufferBuilder.BufferAllocation>> GetCurrentAllocationInformation()
+        {
+            return _sceneBuilder?.BufferBuilders.Select(x => x.AllocationInformation).ToList();
         }
 
         // Document events

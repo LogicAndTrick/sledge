@@ -82,6 +82,12 @@
     <Compile Include="Renderer.cs" />
     <Compile Include="Resources\ResourceCollection.cs" />
     <Compile Include="Resources\ResourceCollector.cs" />
+    <Compile Include="Scene\SceneBufferAllocationSidebarPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Scene\SceneBufferAllocationSidebarPanel.Designer.cs">
+      <DependentUpon>SceneBufferAllocationSidebarPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Scene\SceneBuilderRenderable.cs" />
     <Compile Include="Viewport\CameraViewportEventListenerFactory.cs" />
     <Compile Include="Viewport\IViewportEventListenerFactory.cs" />
@@ -148,7 +154,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Scene\SceneBufferAllocationSidebarPanel.resx">
+      <DependentUpon>SceneBufferAllocationSidebarPanel.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LogicAndTrick.Oy">
       <Version>1.2.0</Version>
