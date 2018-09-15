@@ -55,6 +55,12 @@
             }
         }
     },
+    "Compile": {
+        "BatchProcess": {
+            "ProgramNotFoundTitle": "Configuration error",
+            "ProgramNotFoundMessage": "The batch is trying to run a process that doesn't exist.\n\nPlease check your build configuration and ensure that the build programs are set up correctly."
+        }
+    }, 
     "Components": {
         "ClipboardManager": {
             "NothingSelected": "Nothing",

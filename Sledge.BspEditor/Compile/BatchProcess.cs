@@ -1,7 +1,11 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.Common;
+using Sledge.Common.Translations;
 
 namespace Sledge.BspEditor.Compile
 {
@@ -28,6 +32,20 @@ namespace Sledge.BspEditor.Compile
             var pcs = Process;
             var args = Arguments;
             var wd = WorkingDirectory;
+
+            if (!File.Exists(pcs))
+            {
+                // Only show this notice once at most
+                if (batch.Successful)
+                {
+                    var tlate = Container.Get<ITranslationStringProvider>();
+                    var prefix = GetType().FullName;
+                    MessageBox.Show(tlate.GetString(prefix, "ProgramNotFoundMessage"), tlate.GetString(prefix, "ProgramNotFoundTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                batch.Successful = false;
+                await Oy.Publish("Compile:Error", "Process not found: " + pcs + "\n");
+                return;
+            }
 
             // Replace {Variables} in the strings
             foreach (var kv in batch.Variables)
