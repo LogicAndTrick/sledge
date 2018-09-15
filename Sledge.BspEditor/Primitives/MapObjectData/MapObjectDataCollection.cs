@@ -80,6 +80,11 @@ namespace Sledge.BspEditor.Primitives.MapObjectData
             return copy;
         }
 
+        public void Clear()
+        {
+            Data.Clear();
+        }
+
         public IEnumerator<IMapObjectData> GetEnumerator()
         {
             return Data.GetEnumerator();

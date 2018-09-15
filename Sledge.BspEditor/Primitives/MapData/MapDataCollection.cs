@@ -74,6 +74,11 @@ namespace Sledge.BspEditor.Primitives.MapData
             return copy;
         }
 
+        public void Clear()
+        {
+            Data.Clear();
+        }
+
         public IEnumerator<IMapData> GetEnumerator()
         {
             return Data.GetEnumerator();

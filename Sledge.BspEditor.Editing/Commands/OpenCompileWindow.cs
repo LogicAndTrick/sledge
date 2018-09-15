@@ -29,6 +29,7 @@ namespace Sledge.BspEditor.Editing.Commands
         private readonly Lazy<CompileSpecificationRegister> _compileSpecificationRegister;
         private readonly Lazy<BuildProfileRegister> _buildProfileRegister;
 
+        [ImportingConstructor]
         public OpenCompileWindow(
             [Import] Lazy<CompileSpecificationRegister> compileSpecificationRegister,
             [Import] Lazy<BuildProfileRegister> buildProfileRegister

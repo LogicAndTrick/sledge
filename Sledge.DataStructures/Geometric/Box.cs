@@ -123,6 +123,11 @@ namespace Sledge.DataStructures.Geometric
             yield return new Vector3(End.X, Start.Y, Start.Z);
         }
 
+        public Polyhedron ToPolyhedron()
+        {
+            return new Polyhedron(GetBoxFaces().Select(x => new Polygon(x)));
+        }
+
         public Plane[] GetBoxPlanes()
         {
             var planes = new Plane[6];

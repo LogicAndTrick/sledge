@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Documents;
+using Sledge.DataStructures.Geometric;
 
 namespace Sledge.BspEditor.Compile
 {
@@ -49,6 +50,12 @@ namespace Sledge.BspEditor.Compile
         /// Default: Cordon will be used if it's enabled
         /// </summary>
         public bool? UseCordonBounds { get; set; }
+
+        /// <summary>
+        /// Specify custom cordon bounds to use.
+        /// Default: Use cordon bounds from the map data
+        /// </summary>
+        public Box CordonBounds { get; set; }
 
         /// <summary>
         /// A list of steps to include in the batch.

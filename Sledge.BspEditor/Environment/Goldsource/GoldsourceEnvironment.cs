@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -17,6 +18,7 @@ using Sledge.BspEditor.Providers;
 using Sledge.Common;
 using Sledge.Common.Shell.Commands;
 using Sledge.DataStructures.GameData;
+using Sledge.DataStructures.Geometric;
 using Sledge.FileSystem;
 using Sledge.Providers.GameData;
 using Sledge.Providers.Texture;
@@ -224,9 +226,104 @@ namespace Sledge.BspEditor.Environment.Goldsource
             return _data.OfType<T>();
         }
 
-        private async Task ExportDocumentForBatch(MapDocument doc, string path, bool useCordon)
+        private async Task ExportDocumentForBatch(MapDocument doc, string path, Box cordonBounds)
         {
-            // todo: cordon
+            // If we're exporting cordon then we need to ensure that only objects in the bounds are exported.
+            // Additionally a surrounding box needs to be added to enclose the map.
+            if (cordonBounds != null && !cordonBounds.IsEmpty())
+            {
+                var cordonTextureName = "BLACK"; // todo make this configurable
+                var spawnEntityName = "info_player_start";
+
+                var cloneMap = new Map();
+                
+                // Copy the map data
+                cloneMap.Data.Clear();
+                cloneMap.Data.AddRange(doc.Map.Data.Copy(cloneMap.NumberGenerator));
+
+                // Copy the root data
+                cloneMap.Root.Data.Clear();
+                cloneMap.Root.Data.AddRange(doc.Map.Root.Data.Copy(cloneMap.NumberGenerator));
+
+                // Add copies of all the matching child objects (and their children, etc)
+                cloneMap.Root.Hierarchy.Clear();
+                foreach (var obj in doc.Map.Root.Hierarchy.Where(x => x.BoundingBox.IntersectsWith(cordonBounds)))
+                {
+                    var copy = (IMapObject) obj.Copy(cloneMap.NumberGenerator);
+                    copy.Hierarchy.Parent = cloneMap.Root;
+                }
+
+                // Add a hollow box around the cordon bounds
+                var outside = new Box(cloneMap.Root.Hierarchy.Select(x => x.BoundingBox).Union(new[] { cordonBounds }));
+                outside = new Box(outside.Start - Vector3.One * 10, outside.End + Vector3.One * 10);
+                var inside = cordonBounds;
+
+                var outsideBox = new Solid(cloneMap.NumberGenerator.Next("MapObject"));
+                foreach (var arr in outside.GetBoxFaces())
+                {
+                    var face = new Face(cloneMap.NumberGenerator.Next("Face"))
+                    {
+                        Plane = new DataStructures.Geometric.Plane(arr[0], arr[1], arr[2]),
+                        Texture = { Name = cordonTextureName }
+                    };
+                    face.Vertices.AddRange(arr.Select(x => x.Round(0)));
+                    outsideBox.Data.Add(face);
+                }
+                outsideBox.DescendantsChanged();
+
+                var insideBox = new Solid(cloneMap.NumberGenerator.Next("MapObject"));
+                foreach (var arr in inside.GetBoxFaces())
+                {
+                    var face = new Face(cloneMap.NumberGenerator.Next("Face"))
+                    {
+                        Plane = new DataStructures.Geometric.Plane(arr[0], arr[1], arr[2]),
+                        Texture = { Name = cordonTextureName }
+                    };
+                    face.Vertices.AddRange(arr.Select(x => x.Round(0)));
+                    insideBox.Data.Add(face);
+                }
+                insideBox.DescendantsChanged();
+
+                // Carve the inside box into the outside box and add the front solids to the map
+                foreach (var face in insideBox.Faces)
+                {
+                    // Carve the box
+                    if (!outsideBox.Split(cloneMap.NumberGenerator, face.Plane, out var back, out var front)) continue;
+
+                    // Align texture to face
+                    foreach (var f in front.Faces)
+                    {
+                        f.Texture.XScale = f.Texture.YScale = 1;
+                        f.Texture.AlignToNormal(f.Plane.Normal);
+                    }
+
+                    // Add to map
+                    front.Hierarchy.Parent = cloneMap.Root;
+
+                    // Continue carving
+                    outsideBox = back;
+                }
+
+                // If there's no player spawn in the box, add one into the map
+                if (!string.IsNullOrWhiteSpace(spawnEntityName))
+                {
+                    var spawn = cloneMap.Root.FindAll().OfType<Entity>().FirstOrDefault(x => x.EntityData?.Name == spawnEntityName);
+                    if (spawn == null)
+                    {
+                        spawn = new Entity(cloneMap.NumberGenerator.Next("MapObject"));
+                        spawn.Data.Add(new EntityData {Name = spawnEntityName});
+                        spawn.Data.Add(new Origin(inside.Center));
+                        spawn.Hierarchy.Parent = cloneMap.Root;
+                    }
+                }
+
+                // Now we're ready to export this map
+                doc = new MapDocument(cloneMap, this)
+                {
+                    FileName = Path.GetFileName(doc.FileName),
+                    Name = doc.Name
+                };
+            }
             await Oy.Publish("Command:Run", new CommandMessage("Internal:ExportDocument", new
             {
                 Document = doc,
@@ -257,18 +354,35 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 var fn = options.MapFileName ?? d.FileName;
                 var ext = options.MapFileExtension ?? ".map";
                 if (String.IsNullOrWhiteSpace(fn) || fn.IndexOf('.') < 0) fn = Path.GetRandomFileName();
-                var mapFile = Path.GetFileNameWithoutExtension(fn) + "." + ext;
+                var mapFile = Path.GetFileNameWithoutExtension(fn) + ext;
                 b.Variables["MapFileName"] = mapFile;
 
                 var path = Path.Combine(b.Variables["WorkingDirectory"], mapFile);
                 b.Variables["MapFile"] = path;
 
-                if (options.ExportDocument != null) await options.ExportDocument(d, path);
-                else await ExportDocumentForBatch(d, path, options.UseCordonBounds.GetValueOrDefault(true));
+                if (options.ExportDocument != null)
+                {
+                    await options.ExportDocument(d, path);
+                }
+                else
+                {
+                    var useCordon = options.UseCordonBounds.GetValueOrDefault(true);
+                    Box bounds = null;
+                    if (useCordon && options.CordonBounds != null)
+                    {
+                        bounds = options.CordonBounds;
+                    }
+                    else if (useCordon)
+                    {
+                        var cb = d.Map.Data.GetOne<CordonBounds>();
+                        if (cb != null && cb.Enabled && !cb.Box.IsEmpty()) bounds = cb.Box;
+                    }
+                    await ExportDocumentForBatch(d, path, bounds);
+                }
 
                 await Oy.Publish("Compile:Debug", $"Map file is: {path}\r\n");
             }));
-
+            
             // Run the compile tools
             if (args.ContainsKey("CSG")) batch.Steps.Add(new BatchProcess(BatchStepType.RunBuildExecutable, Path.Combine(ToolsDirectory, CsgExe), args["CSG"] + " \"{MapFile}\""));
             if (args.ContainsKey("BSP")) batch.Steps.Add(new BatchProcess(BatchStepType.RunBuildExecutable, Path.Combine(ToolsDirectory, BspExe), args["BSP"] + " \"{MapFile}\""));
