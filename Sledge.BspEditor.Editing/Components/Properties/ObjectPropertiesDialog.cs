@@ -191,8 +191,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             _subscriptions = new List<Subscription>
             {
                 Oy.Subscribe<Change>("MapDocument:Changed", DocumentChanged),
-                Oy.Subscribe<MapDocument>("Document:Activated", DocumentActivated),
-                Oy.Subscribe<MapDocument>("MapDocument:SelectionChanged", SelectionChanged)
+                Oy.Subscribe<MapDocument>("Document:Activated", DocumentActivated)
             };
         }
 
@@ -250,12 +249,6 @@ namespace Sledge.BspEditor.Editing.Components.Properties
                 await tab.Value.SetObjects(doc, list);
             }
             this.InvokeLater(() => UpdateTabVisibility(_context, list));
-        }
-
-        private async Task SelectionChanged(MapDocument doc)
-        {
-            await Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
-            await DocumentActivated(doc);
         }
 
         private async Task DocumentChanged(Change change)

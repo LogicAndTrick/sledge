@@ -39,15 +39,17 @@ namespace Sledge.Shell.Registers
             _components = new List<IDialog>();
         }
 
-        private async Task ContextChanged(IContext context)
+        private Task ContextChanged(IContext context)
         {
             _shell.InvokeLater(() =>
             {
                 foreach (var c in _components)
                 {
-                    c.SetVisible(context, c.IsInContext(context));
+                    var vis = c.IsInContext(context);
+                    if (vis != c.Visible) c.SetVisible(context, vis);
                 }
             });
+            return Task.CompletedTask;
         }
     }
 }

@@ -7,6 +7,8 @@ namespace Sledge.Common.Shell.Components
     /// </summary>
     public interface IDialog : IContextAware
     {
+        bool Visible { get; }
+
         /// <summary>
         /// Set the visibility status of the dialog
         /// </summary>
