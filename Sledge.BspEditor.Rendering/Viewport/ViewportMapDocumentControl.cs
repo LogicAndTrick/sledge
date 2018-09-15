@@ -27,6 +27,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
         private readonly List<Subscription> _subscriptions;
         private ICamera _camera;
 
+        public bool IsFocused => _viewport.IsFocused;
+
         public string Type => "MapViewport";
         public Control Control => _panel;
 

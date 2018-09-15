@@ -5,6 +5,7 @@ namespace Sledge.BspEditor.Components
 {
     public interface IMapDocumentControl : IDisposable
     {
+        bool IsFocused { get; }
         string Type { get; }
         Control Control { get; }
         string GetSerialisedSettings();

@@ -14,6 +14,8 @@ namespace Sledge.BspEditor.Components
     {
         private readonly TreeView _view;
 
+        public bool IsFocused { get; set; }
+
         public string Type => "TreeView";
         public Control Control => _view;
 

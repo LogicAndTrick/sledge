@@ -92,6 +92,7 @@
     <Compile Include="Commands\View\AutosizeViews.cs" />
     <Compile Include="Commands\View\CenterSelection2D.cs" />
     <Compile Include="Commands\View\CenterSelection3D.cs" />
+    <Compile Include="Commands\View\FocusOnCurrentView.cs" />
     <Compile Include="Commands\View\GoToLocation.cs" />
     <Compile Include="Commands\View\GoToObjectID.cs" />
     <Compile Include="Commands\View\CenterSelectionAll.cs" />

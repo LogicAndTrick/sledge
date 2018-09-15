@@ -200,6 +200,10 @@
             "AutosizeViews": {
                 "Name": "Autosize views",
                 "Details": "Automatically resize the split views to be the same size."
+            },
+            "FocusOnCurrentView": {
+                "Name": "Focus on current view",
+                "Details": "Maximise the current view in the viewport grid."
             }
         },
         "Quick": {

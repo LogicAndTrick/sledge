@@ -28,8 +28,19 @@ namespace Sledge.BspEditor.Components
 
             _subscriptions = new List<Subscription>
             {
-                Oy.Subscribe("BspEditor:SplitView:Autosize", () => this.InvokeLater(() => Table.ResetViews()))
+                Oy.Subscribe("BspEditor:SplitView:Autosize", () => this.InvokeLater(() => Table.ResetViews())),
+                Oy.Subscribe("BspEditor:SplitView:FocusCurrent", () => this.InvokeLater(FocusOnActiveView))
             };
+        }
+
+        private void FocusOnActiveView()
+        {
+            if (Table.IsFocusing()) Table.Unfocus();
+            else
+            {
+                var focused = MapDocumentControls.FirstOrDefault(x => x.Control.IsFocused);
+                if (focused != null) Table.FocusOn(focused.Control.Control);
+            }
         }
 
         public void SetControl(IMapDocumentControl control, int column, int row)
