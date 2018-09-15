@@ -123,6 +123,7 @@
     <Compile Include="Controls\TableSplitControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Documents\MapDocumentExtensions.cs" />
     <Compile Include="Environment\Controls\EnvironmentCollectionEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
