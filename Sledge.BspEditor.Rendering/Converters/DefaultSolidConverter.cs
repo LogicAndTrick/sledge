@@ -12,7 +12,6 @@ using Sledge.BspEditor.Rendering.Resources;
 using Sledge.DataStructures.Geometric;
 using Sledge.Providers.Texture;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Engine;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
@@ -86,23 +85,27 @@ namespace Sledge.BspEditor.Rendering.Converters
                 switch (rendermode)
                 {
                     case renderModeColor:
-                        // Flat colour, use render colour
+                        // Flat colour, use render colour and force it to run through the alpha tested pipeline
                         var rendercolor = parentEntity.EntityData.GetVector3("rendercolor") / 255f ?? Vector3.One;
                         tint = new Vector4(rendercolor, renderamt);
                         flags |= VertexFlags.FlatColour | VertexFlags.AlphaTested;
-                        if (entityHasTransparency) pipeline = PipelineType.TexturedAlpha;
+                        pipeline = PipelineType.TexturedAlpha;
+                        entityHasTransparency = true;
                         break;
                     case renderModeTexture:
                     case renderModeGlow:
+                        // Texture is alpha tested and can be transparent
                         tint = new Vector4(1, 1, 1, renderamt);
                         flags |= VertexFlags.AlphaTested;
                         if (entityHasTransparency) pipeline = PipelineType.TexturedAlpha;
                         break;
                     case renderModeSolid:
+                        // Texture is alpha tested only
                         flags |= VertexFlags.AlphaTested;
                         entityHasTransparency = false;
                         break;
                     case renderModeAdditive:
+                        // Texture is alpha tested and transparent, force through the additive pipeline
                         tint = new Vector4(renderamt, renderamt, renderamt, 1);
                         pipeline = PipelineType.TexturedAdditive;
                         entityHasTransparency = true;
