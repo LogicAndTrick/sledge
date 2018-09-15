@@ -30,9 +30,9 @@ namespace Sledge.BspEditor.Editing.Components.Properties
     [AutoTranslate]
     public sealed partial class ObjectPropertiesDialog : Form, IInitialiseHook, IDialog
     {
-        [Import("Shell", typeof(Form))] private Lazy<Form> _parent;
-        [ImportMany] private IEnumerable<Lazy<IObjectPropertyEditorTab>> _tabs;
-        [Import] private IContext _context;
+        private readonly Lazy<Form> _parent;
+        private readonly IEnumerable<Lazy<IObjectPropertyEditorTab>> _tabs;
+        private readonly IContext _context;
 
         private List<Subscription> _subscriptions;
         private Dictionary<IObjectPropertyEditorTab, TabPage> _pages;
@@ -86,8 +86,17 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         public string UnsavedChanges { get; set; }
         public string DoYouWantToSaveFirst { get; set; }
 
-        public ObjectPropertiesDialog()
+        [ImportingConstructor]
+        public ObjectPropertiesDialog(
+            [Import("Shell")] Lazy<Form> parent,
+            [ImportMany] IEnumerable<Lazy<IObjectPropertyEditorTab>> tabs,
+            [Import] Lazy<IContext> context
+        )
         {
+            _parent = parent;
+            _tabs = tabs;
+            _context = context.Value;
+
             InitializeComponent();
             CreateHandle();
         }
@@ -97,27 +106,38 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         /// </summary>
         private void UpdateTabVisibility(IContext context, List<IMapObject> objects)
         {
-            // todo BETA: to avoid UI flashing, only add/remove tabs when they need to, rather than always
+            var changed = false;
             tabPanel.SuspendLayout();
-            var sel = tabPanel.SelectedIndex < tabPanel.TabCount ? tabPanel.SelectedTab : null;
-            tabPanel.TabPages.Clear();
-            foreach (var tp in _tabs.OrderBy(x => x.Value.OrderHint))
+
+            var currentlyVisibleTabs = tabPanel.TabPages.OfType<TabPage>().Select(x => _pages.FirstOrDefault(p => p.Value == x).Key).ToList();
+            var newVisibleTabs = _tabs.Where(x => x.Value.IsInContext(context, objects)).OrderBy(x => x.Value.OrderHint).Select(x => x.Value).ToList();
+
+            // Add tabs which aren't visible and should be
+            foreach (var add in newVisibleTabs.Except(currentlyVisibleTabs).ToList())
             {
-                var tab = tp.Value;
-                var inContext = tab.IsInContext(context, objects);
-                var page = _pages[tab];
-                if (inContext)
-                {
-                    page.Text = tab.Name;
-                    tabPanel.TabPages.Add(page);
-                }
-                else if (sel == page)
-                {
-                    sel = null;
-                }
+                // Locate the next or previous tab in the visible tab set so we can insert the new tab before/after it
+                var prevCv = currentlyVisibleTabs.Where(x => String.Compare(x.OrderHint, add.OrderHint, StringComparison.Ordinal) < 0).OrderByDescending(x => x.OrderHint).FirstOrDefault();
+                var nextCv = currentlyVisibleTabs.Where(x => String.Compare(x.OrderHint, add.OrderHint, StringComparison.Ordinal) > 0).OrderBy(x => x.OrderHint).FirstOrDefault();
+                var idx = prevCv != null ? tabPanel.TabPages.IndexOf(_pages[prevCv]) + 1
+                        : nextCv != null ? tabPanel.TabPages.IndexOf(_pages[nextCv])
+                        : 0;
+
+                // Add the tab the the currently visible set for later index testing
+                tabPanel.TabPages.Insert(idx, _pages[add]);
+                currentlyVisibleTabs.Add(add);
+                changed = true;
             }
-            if (sel != null) tabPanel.SelectedTab = sel;
-            tabPanel.ResumeLayout(true);
+
+            // Remove tables which are visible and shouldn't be
+            foreach (var rem in currentlyVisibleTabs.Except(newVisibleTabs))
+            {
+                tabPanel.TabPages.Remove(_pages[rem]);
+                changed = true;
+            }
+
+            if (changed) tabPanel.SelectedIndex = tabPanel.TabCount > 0 ? 0 : -1;
+
+            tabPanel.ResumeLayout(changed);
         }
 
         /// <summary>

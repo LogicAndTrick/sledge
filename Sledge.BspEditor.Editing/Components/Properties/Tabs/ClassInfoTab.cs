@@ -32,8 +32,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
     [Export(typeof(IObjectPropertyEditorTab))]
     public partial class ClassInfoTab : UserControl, IObjectPropertyEditorTab
     {
-        [ImportMany] private IEnumerable<Lazy<IObjectPropertyEditor>> _smartEditControls;
-        [Import("Default")] private IObjectPropertyEditor _defaultControl;
+        private readonly IEnumerable<Lazy<IObjectPropertyEditor>> _smartEditControls;
+        private readonly IObjectPropertyEditor _defaultControl;
 
         private ClassValues _tableValues;
         private WeakReference<MapDocument> _document;
@@ -133,8 +133,15 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         /// <inheritdoc />
         public bool HasChanges => _tableValues.ClassChanged || _tableValues.Any(x => x.IsAdded || x.IsModified || x.IsRemoved);
 
-        public ClassInfoTab()
+        [ImportingConstructor]
+        public ClassInfoTab(
+            [ImportMany] IEnumerable<Lazy<IObjectPropertyEditor>> smartEditControls,
+            [Import("Default")] Lazy<IObjectPropertyEditor> defaultControl
+        )
         {
+            _smartEditControls = smartEditControls;
+            _defaultControl = defaultControl.Value;
+
             InitializeComponent();
             CreateHandle();
 
@@ -219,10 +226,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             cmbClass.Items.Clear();
             cmbClass.Items.AddRange(gameDataClasses);
 
-            var classes = _tableValues.OriginalClasses;
+            var classes = _tableValues.OriginalClasses.ToHashSet();
             if (classes.Count == 0) cmbClass.Text = "";
             else if (classes.Count > 1) cmbClass.Text = MultipleClassesText + @" " + String.Join("; ", classes.Select(x => x.Name));
-            else if (classes.Count == 1) cmbClass.Text = classes[0].Name;
+            else if (classes.Count == 1) cmbClass.Text = classes.First().Name;
 
             cmbClass.EndUpdate();
 
@@ -556,7 +563,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             public bool IsRemoved { get; set; }
 
             public string Value => NewValue ?? OriginalValue;
-            public string OriginalValue => String.Join(", ", OriginalValues.Where(x => !String.IsNullOrWhiteSpace(x)));
+            public string OriginalValue => String.Join(", ", OriginalValues.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct());
 
             public string DisplayText => GameDataProperty?.DisplayText() ?? NewKey;
             public string DisplayValue => GameDataProperty?.Options.FirstOrDefault(x => x.Key == Value)?.Description ?? Value;
