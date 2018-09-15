@@ -78,7 +78,7 @@ namespace Sledge.BspEditor.Editing.Commands.Modification
                 // Clone and scale the solid
                 var scale = Vector3.Divide(target, current);
                 var carver = (Solid) solid.Clone();
-                carver.Transform(Matrix4x4.CreateTranslation(origin) * Matrix4x4.CreateScale(scale) * Matrix4x4.CreateTranslation(-origin));
+                carver.Transform(Matrix4x4.CreateTranslation(-origin) * Matrix4x4.CreateScale(scale) * Matrix4x4.CreateTranslation(origin));
 
                 // For a negative width, we want the original solid to be the inside instead
                 if (width < 0)

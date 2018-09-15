@@ -36,11 +36,11 @@ namespace Sledge.BspEditor.Primitives
             var solid = new Solid(generator.Next("MapObject")) { IsSelected = original.IsSelected };
             foreach (var p in poly.Polygons)
             {
-                // Use the first face if we can't find any with the same plane (it's the clipping plane)
+                // Try and find the face with the same plane, so we can duplicate the texture values
                 var originalFace = originalFacePlanes
-                                       .Where(x => p.ClassifyAgainstPlane(x.Plane) == PlaneClassification.OnPlane)
-                                       .Select(x => x.Face)
-                                       .FirstOrDefault() ?? original.Faces.FirstOrDefault();
+                    .Where(x => p.ClassifyAgainstPlane(x.Plane) == PlaneClassification.OnPlane)
+                    .Select(x => x.Face)
+                    .FirstOrDefault();
 
                 var face = new Face(generator.Next("Face"));
                 face.Vertices.AddRange(p.Vertices.Select(x => x.ToStandardVector3()));
@@ -48,7 +48,16 @@ namespace Sledge.BspEditor.Primitives
 
                 if (originalFace != null)
                 {
+                    // The plane exists, so we can just apply the texture axes directly
                     face.Texture = originalFace.Texture.Clone();
+                }
+                else
+                {
+                    // No matching plane exists, so it's the clipping plane.
+                    // Apply the first texture we find and align it with the face.
+                    var firstFace = originalFacePlanes[0].Face;
+                    face.Texture = firstFace.Texture.Clone();
+                    face.Texture.AlignToNormal(face.Plane.Normal);
                 }
 
                 solid.Data.Add(face);
