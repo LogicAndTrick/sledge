@@ -32,7 +32,7 @@ namespace Sledge.BspEditor.Editing.Commands.View
 
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
-            using (var qf = new QuickForm(Title) { LabelWidth = 50, UseShortcutKeys = true }.TextBox("X", "0").TextBox("Y", "0").TextBox("Z", "0").OkCancel(OK, Cancel))
+            using (var qf = new QuickForm(Title) { UseShortcutKeys = true }.TextBox("X", "X", "0").TextBox("Y", "Y", "0").TextBox("Z", "Z", "0").OkCancel(OK, Cancel))
             {
                 qf.ClientSize = new Size(180, qf.ClientSize.Height);
 

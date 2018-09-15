@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace Sledge.QuickForms.Items
@@ -9,44 +8,36 @@ namespace Sledge.QuickForms.Items
     /// </summary>
     public class QuickFormNumericUpDown : QuickFormItem
     {
-        private readonly int _max;
-        private readonly int _min;
-        private readonly int _decimals;
-        private readonly decimal _defaultValue;
+        public override object Value => _numericUpDown.Value;
 
-        public QuickFormNumericUpDown(string key, string label, int nudmin, int nudmax, int nuddecimals, decimal value)
-        {
-            Name = key;
-            Label = label;
-            _min = nudmin;
-            _max = nudmax;
-            _decimals = nuddecimals;
-            _defaultValue = value;
-        }
+        private readonly Label _label;
+        private readonly NumericUpDown _numericUpDown;
 
-        public override List<Control> GetControls(QuickForm qf)
+        public QuickFormNumericUpDown(string text, int min, int max, int numDecimals, decimal value)
         {
-            var controls = new List<Control>();
-            var l = new Label { Text = Label };
-            Location(l, qf, true);
-            Size(l, qf.LabelWidth);
-            TextAlign(l);
-            controls.Add(l);
-            var n = new NumericUpDown
+            _label = new Label
             {
-                Maximum = _max,
-                Minimum = _min,
-                DecimalPlaces = _decimals,
-                Name = Name,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Increment = (_decimals > 0) ? (1m / (_decimals * 10m)) : (1),
-                Width = 80,
-                Value = _defaultValue
+                Text = text,
+                AutoSize = true,
+                MinimumSize = new Size(LabelWidth, 0),
+                MaximumSize = new Size(LabelWidth, 1000),
+                TextAlign = ContentAlignment.MiddleRight,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom
             };
-            Location(n, qf, false);
-            n.Location = new Point(qf.ClientSize.Width - QuickForm.ItemPadding - n.Width, n.Location.Y);
-            controls.Add(n);
-            return controls;
+            _numericUpDown = new NumericUpDown
+            {
+                Maximum = max,
+                Minimum = min,
+                DecimalPlaces = numDecimals,
+                Name = Name,
+                Anchor = AnchorStyles.Right,
+                Increment = (numDecimals > 0) ? (1m / (numDecimals * 10m)) : (1),
+                Width = 80,
+                Value = value
+            };
+
+            Controls.Add(_label);
+            Controls.Add(_numericUpDown);
         }
     }
 }

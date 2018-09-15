@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -9,51 +9,57 @@ namespace Sledge.QuickForms.Items
     /// </summary>
     public class QuickFormBrowse : QuickFormItem
     {
+	    public override object Value => _textBox.Text;
+
+        private readonly Label _label;
+        private readonly TextBox _textBox;
         private readonly string _filter;
+        private readonly Button _button;
 
-        public QuickFormBrowse(string tbname, string filter)
+        public QuickFormBrowse(string text, string browseText, string fileFilter)
         {
-            Name = tbname;
-            _filter = filter;
+            _label = new Label
+            {
+                Text = text,
+                AutoSize = true,
+                MinimumSize = new Size(LabelWidth, 0),
+                MaximumSize = new Size(LabelWidth, 1000),
+                TextAlign = ContentAlignment.MiddleRight,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom
+            };
+            _textBox = new TextBox
+            {
+                Text = ""
+            };
+            _button = new Button
+            {
+                Text = browseText,
+                AutoSize = true,
+                MinimumSize = new Size(60, 0),
+                MaximumSize = new Size(1000, _textBox.Height),
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom
+            };
+
+            _button.Click += (s,e) => ShowBrowseDialog();
+            
+            Controls.Add(_label);
+            Controls.Add(_textBox);
+            Controls.Add(_button);
         }
 
-        public override List<Control> GetControls(QuickForm qf)
+        protected override void OnResize(EventArgs eventargs)
         {
-            var controls = new List<Control>();
-
-            var l = new Label { Text = Name };
-            Location(l, qf, true);
-            Size(l, qf.LabelWidth);
-            TextAlign(l);
-            controls.Add(l);
-
-            var t = new TextBox { Name = Name };
-            Anchor(t);
-            Location(t, qf, false);
-            var textBoxWidth = qf.ClientSize.Width - (QuickForm.ItemPadding * 2);
-            textBoxWidth -= qf.LabelWidth;
-            textBoxWidth -= 60; // Button width
-            textBoxWidth -= QuickForm.ItemPadding * 2;
-            var h = QuickForm.ItemHeight;
-            t.Size = new Size(textBoxWidth, h);
-            controls.Add(t);
-
-            var b = new Button {Text = "Browse", Width = 60, Anchor = AnchorStyles.Top | AnchorStyles.Right};
-            Location(b, qf, false);
-            b.Location = new Point(qf.ClientSize.Width - QuickForm.ItemPadding - b.Width, b.Location.Y);
-            b.Click += (s,e) => ShowBrowseDialog(t);
-            controls.Add(b);
-
-            return controls;
+            _textBox.Width = Width - _label.Width - _label.Margin.Horizontal - _textBox.Margin.Horizontal - _button.Width - _button.Margin.Horizontal;
+            base.OnResize(eventargs);
         }
 
-        private void ShowBrowseDialog(Control textBox)
+        private void ShowBrowseDialog()
         {
-            using (var ofd = new OpenFileDialog {Filter = _filter, FileName = textBox.Text})
+            using (var ofd = new OpenFileDialog {Filter = _filter, FileName = _textBox.Text})
             {
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    textBox.Text = ofd.FileName;
+                    _textBox.Text = ofd.FileName;
                 }
             }
         }

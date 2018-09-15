@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -10,39 +11,37 @@ namespace Sledge.QuickForms.Items
     /// </summary>
     public class QuickFormComboBox : QuickFormItem
     {
-        private readonly IEnumerable<object> _items; 
+        public override object Value => _comboBox.SelectedItem;
 
-        public QuickFormComboBox(string key, string label, IEnumerable<object> items)
+        private readonly Label _label;
+        private readonly ComboBox _comboBox;
+
+        public QuickFormComboBox(string text, IEnumerable<object> items)
         {
-            Name = key;
-            Label = label;
-            _items = items;
+            _label = new Label
+            {
+                Text = text,
+                AutoSize = true,
+                MinimumSize = new Size(LabelWidth, 0),
+                MaximumSize = new Size(LabelWidth, 1000),
+                TextAlign = ContentAlignment.MiddleRight,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom
+            };
+            _comboBox = new ComboBox
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+            _comboBox.Items.AddRange(items.ToArray());
+            _comboBox.SelectedIndex = 0;
+
+            Controls.Add(_label);
+            Controls.Add(_comboBox);
         }
 
-        public override List<Control> GetControls(QuickForm qf)
+        protected override void OnResize(EventArgs eventargs)
         {
-            var controls = new List<Control>();
-
-            var l = new Label { Text = Label };
-            Location(l, qf, true);
-            Size(l, qf.LabelWidth);
-            TextAlign(l);
-            controls.Add(l);
-
-            var cb = new ComboBox
-                         {
-                             Name = Name,
-                             Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                             DropDownStyle = ComboBoxStyle.DropDownList
-                         };
-            cb.Items.AddRange(_items.ToArray());
-            cb.SelectedIndex = 0;
-
-            Location(cb, qf, false);
-            Size(cb, qf, qf.LabelWidth);
-            controls.Add(cb);
-
-            return controls;
+            _comboBox.Width = Width - _label.Width - _label.Margin.Horizontal - _comboBox.Margin.Horizontal;
+            base.OnResize(eventargs);
         }
     }
 }

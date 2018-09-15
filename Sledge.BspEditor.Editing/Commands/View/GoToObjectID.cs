@@ -33,13 +33,13 @@ namespace Sledge.BspEditor.Editing.Commands.View
 
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
-            using (var qf = new QuickForm(Title) { LabelWidth = 100, UseShortcutKeys = true }.TextBox(ObjectID).OkCancel(OK, Cancel))
+            using (var qf = new QuickForm(Title) { UseShortcutKeys = true }.TextBox("ObjectID", ObjectID).OkCancel(OK, Cancel))
             {
                 qf.ClientSize = new Size(230, qf.ClientSize.Height);
 
                 if (await qf.ShowDialogAsync() != DialogResult.OK) return;
 
-                if (!long.TryParse(qf.String(ObjectID), out var id)) return;
+                if (!long.TryParse(qf.String("ObjectID"), out var id)) return;
 
                 var obj = document.Map.Root.FindByID(id);
                 if (obj == null) return;

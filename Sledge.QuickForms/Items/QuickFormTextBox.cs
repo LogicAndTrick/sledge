@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Sledge.QuickForms.Items
@@ -8,28 +9,35 @@ namespace Sledge.QuickForms.Items
     /// </summary>
     public class QuickFormTextBox : QuickFormItem
     {
-        private readonly string _defaultValue;
+        public override object Value => _textBox.Text;
 
-        public QuickFormTextBox(string tbname, string value)
+        private readonly Label _label;
+        private readonly TextBox _textBox;
+
+        public QuickFormTextBox(string text, string value)
         {
-            Name = tbname;
-            _defaultValue = value;
+            _label = new Label
+            {
+                Text = text,
+                AutoSize = true,
+                MinimumSize = new Size(LabelWidth, 0),
+                MaximumSize = new Size(LabelWidth, 1000),
+                TextAlign = ContentAlignment.MiddleRight,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom
+            };
+            _textBox = new TextBox
+            {
+                Text = value
+            };
+
+            Controls.Add(_label);
+            Controls.Add(_textBox);
         }
 
-        public override List<Control> GetControls(QuickForm qf)
+        protected override void OnResize(EventArgs eventargs)
         {
-            var controls = new List<Control>();
-            var l = new Label { Text = Name };
-            Location(l, qf, true);
-            Size(l, qf.LabelWidth);
-            TextAlign(l);
-            controls.Add(l);
-            var t = new TextBox { Name = Name, Text = _defaultValue };
-            Anchor(t);
-            Location(t, qf, false);
-            Size(t, qf, qf.LabelWidth);
-            controls.Add(t);
-            return controls;
+            _textBox.Width = Width - _label.Width - _label.Margin.Horizontal - _textBox.Margin.Horizontal;
+            base.OnResize(eventargs);
         }
     }
 }

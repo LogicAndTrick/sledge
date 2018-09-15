@@ -50,20 +50,39 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Items\QuickFormBrowse.cs" />
-    <Compile Include="Items\QuickFormButton.cs" />
-    <Compile Include="Items\QuickFormCheckBox.cs" />
-    <Compile Include="Items\QuickFormComboBox.cs" />
-    <Compile Include="Items\QuickFormDialogButtons.cs" />
-    <Compile Include="Items\QuickFormItem.cs" />
-    <Compile Include="Items\QuickFormLabel.cs" />
-    <Compile Include="Items\QuickFormNumericUpDown.cs" />
-    <Compile Include="Items\QuickFormOkCancel.cs" />
-    <Compile Include="Items\QuickFormTextBox.cs" />
+    <Compile Include="Items\QuickFormBrowse.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Items\QuickFormButtonSet.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Items\QuickFormCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Items\QuickFormComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Items\QuickFormItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Items\QuickFormLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Items\QuickFormNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Items\QuickFormTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuickForm.cs">
       <SubType>Form</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="QuickForm.resx">
+      <DependentUpon>QuickForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

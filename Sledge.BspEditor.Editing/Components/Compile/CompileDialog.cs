@@ -263,12 +263,12 @@ namespace Sledge.BspEditor.Editing.Components.Compile
         private string PromptName(string name)
         {
             var qf = new QuickForm(ProfileName) {UseShortcutKeys = true};
-            qf.TextBox(ProfileName, name);
+            qf.TextBox("ProfileName", ProfileName, name);
             qf.OkCancel(OK, Cancel);
 
             if (qf.ShowDialog() != DialogResult.OK) return null;
 
-            var n = qf.String(ProfileName);
+            var n = qf.String("ProfileName");
             return String.IsNullOrEmpty(n) ? null : n;
         }
 

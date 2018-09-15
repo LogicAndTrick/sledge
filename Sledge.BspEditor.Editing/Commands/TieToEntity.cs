@@ -66,10 +66,11 @@ namespace Sledge.BspEditor.Editing.Commands
                 using (
                     var qf = new QuickForm(EntitySelectedTitle) {Width = 400}
                         .Label(String.Format(OneEntitySelectedMessage, existingEntities[0].EntityData?.Name))
-                        .Item(new QuickFormDialogButtons()
-                            .Button(KeepExisting, DialogResult.Yes)
-                            .Button(CreateNew, DialogResult.No)
-                            .Button(Cancel, DialogResult.Cancel))
+                        .DialogButtons(
+                            (KeepExisting, DialogResult.Yes),
+                            (CreateNew, DialogResult.No),
+                            (Cancel, DialogResult.Cancel)
+                        )
                 )
                 {
                     var result = await qf.ShowDialogAsync();
