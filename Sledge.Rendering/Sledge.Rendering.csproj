@@ -139,8 +139,8 @@
     <EmbeddedResource Include="Shaders\TexturedOpaque.vert.hlsl.bytes" />
     <EmbeddedResource Include="Shaders\Wireframe.frag.hlsl.bytes" />
     <EmbeddedResource Include="Shaders\Wireframe.vert.hlsl.bytes" />
-    <None Include="Shaders\TexturedAlpha.frag.hlsl.bytes" />
-    <None Include="Shaders\TexturedAlpha.vert.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\TexturedAlpha.frag.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\TexturedAlpha.vert.hlsl.bytes" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Diagnostics.DiagnosticSource">
