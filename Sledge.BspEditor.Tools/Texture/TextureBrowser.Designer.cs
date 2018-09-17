@@ -229,6 +229,7 @@
             // DeleteFavouriteFolderButton
             // 
             this.DeleteFavouriteFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.DeleteFavouriteFolderButton.Enabled = false;
             this.DeleteFavouriteFolderButton.Location = new System.Drawing.Point(113, 446);
             this.DeleteFavouriteFolderButton.Name = "DeleteFavouriteFolderButton";
             this.DeleteFavouriteFolderButton.Size = new System.Drawing.Size(110, 23);
@@ -240,6 +241,7 @@
             // RemoveFavouriteItemButton
             // 
             this.RemoveFavouriteItemButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.RemoveFavouriteItemButton.Enabled = false;
             this.RemoveFavouriteItemButton.Location = new System.Drawing.Point(3, 469);
             this.RemoveFavouriteItemButton.Name = "RemoveFavouriteItemButton";
             this.RemoveFavouriteItemButton.Size = new System.Drawing.Size(220, 23);
@@ -251,6 +253,7 @@
             // AddFavouriteFolderButton
             // 
             this.AddFavouriteFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.AddFavouriteFolderButton.Enabled = false;
             this.AddFavouriteFolderButton.Location = new System.Drawing.Point(3, 446);
             this.AddFavouriteFolderButton.Name = "AddFavouriteFolderButton";
             this.AddFavouriteFolderButton.Size = new System.Drawing.Size(110, 23);

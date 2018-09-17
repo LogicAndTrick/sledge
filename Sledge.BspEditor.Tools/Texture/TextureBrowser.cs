@@ -100,6 +100,7 @@ namespace Sledge.BspEditor.Tools.Texture
             
             UpdatePackageList();
             UpdateTextureList();
+            UpdateFavouritesList();
             _textureList.SortTextureList(x => x, GetMemory("SortDescending", false));
 
             translation.Translate(this);
@@ -237,6 +238,8 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void UpdateFavouritesList()
         {
+            FavouritesTree.Nodes.Clear();
+            FavouritesTree.Nodes.Add("", "(Not implemented yet)");
             //var selected = FavouritesTree.SelectedNode;
             //var selectedKey = selected == null ? GetMemory<string>("SelectedFavourite") : selected.Name;
             //var favourites = SettingsManager.FavouriteTextureFolders;
