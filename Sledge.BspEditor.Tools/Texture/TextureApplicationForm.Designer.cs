@@ -45,28 +45,28 @@
             this.JustifyCenterButton = new System.Windows.Forms.Button();
             this.JustifyLeftButton = new System.Windows.Forms.Button();
             this.ApplyButton = new System.Windows.Forms.Button();
-            this.RotationValue = new System.Windows.Forms.NumericUpDown();
+            this.RotationValue = new Sledge.Shell.Controls.NumericUpDownEx();
             this.ReplaceButton = new System.Windows.Forms.Button();
             this.BrowseButton = new System.Windows.Forms.Button();
             this.RotationLabel = new System.Windows.Forms.Label();
             this.TextureDetailsLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.ScaleXValue = new System.Windows.Forms.NumericUpDown();
+            this.ScaleXValue = new Sledge.Shell.Controls.NumericUpDownEx();
             this.ScaleLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.ShiftLabel = new System.Windows.Forms.Label();
-            this.ScaleYValue = new System.Windows.Forms.NumericUpDown();
-            this.ShiftXValue = new System.Windows.Forms.NumericUpDown();
-            this.ShiftYValue = new System.Windows.Forms.NumericUpDown();
+            this.ScaleYValue = new Sledge.Shell.Controls.NumericUpDownEx();
+            this.ShiftXValue = new Sledge.Shell.Controls.NumericUpDownEx();
+            this.ShiftYValue = new Sledge.Shell.Controls.NumericUpDownEx();
             this.LightmapLabel = new System.Windows.Forms.Label();
-            this.LightmapValue = new System.Windows.Forms.NumericUpDown();
+            this.LightmapValue = new Sledge.Shell.Controls.NumericUpDownEx();
             this.HoverTip = new System.Windows.Forms.ToolTip(this.components);
             this.SelectedTextureListPanel = new System.Windows.Forms.Panel();
             this.RecentTextureListPanel = new System.Windows.Forms.Panel();
             this.LeftClickActionButton = new Sledge.Shell.Controls.DropdownButton();
-            this.RightClickActionButton = new Sledge.Shell.Controls.DropdownButton();
             this.LeftClickActionMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.RightClickActionButton = new Sledge.Shell.Controls.DropdownButton();
             this.RightClickActionMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.AlignGroup.SuspendLayout();
             this.JustifyGroup.SuspendLayout();
@@ -315,7 +315,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 218F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 226F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
@@ -362,6 +362,11 @@
             0,
             0,
             131072});
+            this.ScaleXValue.WheelIncrement = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
             this.ScaleXValue.ValueChanged += new System.EventHandler(this.ScaleXValueChanged);
             this.ScaleXValue.Enter += new System.EventHandler(this.FocusTextInControl);
             // 
@@ -428,11 +433,21 @@
             0,
             0,
             131072});
+            this.ScaleYValue.WheelIncrement = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
             this.ScaleYValue.ValueChanged += new System.EventHandler(this.ScaleYValueChanged);
             this.ScaleYValue.Enter += new System.EventHandler(this.FocusTextInControl);
             // 
             // ShiftXValue
             // 
+            this.ShiftXValue.CtrlWheelMultiplier = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.ShiftXValue.Location = new System.Drawing.Point(91, 30);
             this.ShiftXValue.Maximum = new decimal(new int[] {
             4096,
@@ -457,6 +472,11 @@
             // 
             // ShiftYValue
             // 
+            this.ShiftYValue.CtrlWheelMultiplier = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.ShiftYValue.Location = new System.Drawing.Point(91, 56);
             this.ShiftYValue.Maximum = new decimal(new int[] {
             4096,
@@ -490,6 +510,11 @@
             // 
             // LightmapValue
             // 
+            this.LightmapValue.CtrlWheelMultiplier = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.LightmapValue.Enabled = false;
             this.LightmapValue.Location = new System.Drawing.Point(239, 43);
             this.LightmapValue.Maximum = new decimal(new int[] {
@@ -503,6 +528,11 @@
             0,
             0});
             this.LightmapValue.Name = "LightmapValue";
+            this.LightmapValue.ShiftWheelMultiplier = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.LightmapValue.Size = new System.Drawing.Size(58, 20);
             this.LightmapValue.TabIndex = 19;
             this.LightmapValue.Value = new decimal(new int[] {
@@ -546,6 +576,12 @@
             this.LeftClickActionButton.Text = "Left click: Lift";
             this.LeftClickActionButton.UseVisualStyleBackColor = true;
             // 
+            // LeftClickActionMenu
+            // 
+            this.LeftClickActionMenu.Name = "LeftClickActionMenu";
+            this.LeftClickActionMenu.Size = new System.Drawing.Size(61, 4);
+            this.LeftClickActionMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.SetLeftClickAction);
+            // 
             // RightClickActionButton
             // 
             this.RightClickActionButton.Location = new System.Drawing.Point(164, 390);
@@ -555,12 +591,6 @@
             this.RightClickActionButton.TabIndex = 37;
             this.RightClickActionButton.Text = "Right click: Apply";
             this.RightClickActionButton.UseVisualStyleBackColor = true;
-            // 
-            // LeftClickActionMenu
-            // 
-            this.LeftClickActionMenu.Name = "LeftClickActionMenu";
-            this.LeftClickActionMenu.Size = new System.Drawing.Size(61, 4);
-            this.LeftClickActionMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.SetLeftClickAction);
             // 
             // RightClickActionMenu
             // 
@@ -629,22 +659,22 @@
         private System.Windows.Forms.Button JustifyCenterButton;
         private System.Windows.Forms.Button JustifyLeftButton;
         private System.Windows.Forms.Button ApplyButton;
-        private System.Windows.Forms.NumericUpDown RotationValue;
+        private Sledge.Shell.Controls.NumericUpDownEx RotationValue;
         private System.Windows.Forms.Button ReplaceButton;
         private System.Windows.Forms.Button BrowseButton;
         private System.Windows.Forms.Label RotationLabel;
         private System.Windows.Forms.Label TextureDetailsLabel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.NumericUpDown ScaleXValue;
+        private Sledge.Shell.Controls.NumericUpDownEx ScaleXValue;
         private System.Windows.Forms.Label ScaleLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label ShiftLabel;
-        private System.Windows.Forms.NumericUpDown ScaleYValue;
-        private System.Windows.Forms.NumericUpDown ShiftXValue;
-        private System.Windows.Forms.NumericUpDown ShiftYValue;
+        private Sledge.Shell.Controls.NumericUpDownEx ScaleYValue;
+        private Sledge.Shell.Controls.NumericUpDownEx ShiftXValue;
+        private Sledge.Shell.Controls.NumericUpDownEx ShiftYValue;
         private System.Windows.Forms.Label LightmapLabel;
-        private System.Windows.Forms.NumericUpDown LightmapValue;
+        private Sledge.Shell.Controls.NumericUpDownEx LightmapValue;
         private System.Windows.Forms.ToolTip HoverTip;
         private System.Windows.Forms.CheckBox AlignToFaceCheckbox;
         private System.Windows.Forms.CheckBox AlignToWorldCheckbox;
