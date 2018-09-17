@@ -102,9 +102,9 @@ namespace Sledge.BspEditor.Editing.Components
             {
                 case TransformType.Rotate:
                     var rads = value * (float) Math.PI / 180;
-                    var rMov = Matrix4x4.CreateTranslation(-selectionBox.Center);
+                    var rMov = Matrix4x4.CreateTranslation(selectionBox.Center);
                     var rRot = Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(rads.Y, rads.X, rads.Z));
-                    var rFin = Matrix4x4.CreateTranslation(selectionBox.Center);
+                    var rFin = Matrix4x4.CreateTranslation(-selectionBox.Center);
                     return rFin * rRot * rMov;
                 case TransformType.Translate:
                     return Matrix4x4.CreateTranslation(value);
