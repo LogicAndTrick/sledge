@@ -82,7 +82,6 @@
     <Compile Include="Controls\FileSystem\FileSystemBrowserDialog.Designer.cs">
       <DependentUpon>FileSystemBrowserDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\FileSystem\FileSystemIcons.cs" />
     <Compile Include="Controls\Layout\CreateLayoutWindow.cs" />
     <Compile Include="Controls\Layout\LayoutSettings.cs">
       <SubType>Form</SubType>
@@ -317,6 +316,12 @@
     <None Include="Resources\SquareGrid.png" />
     <Content Include="Resources\DottedGrid.png" />
     <Content Include="Resources\Menu_Delete.png" />
+    <Content Include="Resources\File_Folder.png" />
+    <Content Include="Resources\File_Generic.png" />
+    <Content Include="Resources\File_Mdl.png" />
+    <Content Include="Resources\File_Mp3.png" />
+    <Content Include="Resources\File_Txt.png" />
+    <Content Include="Resources\File_Wav.png" />
     <Content Include="Resources\Menu_Group.png" />
     <Content Include="Resources\Menu_NewWindow.png" />
     <Content Include="Resources\Menu_SelectNone.png" />

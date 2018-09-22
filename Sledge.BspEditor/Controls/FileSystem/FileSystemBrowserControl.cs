@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Sledge.BspEditor.Properties;
 using Sledge.FileSystem;
 
 namespace Sledge.BspEditor.Controls.FileSystem
@@ -28,6 +29,9 @@ namespace Sledge.BspEditor.Controls.FileSystem
             Cancelled?.Invoke(this);
         }
 
+        private const string IconDirectory = "Directory";
+        private const string IconGeneric = "Generic";
+
         #endregion Events
 
         private IFile _file;
@@ -38,8 +42,12 @@ namespace Sledge.BspEditor.Controls.FileSystem
         {
             _regexes = new List<Regex>();
             InitializeComponent();
-            FileImages.Images.Add("_Folder", FileSystemIcons.GetFolderIcon(FileSystemIcons.SystemIconSize.Small, FileSystemIcons.SystemFolderType.Open));
-            FileImages.Images.Add("_Unknown", FileSystemIcons.IconFromExtension(".unknown", FileSystemIcons.SystemIconSize.Small));
+            FileImages.Images.Add(IconDirectory, Resources.File_Folder);
+            FileImages.Images.Add(IconGeneric, Resources.File_Generic);
+            FileImages.Images.Add("mdl", Resources.File_Mdl);
+            FileImages.Images.Add("mp3", Resources.File_Mp3);
+            FileImages.Images.Add("txt", Resources.File_Txt);
+            FileImages.Images.Add("wav", Resources.File_Wav);
         }
 
         public IFile File
@@ -71,12 +79,7 @@ namespace Sledge.BspEditor.Controls.FileSystem
         private string GetIcon(string file)
         {
             var ext = (Path.GetExtension(file) ?? "").Trim('.').ToLower();
-            if (ext == "") return "_Unknown";
-            if (!FileImages.Images.ContainsKey(ext))
-            {
-                FileImages.Images.Add(ext, FileSystemIcons.IconFromExtension(ext, FileSystemIcons.SystemIconSize.Small));
-            }
-            return ext;
+            return FileImages.Images.ContainsKey(ext) ? ext : IconGeneric;
         }
 
         private void UpdateFile()
@@ -86,7 +89,7 @@ namespace Sledge.BspEditor.Controls.FileSystem
             LocationTextbox.Text = File.FullPathName;
             foreach (var child in File.GetChildren().OrderBy(x => x.Name.ToLower()))
             {
-                FileList.Items.Add(new ListViewItem(child.Name, "_Folder") {Tag = child});
+                FileList.Items.Add(new ListViewItem(child.Name, IconDirectory) {Tag = child});
             }
             foreach (var file in File.GetFiles().Where(x => Matches(x.Name)).OrderBy(x => x.Name.ToLower()))
             {
@@ -102,7 +105,7 @@ namespace Sledge.BspEditor.Controls.FileSystem
         private void FileListDoubleClicked(object sender, EventArgs e)
         {
             if (FileList.SelectedIndices.Count != 1) return;
-            if (FileList.SelectedItems[0].ImageKey == "_Folder")
+            if (FileList.SelectedItems[0].ImageKey == IconDirectory)
             {
                 File = File.GetChild(FileList.SelectedItems[0].Text);
             }
