@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sledge.Providers.Model.Mdl10
+namespace Sledge.Providers.Model.Mdl10.Format
 {
     [Flags]
     public enum TextureFlags : int

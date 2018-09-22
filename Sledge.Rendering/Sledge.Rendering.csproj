@@ -76,6 +76,7 @@
     <Compile Include="Pipelines\TexturedAdditivePipeline.cs" />
     <Compile Include="Pipelines\TexturedAlphaPipeline.cs" />
     <Compile Include="Pipelines\BillboardAlphaPipeline.cs" />
+    <Compile Include="Pipelines\TexturedModelPipeline.cs" />
     <Compile Include="Resources\IndirectIndirectBuffer.cs" />
     <Compile Include="Resources\TextureSampleType.cs" />
     <Compile Include="Overlay\IOverlayRenderable.cs" />

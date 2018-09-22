@@ -1,4 +1,4 @@
-﻿namespace Sledge.Providers.Model.Mdl10
+﻿namespace Sledge.Providers.Model.Mdl10.Format
 {
     public struct SkinFamily
     {

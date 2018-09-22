@@ -11,8 +11,8 @@
         TexturedAdditive,
         BillboardAlpha,
 
-        // WireframeModel,
-        // TexturedModel
+        WireframeModel,
+        TexturedModel,
 
         Overlay,
     }

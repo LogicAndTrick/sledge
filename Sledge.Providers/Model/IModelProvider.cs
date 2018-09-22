@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Sledge.FileSystem;
-using Sledge.Rendering.Renderables;
 
 namespace Sledge.Providers.Model
 {
@@ -11,10 +10,8 @@ namespace Sledge.Providers.Model
     {
         bool CanLoadModel(IFile file);
         Task<IModel> LoadModel(IFile file);
-    }
 
-    public interface IModel : IRenderable
-    {
-
+        bool IsProvider(IModel model);
+        IModelRenderable CreateRenderable(IModel model);
     }
 }

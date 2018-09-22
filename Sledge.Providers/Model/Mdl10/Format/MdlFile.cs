@@ -8,7 +8,7 @@ using Sledge.Common.Extensions;
 using Sledge.DataStructures;
 using Sledge.FileSystem;
 
-namespace Sledge.Providers.Model.Mdl10
+namespace Sledge.Providers.Model.Mdl10.Format
 {
     public class MdlFile
     {
