@@ -20,6 +20,8 @@ namespace Sledge.Editor
 
             forceDecimalCulture.NumberFormat.NumberDecimalSeparator = ".";
             forceDecimalCulture.NumberFormat.NumberGroupSeparator = ",";
+            forceDecimalCulture.NumberFormat.NumberGroupSizes = new [] { 3 };
+            forceDecimalCulture.NumberFormat.NumberNegativePattern = 1;
 
             Thread.CurrentThread.CurrentCulture = forceDecimalCulture;
 
