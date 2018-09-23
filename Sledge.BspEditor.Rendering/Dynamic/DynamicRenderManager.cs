@@ -57,7 +57,7 @@ namespace Sledge.BspEditor.Rendering.Dynamic
                 }
 
                 var env = md.Environment;
-                if (env != null) Task.Run(() => _resourceCollection.Upload(env, resourceCollector, _engine.Value)).Wait();
+                if (env != null) Task.Run(() => _resourceCollection.Upload(env, resourceCollector)).Wait();
             }
 
             builder.Complete();

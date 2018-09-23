@@ -406,7 +406,7 @@ namespace Sledge.Providers.Model.Mdl10.Format
             br.BaseStream.Seek(sequence.AnimationIndex, SeekOrigin.Begin);
 
             var animPosition = br.BaseStream.Position;
-            var offsets = br.ReadShortArray(blendLength * sequence.NumBlends);
+            var offsets = br.ReadUshortArray(blendLength * sequence.NumBlends);
             for (var i = 0; i < sequence.NumBlends; i++)
             {
                 var blendOffsets = new ushort[blendLength];
@@ -608,6 +608,56 @@ namespace Sledge.Providers.Model.Mdl10.Format
         }
 
         #endregion
+
+        /// <summary>
+        /// Get the transforms for the bones of this model
+        /// </summary>
+        /// <param name="sequence">The sequence id to use</param>
+        /// <param name="frame">The frame number to use</param>
+        /// <param name="subframe">The subframe between the given frame and the next frame, as a percentage between 0 and 1</param>
+        /// <param name="transforms">The array of transforms to set values into. Must be at least the size of the <see cref="Bones"/> array.</param>
+        public void GetTransforms(int sequence, int frame, float subframe, ref Matrix4x4[] transforms)
+        {
+            var seq = Sequences[sequence];
+            var blend = seq.Blends[0];
+            var cFrame = blend.Frames[frame % seq.NumFrames];
+            var nFrame = blend.Frames[(frame + 1) % seq.NumFrames];
+
+            var indivTransforms = new Matrix4x4[128];
+            for (var i = 0; i < Bones.Count; i++)
+            {
+                var bone = Bones[i];
+                var cPos = bone.Position + cFrame.Positions[i] * bone.PositionScale;
+                var nPos = bone.Position + nFrame.Positions[i] * bone.PositionScale;
+                var cRot = bone.Rotation + cFrame.Rotations[i] * bone.RotationScale;
+                var nRot = bone.Rotation + nFrame.Rotations[i] * bone.RotationScale;
+
+                var cQtn = Quaternion.CreateFromYawPitchRoll(cRot.X, cRot.Y, cRot.Z);
+                var nQtn = Quaternion.CreateFromYawPitchRoll(nRot.X, nRot.Y, nRot.Z);
+
+                // MDL angles have Y as the up direction
+                cQtn = new Quaternion(cQtn.Y, cQtn.X, cQtn.Z, cQtn.W);
+                nQtn = new Quaternion(nQtn.Y, nQtn.X, nQtn.Z, nQtn.W);
+
+                var mat = Matrix4x4.CreateFromQuaternion(Quaternion.Slerp(cQtn, nQtn, subframe));
+                mat.Translation = cPos * (1 - subframe) + nPos * subframe;
+
+                indivTransforms[i] = mat;
+            }
+
+            for (var i = 0; i < Bones.Count; i++)
+            {
+                var mat = indivTransforms[i];
+                var parent = Bones[i].Parent;
+                while (parent >= 0)
+                {
+                    var parMat = indivTransforms[parent];
+                    mat = mat * parMat;
+                    parent = Bones[parent].Parent;
+                }
+                transforms[i] = mat;
+            }
+        }
 
         private enum Section : int
         {

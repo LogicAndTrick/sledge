@@ -55,8 +55,6 @@
     <Compile Include="GameData\FgdGameDataProvider.cs" />
     <Compile Include="GameData\FgdProvider.cs" />
     <Compile Include="GameData\IGameDataProvider.cs" />
-    <Compile Include="Model\IModel.cs" />
-    <Compile Include="Model\IModelRenderable.cs" />
     <Compile Include="Model\Mdl10\Format\AnimationFrame.cs" />
     <Compile Include="Model\Mdl10\Format\Attachment.cs" />
     <Compile Include="Model\Mdl10\Format\Blend.cs" />

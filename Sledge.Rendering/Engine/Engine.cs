@@ -72,6 +72,7 @@ namespace Sledge.Rendering.Engine
             AddPipeline(new WireframePipeline());
             AddPipeline(new TexturedOpaquePipeline());
             AddPipeline(new BillboardOpaquePipeline());
+            AddPipeline(new TexturedModelPipeline());
 
             AddPipeline(new TexturedAlphaPipeline());
             AddPipeline(new TexturedAdditivePipeline());
@@ -301,10 +302,10 @@ namespace Sledge.Rendering.Engine
 
         // Viewports
 
-        public event EventHandler<IViewport> ViewportCreated;
-        public event EventHandler<IViewport> ViewportDestroyed;
+        internal event EventHandler<IViewport> ViewportCreated;
+        internal event EventHandler<IViewport> ViewportDestroyed;
 
-        public IViewport CreateViewport()
+        internal IViewport CreateViewport()
         {
             lock (_lock)
             {

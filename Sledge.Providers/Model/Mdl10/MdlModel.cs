@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Sledge.DataStructures.Geometric;
 using Sledge.Providers.Model.Mdl10.Format;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Interfaces;
@@ -30,10 +31,32 @@ namespace Sledge.Providers.Model.Mdl10
 
         private string TextureName => $"{nameof(MdlModel)}::{_guid}";
 
+        public Vector3 Mins { get; private set; }
+        public Vector3 Maxs { get; private set; }
+
         public MdlModel(MdlFile model)
         {
             Model = model;
             _guid = Guid.NewGuid();
+
+            ComputeBoundingBox();
+        }
+
+        private void ComputeBoundingBox()
+        {
+            var transforms = new Matrix4x4[Model.Bones.Count];
+            Model.GetTransforms(0, 0, 0, ref transforms);
+
+            var list =
+                from part in Model.BodyParts
+                from mesh in part.Models[0].Meshes
+                from vertex in mesh.Vertices
+                let transform = transforms[vertex.VertexBone]
+                select Vector3.Transform(vertex.Vertex, transform);
+
+            var box = new Box(list);
+            Mins = box.Start;
+            Maxs = box.End;
         }
 
         private static Bitmap CreateBitmap(int width, int height, byte[] data, byte[] palette, bool lastTextureIsTransparent)
@@ -180,10 +203,15 @@ namespace Sledge.Providers.Model.Mdl10
             }
         }
 
-        public void Dispose()
+        public void DestroyResources()
         {
             _buffer?.Dispose();
             _textureResource?.Dispose();
+        }
+
+        public void Dispose()
+        {
+            //
         }
     }
 }

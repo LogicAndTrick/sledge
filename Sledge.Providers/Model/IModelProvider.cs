@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Sledge.FileSystem;
+using Sledge.Rendering.Interfaces;
 
 namespace Sledge.Providers.Model
 {

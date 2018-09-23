@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Sledge.Rendering.Engine;
+using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
@@ -51,53 +51,8 @@ namespace Sledge.Providers.Model.Mdl10
 
             _currentFrame = (_currentFrame + skip) % seq.NumFrames;
             _lastFrameMillis = milliseconds;
-
-            CalculateFrame(currentSequence, _currentFrame, _interframePercent);
-        }
-
-        private void CalculateFrame(int currentSequence, int currentFrame, float interFramePercent)
-        {
-            _currentFrame = currentFrame;
-
-            var seq = Model.Model.Sequences[currentSequence];
-            var blend = seq.Blends[0];
-            var cFrame = blend.Frames[currentFrame % seq.NumFrames];
-            var nFrame = blend.Frames[(currentFrame + 1) % seq.NumFrames];
-
-            var indivTransforms = new Matrix4x4[128];
-            for (var i = 0; i < Model.Model.Bones.Count; i++)
-            {
-                var bone = Model.Model.Bones[i];
-                var cPos = bone.Position + cFrame.Positions[i] * bone.PositionScale;
-                var nPos = bone.Position + nFrame.Positions[i] * bone.PositionScale;
-                var cRot = bone.Rotation + cFrame.Rotations[i] * bone.RotationScale;
-                var nRot = bone.Rotation + nFrame.Rotations[i] * bone.RotationScale;
-
-                var cQtn = Quaternion.CreateFromYawPitchRoll(cRot.X, cRot.Y, cRot.Z);
-                var nQtn = Quaternion.CreateFromYawPitchRoll(nRot.X, nRot.Y, nRot.Z);
-
-                // MDL angles have Y as the up direction
-                cQtn = new Quaternion(cQtn.Y, cQtn.X, cQtn.Z, cQtn.W);
-                nQtn = new Quaternion(nQtn.Y, nQtn.X, nQtn.Z, nQtn.W);
-
-                var mat = Matrix4x4.CreateFromQuaternion(Quaternion.Slerp(cQtn, nQtn, interFramePercent));
-                mat.Translation = cPos * (1 - interFramePercent) + nPos * interFramePercent;
-
-                indivTransforms[i] = mat;
-            }
-
-            for (var i = 0; i < Model.Model.Bones.Count; i++)
-            {
-                var mat = indivTransforms[i];
-                var parent = Model.Model.Bones[i].Parent;
-                while (parent >= 0)
-                {
-                    var parMat = indivTransforms[parent];
-                    mat = mat * parMat;
-                    parent = Model.Model.Bones[parent].Parent;
-                }
-                _transforms[i] = mat;
-            }
+            
+            Model.Model.GetTransforms(currentSequence, _currentFrame, _interframePercent, ref _transforms);
         }
 
         public void CreateResources(EngineInterface engine, RenderContext context)

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Sledge.Common.Logging;
+using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Shaders;
 using Veldrid;
@@ -55,6 +56,7 @@ namespace Sledge.Rendering.Engine
             MissingTexture = new Lazy<Texture>(() => UploadTexture("", 1, 1, new byte[] { 255, 255, 255, 255 }, TextureSampleType.Standard));
         }
 
+        // Textures
         private readonly ConcurrentDictionary<string, Texture> _textures = new ConcurrentDictionary<string, Texture>(StringComparer.InvariantCultureIgnoreCase);
 
         internal Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
@@ -74,6 +76,7 @@ namespace Sledge.Rendering.Engine
             return _textures.TryGetValue(name, out var tex) ? tex : MissingTexture.Value;
         }
 
+        // Shaders
         public (Shader, Shader) LoadShaders(string name)
         {
             return (

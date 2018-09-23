@@ -102,6 +102,19 @@ namespace Sledge.Common.Extensions
         // Arrays
 
         /// <summary>
+        /// Read an array of short unsigned integers
+        /// </summary>
+        /// <param name="br">Binary reader</param>
+        /// <param name="num">The number of values to read</param>
+        /// <returns>The resulting array</returns>
+        public static ushort[] ReadUshortArray(this BinaryReader br, int num)
+        {
+            var arr = new ushort[num];
+            for (var i = 0; i < num; i++) arr[i] = br.ReadUInt16();
+            return arr;
+        }
+
+        /// <summary>
         /// Read an array of short integers
         /// </summary>
         /// <param name="br">Binary reader</param>

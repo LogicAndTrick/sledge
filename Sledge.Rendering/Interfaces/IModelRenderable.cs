@@ -1,8 +1,7 @@
 ﻿using Sledge.Rendering.Engine;
-using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Renderables;
 
-namespace Sledge.Providers.Model
+namespace Sledge.Rendering.Interfaces
 {
     public interface IModelRenderable : IRenderable, IUpdateable
     {

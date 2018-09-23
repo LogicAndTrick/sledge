@@ -100,7 +100,7 @@ namespace Sledge.BspEditor.Rendering.Scene
         private async Task DocumentClosed(IDocument doc)
         {
             var envs = _documentRegister.OpenDocuments.OfType<MapDocument>().Select(x => x.Environment).ToHashSet();
-            _resourceCollection.DisposeOtherEnvironments(envs, _engine.Value);
+            _resourceCollection.DisposeOtherEnvironments(envs);
             if (_activeDocument.TryGetTarget(out var md) && md == doc)
             {
                 await UpdateScene(null, null);
@@ -132,7 +132,7 @@ namespace Sledge.BspEditor.Rendering.Scene
                     {
                         var resourceCollector = new ResourceCollector();
                         waitTask = _converter.Value.Convert(md, _sceneBuilder, affected, resourceCollector)
-                            .ContinueWith(t => _resourceCollection.Upload(md.Environment, resourceCollector, _engine.Value));
+                            .ContinueWith(t => _resourceCollection.Upload(md.Environment, resourceCollector));
                     }
                 }
             }

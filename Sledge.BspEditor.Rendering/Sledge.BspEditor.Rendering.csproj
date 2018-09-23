@@ -53,8 +53,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangeHandlers\EntityDecal.cs" />
+    <Compile Include="ChangeHandlers\EntityModel.cs" />
     <Compile Include="ChangeHandlers\EntitySprite.cs" />
     <Compile Include="ChangeHandlers\EntityDecalChangeHandler.cs" />
+    <Compile Include="ChangeHandlers\EntityModelChangeHandler.cs" />
     <Compile Include="ChangeHandlers\EntitySpriteChangeHandler.cs" />
     <Compile Include="ChangeHandlers\IContentsReplaced.cs" />
     <Compile Include="Components\ViewportMouseLocationStatusItem.cs" />
@@ -122,6 +124,10 @@
     <ProjectReference Include="..\Sledge.DataStructures\Sledge.DataStructures.csproj">
       <Project>{26A974C9-E495-4FA3-8E87-1E00019D04F5}</Project>
       <Name>Sledge.DataStructures</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sledge.FileSystem\Sledge.FileSystem.csproj">
+      <Project>{1C2C012D-DBA5-4C7F-994F-E3034AC60DCC}</Project>
+      <Name>Sledge.FileSystem</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sledge.Providers\Sledge.Providers.csproj">
       <Project>{C7BD4AC8-1F8D-4520-AF2D-D279C0601AB4}</Project>

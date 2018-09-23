@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Sledge.FileSystem;
 using Sledge.Providers.Model.Mdl10.Format;
+using Sledge.Rendering.Interfaces;
 
 namespace Sledge.Providers.Model.Mdl10
 {

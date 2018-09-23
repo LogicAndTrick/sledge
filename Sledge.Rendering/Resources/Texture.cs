@@ -47,6 +47,11 @@ namespace Sledge.Rendering.Resources
             ));
         }
 
+        public void CreateResources(EngineInterface engine, RenderContext context)
+        {
+            // The resources are created in the constructor
+        }
+
         public void BindTo(CommandList cl, uint slot)
         {
             if (!_mipsGenerated)
@@ -56,6 +61,11 @@ namespace Sledge.Rendering.Resources
             }
 
             cl.SetGraphicsResourceSet(slot, _set);
+        }
+
+        public void DestroyResources()
+        {
+            // For consistency to match the constructor, the resources are destroyed in the dispose function
         }
 
         public void Dispose()
