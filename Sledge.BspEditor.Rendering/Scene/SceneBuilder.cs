@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Resources;
@@ -12,26 +11,35 @@ namespace Sledge.BspEditor.Rendering.Scene
         private readonly EngineInterface _engine;
 
         private readonly Dictionary<long, BufferBuilder> _bufferBuilders;
-        private long _currentGroup;
-
-        public BufferBuilder MainBuffer => _bufferBuilders[_currentGroup];
-
         public IEnumerable<BufferBuilder> BufferBuilders => _bufferBuilders.Values;
         public IRenderable SceneBuilderRenderable { get; }
+
+        private readonly Dictionary<long, HashSet<IRenderable>> _renderables;
 
         public SceneBuilder(EngineInterface engine)
         {
             _engine = engine;
             _bufferBuilders = new Dictionary<long, BufferBuilder>();
+            _renderables = new Dictionary<long, HashSet<IRenderable>>();
+
             SceneBuilderRenderable = new SceneBuilderRenderable(this);
-            SetCurrentGroup(0);
+        }
+
+        public IEnumerable<IRenderable> GetRenderablesForGroup(long group)
+        {
+            if (_renderables.ContainsKey(group)) return _renderables[group];
+            return new IRenderable[0];
+        }
+
+        public BufferBuilder GetBufferForGroup(long group)
+        {
+            return _bufferBuilders.ContainsKey(group) ? _bufferBuilders[group] : null;
         }
 
         public void Clear()
         {
             foreach (var bb in _bufferBuilders) bb.Value.Dispose();
             _bufferBuilders.Clear();
-            SetCurrentGroup(0);
         }
 
         public void DeleteGroup(long group)
@@ -43,17 +51,16 @@ namespace Sledge.BspEditor.Rendering.Scene
                 _bufferBuilders.Remove(group);
             }
 
-            if (_currentGroup == group)
+            if (_renderables.ContainsKey(group))
             {
-                if (_bufferBuilders.Any()) _currentGroup = _bufferBuilders.Keys.First();
-                else SetCurrentGroup(0);
+                _renderables.Remove(group);
             }
         }
 
-        public void SetCurrentGroup(long group)
+        public void EnsureGroupExists(long group)
         {
             if (!_bufferBuilders.ContainsKey(group)) _bufferBuilders[group] = _engine.CreateBufferBuilder(BufferSize.Medium);
-            _currentGroup = group;
+            if (!_renderables.ContainsKey(group)) _renderables[group] = new HashSet<IRenderable>();
         }
 
         public void Complete()
@@ -72,6 +79,7 @@ namespace Sledge.BspEditor.Rendering.Scene
                 bb.Value.Dispose();
             }
             _bufferBuilders.Clear();
+            _renderables.Clear();
         }
     }
 }

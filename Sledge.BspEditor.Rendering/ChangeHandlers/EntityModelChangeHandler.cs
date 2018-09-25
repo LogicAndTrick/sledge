@@ -54,9 +54,22 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
                     return;
                 }
 
-                var sd = new EntityModel(modelName, model);
+                var renderable = _resourceCollection.Value.CreateModelRenderable(change.Document.Environment, model);
+                var sd = new EntityModel(modelName, renderable);
+
                 entity.Data.Replace(sd);
                 entity.DescendantsChanged();
+            }
+
+            // Ensure removed entity models are disposed properly
+            foreach (var rem in change.Removed)
+            {
+                //.SelectMany(x => x.Data.Get<EntityModel>()).Where(x => x.Renderable != null)
+                var em = rem.Data.GetOne<EntityModel>();
+                if (em?.Renderable == null) continue;
+
+                _resourceCollection.Value.DestroyModelRenderable(change.Document.Environment, em.Renderable);
+                rem.Data.Remove(em);
             }
         }
 
@@ -64,7 +77,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
         {
             return String.IsNullOrWhiteSpace(name)
                 ? model == null
-                : string.Equals(model?.Name, name, StringComparison.InvariantCultureIgnoreCase) && model?.Model != null;
+                : string.Equals(model?.Name, name, StringComparison.InvariantCultureIgnoreCase) && model?.Renderable != null;
         }
 
         private static string GetModelName(Entity entity, GameData gd)

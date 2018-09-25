@@ -67,8 +67,10 @@
     <Compile Include="Converters\DefaultEntityConverter.cs" />
     <Compile Include="Converters\DefaultSolidConverter.cs" />
     <Compile Include="Converters\EntityDecalConverter.cs" />
+    <Compile Include="Converters\EntityModelConverter.cs" />
     <Compile Include="Converters\EntitySpriteConverter.cs" />
     <Compile Include="Converters\HiddenConverter.cs" />
+    <Compile Include="Converters\IMapObjectGroupSceneConverter.cs" />
     <Compile Include="Dynamic\DynamicRenderManager.cs" />
     <Compile Include="Dynamic\IDynamicRenderable.cs" />
     <Compile Include="Dynamic\IMapObjectDynamicRenderable.cs" />

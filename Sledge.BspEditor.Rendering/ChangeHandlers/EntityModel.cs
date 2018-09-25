@@ -13,14 +13,14 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
     public class EntityModel : IMapObjectData, IContentsReplaced, IBoundingBoxProvider
     {
         public string Name { get; }
-        public IModel Model { get; }
+        public IModelRenderable Renderable { get; }
 
-        public bool ContentsReplaced => Model != null;
+        public bool ContentsReplaced => Renderable != null;
 
-        public EntityModel(string name, IModel model)
+        public EntityModel(string name, IModelRenderable renderable)
         {
             Name = name;
-            Model = model;
+            Renderable = renderable;
         }
 
         public EntityModel(SerialisedObject obj)
@@ -38,10 +38,11 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
         public Box GetBoundingBox(IMapObject obj)
         {
-            if (Model == null) return null;
+            if (Renderable == null) return null;
 
+            var model = Renderable.Model;
             var origin = obj.Data.GetOne<Origin>()?.Location ?? Vector3.Zero;
-            return new Box(Model.Mins + origin, Model.Maxs + origin);
+            return new Box(model.Mins + origin, model.Maxs + origin);
         }
 
         public IMapElement Copy(UniqueNumberGenerator numberGenerator)
@@ -51,7 +52,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
         public IMapElement Clone()
         {
-            return new EntityModel(Name, Model);
+            return new EntityModel(Name, Renderable);
         }
 
         public SerialisedObject ToSerialisedObject()

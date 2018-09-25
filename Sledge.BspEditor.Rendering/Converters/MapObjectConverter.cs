@@ -7,16 +7,24 @@ using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Scene;
-using Sledge.Rendering.Engine;
 
 namespace Sledge.BspEditor.Rendering.Converters
 {
     [Export]
     public class MapObjectConverter
     {
-        [ImportMany] private IEnumerable<Lazy<IMapObjectSceneConverter>> _converters;
-        [ImportMany] private IEnumerable<Lazy<IMapObjectGroupSceneConverter>> _groupConverters;
-        [Import] private Lazy<EngineInterface> _engine;
+        private readonly IEnumerable<Lazy<IMapObjectSceneConverter>> _converters;
+        private readonly IEnumerable<Lazy<IMapObjectGroupSceneConverter>> _groupConverters;
+
+        [ImportingConstructor]
+        public MapObjectConverter(
+            [ImportMany] IEnumerable<Lazy<IMapObjectSceneConverter>> converters,
+            [ImportMany] IEnumerable<Lazy<IMapObjectGroupSceneConverter>> groupConverters
+        )
+        {
+            _converters = converters;
+            _groupConverters = groupConverters;
+        }
 
         public async Task Convert(MapDocument document, SceneBuilder builder, IEnumerable<IMapObject> affected, ResourceCollector resourceCollector)
         {
@@ -24,7 +32,11 @@ namespace Sledge.BspEditor.Rendering.Converters
             if (affected != null)
             {
                 var groups = affected.Select(x => x.ID / 200).ToHashSet();
-                foreach (var g in groups) builder.DeleteGroup(g);
+                foreach (var g in groups)
+                {
+                    resourceCollector.RemoveRenderables(builder.GetRenderablesForGroup(g));
+                    builder.DeleteGroup(g);
+                }
                 objs = objs.Where(x => groups.Contains(x.ID / 200)).ToList();
             }
 
@@ -33,11 +45,12 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             foreach (var g in objs.GroupBy(x => x.ID / 200))
             {
-                builder.SetCurrentGroup(g.Key);
+                builder.EnsureGroupExists(g.Key);
+                var buffer = builder.GetBufferForGroup(g.Key);
 
                 foreach (var gc in groupConverters)
                 {
-                    gc.Convert(builder.MainBuffer, document, g, resourceCollector);
+                    gc.Convert(buffer, document, g, resourceCollector);
                 }
 
                 foreach (var obj in g)
@@ -45,10 +58,12 @@ namespace Sledge.BspEditor.Rendering.Converters
                     foreach (var converter in converters)
                     {
                         if (!converter.Supports(obj)) continue;
-                        await converter.Convert(builder.MainBuffer, document, obj, resourceCollector);
+                        await converter.Convert(buffer, document, obj, resourceCollector);
                         if (converter.ShouldStopProcessing(document, obj)) break;
                     }
                 }
+
+                resourceCollector.AddRenderables(builder.GetRenderablesForGroup(g.Key));
             }
 
             builder.Complete();

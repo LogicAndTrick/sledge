@@ -80,6 +80,42 @@ namespace Sledge.BspEditor.Rendering.Resources
         }
 
         /// <summary>
+        /// Create a renderable for a model and initialise it
+        /// </summary>
+        /// <param name="environment">The environment to add the model resource to</param>
+        /// <param name="model">The model</param>
+        /// <returns>A model renderable</returns>
+        public IModelRenderable CreateModelRenderable(IEnvironment environment, IModel model)
+        {
+            EnsureEnvironment(environment);
+            var rlist = _resources[environment.ID];
+
+            var provider = _modelProviders.FirstOrDefault(x => x.Value.IsProvider(model));
+            var res = provider?.Value.CreateRenderable(model);
+            if (res == null) return null;
+
+            _engine.Value.CreateResource(res);
+            rlist.Add(res);
+
+            return res;
+        }
+        
+        /// <summary>
+        /// Destroy a model renderable and remove it from the resource collection.
+        /// This will NOT destroy the associated model.
+        /// </summary>
+        /// <param name="environment">The environment of the renderable</param>
+        /// <param name="renderable">The renderable to remove</param>
+        public void DestroyModelRenderable(IEnvironment environment, IModelRenderable renderable)
+        {
+            EnsureEnvironment(environment);
+            var rlist = _resources[environment.ID];
+
+            _engine.Value.DestroyResource(renderable);
+            rlist.Remove(renderable);
+        }
+
+        /// <summary>
         /// Upload any resources that have been collected to the collection.
         /// </summary>
         /// <param name="environment">The environment to load from</param>

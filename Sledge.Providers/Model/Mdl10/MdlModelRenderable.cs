@@ -12,7 +12,8 @@ namespace Sledge.Providers.Model.Mdl10
 {
     public class MdlModelRenderable : IModelRenderable
     {
-        public MdlModel Model { get; }
+        private readonly MdlModel _model;
+        public IModel Model => _model;
 
         private DeviceBuffer _transformsBuffer;
         private ResourceSet _transformsResourceSet;
@@ -24,7 +25,7 @@ namespace Sledge.Providers.Model.Mdl10
 
         public MdlModelRenderable(MdlModel model)
         {
-            Model = model;
+            _model = model;
 
             _transforms = new Matrix4x4[128];
             for (var i = 0; i < _transforms.Length; i++)
@@ -39,9 +40,9 @@ namespace Sledge.Providers.Model.Mdl10
         public void Update(long milliseconds)
         {
             const int currentSequence = 0;
-            if (currentSequence >= Model.Model.Sequences.Count) return;
+            if (currentSequence >= _model.Model.Sequences.Count) return;
 
-            var seq = Model.Model.Sequences[currentSequence];
+            var seq = _model.Model.Sequences[currentSequence];
             var targetFps = 1000 / seq.Framerate;
             var diff = milliseconds - _lastFrameMillis;
 
@@ -52,7 +53,7 @@ namespace Sledge.Providers.Model.Mdl10
             _currentFrame = (_currentFrame + skip) % seq.NumFrames;
             _lastFrameMillis = milliseconds;
             
-            Model.Model.GetTransforms(currentSequence, _currentFrame, _interframePercent, ref _transforms);
+            _model.Model.GetTransforms(currentSequence, _currentFrame, _interframePercent, ref _transforms);
         }
 
         public void CreateResources(EngineInterface engine, RenderContext context)
@@ -78,9 +79,11 @@ namespace Sledge.Providers.Model.Mdl10
 
         public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
         {
+            if (_transformsResourceSet == null || _transformsBuffer == null) return;
+
             cl.UpdateBuffer(_transformsBuffer, 0, _transforms);
             cl.SetGraphicsResourceSet(2, _transformsResourceSet);
-            Model.Render(context, pipeline, viewport, cl);
+            _model.Render(context, pipeline, viewport, cl);
         }
 
         public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl, ILocation locationObject)
@@ -88,10 +91,18 @@ namespace Sledge.Providers.Model.Mdl10
             //
         }
 
-        public void Dispose()
+        public void DestroyResources()
         {
             _transformsResourceSet?.Dispose();
             _transformsBuffer?.Dispose();
+
+            _transformsResourceSet = null;
+            _transformsBuffer = null;
+        }
+
+        public void Dispose()
+        {
+            //
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
+using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Converters;
@@ -12,6 +13,7 @@ using Sledge.BspEditor.Rendering.Resources;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Rendering.Engine;
+using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Resources;
 using Sledge.Shell.Registers;
 
@@ -132,12 +134,23 @@ namespace Sledge.BspEditor.Rendering.Scene
                     {
                         var resourceCollector = new ResourceCollector();
                         waitTask = _converter.Value.Convert(md, _sceneBuilder, affected, resourceCollector)
-                            .ContinueWith(t => _resourceCollection.Upload(md.Environment, resourceCollector));
+                            .ContinueWith(t => HandleResources(md.Environment, resourceCollector));
                     }
                 }
             }
 
             return waitTask;
+        }
+
+        private async Task HandleResources(IEnvironment environment, ResourceCollector resources)
+        {
+            foreach (var r in resources.AddedRenderables) _engine.Value.Add(r);
+            foreach (var r in resources.AddedRenderables.OfType<IUpdateable>()) _engine.Value.Add(r);
+
+            foreach (var r in resources.RemovedRenderables.OfType<IUpdateable>()) _engine.Value.Remove(r);
+            foreach (var r in resources.RemovedRenderables) _engine.Value.Remove(r);
+
+            await _resourceCollection.Upload(environment, resources);
         }
     }
 }

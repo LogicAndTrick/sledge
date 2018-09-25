@@ -1,15 +1,11 @@
 ﻿using Sledge.Rendering.Engine;
 using Sledge.Rendering.Renderables;
+using Sledge.Rendering.Resources;
 
 namespace Sledge.Rendering.Interfaces
 {
-    public interface IModelRenderable : IRenderable, IUpdateable
+    public interface IModelRenderable : IRenderable, IUpdateable, IResource
     {
-        /// <summary>
-        /// Create resources needed by the model renderable, such as transformation matrices.
-        /// </summary>
-        /// <param name="engine">The engine interface</param>
-        /// <param name="context">The render context</param>
-        void CreateResources(EngineInterface engine, RenderContext context);
+        IModel Model { get; }
     }
 }

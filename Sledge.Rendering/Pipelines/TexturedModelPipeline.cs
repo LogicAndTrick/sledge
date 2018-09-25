@@ -20,10 +20,17 @@ namespace Sledge.Rendering.Pipelines
         private Pipeline _pipeline;
         private DeviceBuffer _projectionBuffer;
         private ResourceSet _projectionResourceSet;
+        private ResourceLayout _transformsLayout;
 
         public void Create(RenderContext context)
         {
             (_vertex, _fragment) = context.ResourceLoader.LoadShaders(Type.ToString());
+
+            _transformsLayout = context.Device.ResourceFactory.CreateResourceLayout(
+                new ResourceLayoutDescription(
+                    new ResourceLayoutElementDescription("uTransforms", ResourceKind.UniformBuffer, ShaderStages.Vertex)
+                )
+            );
 
             var pDesc = new GraphicsPipelineDescription
             {
@@ -31,7 +38,7 @@ namespace Sledge.Rendering.Pipelines
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerState = RasterizerStateDescription.Default,
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
-                ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout },
+                ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout, _transformsLayout },
                 ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _fragment }),
                 Outputs = new OutputDescription
                 {
@@ -93,6 +100,7 @@ namespace Sledge.Rendering.Pipelines
             _projectionResourceSet?.Dispose();
             _projectionBuffer?.Dispose();
             _pipeline?.Dispose();
+            _transformsLayout?.Dispose();
             _vertex?.Dispose();
             _fragment?.Dispose();
         }
