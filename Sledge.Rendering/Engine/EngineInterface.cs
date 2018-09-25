@@ -55,8 +55,8 @@ namespace Sledge.Rendering.Engine
         /// <param name="height">The texture height</param>
         /// <param name="data">The texture data, row first, in RGBA format.</param>
         /// <param name="sampleType">The sample type for this texture</param>
-        /// <returns>The created resource</returns>
-        public IResource UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
+        /// <returns>The created texture resource</returns>
+        public Texture UploadTexture(string name, int width, int height, byte[] data, TextureSampleType sampleType)
         {
             return Engine.Instance.Context.ResourceLoader.UploadTexture(name, width, height, data, sampleType);
         }

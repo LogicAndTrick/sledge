@@ -23,6 +23,8 @@ namespace Sledge.Providers.Model.Mdl10
         private long _lastFrameMillis;
         private float _interframePercent;
 
+        public Vector3 Origin { get; set; }
+
         public MdlModelRenderable(MdlModel model)
         {
             _model = model;

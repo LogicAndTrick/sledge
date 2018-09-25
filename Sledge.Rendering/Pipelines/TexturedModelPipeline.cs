@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Sledge.Rendering.Engine;
+using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
@@ -39,7 +41,7 @@ namespace Sledge.Rendering.Pipelines
                 RasterizerState = RasterizerStateDescription.Default,
                 PrimitiveTopology = PrimitiveTopology.TriangleList,
                 ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout, _transformsLayout },
-                ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexStandardLayoutDescription }, new[] { _vertex, _fragment }),
+                ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexModel3LayoutDescription }, new[] { _vertex, _fragment }),
                 Outputs = new OutputDescription
                 {
                     ColorAttachments = new[] { new OutputAttachmentDescription(PixelFormat.B8_G8_R8_A8_UNorm) },
@@ -61,13 +63,7 @@ namespace Sledge.Rendering.Pipelines
 
         public void SetupFrame(RenderContext context, IViewport target)
         {
-            context.Device.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
-            {
-                Selective = context.SelectiveTransform,
-                Model = Matrix4x4.Identity,
-                View = target.Camera.View,
-                Projection = target.Camera.Projection,
-            });
+            // 
         }
 
         public void Render(RenderContext context, IViewport target, CommandList cl, IEnumerable<IRenderable> renderables)
@@ -75,8 +71,16 @@ namespace Sledge.Rendering.Pipelines
             cl.SetPipeline(_pipeline);
             cl.SetGraphicsResourceSet(0, _projectionResourceSet);
 
-            foreach (var r in renderables)
+            foreach (var r in renderables.OfType<IModelRenderable>())
             {
+                cl.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
+                {
+                    Selective = context.SelectiveTransform,
+                    Model = Matrix4x4.CreateTranslation(r.Origin),
+                    View = target.Camera.View,
+                    Projection = target.Camera.Projection,
+                });
+
                 r.Render(context, this, target, cl);
             }
         }
@@ -85,6 +89,17 @@ namespace Sledge.Rendering.Pipelines
         {
             cl.SetPipeline(_pipeline);
             cl.SetGraphicsResourceSet(0, _projectionResourceSet);
+
+            if (renderable is IModelRenderable r)
+            {
+                cl.UpdateBuffer(_projectionBuffer, 0, new UniformProjection
+                {
+                    Selective = context.SelectiveTransform,
+                    Model = Matrix4x4.CreateTranslation(r.Origin),
+                    View = target.Camera.View,
+                    Projection = target.Camera.Projection,
+                });
+            }
 
             renderable.Render(context, this, target, cl, locationObject);
         }

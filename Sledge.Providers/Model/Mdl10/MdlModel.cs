@@ -26,7 +26,7 @@ namespace Sledge.Providers.Model.Mdl10
         private readonly Guid _guid;
         private uint[][] _bodyPartIndices;
 
-        private IResource _textureResource;
+        private Rendering.Resources.Texture _textureResource;
         private Buffer _buffer;
 
         private string TextureName => $"{nameof(MdlModel)}::{_guid}";
@@ -147,33 +147,30 @@ namespace Sledge.Providers.Model.Mdl10
             {
                 var part = Model.BodyParts[bpi];
                 _bodyPartIndices[bpi] = new uint[part.Models.Length];
+                
+                // Only render the first submodel
+                var model = part.Models[0];
+                _bodyPartIndices[bpi][0] = (uint) model.Meshes.Sum(x => x.Vertices.Length);
 
-                for (var mi = 0; mi < part.Models.Length; mi++)
+                foreach (var mesh in model.Meshes)
                 {
-                    var model = part.Models[mi];
-                    _bodyPartIndices[bpi][mi] = (uint)model.Meshes.Sum(x => x.Vertices.Length);
-
-                    foreach (var mesh in model.Meshes)
+                    var texId = skin[mesh.SkinRef];
+                    var rec = rectangles.Count > texId ? rectangles[texId] : Rectangle.Empty;
+                    foreach (var x in mesh.Vertices)
                     {
-                        var texId = skin[mesh.SkinRef];
-                        var rec = rectangles.Count > texId ? rectangles[texId] : Rectangle.Empty;
-                        foreach (var x in mesh.Vertices)
+                        vertices.Add(new VertexModel3
                         {
-                            vertices.Add(new VertexModel3
-                            {
-                                Position = x.Vertex,
-                                Normal = x.Normal,
-                                Texture = (x.Texture + new Vector2(rec.X, rec.Y)) / new Vector2(texWidth, texHeight),
-                                Bone = (uint)x.VertexBone
-                            });
-                            indices[texId].Add(vi);
-                            vi++;
-                        }
+                            Position = x.Vertex,
+                            Normal = x.Normal,
+                            Texture = (x.Texture + new Vector2(rec.X, rec.Y)) / new Vector2(texWidth, texHeight),
+                            Bone = (uint) x.VertexBone
+                        });
+                        indices[texId].Add(vi);
+                        vi++;
                     }
                 }
-
             }
-            
+
             var flatIndices = new uint[vi];
             var currentIndexCount = 0;
             foreach (var kv in indices.OrderBy(x => x.Key))
@@ -190,6 +187,7 @@ namespace Sledge.Providers.Model.Mdl10
         public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
         {
             _buffer.Bind(cl, 0);
+            _textureResource.BindTo(cl, 1);
             uint ci = 0;
 
             foreach (var bpi in _bodyPartIndices)

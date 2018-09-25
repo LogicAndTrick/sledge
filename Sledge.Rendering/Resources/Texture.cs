@@ -4,7 +4,7 @@ using Veldrid;
 
 namespace Sledge.Rendering.Resources
 {
-    internal class Texture : IResource
+    public class Texture : IResource
     {
         private readonly Veldrid.Texture _texture;
         private readonly TextureView _view;

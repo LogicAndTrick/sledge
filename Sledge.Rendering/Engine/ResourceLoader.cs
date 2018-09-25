@@ -23,6 +23,7 @@ namespace Sledge.Rendering.Engine
         public Sampler OverlaySampler { get; }
 
         public VertexLayoutDescription VertexStandardLayoutDescription { get; }
+        public VertexLayoutDescription VertexModel3LayoutDescription { get; }
 
         private Lazy<Texture> MissingTexture { get; }
 
@@ -50,6 +51,14 @@ namespace Sledge.Rendering.Engine
                 new VertexElementDescription("Tint", VertexElementSemantic.Color, VertexElementFormat.Float4),
                 new VertexElementDescription("Flags", VertexElementSemantic.Position, VertexElementFormat.UInt1)
             );
+
+            VertexModel3LayoutDescription = new VertexLayoutDescription(
+                new VertexElementDescription("Position", VertexElementSemantic.Position, VertexElementFormat.Float3),
+                new VertexElementDescription("Normal", VertexElementSemantic.Normal, VertexElementFormat.Float3),
+                new VertexElementDescription("Texture", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
+                new VertexElementDescription("Bone", VertexElementSemantic.Position, VertexElementFormat.UInt1)
+            );
+
             TextureSampler = context.Device.Aniso4xSampler;
             OverlaySampler = context.Device.PointSampler;
 

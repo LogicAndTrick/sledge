@@ -313,6 +313,7 @@ namespace Sledge.Providers.Model.Mdl10.Format
 
             // Textures
             num = SeekToSection(br, Section.Texture, sections);
+            var firstTextureIndex = Textures.Count;
             for (var i = 0; i < num; i++)
             {
                 var texture = new Texture
@@ -327,7 +328,7 @@ namespace Sledge.Providers.Model.Mdl10.Format
             }
 
             // Texture data
-            for (var i = 0; i < num; i++)
+            for (var i = firstTextureIndex; i < firstTextureIndex + num; i++)
             {
                 var t = Textures[i];
                 br.BaseStream.Position = t.Index;
@@ -656,6 +657,55 @@ namespace Sledge.Providers.Model.Mdl10.Format
                     parent = Bones[parent].Parent;
                 }
                 transforms[i] = mat;
+            }
+        }
+
+        /// <summary>
+        /// Pre-calculate some bogus chrome values that look "ok" for a cheap effect.
+        /// This method will modify the original vertices.
+        /// </summary>
+        public void WriteFakePrecalculatedChromeCoordinates()
+        {
+            var transforms = new Matrix4x4[Bones.Count];
+            GetTransforms(0, 0, 0, ref transforms);
+            for (var bp = 0; bp < BodyParts.Count; bp++)
+            {
+                var part = BodyParts[bp];
+                for (var m = 0; m < part.Models.Length; m++)
+                {
+                    var model = part.Models[m];
+                    for (var me = 0; me < model.Meshes.Length; me++)
+                    {
+                        var mesh = model.Meshes[me];
+                        var skin = Textures[mesh.SkinRef];
+                        if (!skin.Flags.HasFlag(TextureFlags.Chrome)) continue;
+
+                        for (var vi = 0; vi < mesh.Vertices.Length; vi++)
+                        {
+                            var v = mesh.Vertices[vi];
+                            var transform = transforms[v.VertexBone];
+
+                            // Borrowed from HLMV's StudioModel::Chrome function
+                            var tmp = Vector3.Normalize(transform.Translation);
+
+                            // Using unitx for the "player right" vector
+                            var up = Vector3.Normalize(Vector3.Cross(tmp, Vector3.UnitX));
+                            var right = Vector3.Normalize(Vector3.Cross(tmp, up));
+
+                            // HLMV is doing an inverse rotate (no translation),
+                            // so we set the shift values to zero after inverting
+                            var inv = Matrix4x4.Invert(transform, out var i) ? i : transform;
+                            inv.Translation = Vector3.Zero;
+                            up = Vector3.Transform(up, inv);
+                            right = Vector3.Transform(right, inv);
+
+                            BodyParts[bp].Models[m].Meshes[me].Vertices[vi].Texture = new Vector2(
+                                (Vector3.Dot(v.Normal, right) + 1) * 32,
+                                (Vector3.Dot(v.Normal, up) + 1) * 32
+                            );
+                        }
+                    }
+                }
             }
         }
 
