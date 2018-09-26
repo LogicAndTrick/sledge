@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Sledge.Common.Transport;
 
 namespace Sledge.Common.Shell.Documents
 {
@@ -59,13 +58,13 @@ namespace Sledge.Common.Shell.Documents
         /// </summary>
         /// <param name="document">The document</param>
         /// <returns>A minimal pointer that contains any metadata needed to load the document</returns>
-        SerialisedObject GetDocumentPointer(IDocument document);
+        DocumentPointer GetDocumentPointer(IDocument document);
 
         /// <summary>
         /// Load the document from a pointer
         /// </summary>
         /// <param name="documentPointer"></param>
         /// <returns></returns>
-        Task<IDocument> Load(SerialisedObject documentPointer);
+        Task<IDocument> Load(DocumentPointer documentPointer);
     }
 }

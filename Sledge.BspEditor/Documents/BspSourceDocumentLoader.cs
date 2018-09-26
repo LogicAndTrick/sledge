@@ -189,18 +189,20 @@ namespace Sledge.BspEditor.Documents
             }
         }
 
-        public SerialisedObject GetDocumentPointer(IDocument document)
+        public DocumentPointer GetDocumentPointer(IDocument document)
         {
             if (!(document is MapDocument doc)) return null;
-            var so = new SerialisedObject(nameof(BspSourceDocumentLoader));
-            so.Set("FileName", doc.FileName);
+            var so = new DocumentPointer(nameof(BspSourceDocumentLoader))
+            {
+                FileName = doc.FileName
+            };
             so.Set("Environment", doc.Environment.ID);
             return so;
         }
 
-        public async Task<IDocument> Load(SerialisedObject documentPointer)
+        public async Task<IDocument> Load(DocumentPointer documentPointer)
         {
-            var fileName = documentPointer.Get<string>("FileName");
+            var fileName = documentPointer.FileName;
             var envId = documentPointer.Get<string>("Environment");
             if (String.IsNullOrWhiteSpace(fileName) || String.IsNullOrWhiteSpace(envId)) return null;
             

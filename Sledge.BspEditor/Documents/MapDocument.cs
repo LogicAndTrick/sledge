@@ -32,10 +32,10 @@ namespace Sledge.BspEditor.Documents
         public object Control => MapDocumentControlHost.Instance;
         public bool HasUnsavedChanges { get; set; }
 
-        public Map Map { get; set; }
+        public Map Map { get; }
         public IEnvironment Environment { get; }
 
-        private List<Subscription> _subscriptions;
+        private readonly List<Subscription> _subscriptions;
 
         public Selection Selection
         {
@@ -60,7 +60,6 @@ namespace Sledge.BspEditor.Documents
 
             _subscriptions = new List<Subscription>
             {
-                Oy.Subscribe<IDocument>("Document:RequestClose", IfThis(RequestClose)),
                 Oy.Subscribe<IDocument>("Document:Saved", IfThis(Saved)),
                 Oy.Subscribe<MapDocumentOperation>("MapDocument:Perform", async c =>
                 {
@@ -87,9 +86,13 @@ namespace Sledge.BspEditor.Documents
             await Oy.Publish("Document:Changed", this);
         }
 
-        private async Task RequestClose()
+        public Task<bool> RequestClose()
         {
-            await Oy.Publish("Document:Closed", this);
+            return Task.FromResult(true);
+        }
+
+        public void Dispose()
+        {
             _subscriptions.ForEach(x => x.Dispose());
         }
     }

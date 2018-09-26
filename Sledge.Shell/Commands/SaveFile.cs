@@ -13,6 +13,7 @@ using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 using Sledge.Shell.Properties;
+using Sledge.Shell.Registers;
 
 namespace Sledge.Shell.Commands
 {
@@ -24,15 +25,17 @@ namespace Sledge.Shell.Commands
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Save))]
     public class SaveFile : ICommand
     {
-        private readonly IEnumerable<Lazy<IDocumentLoader>> _loaders;
+        private readonly Lazy<DocumentRegister> _documentRegister;
 
         public string Name { get; set; } = "Save";
         public string Details { get; set; } = "Save";
 
         [ImportingConstructor]
-        public SaveFile([ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders)
+        public SaveFile(
+            [Import] Lazy<DocumentRegister> documentRegister
+        )
         {
-            _loaders = loaders;
+            _documentRegister = documentRegister;
         }
 
         public bool IsInContext(IContext context)
@@ -45,13 +48,13 @@ namespace Sledge.Shell.Commands
             var doc = context.Get<IDocument>("ActiveDocument");
             if (doc != null)
             {
-                var loaders = _loaders.Select(x => x.Value).Where(x => x.CanSave(doc)).ToList();
-
                 var filename = doc.FileName;
 
                 if (filename == null || !Directory.Exists(Path.GetDirectoryName(filename)))
                 {
-                    var filter = loaders.SelectMany(x => x.SupportedFileExtensions).Select(x => x.Description + "|" + String.Join(";", x.Extensions.Select(e => "*" + e))).ToList();
+                    var filter = _documentRegister.Value.GetSupportedFileExtensions(doc)
+                        .Select(x => x.Description + "|" + String.Join(";", x.Extensions.Select(ex => "*" + ex)))
+                        .ToList();
 
                     using (var sfd = new SaveFileDialog {Filter = String.Join("|", filter)})
                     {
@@ -60,11 +63,7 @@ namespace Sledge.Shell.Commands
                     }
                 }
 
-                await Oy.Publish("Command:Run", new CommandMessage("Internal:SaveDocument", new
-                {
-                    Document = doc,
-                    Path = filename
-                }));
+                await _documentRegister.Value.SaveDocument(doc, filename);
             }
         }
     }

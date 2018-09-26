@@ -1,12 +1,13 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 using System.Threading.Tasks;
-using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 using Sledge.Shell.Properties;
+using Sledge.Shell.Registers;
 
 namespace Sledge.Shell.Commands
 {
@@ -17,8 +18,18 @@ namespace Sledge.Shell.Commands
     [MenuImage(typeof(Resources), nameof(Resources.Menu_Close))]
     public class CloseFile : ICommand
     {
+        private readonly Lazy<DocumentRegister> _documentRegister;
+
         public string Name { get; set; } = "Close";
         public string Details { get; set; } = "Close";
+
+        [ImportingConstructor]
+        public CloseFile(
+            [Import] Lazy<DocumentRegister> documentRegister
+        )
+        {
+            _documentRegister = documentRegister;
+        }
 
         public bool IsInContext(IContext context)
         {
@@ -30,10 +41,7 @@ namespace Sledge.Shell.Commands
             var doc = context.Get<IDocument>("ActiveDocument");
             if (doc != null)
             {
-                await Oy.Publish("Command:Run", new CommandMessage("Internal:CloseDocument", new
-                {
-                    Document = doc
-                }));
+                await _documentRegister.Value.RequestCloseDocument(doc);
             }
         }
     }

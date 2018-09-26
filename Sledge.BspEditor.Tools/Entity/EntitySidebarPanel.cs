@@ -32,8 +32,8 @@ namespace Sledge.BspEditor.Tools.Entity
             InitializeComponent();
             CreateHandle();
 
-            Oy.Subscribe<MapDocument>("Document:Activated", RefreshEntities);
-            Oy.Subscribe<EntityTool>("EntityTool:ResetEntityType", ResetEntityType);
+            Oy.Subscribe<MapDocument>("Document:Activated", d => { this.InvokeLater(() => RefreshEntities(d)); });
+            Oy.Subscribe<EntityTool>("EntityTool:ResetEntityType", t => { this.InvokeLater(() => ResetEntityType(t)); });
         }
 
         public bool IsInContext(IContext context)

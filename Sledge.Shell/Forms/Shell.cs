@@ -8,8 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
-using Sledge.Common.Shell.Commands;
-using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Settings;
 using Sledge.Common.Translations;
@@ -28,13 +26,11 @@ namespace Sledge.Shell.Forms
     [AutoTranslate]
     internal partial class Shell : BaseForm, ISettingsContainer
     {
-        private readonly List<IDocument> _documents;
         private readonly object _lock = new object();
 
-        private Lazy<Bootstrapper> _bootstrapper;
-        private IEnumerable<Lazy<IDocumentLoader>> _loaders;
-        private Lazy<DocumentRegister> _documentRegister;
-        private Lazy<ITranslationStringProvider> _translation;
+        private readonly Lazy<Bootstrapper> _bootstrapper;
+        private readonly Lazy<DocumentRegister> _documentRegister;
+        private readonly Lazy<ITranslationStringProvider> _translation;
 
         public string Title { get; set; } = "Sledge Shell";
 
@@ -46,17 +42,13 @@ namespace Sledge.Shell.Forms
         [ImportingConstructor]
         public Shell(
             [Import] Lazy<Bootstrapper> bootstrapper, 
-            [ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders, 
             [Import] Lazy<DocumentRegister> documentRegister, 
             [Import] Lazy<ITranslationStringProvider> translation
         )
         {
             _bootstrapper = bootstrapper;
-            _loaders = loaders;
             _documentRegister = documentRegister;
             _translation = translation;
-
-            _documents = new List<IDocument>();
 
             InitializeComponent();
             InitializeShell();
@@ -74,14 +66,16 @@ namespace Sledge.Shell.Forms
             Oy.Subscribe<IDocument>("Document:Opened", async d => await this.InvokeAsync(() => OpenDocument(d)));
             Oy.Subscribe<IDocument>("Document:Closed", async d => await this.InvokeLaterAsync(() => CloseDocument(d)));
             Oy.Subscribe<IDocument>("Document:Changed", async d => await this.InvokeAsync(() => DocumentChanged(d)));
-            Oy.Subscribe<IDocument>("Document:Switch", async d => await this.InvokeAsync(() => DocumentSwitch(d)));
-            Oy.Subscribe<IDocument>("Document:CloseAndPrompt", async d => await this.InvokeAsync(() => DocumentCloseAndPrompt(d)));
+            Oy.Subscribe<IDocument>("Document:Activated", async d => await this.InvokeAsync(() => DocumentActivated(d)));
+            Oy.Subscribe<DocumentCloseMessage>("Document:RequestClose", async d => await this.InvokeAsync(() => DocumentRequestClose(d)));
 
             Oy.Subscribe<string>("Shell:OpenCommandBox", async o => await this.InvokeAsync(() => OpenCommandBox(o)));
 
             Oy.Subscribe<Exception>("Shell:UnhandledException", ShowExceptionDialog);
             Oy.Subscribe<Exception>("Shell:UnhandledExceptionOnce", ShowExceptionDialogOnce);
         }
+
+        // Error handling
 
         private Task ShowExceptionDialog(Exception obj)
         {
@@ -112,18 +106,17 @@ namespace Sledge.Shell.Forms
             _shownExceptions.Add(exData);
             return true;
         }
+        
+        // Lifecycle
 
-        private async Task InstanceOpened(List<string> args)
+        private async Task InstanceOpened(IEnumerable<string> args)
         {
             foreach (var arg in args.Skip(1))
             {
                 Common.Logging.Log.Debug(nameof(Shell), $"Command line: `{arg}`");
                 if (!File.Exists(arg)) continue;
 
-                await Oy.Publish("Command:Run", new CommandMessage("Internal:OpenDocument", new
-                {
-                    Path = arg
-                }));
+                await _documentRegister.Value.OpenDocument(arg);
             }
         }
 
@@ -147,19 +140,26 @@ namespace Sledge.Shell.Forms
             {
                 foreach (var dp in _openDocuments)
                 {
-                    if (!File.Exists(dp.FileName)) continue;
-                    
-                    var loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.GetType().Name == dp.Loader && x.CanLoad(dp.FileName));
-                    if (loader == null) continue;
-                    
-                    var doc = await loader.Load(dp.ToPointer());
-                    if (doc != null)
-                    {
-                        await Oy.Publish("Document:Opened", doc);
-                    }
+                    await _documentRegister.Value.OpenDocument(dp.ToPointer(), dp.Loader);
                 }
             }
             await Oy.Publish("Shell:InstanceOpened", Environment.GetCommandLineArgs().ToList());
+        }
+
+        private void PersistCurrentOpenDocumentList()
+        {
+            _openDocuments = new List<LoadedDocument>();
+            lock (_lock)
+            {
+                foreach (var d in _documentRegister.Value.OpenDocuments)
+                {
+                    var pointer = _documentRegister.Value.GetDocumentPointer(d);
+                    if (pointer == null) continue;
+
+                    var dp = new LoadedDocument(pointer);
+                    _openDocuments.Add(dp);
+                }
+            }
         }
 
         private void CancelClose(object sender, CancelEventArgs e) => e.Cancel = true;
@@ -180,26 +180,14 @@ namespace Sledge.Shell.Forms
                 return;
             }
 
-            // Try to close all the open documents
-            SaveOpenDocuments();
-
-            // Get the list of currently open documents
-            List<IDocument> docs;
-            lock (_lock) docs = _documents.ToList();
-
-            foreach (var doc in docs)
+            // Save the list of documents so we can re-open them next time
+            PersistCurrentOpenDocumentList();
+            
+            // We've already asked the user if they want to save and they've either saved
+            // or chosen to discard changes, so we force the close now.
+            foreach (var doc in _documentRegister.Value.OpenDocuments.ToList())
             {
-                // Request to close the document
-                await Oy.Publish("Document:RequestClose", doc);
-                lock (_lock)
-                {
-                    // If the document is still open than we can't continue
-                    if (!_documents.Contains(doc)) continue;
-
-                    Closing += DoClosing;
-                    Closing -= CancelClose;
-                    return;
-                }
+                await _documentRegister.Value.ForceCloseDocument(doc);
             }
 
             // Close anything else
@@ -218,24 +206,6 @@ namespace Sledge.Shell.Forms
                 _bootstrapper.Value.UIShutdown();
             });
             Close();
-        }
-
-        private void SaveOpenDocuments()
-        {
-            _openDocuments = new List<DocumentPointer>();
-            lock (_lock)
-            {
-                foreach (var d in _documents)
-                {
-                    var loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.CanSave(d));
-                    var pointer = loader?.GetDocumentPointer(d);
-                    if (pointer != null)
-                    {
-                        var dp = new DocumentPointer(pointer);
-                        _openDocuments.Add(dp);
-                    }
-                }
-            }
         }
 
         private async Task<bool> SaveUnsavedDocuments()
@@ -280,13 +250,13 @@ namespace Sledge.Shell.Forms
         
         // Subscriptions
 
+        /// <summary>
+        /// A document has been opened, add a tab for it
+        /// </summary>
         private Task OpenDocument(IDocument document)
         {
             lock (_lock)
             {
-                if (_documents.Contains(document)) return Task.CompletedTask;
-
-                _documents.Add(document);
                 var page = new TabPage
                 {
                     Text = document.Name,
@@ -294,41 +264,56 @@ namespace Sledge.Shell.Forms
                 };
                 DocumentTabs.TabPages.Add(page);
                 page.ImageKey = document.HasUnsavedChanges ? "Dirty" : "Clean";
-                DocumentTabs.SelectedIndex = DocumentTabs.TabPages.Count - 1;
-                TabChanged(DocumentTabs, EventArgs.Empty);
             }
 
             return Task.CompletedTask;
         }
 
-        private void DocumentSwitch(IDocument document)
+        /// <summary>
+        /// A document has been activated, ensure the correct tab is selected
+        /// </summary>
+        private void DocumentActivated(IDocument document)
         {
             var tab = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == document);
-            if (tab == null) return;
-
-            var idx = DocumentTabs.TabPages.IndexOf(tab);
-            if (idx < 0) return;
-
-            DocumentTabs.SelectedIndex = idx;
-            TabChanged(DocumentTabs, EventArgs.Empty);
-
-        }
-
-        private Task CloseDocument(IDocument document)
-        {
-            lock (_lock)
+            if (tab != null)
             {
-                if (!_documents.Contains(document)) return Task.CompletedTask;
-
-                _documents.Remove(document);
-                var page = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == document);
-                if (page != null) DocumentTabs.TabPages.Remove(page);
-                TabChanged(DocumentTabs, EventArgs.Empty);
+                var idx = DocumentTabs.TabPages.IndexOf(tab);
+                if (idx >= 0) DocumentTabs.SelectedIndex = idx;
             }
 
+            // Update the window title & other things
+            if (document == null || document is NoDocument)
+            {
+                DocumentContainer.Controls.Clear();
+                Text = Title;
+            }
+            else
+            {
+                var currentControl = DocumentContainer.Controls.OfType<Control>().FirstOrDefault();
+                if (currentControl != document.Control)
+                {
+                    DocumentContainer.Controls.Clear();
+                    DocumentContainer.Controls.Add((Control) document.Control);
+                    DocumentContainer.Controls[0].Dock = DockStyle.Fill;
+                }
+
+                Text = Title + @" - " + document.Name;
+            }
+        }
+
+        /// <summary>
+        /// A document has been closed, remove the tab for it
+        /// </summary>
+        private Task CloseDocument(IDocument document)
+        {
+            var page = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == document);
+            if (page != null) DocumentTabs.TabPages.Remove(page);
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// A document has changed, make sure the tab has the correct properties
+        /// </summary>
         private Task DocumentChanged(IDocument document)
         {
             var page = DocumentTabs.TabPages.OfType<TabPage>().FirstOrDefault(x => x.Tag == document);
@@ -341,32 +326,44 @@ namespace Sledge.Shell.Forms
             return Task.CompletedTask;
         }
 
-        private async Task DocumentCloseAndPrompt(IDocument doc)
+        /// <summary>
+        /// A request to close a document has been made, prompt the user to save changes
+        /// or cancel the request.
+        /// </summary>
+        private async Task DocumentRequestClose(DocumentCloseMessage msg)
         {
+            var doc = msg.Document;
             if (doc.HasUnsavedChanges)
             {
                 var r = MessageBox.Show(this, String.Format(SaveChangesToFile, doc.Name), UnsavedChanges, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (r == DialogResult.Cancel)
                 {
+                    msg.Cancel();
                     return;
                 }
 
                 if (r == DialogResult.Yes)
                 {
-                    if (!await SaveDocument(doc)) return;
+                    if (!await SaveDocument(doc))
+                    {
+                        msg.Cancel();
+                    }
                 }
             }
-            await Oy.Publish("Document:RequestClose", doc);
         }
 
+        /// <summary>
+        /// Save a document, prompting for a file name if needed
+        /// </summary>
         private async Task<bool> SaveDocument(IDocument doc)
         {
             var filename = doc.FileName;
 
             if (String.IsNullOrWhiteSpace(filename) || !Directory.Exists(Path.GetDirectoryName(filename)))
             {
-                var loaders = _loaders.Select(x => x.Value).Where(x => x.CanSave(doc)).ToList();
-                var filter = loaders.SelectMany(x => x.SupportedFileExtensions).Select(x => x.Description + "|" + String.Join(";", x.Extensions.Select(ex => "*" + ex))).ToList();
+                var filter = _documentRegister.Value.GetSupportedFileExtensions(doc)
+                    .Select(x => x.Description + "|" + String.Join(";", x.Extensions.Select(ex => "*" + ex)))
+                    .ToList();
 
                 using (var sfd = new SaveFileDialog {Filter = String.Join("|", filter)})
                 {
@@ -375,12 +372,7 @@ namespace Sledge.Shell.Forms
                 }
             }
 
-            await Oy.Publish("Command:Run", new CommandMessage("Internal:SaveDocument", new
-            {
-                Document = doc,
-                Path = filename
-            }));
-            return true;
+            return await _documentRegister.Value.SaveDocument(doc, filename);
         }
 
         private Task OpenCommandBox(string obj)
@@ -393,54 +385,22 @@ namespace Sledge.Shell.Forms
         }
 
         // Form events
-
+        
         private void TabChanged(object sender, EventArgs e)
         {
-            if (DocumentTabs.SelectedTab != null)
-            {
-                if (DocumentTabs.SelectedTab.Tag is IDocument doc)
-                {
-                    var currentControl = DocumentContainer.Controls.OfType<Control>().FirstOrDefault();
-                    if (currentControl != doc.Control)
-                    {
-                        DocumentContainer.Controls.Clear();
-                        DocumentContainer.Controls.Add((Control) doc.Control);
-                        DocumentContainer.Controls[0].Dock = DockStyle.Fill;
-                    }
-                    Oy.Publish("Document:Activated", doc);
-                    Oy.Publish("Context:Add", new ContextInfo("ActiveDocument", doc));
-
-                    Text = Title + @" - " + doc.Name;
-                }
-                else
-                {
-                    Oy.Publish<IDocument>("Document:Activated", new NoDocument());
-                    Oy.Publish("Context:Remove", new ContextInfo("ActiveDocument"));
-                    Text = Title;
-                }
-            }
-            else
-            {
-                DocumentContainer.Controls.Clear();
-                Oy.Publish<IDocument>("Document:Activated", new NoDocument());
-                Oy.Publish("Context:Remove", new ContextInfo("ActiveDocument"));
-                Text = Title;
-            }
+            _documentRegister.Value.ActivateDocument(DocumentTabs.SelectedTab?.Tag as IDocument);
         }
 
         private void RequestClose(object sender, int index)
         {
             if (DocumentTabs.TabPages[index].Tag is IDocument doc)
             {
-                Oy.Publish("Command:Run", new CommandMessage("Internal:CloseDocument", new
-                {
-                    Document = doc
-                }));
+                _documentRegister.Value.RequestCloseDocument(doc);
             }
         }
 
-        // settings
-        private List<DocumentPointer> _openDocuments;
+        // Settings
+        private List<LoadedDocument> _openDocuments;
 
         string ISettingsContainer.Name => "Sledge.Shell";
 
@@ -451,7 +411,7 @@ namespace Sledge.Shell.Forms
 
         public void LoadValues(ISettingsStore store)
         {
-            _openDocuments = store.Get<DocumentPointer[]>("OpenDocuments")?.ToList();
+            _openDocuments = store.Get<LoadedDocument[]>("OpenDocuments")?.ToList();
         }
 
         public void StoreValues(ISettingsStore store)
@@ -459,7 +419,7 @@ namespace Sledge.Shell.Forms
             store.Set("OpenDocuments", _openDocuments?.ToArray());
         }
 
-        private class DocumentPointer
+        private class LoadedDocument
         {
             public string Loader { get; set; }
             public string FileName { get; set; }
@@ -467,12 +427,12 @@ namespace Sledge.Shell.Forms
 
             // ReSharper disable once UnusedMember.Local
             // Don't delete this, it's used for reflection
-            public DocumentPointer()
+            public LoadedDocument()
             {
                 Metadata = new Dictionary<string, string>();
             }
 
-            public DocumentPointer(SerialisedObject pointer)
+            public LoadedDocument(SerialisedObject pointer)
             {
                 Metadata = new Dictionary<string, string>();
                 Loader = pointer.Name;
@@ -480,11 +440,11 @@ namespace Sledge.Shell.Forms
                 FileName = pointer.Get<string>("FileName");
             }
 
-            public SerialisedObject ToPointer()
+            public DocumentPointer ToPointer()
             {
-                var so = new SerialisedObject(Loader);
+                var so = new DocumentPointer(Loader);
                 foreach (var m in Metadata) so.Set(m.Key, m.Value);
-                so.Set("FileName", FileName);
+                so.FileName = FileName;
                 return so;
             }
         }

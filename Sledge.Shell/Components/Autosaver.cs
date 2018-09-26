@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using LogicAndTrick.Oy;
 using Sledge.Common.Scheduling;
-using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Documents;
 using Sledge.Common.Shell.Settings;
 using Sledge.Shell.Registers;
@@ -18,7 +17,6 @@ namespace Sledge.Shell.Components
     public class Autosaver : ISettingsContainer
     {
         private readonly DocumentRegister _documentRegister;
-        private readonly IDocumentLoader[] _loaders;
 
         [Setting] private bool Enabled { get; set; } = true;
         [Setting] private int IntervalMinutes { get; set; } = 5;
@@ -29,10 +27,11 @@ namespace Sledge.Shell.Components
         [Setting] private bool SaveDocumentOnAutosave { get; set; } = true;
 
         [ImportingConstructor]
-        public Autosaver([Import] Lazy<DocumentRegister> documentRegister, [ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders)
+        public Autosaver(
+            [Import] Lazy<DocumentRegister> documentRegister
+        )
         {
             _documentRegister = documentRegister.Value;
-            _loaders = loaders.Select(x => x.Value).ToArray();
         }
 
         public string Name => "Sledge.Shell.Autosaver";
@@ -107,10 +106,7 @@ namespace Sledge.Shell.Components
             }
 
             // Save the file
-            var loader = _loaders.FirstOrDefault(x => x.CanSave(document) && x.CanLoad(filename));
-            if (loader == null) return;
-
-            Oy.Publish("Document:BeforeSave", document).ContinueWith(x => loader.Save(document, filename));
+            _documentRegister.SaveDocument(document, filename);
         }
 
         private void Save(IDocument document)
@@ -118,11 +114,7 @@ namespace Sledge.Shell.Components
             var filename = document.FileName;
             if (filename == null || !Directory.Exists(Path.GetDirectoryName(filename))) return;
 
-            Oy.Publish("Command:Run", new CommandMessage("Internal:SaveDocument", new
-            {
-                Document = document,
-                Path = filename
-            }));
+            _documentRegister.SaveDocument(document, filename);
         }
 
         private string GetAutosaveFormatString(IDocument document)

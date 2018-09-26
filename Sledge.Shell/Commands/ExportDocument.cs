@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Threading.Tasks;
-using LogicAndTrick.Oy;
-using Sledge.Common.Shell;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
+using Sledge.Shell.Registers;
 
 namespace Sledge.Shell.Commands
 {
@@ -19,15 +16,17 @@ namespace Sledge.Shell.Commands
     [InternalCommand]
     public class ExportDocument : ICommand
     {
-        private readonly IEnumerable<Lazy<IDocumentLoader>> _loaders;
+        private readonly Lazy<DocumentRegister> _documentRegister;
 
         public string Name { get; set; } = "Export";
         public string Details { get; set; } = "Export";
 
         [ImportingConstructor]
-        public ExportDocument([ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders)
+        public ExportDocument(
+            [Import] Lazy<DocumentRegister> documentRegister
+        )
         {
-            _loaders = loaders;
+            _documentRegister = documentRegister;
         }
 
         public bool IsInContext(IContext context)
@@ -40,17 +39,8 @@ namespace Sledge.Shell.Commands
             var doc = parameters.Get<IDocument>("Document");
             var path = parameters.Get<string>("Path");
             var hint = parameters.Get("LoaderHint", "");
-            if (doc != null && path != null)
-            {
-                IDocumentLoader loader = null;
-                if (!String.IsNullOrWhiteSpace(hint)) loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.GetType().Name == hint);
-                if (loader == null) loader = _loaders.Select(x => x.Value).FirstOrDefault(x => x.CanSave(doc) && x.CanLoad(path));
-                if (loader != null)
-                {
-                    await Oy.Publish("Document:BeforeSave", doc);
-                    await loader.Save(doc, path);
-                }
-            }
+
+            await _documentRegister.Value.ExportDocument(doc, path, hint);
         }
     }
 }
