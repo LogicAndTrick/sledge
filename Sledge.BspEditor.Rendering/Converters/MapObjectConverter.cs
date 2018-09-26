@@ -47,10 +47,11 @@ namespace Sledge.BspEditor.Rendering.Converters
             {
                 builder.EnsureGroupExists(g.Key);
                 var buffer = builder.GetBufferForGroup(g.Key);
+                var collector = new ResourceCollector();
 
                 foreach (var gc in groupConverters)
                 {
-                    gc.Convert(buffer, document, g, resourceCollector);
+                    gc.Convert(buffer, document, g, collector);
                 }
 
                 foreach (var obj in g)
@@ -58,12 +59,15 @@ namespace Sledge.BspEditor.Rendering.Converters
                     foreach (var converter in converters)
                     {
                         if (!converter.Supports(obj)) continue;
-                        await converter.Convert(buffer, document, obj, resourceCollector);
+                        await converter.Convert(buffer, document, obj, collector);
                         if (converter.ShouldStopProcessing(document, obj)) break;
                     }
                 }
 
-                resourceCollector.AddRenderables(builder.GetRenderablesForGroup(g.Key));
+                builder.RemoveRenderablesFromGroup(g.Key, collector.GetRenderablesToRemove());
+                builder.AddRenderablesToGroup(g.Key, collector.GetRenderablesToAdd());
+
+                resourceCollector.Merge(collector);
             }
 
             builder.Complete();

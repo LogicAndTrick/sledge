@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Resources;
@@ -25,11 +26,25 @@ namespace Sledge.BspEditor.Rendering.Scene
             SceneBuilderRenderable = new SceneBuilderRenderable(this);
         }
 
+        public void AddRenderablesToGroup(long group, IEnumerable<IRenderable> renderables)
+        {
+            EnsureGroupExists(group);
+            _renderables[group].UnionWith(renderables);
+        }
+
+        public void RemoveRenderablesFromGroup(long group, IEnumerable<IRenderable> renderables)
+        {
+            EnsureGroupExists(group);
+            _renderables[group].ExceptWith(renderables);
+        }
+
         public IEnumerable<IRenderable> GetRenderablesForGroup(long group)
         {
             if (_renderables.ContainsKey(group)) return _renderables[group];
             return new IRenderable[0];
         }
+
+        public IEnumerable<IRenderable> GetAllRenderables() => _renderables.Values.SelectMany(x => x);
 
         public BufferBuilder GetBufferForGroup(long group)
         {
@@ -40,6 +55,7 @@ namespace Sledge.BspEditor.Rendering.Scene
         {
             foreach (var bb in _bufferBuilders) bb.Value.Dispose();
             _bufferBuilders.Clear();
+            _renderables.Clear();
         }
 
         public void DeleteGroup(long group)

@@ -127,6 +127,11 @@ namespace Sledge.BspEditor.Rendering.Scene
                 {
                     if (affected == null || md == null)
                     {
+                        foreach (var r in _sceneBuilder.GetAllRenderables())
+                        {
+                            _engine.Value.Remove(r);
+                            if (r is IUpdateable u) _engine.Value.Remove(u);
+                        }
                         _sceneBuilder.Clear();
                     }
 
@@ -144,11 +149,14 @@ namespace Sledge.BspEditor.Rendering.Scene
 
         private async Task HandleResources(IEnvironment environment, ResourceCollector resources)
         {
-            foreach (var r in resources.AddedRenderables) _engine.Value.Add(r);
-            foreach (var r in resources.AddedRenderables.OfType<IUpdateable>()) _engine.Value.Add(r);
+            var add = resources.GetRenderablesToAdd().ToHashSet();
+            var rem = resources.GetRenderablesToRemove().ToHashSet();
 
-            foreach (var r in resources.RemovedRenderables.OfType<IUpdateable>()) _engine.Value.Remove(r);
-            foreach (var r in resources.RemovedRenderables) _engine.Value.Remove(r);
+            foreach (var r in add) _engine.Value.Add(r);
+            foreach (var r in add.OfType<IUpdateable>()) _engine.Value.Add(r);
+
+            foreach (var r in rem.OfType<IUpdateable>()) _engine.Value.Remove(r);
+            foreach (var r in rem) _engine.Value.Remove(r);
 
             await _resourceCollection.Upload(environment, resources);
         }

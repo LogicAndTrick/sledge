@@ -7,8 +7,8 @@ namespace Sledge.BspEditor.Rendering.Resources
     public class ResourceCollector
     {
         public HashSet<string> Textures { get; }
-        public HashSet<IRenderable> AddedRenderables { get; set; }
-        public HashSet<IRenderable> RemovedRenderables { get; set; }
+        private HashSet<IRenderable> AddedRenderables { get; }
+        private HashSet<IRenderable> RemovedRenderables { get; }
 
         public ResourceCollector()
         {
@@ -18,18 +18,17 @@ namespace Sledge.BspEditor.Rendering.Resources
         }
 
         public void RequireTexture(string name) => Textures.Add(name);
-        public void AddRenderables(IEnumerable<IRenderable> renderables)
-        {
-            var arr = renderables.ToArray();
-            AddedRenderables.UnionWith(arr);
-            RemovedRenderables.ExceptWith(arr);
-        }
+        public void AddRenderables(IEnumerable<IRenderable> renderables) => AddedRenderables.UnionWith(renderables);
+        public void RemoveRenderables(IEnumerable<IRenderable> renderables) => RemovedRenderables.UnionWith(renderables);
 
-        public void RemoveRenderables(IEnumerable<IRenderable> renderables)
+        public IEnumerable<IRenderable> GetRenderablesToAdd() => AddedRenderables.Except(RemovedRenderables);
+        public IEnumerable<IRenderable> GetRenderablesToRemove() => RemovedRenderables.Except(AddedRenderables);
+
+        public void Merge(ResourceCollector collector)
         {
-            var arr = renderables.ToArray();
-            RemovedRenderables.UnionWith(arr);
-            AddedRenderables.ExceptWith(arr);
+            Textures.UnionWith(collector.Textures);
+            AddedRenderables.UnionWith(collector.AddedRenderables);
+            RemovedRenderables.UnionWith(collector.RemovedRenderables);
         }
     }
 }
