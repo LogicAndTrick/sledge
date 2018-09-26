@@ -51,7 +51,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
                 if (model == null)
                 {
                     if (entity.Data.Remove(x => x is EntityModel) > 0) entity.DescendantsChanged();
-                    return;
+                    continue;
                 }
 
                 var renderable = _resourceCollection.Value.CreateModelRenderable(change.Document.Environment, model);
