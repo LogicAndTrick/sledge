@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Sledge.DataStructures.Geometric;
+using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
 using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
@@ -19,11 +21,18 @@ namespace Sledge.Providers.Model.Mdl10
         private ResourceSet _transformsResourceSet;
         private Matrix4x4[] _transforms;
 
+        private DeviceBuffer _frozenTransformsBuffer;
+        private ResourceSet _frozenTransformsResourceSet;
+
         private int _currentFrame;
         private long _lastFrameMillis;
         private float _interframePercent;
 
         public Vector3 Origin { get; set; }
+        public Vector3 Angles { get; set; }
+
+        private int _lastSequence = -1;
+        public int Sequence { get; set; }
 
         public MdlModelRenderable(MdlModel model)
         {
@@ -39,9 +48,25 @@ namespace Sledge.Providers.Model.Mdl10
             _interframePercent = 0;
         }
 
+        public Matrix4x4 GetModelTransformation()
+        {
+            return Matrix4x4.CreateFromYawPitchRoll(Angles.X, Angles.Z, Angles.Y) * Matrix4x4.CreateTranslation(Origin);
+        }
+
+        public (Vector3, Vector3) GetBoundingBox()
+        {
+            var (min, max) = _model.GetBoundingBox(Sequence, 0, 0);
+
+            var tf = GetModelTransformation();
+            var box = new Box(min, max);
+            box = box.Transform(tf);
+
+            return (box.Start, box.End);
+        }
+
         public void Update(long milliseconds)
         {
-            const int currentSequence = 0;
+            var currentSequence = Sequence;
             if (currentSequence >= _model.Model.Sequences.Count) return;
 
             var seq = _model.Model.Sequences[currentSequence];
@@ -67,6 +92,14 @@ namespace Sledge.Providers.Model.Mdl10
             _transformsResourceSet = context.Device.ResourceFactory.CreateResourceSet(
                 new ResourceSetDescription(context.ResourceLoader.ProjectionLayout, _transformsBuffer)
             );
+
+            _frozenTransformsBuffer = context.Device.ResourceFactory.CreateBuffer(
+                new BufferDescription((uint) Unsafe.SizeOf<Matrix4x4>() * 128, BufferUsage.UniformBuffer)
+            );
+
+            _frozenTransformsResourceSet = context.Device.ResourceFactory.CreateResourceSet(
+                new ResourceSetDescription(context.ResourceLoader.ProjectionLayout, _frozenTransformsBuffer)
+            );
         }
 
         public IEnumerable<ILocation> GetLocationObjects(IPipeline pipeline, IViewport viewport)
@@ -76,15 +109,41 @@ namespace Sledge.Providers.Model.Mdl10
 
         public bool ShouldRender(IPipeline pipeline, IViewport viewport)
         {
-            return pipeline.Type == PipelineType.WireframeModel || pipeline.Type == PipelineType.TexturedModel;
+            if (pipeline.Type == PipelineType.WireframeModel)
+            {
+                if (viewport.Camera.Type != CameraType.Orthographic) return false;
+                if (viewport.Camera is OrthographicCamera oc && oc.Zoom < 0.25f) return false;
+                return true;
+            }
+            else if (pipeline.Type == PipelineType.TexturedModel)
+            {
+                if (viewport.Camera.Type != CameraType.Perspective) return false;
+                return true;
+            }
+            return false;
         }
 
         public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
         {
             if (_transformsResourceSet == null || _transformsBuffer == null) return;
 
-            cl.UpdateBuffer(_transformsBuffer, 0, _transforms);
-            cl.SetGraphicsResourceSet(2, _transformsResourceSet);
+            if (pipeline.Type == PipelineType.WireframeModel)
+            {
+                if (_lastSequence != Sequence)
+                {
+                    var transforms = new Matrix4x4[128];
+                    _model.Model.GetTransforms(Sequence, 0, 0, ref transforms);
+                    cl.UpdateBuffer(_frozenTransformsBuffer, 0, transforms);
+                    _lastSequence = Sequence;
+                }
+                cl.SetGraphicsResourceSet(1, _frozenTransformsResourceSet);
+            }
+            else
+            {
+                cl.UpdateBuffer(_transformsBuffer, 0, _transforms);
+                cl.SetGraphicsResourceSet(2, _transformsResourceSet);
+            }
+
             _model.Render(context, pipeline, viewport, cl);
         }
 
@@ -97,9 +156,13 @@ namespace Sledge.Providers.Model.Mdl10
         {
             _transformsResourceSet?.Dispose();
             _transformsBuffer?.Dispose();
+            _frozenTransformsResourceSet?.Dispose();
+            _frozenTransformsBuffer?.Dispose();
 
             _transformsResourceSet = null;
             _transformsBuffer = null;
+            _frozenTransformsResourceSet = null;
+            _frozenTransformsBuffer = null;
         }
 
         public void Dispose()

@@ -81,6 +81,13 @@ namespace Sledge.Shell.Registers
             return _openDocuments.Contains(document);
         }
 
+        public async Task<IDocument> NewDocument(IDocumentLoader loader)
+        {
+            var doc = await loader.CreateBlank();
+            if (doc != null) OpenDocument(doc);
+            return doc;
+        }
+
         public async Task<IDocument> OpenDocument(DocumentPointer documentPointer, string loaderName = null)
         {
             var fileName = documentPointer.FileName;

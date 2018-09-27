@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Sledge.Rendering.Resources;
 
@@ -11,13 +12,9 @@ namespace Sledge.Rendering.Interfaces
     public interface IModel : IDisposable, IResource
     {
         /// <summary>
-        /// The minimum bounds for this model
+        /// Get a list of sequences for this model.
         /// </summary>
-        Vector3 Mins { get; }
-
-        /// <summary>
-        /// The maximum bounds for this model
-        /// </summary>
-        Vector3 Maxs { get; }
+        /// <returns>List of sequences</returns>
+        List<string> GetSequences();
     }
 }

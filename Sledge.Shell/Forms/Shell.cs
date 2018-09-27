@@ -323,6 +323,11 @@ namespace Sledge.Shell.Forms
                 page.ImageKey = document.HasUnsavedChanges ? "Dirty" : "Clean";
             }
 
+            if (DocumentTabs.SelectedTab?.Tag is IDocument sd)
+            {
+                Text = Title + @" - " + sd.Name;
+            }
+
             return Task.CompletedTask;
         }
 

@@ -36,7 +36,6 @@ namespace Sledge.BspEditor.Rendering.Converters
 
             if (em.ContentsReplaced && em.Renderable != null)
             {
-                em.Renderable.Origin = obj.Data.GetOne<Origin>()?.Location ?? obj.BoundingBox.Center;
                 resourceCollector.AddRenderables(new []{ em.Renderable });
             }
 

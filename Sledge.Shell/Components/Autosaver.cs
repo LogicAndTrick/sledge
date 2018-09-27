@@ -106,7 +106,7 @@ namespace Sledge.Shell.Components
             }
 
             // Save the file
-            _documentRegister.SaveDocument(document, filename);
+            _documentRegister.ExportDocument(document, filename);
         }
 
         private void Save(IDocument document)

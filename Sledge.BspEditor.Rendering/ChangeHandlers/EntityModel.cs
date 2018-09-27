@@ -42,7 +42,9 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
             var model = Renderable.Model;
             var origin = obj.Data.GetOne<Origin>()?.Location ?? Vector3.Zero;
-            return new Box(model.Mins + origin, model.Maxs + origin);
+            var (min, max) = Renderable.GetBoundingBox();
+            return new Box(min, max);
+            //return new Box(model.Mins + origin, model.Maxs + origin);
         }
 
         public IMapElement Copy(UniqueNumberGenerator numberGenerator)
@@ -52,7 +54,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
         public IMapElement Clone()
         {
-            return new EntityModel(Name, Renderable);
+            return new EntityModel(Name, null);
         }
 
         public SerialisedObject ToSerialisedObject()

@@ -78,6 +78,7 @@
     <Compile Include="Pipelines\TexturedAdditivePipeline.cs" />
     <Compile Include="Pipelines\TexturedAlphaPipeline.cs" />
     <Compile Include="Pipelines\BillboardAlphaPipeline.cs" />
+    <Compile Include="Pipelines\WireframeModelPipeline.cs" />
     <Compile Include="Pipelines\TexturedModelPipeline.cs" />
     <Compile Include="Resources\IndirectIndirectBuffer.cs" />
     <Compile Include="Resources\TextureSampleType.cs" />
@@ -146,6 +147,8 @@
     <EmbeddedResource Include="Shaders\TexturedAlpha.vert.hlsl.bytes" />
     <EmbeddedResource Include="Shaders\TexturedModel.frag.hlsl.bytes" />
     <EmbeddedResource Include="Shaders\TexturedModel.vert.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\WireframeModel.frag.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\WireframeModel.vert.hlsl.bytes" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Diagnostics.DiagnosticSource">
@@ -200,6 +203,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Shaders\TexturedModel.vert.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders\WireframeModel.vert.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders\WireframeModel.frag.hlsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

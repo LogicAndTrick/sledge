@@ -8,5 +8,10 @@ namespace Sledge.Rendering.Interfaces
     {
         IModel Model { get; }
         Vector3 Origin { get; set; }
+        Vector3 Angles { get; set; }
+        int Sequence { get; set; }
+
+        Matrix4x4 GetModelTransformation();
+        (Vector3, Vector3) GetBoundingBox();
     }
 }

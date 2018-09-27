@@ -11,9 +11,9 @@ using Veldrid;
 
 namespace Sledge.Rendering.Pipelines
 {
-    public class TexturedModelPipeline : IPipeline
+    public class WireframeModelPipeline : IPipeline
     {
-        public PipelineType Type => PipelineType.TexturedModel;
+        public PipelineType Type => PipelineType.WireframeModel;
         public PipelineGroup Group => PipelineGroup.Opaque;
         public float Order => 7;
 
@@ -39,8 +39,8 @@ namespace Sledge.Rendering.Pipelines
                 BlendState = BlendStateDescription.SingleDisabled,
                 DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual,
                 RasterizerState = RasterizerStateDescription.Default,
-                PrimitiveTopology = PrimitiveTopology.TriangleList,
-                ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, context.ResourceLoader.TextureLayout, _transformsLayout },
+                PrimitiveTopology = PrimitiveTopology.LineList,
+                ResourceLayouts = new[] { context.ResourceLoader.ProjectionLayout, _transformsLayout },
                 ShaderSet = new ShaderSetDescription(new[] { context.ResourceLoader.VertexModel3LayoutDescription }, new[] { _vertex, _fragment }),
                 Outputs = new OutputDescription
                 {

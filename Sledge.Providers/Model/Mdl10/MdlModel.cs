@@ -28,24 +28,26 @@ namespace Sledge.Providers.Model.Mdl10
 
         private Rendering.Resources.Texture _textureResource;
         private Buffer _buffer;
+        private uint _numTexturedIndices;
+        private uint _numWireframeIndices;
 
         private string TextureName => $"{nameof(MdlModel)}::{_guid}";
-
-        public Vector3 Mins { get; private set; }
-        public Vector3 Maxs { get; private set; }
 
         public MdlModel(MdlFile model)
         {
             Model = model;
             _guid = Guid.NewGuid();
-
-            ComputeBoundingBox();
         }
 
-        private void ComputeBoundingBox()
+        public List<string> GetSequences()
+        {
+            return Model.Sequences.Select(x => x.Name).ToList();
+        }
+
+        public (Vector3, Vector3) GetBoundingBox(int sequence, int frame, float subframe)
         {
             var transforms = new Matrix4x4[Model.Bones.Count];
-            Model.GetTransforms(0, 0, 0, ref transforms);
+            Model.GetTransforms(sequence, frame, subframe, ref transforms);
 
             var list =
                 from part in Model.BodyParts
@@ -55,8 +57,7 @@ namespace Sledge.Providers.Model.Mdl10
                 select Vector3.Transform(vertex.Vertex, transform);
 
             var box = new Box(list);
-            Mins = box.Start;
-            Maxs = box.End;
+            return (box.Start, box.End);
         }
 
         private static Bitmap CreateBitmap(int width, int height, byte[] data, byte[] palette, bool lastTextureIsTransparent)
@@ -135,6 +136,8 @@ namespace Sledge.Providers.Model.Mdl10
             var indices = new Dictionary<short, List<uint>>();
             for (short i = 0; i < Model.Textures.Count; i++) indices[i] = new List<uint>();
 
+            var wireframeIndices = new List<uint>();
+
             var rectangles = CreateTexuture(engine, context);
             var texHeight = rectangles.Max(x => x.Bottom);
             var texWidth = rectangles.Max(x => x.Right);
@@ -156,8 +159,9 @@ namespace Sledge.Providers.Model.Mdl10
                 {
                     var texId = skin[mesh.SkinRef];
                     var rec = rectangles.Count > texId ? rectangles[texId] : Rectangle.Empty;
-                    foreach (var x in mesh.Vertices)
+                    for (var i = 0; i < mesh.Vertices.Length; i++)
                     {
+                        var x = mesh.Vertices[i];
                         vertices.Add(new VertexModel3
                         {
                             Position = x.Vertex,
@@ -166,12 +170,14 @@ namespace Sledge.Providers.Model.Mdl10
                             Bone = (uint) x.VertexBone
                         });
                         indices[texId].Add(vi);
+                        wireframeIndices.Add(vi);
+                        wireframeIndices.Add(i % 3 == 2 ? vi - 2 : vi + 1);
                         vi++;
                     }
                 }
             }
 
-            var flatIndices = new uint[vi];
+            var flatIndices = new uint[vi + wireframeIndices.Count];
             var currentIndexCount = 0;
             foreach (var kv in indices.OrderBy(x => x.Key))
             {
@@ -179,25 +185,37 @@ namespace Sledge.Providers.Model.Mdl10
                 Array.Copy(kv.Value.ToArray(), 0, flatIndices, currentIndexCount, num);
                 currentIndexCount += num;
             }
+            Array.Copy(wireframeIndices.ToArray(), 0, flatIndices, currentIndexCount, wireframeIndices.Count);
 
             _buffer = engine.CreateBuffer();
             _buffer.Update(vertices, flatIndices);
+
+            _numTexturedIndices = (uint) (flatIndices.Length - wireframeIndices.Count);
+            _numWireframeIndices = (uint) wireframeIndices.Count;
         }
 
         public void Render(RenderContext context, IPipeline pipeline, IViewport viewport, CommandList cl)
         {
             _buffer.Bind(cl, 0);
-            _textureResource.BindTo(cl, 1);
-            uint ci = 0;
 
-            foreach (var bpi in _bodyPartIndices)
+            if (pipeline.Type == PipelineType.TexturedModel)
             {
-                const int model = 0;
-                for (var j = 0; j < bpi.Length; j++)
+                _textureResource.BindTo(cl, 1);
+                uint ci = 0;
+
+                foreach (var bpi in _bodyPartIndices)
                 {
-                    if (j == model) cl.DrawIndexed(bpi[j], 1, ci, 0, 0);
-                    ci += bpi[j];
+                    const int model = 0;
+                    for (var j = 0; j < bpi.Length; j++)
+                    {
+                        if (j == model) cl.DrawIndexed(bpi[j], 1, ci, 0, 0);
+                        ci += bpi[j];
+                    }
                 }
+            }
+            else if (pipeline.Type == PipelineType.WireframeModel)
+            {
+                cl.DrawIndexed(_numWireframeIndices, 1, _numTexturedIndices, 0, 0);
             }
         }
 

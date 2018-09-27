@@ -12,6 +12,7 @@ using Sledge.Common.Shell.Hotkeys;
 using Sledge.Common.Shell.Menu;
 using Sledge.Common.Translations;
 using Sledge.Shell.Properties;
+using Sledge.Shell.Registers;
 
 namespace Sledge.Shell.Commands
 {
@@ -23,14 +24,19 @@ namespace Sledge.Shell.Commands
     [MenuImage(typeof(Resources), nameof(Resources.Menu_New))]
     public class NewFile : ICommand
     {
+        private readonly Lazy<DocumentRegister> _documentRegister;
         private readonly IEnumerable<Lazy<IDocumentLoader>> _loaders;
 
         public string Name { get; set; } = "New";
         public string Details { get; set; } = "New";
 
         [ImportingConstructor]
-        public NewFile([ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders)
+        public NewFile(
+            [Import] Lazy<DocumentRegister> documentRegister,
+            [ImportMany] IEnumerable<Lazy<IDocumentLoader>> loaders
+        )
         {
+            _documentRegister = documentRegister;
             _loaders = loaders;
         }
 
@@ -55,11 +61,7 @@ namespace Sledge.Shell.Commands
 
             if (loader != null)
             {
-                var doc = await loader.CreateBlank();
-                if (doc != null)
-                {
-                    await Oy.Publish("Document:Opened", doc);
-                }
+                await _documentRegister.Value.NewDocument(loader);
             }
         }
     }
