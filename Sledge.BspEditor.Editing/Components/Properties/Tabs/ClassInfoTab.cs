@@ -566,7 +566,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             public string OriginalValue => String.Join(", ", OriginalValues.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct());
 
             public string DisplayText => GameDataProperty?.DisplayText() ?? NewKey;
-            public string DisplayValue => GameDataProperty?.Options.FirstOrDefault(x => x.Key == Value)?.Description ?? Value;
+
+            public string DisplayValue => String.IsNullOrWhiteSpace(Value)
+                ? GameDataProperty?.DefaultValue
+                : GameDataProperty?.Options.FirstOrDefault(x => x.Key == Value)?.Description ?? Value;
 
             public Color Colour
             {
