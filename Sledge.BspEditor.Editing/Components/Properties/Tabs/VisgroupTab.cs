@@ -104,7 +104,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
         private Dictionary<VisgroupItem, CheckState> GetVisgroups(MapDocument document, List<IMapObject> objects)
         {
             var d = new Dictionary<VisgroupItem, CheckState>();
-            if (document == null) return d;
+            if (document == null || objects == null) return d;
 
             var objGroups = objects
                 .SelectMany(x => x.Data.Get<VisgroupID>().Select(v => new {Object = x, Visgroup = v.ID}))

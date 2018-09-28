@@ -161,6 +161,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             _gameData = null;
             if (document != null) _gameData = await document.Environment.GetGameData();
             if (_gameData == null) _gameData = new GameData();
+            if (objects == null) objects = new List<IMapObject>();
             this.InvokeLater(() =>
             {
                 UpdateObjects(objects);

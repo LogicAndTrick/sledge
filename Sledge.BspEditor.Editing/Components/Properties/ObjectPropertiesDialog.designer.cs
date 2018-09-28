@@ -37,8 +37,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 		private void InitializeComponent()
 		{
             this.tabPanel = new System.Windows.Forms.TabControl();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnOk = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
             this.btnApply = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -51,29 +50,19 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             this.tabPanel.Size = new System.Drawing.Size(682, 406);
             this.tabPanel.TabIndex = 1;
             // 
-            // btnCancel
+            // btnClose
             // 
-            this.btnCancel.Location = new System.Drawing.Point(619, 424);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 2;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.CancelClicked);
-            // 
-            // btnOk
-            // 
-            this.btnOk.Location = new System.Drawing.Point(538, 424);
-            this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(75, 23);
-            this.btnOk.TabIndex = 2;
-            this.btnOk.Text = "OK";
-            this.btnOk.UseVisualStyleBackColor = true;
-            this.btnOk.Click += new System.EventHandler(this.OkClicked);
+            this.btnClose.Location = new System.Drawing.Point(619, 424);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(75, 23);
+            this.btnClose.TabIndex = 2;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.CancelClicked);
             // 
             // btnApply
             // 
-            this.btnApply.Location = new System.Drawing.Point(457, 424);
+            this.btnApply.Location = new System.Drawing.Point(538, 424);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 2;
@@ -99,8 +88,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             this.ClientSize = new System.Drawing.Size(706, 459);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnApply);
-            this.Controls.Add(this.btnOk);
-            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnClose);
             this.Controls.Add(this.tabPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
@@ -113,8 +101,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             this.ResumeLayout(false);
 
 		}
-		private System.Windows.Forms.Button btnOk;
-		private System.Windows.Forms.Button btnCancel;
+		private System.Windows.Forms.Button btnClose;
 		private System.Windows.Forms.TabControl tabPanel;
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Button btnReset;

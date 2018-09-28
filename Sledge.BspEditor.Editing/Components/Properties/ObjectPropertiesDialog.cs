@@ -37,7 +37,9 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         private List<Subscription> _subscriptions;
         private Dictionary<IObjectPropertyEditorTab, TabPage> _pages;
         private MapDocument _currentDocument;
-        private List<IMapObject> _forcedSelection;
+
+        private bool _selectionForced;
+        private List<IMapObject> _selectedObjects;
 
         public Task OnInitialise()
         {
@@ -69,16 +71,10 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             set => this.InvokeLater(() => btnApply.Text = value);
         }
 
-        public string OK
+        public string CloseButton
         {
-            get => btnOk.Text;
-            set => this.InvokeLater(() => btnOk.Text = value);
-        }
-
-        public string Cancel
-        {
-            get => btnCancel.Text;
-            set => this.InvokeLater(() => btnCancel.Text = value);
+            get => btnClose.Text;
+            set => this.InvokeLater(() => btnClose.Text = value);
         }
 
         public string ResetUnsavedChanges
@@ -86,9 +82,6 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             get => btnReset.Text;
             set => this.InvokeLater(() => btnReset.Text = value);
         }
-
-        public string UnsavedChanges { get; set; }
-        public string DoYouWantToSaveFirst { get; set; }
 
         [ImportingConstructor]
         public ObjectPropertiesDialog(
@@ -107,18 +100,12 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 
         private async Task OpenWithSelection(List<IMapObject> selection)
         {
-            _forcedSelection = selection;
-            await Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
-        }
+            if (Visible) await Save();
 
-        /// <summary>
-        /// Get the current selection, using the forced if it exists, otherwise using the document selection.
-        /// </summary>
-        private List<IMapObject> GetCurrentSelection()
-        {
-            return _forcedSelection?.ToList()
-                   ?? _currentDocument?.Selection.GetSelectedParents().ToList()
-                   ?? new List<IMapObject>();
+            _selectedObjects = selection;
+            _selectionForced = true;
+
+            await Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
         }
 
         /// <summary>
@@ -166,7 +153,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         protected override void OnClosing(CancelEventArgs e)
         {
             e.Cancel = true;
-            ConfirmIfChanged().ContinueWith(Close);
+            Save().ContinueWith(Close);
         }
 
         /// <summary>
@@ -201,7 +188,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties
                 }
                 else
                 {
-                    _forcedSelection = null;
+                    _selectionForced = false;
+                    _selectedObjects = null;
                     Hide();
                     Unsubscribe();
                 }
@@ -214,7 +202,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             _subscriptions = new List<Subscription>
             {
                 Oy.Subscribe<Change>("MapDocument:Changed", DocumentChanged),
-                Oy.Subscribe<MapDocument>("Document:Activated", DocumentActivated)
+                Oy.Subscribe<MapDocument>("Document:Activated", DocumentActivated),
+                Oy.Subscribe<MapDocument>("MapDocument:SelectionChanged", SelectionChanged)
             };
         }
 
@@ -226,21 +215,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         }
 
         /// <summary>
-        /// Checks for changes and prompts the user if they want to save.
-        /// </summary>
-        private Task<bool> ConfirmIfChanged()
-        {
-            if (_currentDocument == null) return Task.FromResult(true);
-            if (!_tabs.Any(x => x.Value.HasChanges)) return Task.FromResult(true);
-            var result = MessageBox.Show(DoYouWantToSaveFirst, UnsavedChanges, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
-
-            if (result == DialogResult.Yes) return Save(); // Save first, then close
-            if (result == DialogResult.No) return Task.FromResult(true); // Don't save, and close
-            return Task.FromResult(false); // Don't save, don't close
-        }
-
-        /// <summary>
         /// Saves the current changes (if any)
+        /// This will clear all values from all tabs, they'll need to be reset afterwards.
         /// </summary>
         private async Task<bool> Save()
         {
@@ -248,9 +224,12 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             var changed = _tabs.Select(x => x.Value).Where(x => x.HasChanges).ToList();
             if (!changed.Any()) return true;
 
-            var list = GetCurrentSelection();
+            var list = _selectedObjects;
             var changes = changed.SelectMany(x => x.GetChanges(_currentDocument, list));
             var tsn = new Transaction(changes);
+
+            // Clear all changes from all tabs
+            foreach (var t in _tabs) await t.Value.SetObjects(_currentDocument, _selectedObjects);
 
             await MapDocumentOperation.Perform(_currentDocument, tsn);
             return true;
@@ -269,19 +248,25 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         /// </summary>
         private async Task DocumentActivated(MapDocument doc)
         {
+            await Save();
+
             _currentDocument = doc;
 
             // If the selection is forced, reset it
-            var forced = _forcedSelection;
-            if (forced != null && !forced.All(x => ReferenceEquals(doc.Map.Root.FindByID(x.ID), x)))
+            if (_selectionForced && _selectedObjects != null && !_selectedObjects.All(x => ReferenceEquals(doc.Map.Root.FindByID(x.ID), x)))
             {
                 // Special case for root object
-                if (forced.Count == 1 && forced[0] is Root) forced[0] = _currentDocument.Map.Root;
+                if (_selectedObjects.Count == 1 && _selectedObjects[0] is Root) _selectedObjects[0] = _currentDocument.Map.Root;
                 // Otherwise clear the forced selection
-                else _forcedSelection = null;
+                else _selectionForced = false;
             }
 
             await UpdateSelection();
+        }
+
+        private async Task SelectionChanged(MapDocument document)
+        {
+            await Save();
         }
 
         /// <summary>
@@ -290,7 +275,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         private async Task DocumentChanged(Change change)
         {
             // If the selection is forced, make sure any deleted objects are removed from the selection
-            _forcedSelection?.RemoveAll(x => change.Removed.Contains(x));
+            _selectedObjects?.RemoveAll(x => change.Removed.Contains(x));
 
             await UpdateSelection();
         }
@@ -300,19 +285,20 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         /// </summary>
         private async Task UpdateSelection()
         {
-            var list = GetCurrentSelection();
-
+            _selectedObjects = _selectionForced
+                ? _selectedObjects
+                : _currentDocument?.Selection.GetSelectedParents().ToList();
+            
             foreach (var tab in _tabs)
             {
-                await tab.Value.SetObjects(_currentDocument, list);
+                await tab.Value.SetObjects(_currentDocument, _selectedObjects);
             }
 
-            this.InvokeLater(() => UpdateTabVisibility(_context, list));
+            this.InvokeLater(() => UpdateTabVisibility(_context, _selectedObjects));
         }
 
         private void ApplyClicked(object sender, EventArgs e) => Save().ContinueWith(Reset);
-        private void OkClicked(object sender, EventArgs e) => Save().ContinueWith(Close);
-        private void CancelClicked(object sender, EventArgs e) => ConfirmIfChanged().ContinueWith(Close);
+        private void CancelClicked(object sender, EventArgs e) => Close();
         private void ResetClicked(object sender, EventArgs e) => Reset();
     }
 }
