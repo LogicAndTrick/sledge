@@ -253,7 +253,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             lstKeyValues.Items.Clear();
 
             angAngles.Enabled = false;
-            angAngles.SetAngle(0);
+            angAngles.Angle = 0;
 
             foreach (var tv in _tableValues.OrderBy(x => x.IsAdded ? 1 : x.IsRemoved ? 2 : 0))
             {
@@ -279,7 +279,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
                 if (tv.Key == "angles")
                 {
                     angAngles.Enabled = true;
-                    angAngles.SetAnglePropertyString(tv.Value);
+                    angAngles.AnglePropertyString = tv.Value;
                 }
             }
 
@@ -316,7 +316,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
 
                 if (tv.Key == "angles")
                 {
-                    angAngles.SetAnglePropertyString(tv.Value);
+                    angAngles.AnglePropertyString = tv.Value;
                 }
             }
         }
@@ -392,6 +392,23 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             if (tv == null) return;
 
             tv.NewValue = value;
+            RefreshTable();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
+        }
+
+        /// <summary>
+        /// User has changed the angles via the circle widget
+        /// </summary>
+        private void SetAngleValue(object sender, EventArgs e)
+        {
+            var angles = _tableValues.FirstOrDefault(x => x.Key == "angles");
+            if (angles == null) return;
+
+            var ps = angAngles.AnglePropertyString;
+            if (ps == angles.NewValue) return;
+
+            angles.NewValue = ps;
+
             RefreshTable();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasChanges)));
         }

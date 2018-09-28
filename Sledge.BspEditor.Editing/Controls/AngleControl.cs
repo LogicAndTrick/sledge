@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Sledge.Common;
 
 namespace Sledge.BspEditor.Editing.Controls
 {
@@ -11,32 +12,78 @@ namespace Sledge.BspEditor.Editing.Controls
     /// </summary>
     public partial class AngleControl : UserControl
     {
-        public delegate void AngleChangedEventHandler(object sender, AngleChangedEventArgs e);
+        public event EventHandler AngleChangedEvent;
 
-        public event AngleChangedEventHandler AngleChangedEvent;
+        private int _angle;
+        private bool _draggedinside;
 
-        public class AngleChangedEventArgs : EventArgs
+        public int Angle
         {
-            public string Text { get; private set; }
-            public int Degrees { get; private set; }
-            public double Radians { get; private set; }
-
-            public AngleChangedEventArgs(double rad)
+            get => _angle;
+            set
             {
-                Radians = rad;
-                Degrees = (int)(rad * 180 / Math.PI);
-                Text = Degrees.ToString();
+                while (value < 0) value += 360;
+                value = value % 360;
+
+                _angle = value;
+
+                UpdateAngle();
             }
         }
 
-        private double _angle;
-        private int _elevation;
-        private bool _draggedinside;
-        private string _anglestring;
+        public bool Up
+        {
+            get => _angle == -1;
+            set
+            {
+                _angle = -1;
+                UpdateAngle();
+            }
+        }
 
-        public int Degrees => (int)(_angle * 180 / Math.PI);
+        public bool Down
+        {
+            get => _angle == -2;
+            set
+            {
+                _angle = -2;
+                UpdateAngle();
+            }
+        }
 
-        public override string Text => _anglestring;
+        public override string Text
+        {
+            get
+            {
+                if (_angle == -1) return @"Up";
+                else if (_angle == -2) return @"Down";
+                return _angle.ToString();
+            }
+        }
+
+        public string AnglePropertyString
+        {
+            get
+            {
+                if (_angle == -1) return "-90 0 0";
+                if (_angle == -2) return "90 0 0";
+                return "0 " + _angle + " 0";
+            }
+            set
+            {
+                var split = value.Split(' ');
+
+                if (split.Length != 3) return;
+                if (!int.TryParse(split[0], out var a1)) return;
+                if (!int.TryParse(split[1], out var a2)) return;
+                if (!int.TryParse(split[2], out var a3)) return;
+
+                if (a1 == 0 && a3 == 0) Angle = a2;
+                else if (a1 == 90 && a2 == 0 && a3 == 0) Down = true;
+                else if (a1 == -90 && a2 == 0 && a3 == 0) Up = true;
+                else cmbAngles.Text = "";
+            }
+        }
 
         private bool _showTextBox;
         public bool ShowTextBox
@@ -66,94 +113,20 @@ namespace Sledge.BspEditor.Editing.Controls
         {
             InitializeComponent();
             _angle = 0;
-            _elevation = 0;
             _draggedinside = false;
-            _anglestring = Degrees.ToString();
             _showTextBox = true;
         }
 
         private void FireAngleChangedEvent()
         {
-            OnAngleChangedEvent(new AngleChangedEventArgs(_angle));
-        }
-
-        protected virtual void OnAngleChangedEvent(AngleChangedEventArgs e)
-        {
-            if (AngleChangedEvent == null) return;
-            AngleChangedEvent(this, e);
-        }
-
-        /// <summary>
-        /// Sets the current angle in degrees
-        /// </summary>
-        /// <param name="ang">The angle in degrees.</param>
-        public void SetAngle(int ang)
-        {
-            while (ang < 0) ang += 360;
-            ang = ang % 360;
-            _angle = ang * Math.PI / 180;
-            _elevation = 0;
-            _anglestring = Degrees.ToString();
-            UpdateAngle();
-            if (!_draggedinside) FireAngleChangedEvent();
-        }
-
-        public void SetAnglePropertyString(string angles)
-        {
-            var split = angles.Split(' ');
-            int a1, a2, a3;
-            if (split.Length == 3 && int.TryParse(split[0], out a1) && int.TryParse(split[1], out a2) && int.TryParse(split[2], out a3))
-            {
-                if (a1 == 0 && a3 == 0) SetAngle(a2);
-                else if (a1 == 90 && a2 == 0 && a3 == 0) SetDown();
-                else if (a1 == -90 && a2 == 0 && a3 == 0) SetUp();
-                else cmbAngles.Text = "";
-            }
-        }
-
-        public string GetAnglePropertyString()
-        {
-            if (_elevation == 1) return "-90 0 0";
-            if (_elevation == 2) return "90 0 0";
-            return "0 " + Degrees + " 0";
-        }
-
-        /// <summary>
-        /// Sets the current angle in radians
-        /// </summary>
-        /// <param name="ang">The angle in radians</param>
-        public void SetAngle(double ang)
-        {
-            SetAngle((int)Math.Floor(ang * 180 / Math.PI));
-        }
-
-        /// <summary>
-        /// Sets the current angle to Up.
-        /// </summary>
-        public void SetUp()
-        {
-            _elevation = 1;
-            _anglestring = "Up";
-            UpdateAngle();
-            FireAngleChangedEvent();
-        }
-
-        /// <summary>
-        /// Sets the current angle to Down.
-        /// </summary>
-        public void SetDown()
-        {
-            _elevation = 2;
-            _anglestring = "Down";
-            UpdateAngle();
-            FireAngleChangedEvent();
+            AngleChangedEvent?.Invoke(this, EventArgs.Empty);
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            System.Drawing.Graphics g = e.Graphics;
+            var g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            var fill = Enabled ? System.Drawing.Brushes.Black : System.Drawing.Brushes.LightGray;
+            var fill = Enabled ? Brushes.Black : Brushes.LightGray;
             var top = new Pen(Color.FromArgb(167, 166, 170), 4);
             var bottom = new Pen(Color.White, 4);
 
@@ -166,23 +139,23 @@ namespace Sledge.BspEditor.Editing.Controls
 
         private void UpdateAngle()
         {
-            lblAngle.Text = _anglestring;
-            cmbAngles.Text = _anglestring;
+            lblAngle.Text = Text;
+            cmbAngles.Text = Text;
             Refresh();
         }
 
         /// <summary>
         /// Updates the line indicating the angle.
         /// </summary>
-        void UpdateAngle(System.Drawing.Graphics g)
+        void UpdateAngle(Graphics g)
         {
             var x = Width - 40;
-            var fill = Enabled ? System.Drawing.Brushes.Black : System.Drawing.Brushes.LightGray;
+            var fill = Enabled ? Brushes.Black : Brushes.LightGray;
             var line = Enabled ? Pens.White : Pens.LightGray;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
             g.FillEllipse(fill, x + 4, 4, 32, 32);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            if (_elevation > 0)
+            if (_angle < 0)
             {
                 // Draw a single pixel in the center - a bit of a pain to do
                 var pt = new Bitmap(1, 1);
@@ -192,8 +165,9 @@ namespace Sledge.BspEditor.Editing.Controls
             }
             else
             {
-                var xcoord = x + (int)Math.Round(Math.Cos(_angle) * 15, 0) + 20;
-                var ycoord = -(int)Math.Round(Math.Sin(_angle) * 15, 0) + 20;
+                var rad = MathHelper.DegreesToRadians(_angle);
+                var xcoord = x + (int)Math.Round(Math.Cos(rad) * 15, 0) + 20;
+                var ycoord = -(int)Math.Round(Math.Sin(rad) * 15, 0) + 20;
                 g.DrawLine(line, x + 20, 20, xcoord, ycoord);
             }
         }
@@ -206,7 +180,7 @@ namespace Sledge.BspEditor.Editing.Controls
             var ycoord = -(e.Y - 20);
             var ang = Math.Atan2(ycoord, xcoord);
             while (ang < 0) ang += 2 * Math.PI;
-            SetAngle(ang);
+            Angle = (int) MathHelper.RadiansToDegrees(ang);
         }
 
         private void AngleControlMouseDown(object sender, MouseEventArgs e)
@@ -225,22 +199,24 @@ namespace Sledge.BspEditor.Editing.Controls
         {
             if (e.Button != MouseButtons.Left) return;
             _draggedinside = false;
-            SetAngle(_angle);
+
+            FireAngleChangedEvent();
         }
 
         void CmbAnglesSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbAngles.SelectedIndex == 0) SetUp();
-            else SetDown();
+            if (cmbAngles.SelectedIndex == 0) Up = true;
+            else Down = true;
+
+            FireAngleChangedEvent();
         }
 
         void CmbAnglesKeyDown(object sender, KeyEventArgs e)
         {
-            int i;
-            if (e.KeyCode == Keys.Enter && int.TryParse(cmbAngles.Text, out i) && i >= 0 && i <= 359)
-            {
-                SetAngle(i);
-            }
+            if (e.KeyCode != Keys.Enter || !int.TryParse(cmbAngles.Text, out var i) || i < 0 || i > 359) return;
+
+            Angle = i;
+            FireAngleChangedEvent();
         }
     }
 }

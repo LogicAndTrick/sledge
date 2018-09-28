@@ -208,12 +208,14 @@ namespace Sledge.BspEditor.Editing.Components.Properties.Tabs
             // angAngles
             // 
             this.angAngles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.angAngles.LabelText = "Angles:";
             this.angAngles.Location = new System.Drawing.Point(490, 3);
             this.angAngles.Name = "angAngles";
             this.angAngles.ShowLabel = true;
             this.angAngles.ShowTextBox = true;
             this.angAngles.Size = new System.Drawing.Size(115, 64);
             this.angAngles.TabIndex = 26;
+            this.angAngles.AngleChangedEvent += new System.EventHandler(this.SetAngleValue);
             // 
             // ClassInfoTab
             // 
