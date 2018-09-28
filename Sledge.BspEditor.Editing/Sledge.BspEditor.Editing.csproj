@@ -286,7 +286,7 @@
     <Compile Include="Problems\GameDataNotFound.cs" />
     <Compile Include="Problems\GroupWithoutChildren.cs" />
     <Compile Include="Problems\InvalidKeyValues.cs" />
-    <Compile Include="Problems\InvalidSolids.cs" />
+    <Compile Include="Problems\InvalidSolid.cs" />
     <Compile Include="Problems\IProblemCheck.cs" />
     <Compile Include="Problems\NoPlayerStart.cs" />
     <Compile Include="Problems\PointEntityWithChildren.cs" />

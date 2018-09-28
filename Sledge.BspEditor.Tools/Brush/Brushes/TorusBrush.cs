@@ -67,7 +67,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
 
         public string Name { get; set; } = "Torus";
 
-        public bool CanRound => true;
+        public bool CanRound => false;
 
         public IEnumerable<BrushControl> GetControls()
         {
@@ -98,29 +98,40 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
                 face.Vertices.AddRange(arr);
                 solid.Data.Add(face);
             }
+
             solid.DescendantsChanged();
             return solid;
         }
 
         public IEnumerable<IMapObject> Create(UniqueNumberGenerator generator, Box box, string texture, int roundDecimals)
         {
+            roundDecimals = 2; // don't support rounding
+
             var crossSides = (int)_crossSides.GetValue();
             if (crossSides < 3) yield break;
+
             var crossWidth = (float) _crossRadius.GetValue() * 2;
             if (crossWidth < 1) yield break;
+
             var crossMakeHollow = _crossMakeHollow.GetValue();
             var crossArc = !crossMakeHollow ? 360 : (float)_crossArc.GetValue();
             if (crossArc < 1) yield break;
+
             var crossStartAngle = (float)_crossStartAngle.GetValue();
             if (crossStartAngle < 0 || crossStartAngle > 359) yield break;
+
             var crossWallWidth = (float) _crossWallWidth.GetValue();
             if (crossWallWidth < 1) yield break;
+
             var ringSides = (int)_ringSides.GetValue();
             if (ringSides < 3) yield break;
+
             var ringArc = (float)_ringArc.GetValue();
             if (ringArc < 1) yield break;
+
             var ringStartAngle = (float)_ringStartAngle.GetValue();
             if (ringStartAngle < 0 || ringStartAngle > 359) yield break;
+
             var rotationHeight = (float) _rotationHeight.GetValue();
 
             // Sort of a combination of cylinder and pipe brushes
@@ -159,6 +170,7 @@ namespace Sledge.BspEditor.Tools.Brush.Brushes
                     var zval = minorSecondaryOuter * (float) Math.Sin(cross);
                     crossSecOuter[j] = new Vector3(xval + rxval, yval + ryval, zval + rzval).Round(roundDecimals);
                     if (!crossMakeHollow) continue;
+
                     xval = majorSecondaryInner * (float) Math.Cos(cross) * (float) Math.Cos(ring);
                     yval = majorSecondaryInner * (float) Math.Cos(cross) * (float) Math.Sin(ring);
                     zval = minorSecondaryInner * (float) Math.Sin(cross);

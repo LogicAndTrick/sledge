@@ -14,7 +14,7 @@ namespace Sledge.BspEditor.Editing.Problems
 {
     [Export(typeof(IProblemCheck))]
     [AutoTranslate]
-    public class InvalidSolids : IProblemCheck
+    public class InvalidSolid : IProblemCheck
     {
         public string Name { get; set; }
         public string Details { get; set; }
