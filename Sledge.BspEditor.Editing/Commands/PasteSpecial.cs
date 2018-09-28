@@ -140,7 +140,7 @@ namespace Sledge.BspEditor.Editing.Commands
             var mov = Matrix4x4.CreateTranslation(-box.Center); // Move to zero
             var rot = Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(rads.Y, rads.X, rads.Z)); // Do rotation
             var fin = Matrix4x4.CreateTranslation(origin); // Move to final origin
-            var transform = fin * rot * mov;
+            var transform = mov * rot * fin;
 
             foreach (var mo in objectsToPaste)
             {
