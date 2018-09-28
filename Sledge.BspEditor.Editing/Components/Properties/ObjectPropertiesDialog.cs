@@ -37,8 +37,9 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         private List<Subscription> _subscriptions;
         private Dictionary<IObjectPropertyEditorTab, TabPage> _pages;
         private MapDocument _currentDocument;
+        private List<IMapObject> _forcedSelection;
 
-        public async Task OnInitialise()
+        public Task OnInitialise()
         {
             _pages = new Dictionary<IObjectPropertyEditorTab, TabPage>();
             this.InvokeLater(() =>
@@ -51,6 +52,9 @@ namespace Sledge.BspEditor.Editing.Components.Properties
                     _pages[tab] = page;
                 }
             });
+
+            Oy.Subscribe<List<IMapObject>>("BspEditor:ObjectProperties:OpenWithSelection", OpenWithSelection);
+            return Task.CompletedTask;
         }
 
         public string Title
@@ -99,6 +103,22 @@ namespace Sledge.BspEditor.Editing.Components.Properties
 
             InitializeComponent();
             CreateHandle();
+        }
+
+        private async Task OpenWithSelection(List<IMapObject> selection)
+        {
+            _forcedSelection = selection;
+            await Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
+        }
+
+        /// <summary>
+        /// Get the current selection, using the forced if it exists, otherwise using the document selection.
+        /// </summary>
+        private List<IMapObject> GetCurrentSelection()
+        {
+            return _forcedSelection?.ToList()
+                   ?? _currentDocument?.Selection.GetSelectedParents().ToList()
+                   ?? new List<IMapObject>();
         }
 
         /// <summary>
@@ -157,11 +177,13 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             if (actuallyClose.Result) Oy.Publish("Context:Remove", new ContextInfo("BspEditor:ObjectProperties"));
         }
 
+        /// <inheritdoc />
         public bool IsInContext(IContext context)
         {
             return context.HasAny("BspEditor:ObjectProperties");
         }
 
+        /// <inheritdoc />
         public void SetVisible(IContext context, bool visible)
         {
             this.InvokeLater(() =>
@@ -179,6 +201,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
                 }
                 else
                 {
+                    _forcedSelection = null;
                     Hide();
                     Unsubscribe();
                 }
@@ -225,7 +248,8 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             var changed = _tabs.Select(x => x.Value).Where(x => x.HasChanges).ToList();
             if (!changed.Any()) return true;
 
-            var changes = changed.SelectMany(x => x.GetChanges(_currentDocument, _currentDocument.Selection.GetSelectedParents().ToList()));
+            var list = GetCurrentSelection();
+            var changes = changed.SelectMany(x => x.GetChanges(_currentDocument, list));
             var tsn = new Transaction(changes);
 
             await MapDocumentOperation.Perform(_currentDocument, tsn);
@@ -237,24 +261,53 @@ namespace Sledge.BspEditor.Editing.Components.Properties
         /// </summary>
         private Task Reset(Task t = null)
         {
-            return DocumentActivated(_currentDocument);
+            return UpdateSelection();
         }
 
+        /// <summary>
+        /// A different document has been activated, clear the selection and reset to the new document
+        /// </summary>
         private async Task DocumentActivated(MapDocument doc)
         {
             _currentDocument = doc;
-            var list = _context.Get("BspEditor:ObjectProperties", doc?.Selection.GetSelectedParents().ToList()) ?? new List<IMapObject>();
-            foreach (var tab in _tabs)
+
+            // If the selection is forced, reset it
+            var forced = _forcedSelection;
+            if (forced != null && !forced.All(x => ReferenceEquals(doc.Map.Root.FindByID(x.ID), x)))
             {
-                await tab.Value.SetObjects(doc, list);
+                // Special case for root object
+                if (forced.Count == 1 && forced[0] is Root) forced[0] = _currentDocument.Map.Root;
+                // Otherwise clear the forced selection
+                else _forcedSelection = null;
             }
-            this.InvokeLater(() => UpdateTabVisibility(_context, list));
+
+            await UpdateSelection();
         }
 
+        /// <summary>
+        /// The active document has been modified, ensure the selection is still correct.
+        /// </summary>
         private async Task DocumentChanged(Change change)
         {
-            await Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties"));
-            await DocumentActivated(change.Document);
+            // If the selection is forced, make sure any deleted objects are removed from the selection
+            _forcedSelection?.RemoveAll(x => change.Removed.Contains(x));
+
+            await UpdateSelection();
+        }
+
+        /// <summary>
+        /// Update all tabs with the new selection.
+        /// </summary>
+        private async Task UpdateSelection()
+        {
+            var list = GetCurrentSelection();
+
+            foreach (var tab in _tabs)
+            {
+                await tab.Value.SetObjects(_currentDocument, list);
+            }
+
+            this.InvokeLater(() => UpdateTabVisibility(_context, list));
         }
 
         private void ApplyClicked(object sender, EventArgs e) => Save().ContinueWith(Reset);

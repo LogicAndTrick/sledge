@@ -25,7 +25,7 @@ namespace Sledge.BspEditor.Editing.Commands
 
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
-            await Oy.Publish("Context:Add", new ContextInfo("BspEditor:ObjectProperties", new List<IMapObject> { document.Map.Root }));
+            await Oy.Publish("BspEditor:ObjectProperties:OpenWithSelection", new List<IMapObject> {document.Map.Root});
         }
     }
 }
