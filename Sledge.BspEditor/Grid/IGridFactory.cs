@@ -4,6 +4,9 @@ using Sledge.BspEditor.Environment;
 
 namespace Sledge.BspEditor.Grid
 {
+    /// <summary>
+    /// A factory that creates grid objects.
+    /// </summary>
     public interface IGridFactory
     {
         /// <summary>
@@ -16,21 +19,21 @@ namespace Sledge.BspEditor.Grid
         /// </summary>
         string Details { get; set; }
 
+        /// <summary>
+        /// An icon for this grid type
+        /// </summary>
         Image Icon { get; }
-
 
         /// <summary>
         /// Create a grid for the provided environment
         /// </summary>
-        /// <param name="environment"></param>
-        /// <returns></returns>
+        /// <param name="environment">The environment to use</param>
         Task<IGrid> Create(IEnvironment environment);
 
         /// <summary>
         /// Test if a grid is an instance of this factory class
         /// </summary>
-        /// <param name="grid"></param>
-        /// <returns></returns>
+        /// <param name="grid">The grid to test</param>
         bool IsInstance(IGrid grid);
     }
 }

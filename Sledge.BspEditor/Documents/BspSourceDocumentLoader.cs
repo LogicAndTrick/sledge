@@ -18,6 +18,9 @@ using Sledge.Shell;
 
 namespace Sledge.BspEditor.Documents
 {
+    /// <summary>
+    /// A document loader for BSP source files.
+    /// </summary>
     [AutoTranslate]
     [Export(typeof(IDocumentLoader))]
     public class BspSourceDocumentLoader : IDocumentLoader
@@ -27,7 +30,9 @@ namespace Sledge.BspEditor.Documents
         private readonly Lazy<EnvironmentRegister> _environments;
         private readonly Lazy<Form> _shell;
 
+        /// <inheritdoc />
         public string FileTypeDescription { get; set; }
+
         public string UntitledDocumentName { get; set; }
 
         private static int _untitled = 1;
@@ -46,21 +51,34 @@ namespace Sledge.BspEditor.Documents
             _shell = shell;
         }
 
+        /// <inheritdoc />
         public IEnumerable<FileExtensionInfo> SupportedFileExtensions
         {
             get { return _providers.SelectMany(x => x.Value.SupportedFileExtensions); }
         }
 
+        /// <inheritdoc />
         public bool CanLoad(string location)
         {
             return location == null || _providers.Any(x => CanLoad(x.Value, location));
         }
 
+        /// <summary>
+        /// See if a given provider can load a file from a given location.
+        /// </summary>
+        /// <param name="provider">The provider to test</param>
+        /// <param name="location">The location of the file</param>
         private bool CanLoad(IBspSourceProvider provider, string location)
         {
             return location == null || provider.SupportedFileExtensions.Any(x => x.Matches(location));
         }
 
+        /// <summary>
+        /// Get an environment for the document.
+        /// If more than one environment exists, then the user will be prompted.
+        /// If the user chooses to cancel, null will be returned.
+        /// If no environment is configured, <see cref="EmptyEnvironment"/> will be returned.
+        /// </summary>
         private async Task<IEnvironment> GetEnvironment()
         {
             var envs = _environments.Value.GetSerialisedEnvironments().ToList();
@@ -87,6 +105,7 @@ namespace Sledge.BspEditor.Documents
             return new EmptyEnvironment();
         }
 
+        /// <inheritdoc />
         public async Task<IDocument> CreateBlank()
         {
             var env = await GetEnvironment();
@@ -101,6 +120,7 @@ namespace Sledge.BspEditor.Documents
             return md;
         }
 
+        /// <inheritdoc />
         public async Task<IDocument> Load(string location)
         {
             var env = await GetEnvironment();
@@ -135,6 +155,11 @@ namespace Sledge.BspEditor.Documents
             throw new NotSupportedException("This file type is not supported.");
         }
 
+        /// <summary>
+        /// Process a document after it has been loaded from a file.
+        /// </summary>
+        /// <param name="env">The document's environment</param>
+        /// <param name="document">The document to process</param>
         private async Task ProcessAfterLoad(IEnvironment env, MapDocument document)
         {
             await env.UpdateDocumentData(document);
@@ -145,11 +170,13 @@ namespace Sledge.BspEditor.Documents
             }
         }
 
+        /// <inheritdoc />
         public bool CanSave(IDocument document)
         {
             return document is MapDocument;
         }
 
+        /// <inheritdoc />
         public async Task Save(IDocument document, string location)
         {
             var map = (MapDocument) document;
@@ -181,6 +208,12 @@ namespace Sledge.BspEditor.Documents
             throw new NotSupportedException("This file type is not supported.");
         }
 
+        /// <summary>
+        /// Process a document before it is saved to a file.
+        /// This method will be run at any time, and may not be followed by a change to the document's underlying file.
+        /// For example, when exporting a document for compile, this method will be called.
+        /// </summary>
+        /// <param name="document">The document to process</param>
         private async Task ProcessBeforeSave(MapDocument document)
         {
             foreach (var p in _processors.Select(x => x.Value).OrderBy(x => x.OrderHint))
@@ -189,6 +222,7 @@ namespace Sledge.BspEditor.Documents
             }
         }
 
+        /// <inheritdoc />
         public DocumentPointer GetDocumentPointer(IDocument document)
         {
             if (!(document is MapDocument doc)) return null;
@@ -200,6 +234,7 @@ namespace Sledge.BspEditor.Documents
             return so;
         }
 
+        /// <inheritdoc />
         public async Task<IDocument> Load(DocumentPointer documentPointer)
         {
             var fileName = documentPointer.FileName;

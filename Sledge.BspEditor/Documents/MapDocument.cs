@@ -12,11 +12,17 @@ using Sledge.Common.Shell.Documents;
 
 namespace Sledge.BspEditor.Documents
 {
+    /// <summary>
+    /// A document that represents a BSP map file.
+    /// </summary>
     public class MapDocument : IDocument
     {
+        /// <inheritdoc />
         public string Name { get; set; }
         
         private string _fileName;
+
+        /// <inheritdoc />
         public string FileName
         {
             get => _fileName;
@@ -29,14 +35,28 @@ namespace Sledge.BspEditor.Documents
             }
         }
 
+        /// <inheritdoc />
         public object Control => MapDocumentControlHost.Instance;
+
+        /// <inheritdoc />
         public bool HasUnsavedChanges { get; set; }
 
+        /// <summary>
+        /// The map for this document
+        /// </summary>
         public Map Map { get; }
+
+        /// <summary>
+        /// The environment for this document
+        /// </summary>
         public IEnvironment Environment { get; }
 
         private readonly List<Subscription> _subscriptions;
 
+        /// <summary>
+        /// A convenience method to get the selection for this document.
+        /// If no selection map data object exists, it will be created.
+        /// </summary>
         public Selection Selection
         {
             get
@@ -50,6 +70,11 @@ namespace Sledge.BspEditor.Documents
             }
         }
 
+        /// <summary>
+        /// Create a map document with the given map and environment
+        /// </summary>
+        /// <param name="map">The map</param>
+        /// <param name="environment">The environment</param>
         public MapDocument(Map map, IEnvironment environment)
         {
             FileName = null;
@@ -86,11 +111,13 @@ namespace Sledge.BspEditor.Documents
             await Oy.Publish("Document:Changed", this);
         }
 
+        /// <inheritdoc />
         public Task<bool> RequestClose()
         {
             return Task.FromResult(true);
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _subscriptions.ForEach(x => x.Dispose());

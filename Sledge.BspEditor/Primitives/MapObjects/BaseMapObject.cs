@@ -15,10 +15,19 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     /// </summary>
     public abstract class BaseMapObject : IMapObject
     {
+        /// <inheritdoc />
         public long ID { get; }
+
+        /// <inheritdoc />
         public bool IsSelected { get; set; }
+
+        /// <inheritdoc />
         public Box BoundingBox { get; private set; }
+
+        /// <inheritdoc />
         public MapObjectDataCollection Data { get; private set; }
+
+        /// <inheritdoc />
         public MapObjectHierarchy Hierarchy { get; private set; }
 
         protected BaseMapObject(long id)
@@ -40,6 +49,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             SetCustomSerialisedData(obj);
         }
 
+        /// <inheritdoc />
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("ID", ID);
@@ -47,6 +57,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             info.AddValue("Children", Hierarchy.ToArray());
         }
 
+        /// <inheritdoc />
         public void DescendantsChanged()
         {
             OnDescendantsChanged();
@@ -54,6 +65,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             Hierarchy.Parent?.DescendantsChanged();
         }
 
+        /// <inheritdoc />
         public void Invalidate()
         {
             foreach (var ch in Hierarchy)
@@ -64,11 +76,17 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             OnInvalidated();
         }
 
+        /// <summary>
+        /// Fires when descendants changed is called, before updating the bounding box or bubbling to the parent.
+        /// </summary>
         protected virtual void OnDescendantsChanged()
         {
             //
         }
 
+        /// <summary>
+        /// Fires when invalidate is called, after updating the bounding box and bubbling to all children.
+        /// </summary>
         protected virtual void OnInvalidated()
         {
             //
@@ -113,9 +131,13 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             DescendantsChanged();
         }
 
+        /// <inheritdoc />
         public abstract IEnumerable<Polygon> GetPolygons();
+
+        /// <inheritdoc />
         public abstract IEnumerable<IMapObject> Decompose(IEnumerable<Type> allowedTypes);
 
+        /// <inheritdoc />
         public virtual IMapElement Clone()
         {
             var inst = (BaseMapObject) GetType().GetConstructor(new[] {typeof(long)}).Invoke(new object[] {ID});
@@ -123,12 +145,14 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             return inst;
         }
 
+        /// <inheritdoc />
         public virtual void Unclone(IMapObject obj)
         {
             if (obj.GetType() != GetType()) throw new ArgumentException("Cannot unclone into a different type.", nameof(obj));
             UncloneBase((BaseMapObject) obj);
         }
 
+        /// <inheritdoc />
         public virtual IMapElement Copy(UniqueNumberGenerator numberGenerator)
         {
             var inst = (BaseMapObject)GetType().GetConstructor(new[] { typeof(long) }).Invoke(new object[] { numberGenerator.Next("MapObject") });
@@ -136,7 +160,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             return inst;
         }
 
-
+        /// <inheritdoc />
         public virtual void Transform(Matrix4x4 matrix)
         {
             foreach (var t in Data.OfType<ITransformable>())
@@ -180,6 +204,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
 
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -188,11 +213,13 @@ namespace Sledge.BspEditor.Primitives.MapObjects
             return Equals((IMapObject)obj);
         }
 
+        /// <inheritdoc />
         public bool Equals(IMapObject other)
         {
             return other != null && other.ID == ID;
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             return ID.GetHashCode();

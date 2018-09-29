@@ -43,8 +43,14 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         /// <param name="obj">The object to retrieve data from</param>
         void Unclone(IMapObject obj);
 
+        /// <summary>
+        /// Updates the bounding box and any other metadata, and then bubbles upwards to the root object.
+        /// </summary>
         void DescendantsChanged();
 
+        /// <summary>
+        /// Updates the bounding box and any other metadata, and then bubbles downwards towards all descendants.
+        /// </summary>
         void Invalidate();
 
         /// <summary>

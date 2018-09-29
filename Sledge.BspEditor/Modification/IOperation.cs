@@ -3,6 +3,10 @@ using Sledge.BspEditor.Documents;
 
 namespace Sledge.BspEditor.Modification
 {
+    /// <summary>
+    /// An operation is an action that modifies a document.
+    /// All changes made on a document should be done via an operation.
+    /// </summary>
     public interface IOperation
     {
         /// <summary>

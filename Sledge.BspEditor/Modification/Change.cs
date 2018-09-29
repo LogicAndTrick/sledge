@@ -6,22 +6,50 @@ using Sledge.BspEditor.Primitives.MapObjects;
 
 namespace Sledge.BspEditor.Modification
 {
+    /// <summary>
+    /// Represents a change set as a result of an operation on a document.
+    /// </summary>
     public class Change
     {
+        /// <summary>
+        /// The document modified by the change
+        /// </summary>
         public MapDocument Document { get; }
+
         private readonly HashSet<IMapData> _affectedData;
 
         private readonly HashSet<IMapObject> _added;
         private readonly HashSet<IMapObject> _updated;
         private readonly HashSet<IMapObject> _removed;
 
+        /// <summary>
+        /// The items that were added during the change
+        /// </summary>
         public IEnumerable<IMapObject> Added => _added;
+
+        /// <summary>
+        /// The items that were updated during the change
+        /// </summary>
         public IEnumerable<IMapObject> Updated => _updated;
+
+        /// <summary>
+        /// The items that were removed during the change
+        /// </summary>
         public IEnumerable<IMapObject> Removed => _removed;
 
+        /// <summary>
+        /// The map data objects which were affected during the change
+        /// </summary>
         public IEnumerable<IMapData> AffectedData => _affectedData;
 
+        /// <summary>
+        /// True if there are object changes in this change
+        /// </summary>
         public bool HasObjectChanges => _added.Count + _updated.Count + _removed.Count > 0;
+
+        /// <summary>
+        /// True if there are map data changes in this change
+        /// </summary>
         public bool HasDataChanges => _affectedData.Count > 0;
 
         public Change(MapDocument document)

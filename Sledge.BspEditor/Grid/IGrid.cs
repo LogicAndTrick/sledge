@@ -3,6 +3,13 @@ using System.Numerics;
 
 namespace Sledge.BspEditor.Grid
 {
+    /// <summary>
+    /// A grid is used for guidelines and vertex snapping.
+    /// 
+    /// The grid interface should represent both a list of lines
+    /// to render on the screen, as well as a snapping rule set
+    /// to use during user interaction.
+    /// </summary>
     public interface IGrid
     {
         /// <summary>
