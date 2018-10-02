@@ -214,6 +214,8 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         protected virtual void DrawBox(IViewport viewport, OrthographicCamera camera, Graphics graphics, Vector3 start, Vector3 end)
         {
+            start = Vector3.Max(start, new Vector3(-100, -100, -100));
+            end = Vector3.Min(end, new Vector3(viewport.Width + 100, viewport.Height + 100, 100));
             using (var b = new SolidBrush(GetRenderFillColour()))
             {
                 graphics.FillRectangle(b, start.X, end.Y, end.X - start.X, start.Y - end.Y);

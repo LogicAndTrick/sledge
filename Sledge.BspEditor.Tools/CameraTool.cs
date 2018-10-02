@@ -166,7 +166,7 @@ namespace Sledge.BspEditor.Tools
             var active = Document.Map.Data.Get<Camera>().FirstOrDefault(x => x.IsActive);
             if (active == null)
             {
-                active = Document.Map.Data.GetOne<Camera>();
+                active = Document.Map.Data.GetOne<Camera>() ?? new Camera();
                 active.IsActive = true;
             }
             var len = active.Length;

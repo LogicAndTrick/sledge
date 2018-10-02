@@ -393,7 +393,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         private IEnumerable<VertexPoint> GetVisiblePoints()
         {
-            var points = _vertices.SelectMany(x => x.Value.Points);
+            var points = _vertices.SelectMany(x => x.Value.Points).ToList();
             switch (_showPoints)
             {
                 case VisiblePoints.All:
