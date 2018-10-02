@@ -156,23 +156,24 @@
             this.FitGroup.Controls.Add(this.label4);
             this.FitGroup.Location = new System.Drawing.Point(8, 87);
             this.FitGroup.Name = "FitGroup";
-            this.FitGroup.Size = new System.Drawing.Size(205, 99);
+            this.FitGroup.Size = new System.Drawing.Size(205, 108);
             this.FitGroup.TabIndex = 5;
             this.FitGroup.TabStop = false;
             this.FitGroup.Text = "Fit to multiple tiles";
             // 
             // TimesToTileLabel
             // 
-            this.TimesToTileLabel.AutoSize = true;
+            this.TimesToTileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.TimesToTileLabel.Location = new System.Drawing.Point(8, 21);
             this.TimesToTileLabel.Name = "TimesToTileLabel";
-            this.TimesToTileLabel.Size = new System.Drawing.Size(105, 13);
+            this.TimesToTileLabel.Size = new System.Drawing.Size(191, 27);
             this.TimesToTileLabel.TabIndex = 4;
             this.TimesToTileLabel.Text = "Times to tile on face:";
             // 
             // TileFitX
             // 
-            this.TileFitX.Location = new System.Drawing.Point(41, 41);
+            this.TileFitX.Location = new System.Drawing.Point(41, 51);
             this.TileFitX.Minimum = new decimal(new int[] {
             1,
             0,
@@ -189,9 +190,9 @@
             // 
             // TileFitButton
             // 
-            this.TileFitButton.Location = new System.Drawing.Point(98, 50);
+            this.TileFitButton.Location = new System.Drawing.Point(98, 60);
             this.TileFitButton.Name = "TileFitButton";
-            this.TileFitButton.Size = new System.Drawing.Size(34, 23);
+            this.TileFitButton.Size = new System.Drawing.Size(71, 23);
             this.TileFitButton.TabIndex = 3;
             this.TileFitButton.Text = "Fit";
             this.TileFitButton.UseVisualStyleBackColor = true;
@@ -199,7 +200,7 @@
             // 
             // TileFitY
             // 
-            this.TileFitY.Location = new System.Drawing.Point(41, 67);
+            this.TileFitY.Location = new System.Drawing.Point(41, 77);
             this.TileFitY.Minimum = new decimal(new int[] {
             1,
             0,
@@ -217,7 +218,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(21, 43);
+            this.label1.Location = new System.Drawing.Point(21, 53);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(17, 13);
             this.label1.TabIndex = 2;
@@ -226,7 +227,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(21, 69);
+            this.label4.Location = new System.Drawing.Point(21, 79);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(17, 13);
             this.label4.TabIndex = 2;
@@ -241,7 +242,7 @@
             this.Controls.Add(this.RandomiseShiftValuesGroup);
             this.Name = "TextureToolSidebarPanel";
             this.Padding = new System.Windows.Forms.Padding(5);
-            this.Size = new System.Drawing.Size(220, 196);
+            this.Size = new System.Drawing.Size(220, 203);
             ((System.ComponentModel.ISupportInitialize)(this.RandomShiftMin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.RandomShiftMax)).EndInit();
             this.RandomiseShiftValuesGroup.ResumeLayout(false);

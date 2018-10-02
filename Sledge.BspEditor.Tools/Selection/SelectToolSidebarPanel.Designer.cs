@@ -101,9 +101,11 @@
             // 
             // MoveToWorldButton
             // 
-            this.MoveToWorldButton.Location = new System.Drawing.Point(3, 3);
+            this.MoveToWorldButton.AutoSize = true;
+            this.MoveToWorldButton.Location = new System.Drawing.Point(1, 1);
+            this.MoveToWorldButton.Margin = new System.Windows.Forms.Padding(1);
             this.MoveToWorldButton.Name = "MoveToWorldButton";
-            this.MoveToWorldButton.Size = new System.Drawing.Size(86, 23);
+            this.MoveToWorldButton.Size = new System.Drawing.Size(100, 23);
             this.MoveToWorldButton.TabIndex = 8;
             this.MoveToWorldButton.Text = "Move to World";
             this.MoveToWorldButton.UseVisualStyleBackColor = true;
@@ -111,9 +113,11 @@
             // 
             // MoveToEntityButton
             // 
-            this.MoveToEntityButton.Location = new System.Drawing.Point(95, 3);
+            this.MoveToEntityButton.AutoSize = true;
+            this.MoveToEntityButton.Location = new System.Drawing.Point(1, 26);
+            this.MoveToEntityButton.Margin = new System.Windows.Forms.Padding(1);
             this.MoveToEntityButton.Name = "MoveToEntityButton";
-            this.MoveToEntityButton.Size = new System.Drawing.Size(84, 23);
+            this.MoveToEntityButton.Size = new System.Drawing.Size(100, 23);
             this.MoveToEntityButton.TabIndex = 9;
             this.MoveToEntityButton.Text = "Tie to Entity";
             this.MoveToEntityButton.UseVisualStyleBackColor = true;
@@ -131,6 +135,8 @@
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.Controls.Add(this.TranslateModeCheckbox);
             this.flowLayoutPanel1.Controls.Add(this.RotateModeCheckbox);
             this.flowLayoutPanel1.Controls.Add(this.SkewModeCheckbox);
@@ -138,15 +144,20 @@
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(220, 30);
             this.flowLayoutPanel1.TabIndex = 10;
+            this.flowLayoutPanel1.WrapContents = false;
             // 
             // flowLayoutPanel2
             // 
+            this.flowLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel2.Controls.Add(this.MoveToWorldButton);
             this.flowLayoutPanel2.Controls.Add(this.MoveToEntityButton);
+            this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 88);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(220, 28);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(220, 53);
             this.flowLayoutPanel2.TabIndex = 11;
+            this.flowLayoutPanel2.WrapContents = false;
             // 
             // SelectToolSidebarPanel
             // 
@@ -160,10 +171,11 @@
             this.Controls.Add(this.Show3DWidgetsCheckbox);
             this.Name = "SelectToolSidebarPanel";
             this.Padding = new System.Windows.Forms.Padding(5);
-            this.Size = new System.Drawing.Size(232, 124);
+            this.Size = new System.Drawing.Size(232, 149);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

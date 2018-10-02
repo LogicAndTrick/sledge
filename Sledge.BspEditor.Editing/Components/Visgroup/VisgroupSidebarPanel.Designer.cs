@@ -38,9 +38,9 @@
             // btnShowAll
             // 
             this.btnShowAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnShowAll.Location = new System.Drawing.Point(96, 175);
+            this.btnShowAll.Location = new System.Drawing.Point(104, 188);
             this.btnShowAll.Name = "btnShowAll";
-            this.btnShowAll.Size = new System.Drawing.Size(57, 22);
+            this.btnShowAll.Size = new System.Drawing.Size(95, 22);
             this.btnShowAll.TabIndex = 5;
             this.btnShowAll.Tag = "ShowAll";
             this.btnShowAll.Text = "Show All";
@@ -50,9 +50,9 @@
             // btnSelect
             // 
             this.btnSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSelect.Location = new System.Drawing.Point(44, 175);
+            this.btnSelect.Location = new System.Drawing.Point(3, 188);
             this.btnSelect.Name = "btnSelect";
-            this.btnSelect.Size = new System.Drawing.Size(46, 22);
+            this.btnSelect.Size = new System.Drawing.Size(95, 22);
             this.btnSelect.TabIndex = 6;
             this.btnSelect.Tag = "Select";
             this.btnSelect.Text = "Select";
@@ -62,9 +62,9 @@
             // btnEdit
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnEdit.Location = new System.Drawing.Point(3, 175);
+            this.btnEdit.Location = new System.Drawing.Point(3, 165);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(35, 22);
+            this.btnEdit.Size = new System.Drawing.Size(95, 22);
             this.btnEdit.TabIndex = 7;
             this.btnEdit.Tag = "Edit";
             this.btnEdit.Text = "Edit";
@@ -78,8 +78,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.VisgroupPanel.Location = new System.Drawing.Point(3, 3);
             this.VisgroupPanel.Name = "VisgroupPanel";
+            this.VisgroupPanel.SelectedVisgroup = null;
             this.VisgroupPanel.ShowCheckboxes = true;
-            this.VisgroupPanel.Size = new System.Drawing.Size(196, 166);
+            this.VisgroupPanel.Size = new System.Drawing.Size(196, 160);
             this.VisgroupPanel.TabIndex = 8;
             this.VisgroupPanel.VisgroupToggled += new Sledge.BspEditor.Editing.Components.Visgroup.VisgroupPanel.VisgroupToggledEventHandler(this.VisgroupToggled);
             this.VisgroupPanel.VisgroupSelected += new Sledge.BspEditor.Editing.Components.Visgroup.VisgroupPanel.VisgroupSelectedEventHandler(this.VisgroupSelected);
@@ -87,9 +88,9 @@
             // btnNew
             // 
             this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnNew.Location = new System.Drawing.Point(159, 175);
+            this.btnNew.Location = new System.Drawing.Point(104, 165);
             this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(40, 22);
+            this.btnNew.Size = new System.Drawing.Size(95, 22);
             this.btnNew.TabIndex = 9;
             this.btnNew.Tag = "New";
             this.btnNew.Text = "New";
@@ -108,7 +109,7 @@
             this.MaximumSize = new System.Drawing.Size(0, 250);
             this.MinimumSize = new System.Drawing.Size(200, 165);
             this.Name = "VisgroupSidebarPanel";
-            this.Size = new System.Drawing.Size(200, 200);
+            this.Size = new System.Drawing.Size(200, 212);
             this.ResumeLayout(false);
 
         }

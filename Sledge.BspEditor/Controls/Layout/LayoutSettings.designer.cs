@@ -58,7 +58,7 @@
             this.TableLayout.RowCount = 2;
             this.TableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.TableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.TableLayout.Size = new System.Drawing.Size(290, 233);
+            this.TableLayout.Size = new System.Drawing.Size(290, 230);
             this.TableLayout.TabIndex = 0;
             // 
             // Rows
@@ -98,7 +98,7 @@
             // Columns
             // 
             this.Columns.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Columns.Location = new System.Drawing.Point(96, 278);
+            this.Columns.Location = new System.Drawing.Point(96, 272);
             this.Columns.Maximum = new decimal(new int[] {
             4,
             0,
@@ -122,7 +122,7 @@
             // lblColumns
             // 
             this.lblColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblColumns.Location = new System.Drawing.Point(12, 278);
+            this.lblColumns.Location = new System.Drawing.Point(12, 272);
             this.lblColumns.Name = "lblColumns";
             this.lblColumns.Size = new System.Drawing.Size(78, 20);
             this.lblColumns.TabIndex = 2;
@@ -132,7 +132,7 @@
             // btnApply
             // 
             this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApply.Location = new System.Drawing.Point(278, 278);
+            this.btnApply.Location = new System.Drawing.Point(278, 272);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 3;
@@ -143,7 +143,7 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(197, 278);
+            this.btnCancel.Location = new System.Drawing.Point(197, 272);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 3;
@@ -176,7 +176,7 @@
             // 
             this.lblInstructions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblInstructions.AutoSize = true;
-            this.lblInstructions.Location = new System.Drawing.Point(12, 304);
+            this.lblInstructions.Location = new System.Drawing.Point(12, 298);
             this.lblInstructions.Name = "lblInstructions";
             this.lblInstructions.Size = new System.Drawing.Size(233, 39);
             this.lblInstructions.TabIndex = 2;
@@ -187,7 +187,7 @@
             // 
             this.lblPreset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblPreset.AutoSize = true;
-            this.lblPreset.Location = new System.Drawing.Point(12, 352);
+            this.lblPreset.Location = new System.Drawing.Point(12, 346);
             this.lblPreset.Name = "lblPreset";
             this.lblPreset.Size = new System.Drawing.Size(131, 13);
             this.lblPreset.TabIndex = 2;
@@ -197,9 +197,9 @@
             // 
             this.PresetButtonPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.PresetButtonPanel.Location = new System.Drawing.Point(149, 348);
+            this.PresetButtonPanel.Location = new System.Drawing.Point(15, 364);
             this.PresetButtonPanel.Name = "PresetButtonPanel";
-            this.PresetButtonPanel.Size = new System.Drawing.Size(204, 24);
+            this.PresetButtonPanel.Size = new System.Drawing.Size(338, 24);
             this.PresetButtonPanel.TabIndex = 5;
             this.PresetButtonPanel.WrapContents = false;
             // 
@@ -207,7 +207,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(365, 382);
+            this.ClientSize = new System.Drawing.Size(365, 400);
             this.Controls.Add(this.PresetButtonPanel);
             this.Controls.Add(this.WindowDropDown);
             this.Controls.Add(this.btnCancel);

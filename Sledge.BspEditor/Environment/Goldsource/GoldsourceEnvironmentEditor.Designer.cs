@@ -197,7 +197,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.lstFgds.Location = new System.Drawing.Point(6, 19);
             this.lstFgds.Name = "lstFgds";
             this.lstFgds.ShowItemToolTips = true;
-            this.lstFgds.Size = new System.Drawing.Size(357, 160);
+            this.lstFgds.Size = new System.Drawing.Size(357, 115);
             this.lstFgds.TabIndex = 34;
             this.lstFgds.UseCompatibleStateImageBehavior = false;
             this.lstFgds.View = System.Windows.Forms.View.Details;
@@ -222,9 +222,9 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             // lblDefaultBrushEntity
             // 
-            this.lblDefaultBrushEntity.Location = new System.Drawing.Point(45, 213);
+            this.lblDefaultBrushEntity.Location = new System.Drawing.Point(7, 168);
             this.lblDefaultBrushEntity.Name = "lblDefaultBrushEntity";
-            this.lblDefaultBrushEntity.Size = new System.Drawing.Size(112, 20);
+            this.lblDefaultBrushEntity.Size = new System.Drawing.Size(151, 20);
             this.lblDefaultBrushEntity.TabIndex = 30;
             this.lblDefaultBrushEntity.Text = "Default Brush Entity";
             this.lblDefaultBrushEntity.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -241,9 +241,9 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             // lblDefaultPointEntity
             // 
-            this.lblDefaultPointEntity.Location = new System.Drawing.Point(45, 186);
+            this.lblDefaultPointEntity.Location = new System.Drawing.Point(7, 141);
             this.lblDefaultPointEntity.Name = "lblDefaultPointEntity";
-            this.lblDefaultPointEntity.Size = new System.Drawing.Size(112, 20);
+            this.lblDefaultPointEntity.Size = new System.Drawing.Size(151, 20);
             this.lblDefaultPointEntity.TabIndex = 31;
             this.lblDefaultPointEntity.Text = "Default Point Entity";
             this.lblDefaultPointEntity.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -256,7 +256,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.cmbDefaultBrushEntity.IntegralHeight = false;
             this.cmbDefaultBrushEntity.Items.AddRange(new object[] {
             "Valve"});
-            this.cmbDefaultBrushEntity.Location = new System.Drawing.Point(163, 212);
+            this.cmbDefaultBrushEntity.Location = new System.Drawing.Point(164, 167);
             this.cmbDefaultBrushEntity.Name = "cmbDefaultBrushEntity";
             this.cmbDefaultBrushEntity.Size = new System.Drawing.Size(199, 21);
             this.cmbDefaultBrushEntity.TabIndex = 32;
@@ -269,7 +269,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.cmbDefaultPointEntity.IntegralHeight = false;
             this.cmbDefaultPointEntity.Items.AddRange(new object[] {
             "Valve"});
-            this.cmbDefaultPointEntity.Location = new System.Drawing.Point(163, 185);
+            this.cmbDefaultPointEntity.Location = new System.Drawing.Point(164, 140);
             this.cmbDefaultPointEntity.Name = "cmbDefaultPointEntity";
             this.cmbDefaultPointEntity.Size = new System.Drawing.Size(199, 21);
             this.cmbDefaultPointEntity.TabIndex = 33;
@@ -305,9 +305,9 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.chkIncludeFgdDirectories.Checked = true;
             this.chkIncludeFgdDirectories.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkIncludeFgdDirectories.Location = new System.Drawing.Point(17, 267);
+            this.chkIncludeFgdDirectories.Location = new System.Drawing.Point(6, 194);
             this.chkIncludeFgdDirectories.Name = "chkIncludeFgdDirectories";
-            this.chkIncludeFgdDirectories.Size = new System.Drawing.Size(251, 24);
+            this.chkIncludeFgdDirectories.Size = new System.Drawing.Size(357, 24);
             this.chkIncludeFgdDirectories.TabIndex = 39;
             this.chkIncludeFgdDirectories.Text = "Load sprites and models from FGD directories";
             this.chkIncludeFgdDirectories.UseVisualStyleBackColor = true;
@@ -323,16 +323,16 @@ namespace Sledge.BspEditor.Environment.Goldsource
             "32768",
             "65536",
             "131072"});
-            this.cmbMapSizeOverrideHigh.Location = new System.Drawing.Point(305, 239);
+            this.cmbMapSizeOverrideHigh.Location = new System.Drawing.Point(75, 275);
             this.cmbMapSizeOverrideHigh.Name = "cmbMapSizeOverrideHigh";
             this.cmbMapSizeOverrideHigh.Size = new System.Drawing.Size(57, 21);
             this.cmbMapSizeOverrideHigh.TabIndex = 44;
             // 
             // lblMapSizeOverrideHigh
             // 
-            this.lblMapSizeOverrideHigh.Location = new System.Drawing.Point(264, 238);
+            this.lblMapSizeOverrideHigh.Location = new System.Drawing.Point(5, 274);
             this.lblMapSizeOverrideHigh.Name = "lblMapSizeOverrideHigh";
-            this.lblMapSizeOverrideHigh.Size = new System.Drawing.Size(35, 20);
+            this.lblMapSizeOverrideHigh.Size = new System.Drawing.Size(64, 20);
             this.lblMapSizeOverrideHigh.TabIndex = 43;
             this.lblMapSizeOverrideHigh.Text = "High";
             this.lblMapSizeOverrideHigh.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -348,7 +348,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             "-32768",
             "-65536",
             "-131072"});
-            this.cmbMapSizeOverrideLow.Location = new System.Drawing.Point(201, 239);
+            this.cmbMapSizeOverrideLow.Location = new System.Drawing.Point(75, 248);
             this.cmbMapSizeOverrideLow.Name = "cmbMapSizeOverrideLow";
             this.cmbMapSizeOverrideLow.Size = new System.Drawing.Size(57, 21);
             this.cmbMapSizeOverrideLow.TabIndex = 42;
@@ -357,18 +357,18 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.chkOverrideMapSize.Checked = true;
             this.chkOverrideMapSize.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkOverrideMapSize.Location = new System.Drawing.Point(17, 237);
+            this.chkOverrideMapSize.Location = new System.Drawing.Point(6, 221);
             this.chkOverrideMapSize.Name = "chkOverrideMapSize";
-            this.chkOverrideMapSize.Size = new System.Drawing.Size(137, 24);
+            this.chkOverrideMapSize.Size = new System.Drawing.Size(196, 24);
             this.chkOverrideMapSize.TabIndex = 41;
             this.chkOverrideMapSize.Text = "Override FGD map size";
             this.chkOverrideMapSize.UseVisualStyleBackColor = true;
             // 
             // lblMapSizeOverrideLow
             // 
-            this.lblMapSizeOverrideLow.Location = new System.Drawing.Point(160, 238);
+            this.lblMapSizeOverrideLow.Location = new System.Drawing.Point(6, 249);
             this.lblMapSizeOverrideLow.Name = "lblMapSizeOverrideLow";
-            this.lblMapSizeOverrideLow.Size = new System.Drawing.Size(35, 20);
+            this.lblMapSizeOverrideLow.Size = new System.Drawing.Size(63, 20);
             this.lblMapSizeOverrideLow.TabIndex = 40;
             this.lblMapSizeOverrideLow.Text = "Low";
             this.lblMapSizeOverrideLow.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -379,7 +379,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.chkLoadHdModels.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkLoadHdModels.Location = new System.Drawing.Point(210, 123);
             this.chkLoadHdModels.Name = "chkLoadHdModels";
-            this.chkLoadHdModels.Size = new System.Drawing.Size(177, 24);
+            this.chkLoadHdModels.Size = new System.Drawing.Size(243, 24);
             this.chkLoadHdModels.TabIndex = 45;
             this.chkLoadHdModels.Text = "Load HD Models (if available)";
             this.chkLoadHdModels.UseVisualStyleBackColor = true;
@@ -459,7 +459,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.lblCopyToMapFolder.Location = new System.Drawing.Point(6, 277);
             this.lblCopyToMapFolder.Name = "lblCopyToMapFolder";
-            this.lblCopyToMapFolder.Size = new System.Drawing.Size(148, 20);
+            this.lblCopyToMapFolder.Size = new System.Drawing.Size(182, 20);
             this.lblCopyToMapFolder.TabIndex = 43;
             this.lblCopyToMapFolder.Text = "Copy to map folder:";
             this.lblCopyToMapFolder.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -479,7 +479,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.chkCopyRes.Checked = true;
             this.chkCopyRes.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCopyRes.Location = new System.Drawing.Point(345, 276);
+            this.chkCopyRes.Location = new System.Drawing.Point(379, 276);
             this.chkCopyRes.Name = "chkCopyRes";
             this.chkCopyRes.Size = new System.Drawing.Size(49, 24);
             this.chkCopyRes.TabIndex = 42;
@@ -490,7 +490,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.chkCopyErr.Checked = true;
             this.chkCopyErr.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCopyErr.Location = new System.Drawing.Point(298, 276);
+            this.chkCopyErr.Location = new System.Drawing.Point(332, 276);
             this.chkCopyErr.Name = "chkCopyErr";
             this.chkCopyErr.Size = new System.Drawing.Size(49, 24);
             this.chkCopyErr.TabIndex = 42;
@@ -501,7 +501,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.chkCopyLog.Checked = true;
             this.chkCopyLog.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCopyLog.Location = new System.Drawing.Point(250, 276);
+            this.chkCopyLog.Location = new System.Drawing.Point(284, 276);
             this.chkCopyLog.Name = "chkCopyLog";
             this.chkCopyLog.Size = new System.Drawing.Size(49, 24);
             this.chkCopyLog.TabIndex = 42;
@@ -512,7 +512,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.chkCopyMap.Checked = true;
             this.chkCopyMap.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCopyMap.Location = new System.Drawing.Point(204, 276);
+            this.chkCopyMap.Location = new System.Drawing.Point(238, 276);
             this.chkCopyMap.Name = "chkCopyMap";
             this.chkCopyMap.Size = new System.Drawing.Size(49, 24);
             this.chkCopyMap.TabIndex = 42;
@@ -523,7 +523,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.chkMapCopyBsp.Checked = true;
             this.chkMapCopyBsp.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkMapCopyBsp.Location = new System.Drawing.Point(160, 276);
+            this.chkMapCopyBsp.Location = new System.Drawing.Point(194, 276);
             this.chkMapCopyBsp.Name = "chkMapCopyBsp";
             this.chkMapCopyBsp.Size = new System.Drawing.Size(49, 24);
             this.chkMapCopyBsp.TabIndex = 42;
@@ -569,7 +569,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.lblBuildExeFolder.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lblBuildExeFolder.Location = new System.Drawing.Point(6, 16);
             this.lblBuildExeFolder.Name = "lblBuildExeFolder";
-            this.lblBuildExeFolder.Size = new System.Drawing.Size(176, 20);
+            this.lblBuildExeFolder.Size = new System.Drawing.Size(357, 20);
             this.lblBuildExeFolder.TabIndex = 27;
             this.lblBuildExeFolder.Text = "Folder containing build executables:";
             this.lblBuildExeFolder.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -741,7 +741,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
             this.lblTexturePackageExclusions.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lblTexturePackageExclusions.Location = new System.Drawing.Point(12, 36);
             this.lblTexturePackageExclusions.Name = "lblTexturePackageExclusions";
-            this.lblTexturePackageExclusions.Size = new System.Drawing.Size(322, 20);
+            this.lblTexturePackageExclusions.Size = new System.Drawing.Size(314, 20);
             this.lblTexturePackageExclusions.TabIndex = 34;
             this.lblTexturePackageExclusions.Text = "Texture packages to include:";
             this.lblTexturePackageExclusions.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -759,9 +759,9 @@ namespace Sledge.BspEditor.Environment.Goldsource
             // 
             this.chkToggleAllTextures.Checked = true;
             this.chkToggleAllTextures.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkToggleAllTextures.Location = new System.Drawing.Point(372, 41);
+            this.chkToggleAllTextures.Location = new System.Drawing.Point(332, 41);
             this.chkToggleAllTextures.Name = "chkToggleAllTextures";
-            this.chkToggleAllTextures.Size = new System.Drawing.Size(81, 18);
+            this.chkToggleAllTextures.Size = new System.Drawing.Size(121, 18);
             this.chkToggleAllTextures.TabIndex = 42;
             this.chkToggleAllTextures.Text = "Toggle all";
             this.chkToggleAllTextures.UseVisualStyleBackColor = true;

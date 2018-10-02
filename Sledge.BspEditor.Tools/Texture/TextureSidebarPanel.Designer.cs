@@ -40,9 +40,9 @@
             // BrowseButton
             // 
             this.BrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BrowseButton.Location = new System.Drawing.Point(131, 116);
+            this.BrowseButton.Location = new System.Drawing.Point(102, 137);
             this.BrowseButton.Name = "BrowseButton";
-            this.BrowseButton.Size = new System.Drawing.Size(66, 22);
+            this.BrowseButton.Size = new System.Drawing.Size(95, 22);
             this.BrowseButton.TabIndex = 11;
             this.BrowseButton.Text = "Browse...";
             this.BrowseButton.UseVisualStyleBackColor = true;
@@ -51,9 +51,9 @@
             // ReplaceButton
             // 
             this.ReplaceButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ReplaceButton.Location = new System.Drawing.Point(131, 140);
+            this.ReplaceButton.Location = new System.Drawing.Point(102, 161);
             this.ReplaceButton.Name = "ReplaceButton";
-            this.ReplaceButton.Size = new System.Drawing.Size(66, 22);
+            this.ReplaceButton.Size = new System.Drawing.Size(95, 22);
             this.ReplaceButton.TabIndex = 12;
             this.ReplaceButton.Text = "Replace...";
             this.ReplaceButton.UseVisualStyleBackColor = true;
@@ -62,9 +62,9 @@
             // ApplyButton
             // 
             this.ApplyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ApplyButton.Location = new System.Drawing.Point(3, 140);
+            this.ApplyButton.Location = new System.Drawing.Point(3, 161);
             this.ApplyButton.Name = "ApplyButton";
-            this.ApplyButton.Size = new System.Drawing.Size(66, 22);
+            this.ApplyButton.Size = new System.Drawing.Size(95, 22);
             this.ApplyButton.TabIndex = 11;
             this.ApplyButton.Text = "Apply";
             this.ApplyButton.UseVisualStyleBackColor = true;
@@ -78,7 +78,7 @@
             this.SelectionPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.SelectionPictureBox.Location = new System.Drawing.Point(3, 3);
             this.SelectionPictureBox.Name = "SelectionPictureBox";
-            this.SelectionPictureBox.Size = new System.Drawing.Size(194, 107);
+            this.SelectionPictureBox.Size = new System.Drawing.Size(194, 115);
             this.SelectionPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.SelectionPictureBox.TabIndex = 10;
             this.SelectionPictureBox.TabStop = false;
@@ -87,7 +87,7 @@
             // 
             this.SizeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SizeLabel.AutoSize = true;
-            this.SizeLabel.Location = new System.Drawing.Point(75, 145);
+            this.SizeLabel.Location = new System.Drawing.Point(3, 142);
             this.SizeLabel.Name = "SizeLabel";
             this.SizeLabel.Size = new System.Drawing.Size(27, 13);
             this.SizeLabel.TabIndex = 13;
@@ -97,7 +97,7 @@
             // 
             this.NameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.NameLabel.AutoSize = true;
-            this.NameLabel.Location = new System.Drawing.Point(3, 119);
+            this.NameLabel.Location = new System.Drawing.Point(3, 122);
             this.NameLabel.Name = "NameLabel";
             this.NameLabel.Size = new System.Drawing.Size(35, 13);
             this.NameLabel.TabIndex = 13;
@@ -117,7 +117,7 @@
             this.MaximumSize = new System.Drawing.Size(0, 250);
             this.MinimumSize = new System.Drawing.Size(200, 165);
             this.Name = "TextureSidebarPanel";
-            this.Size = new System.Drawing.Size(200, 165);
+            this.Size = new System.Drawing.Size(200, 186);
             ((System.ComponentModel.ISupportInitialize)(this.SelectionPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

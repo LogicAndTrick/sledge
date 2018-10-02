@@ -31,6 +31,7 @@ namespace Sledge.Common.Translations
 
 #if DEBUG
             Languages["debug_en"] = new Language("debug_en") { Description = "Debug (english fallback)", Inherit = "en" };
+            Languages["debug_doubler"] = new Language("debug_doubler") { Description = "Debug (english doubler)", Inherit = "en" };
             Languages["debug_keys"] = new Language("debug_keys") { Description = "Debug (keys)" };
             Languages["debug_keys_long"] = new Language("debug_keys_long") { Description = "Debug (long keys)" };
             Languages["debug_blank"] = new Language("debug_blank") { Description = "Debug (no fallback)" };
@@ -112,6 +113,7 @@ namespace Sledge.Common.Translations
             {
                 if (!String.IsNullOrWhiteSpace(kv.Value)) language.Collection.Settings[kv.Key] = kv.Value;
 #if DEBUG
+                if (data.Code == "en") Languages["debug_doubler"].Collection.Settings[kv.Key] = kv.Value + " | " + kv.Value;
                 Languages["debug_blank"].Collection.Settings[kv.Key] = "--";
                 Languages["debug_keys"].Collection.Settings[kv.Key] = "[" + kv.Key.Split('.').LastOrDefault() + "]";
                 Languages["debug_keys_long"].Collection.Settings[kv.Key] = "[" + kv.Key + "]";
@@ -122,6 +124,7 @@ namespace Sledge.Common.Translations
             {
                 if (!String.IsNullOrWhiteSpace(kv.Value)) language.Collection.Strings[kv.Key] = kv.Value;
 #if DEBUG
+                if (data.Code == "en") Languages["debug_doubler"].Collection.Strings[kv.Key] = kv.Value + " | " + kv.Value;
                 Languages["debug_blank"].Collection.Strings[kv.Key] = "--";
                 Languages["debug_keys"].Collection.Strings[kv.Key] = "[" + kv.Key.Split('.').LastOrDefault() + "]";
                 Languages["debug_keys_long"].Collection.Strings[kv.Key] = "[" + kv.Key + "]";

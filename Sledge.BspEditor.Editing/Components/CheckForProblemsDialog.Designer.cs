@@ -64,15 +64,15 @@
             this.DescriptionTextBox.Multiline = true;
             this.DescriptionTextBox.Name = "DescriptionTextBox";
             this.DescriptionTextBox.ReadOnly = true;
-            this.DescriptionTextBox.Size = new System.Drawing.Size(272, 94);
+            this.DescriptionTextBox.Size = new System.Drawing.Size(219, 94);
             this.DescriptionTextBox.TabIndex = 1;
             // 
             // btnGoToError
             // 
             this.btnGoToError.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGoToError.Location = new System.Drawing.Point(284, 19);
+            this.btnGoToError.Location = new System.Drawing.Point(231, 19);
             this.btnGoToError.Name = "btnGoToError";
-            this.btnGoToError.Size = new System.Drawing.Size(98, 23);
+            this.btnGoToError.Size = new System.Drawing.Size(151, 23);
             this.btnGoToError.TabIndex = 2;
             this.btnGoToError.Text = "Go to error";
             this.btnGoToError.UseVisualStyleBackColor = true;
@@ -81,9 +81,9 @@
             // btnFix
             // 
             this.btnFix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnFix.Location = new System.Drawing.Point(284, 48);
+            this.btnFix.Location = new System.Drawing.Point(231, 48);
             this.btnFix.Name = "btnFix";
-            this.btnFix.Size = new System.Drawing.Size(98, 23);
+            this.btnFix.Size = new System.Drawing.Size(151, 23);
             this.btnFix.TabIndex = 2;
             this.btnFix.Text = "Fix error";
             this.btnFix.UseVisualStyleBackColor = true;
@@ -92,9 +92,9 @@
             // btnFixAllOfType
             // 
             this.btnFixAllOfType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnFixAllOfType.Location = new System.Drawing.Point(284, 77);
+            this.btnFixAllOfType.Location = new System.Drawing.Point(231, 77);
             this.btnFixAllOfType.Name = "btnFixAllOfType";
-            this.btnFixAllOfType.Size = new System.Drawing.Size(98, 23);
+            this.btnFixAllOfType.Size = new System.Drawing.Size(151, 23);
             this.btnFixAllOfType.TabIndex = 2;
             this.btnFixAllOfType.Text = "Fix all of type";
             this.btnFixAllOfType.UseVisualStyleBackColor = true;
@@ -103,9 +103,9 @@
             // btnFixAll
             // 
             this.btnFixAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnFixAll.Location = new System.Drawing.Point(284, 106);
+            this.btnFixAll.Location = new System.Drawing.Point(231, 106);
             this.btnFixAll.Name = "btnFixAll";
-            this.btnFixAll.Size = new System.Drawing.Size(98, 23);
+            this.btnFixAll.Size = new System.Drawing.Size(151, 23);
             this.btnFixAll.TabIndex = 2;
             this.btnFixAll.Text = "Fix all problems";
             this.btnFixAll.UseVisualStyleBackColor = true;
