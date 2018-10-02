@@ -55,7 +55,7 @@ namespace Sledge.Providers.Texture.Spr
             foreach (var name in textures)
             {
                 var entry = _file.TraversePath(name);
-                if (entry == null) continue;
+                if (entry == null || !entry.Exists) continue;
 
                 var size = GetSize(entry);
                 var item = new TextureItem(name, TextureFlags.None, size.Width, size.Height);

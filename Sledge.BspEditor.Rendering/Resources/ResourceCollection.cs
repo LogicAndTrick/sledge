@@ -60,7 +60,7 @@ namespace Sledge.BspEditor.Rendering.Resources
 
             // Find the file
             var file = environment.Root.TraversePath(path);
-            if (!file.Exists) return null;
+            if (file == null || !file.Exists) return null;
 
             // Find a provider for the file
             var provider = _modelProviders.FirstOrDefault(x => x.Value.CanLoadModel(file));
