@@ -1,280 +1,207 @@
-﻿{
-    "@Meta": {
-        "Base": "Sledge.BspEditor.Tools",
-        "Language": "it",
-        "LanguageDescription":  "Italiano / Italian",
-        "Inherit": "en"
-    },
-    "@Settings": {
-        "@Group.Tools": "Strumenti",
-        "@Group.Tools/Brush": "Strumento Brush",
-        "@Group.Tools/Entity": "Strumento Entità",
-        "@Group.Tools/Selection": "Strumento Selezione",
-        "BrushTool": {
-            "SelectionBoxBackgroundOpacity": "Opacità dello sfondo del riquadro selezione",
-            "SelectCreatedBrush": "Seleziona il brush dopo la creazione",
-            "SwitchToSelectAfterBrushCreation": "Passa allo strumento di selezione dopo la creazione del brush",
-            "ResetBrushTypeOnCreation": "Reimposta il tipo di brush predefinito dopo la creazione del brush"
-        },
-        "EntityTool": {
-            "SelectCreatedEntity": "Seleziona l'entità dopo la creazione",
-            "SwitchToSelectAfterEntityCreation": "Passa allo strumento di selezione dopo la creazione dell'entità",
-            "ResetEntityTypeOnCreation": "Reimposta il tipo di entità predefinita dopo la creazione dell'entità"
-        },
-        "SelectTool": {
-            "SelectionBoxBackgroundOpacity": "Opacità dello sfondo del riquadro selezione",
-            "SelectionBoxStippled": "Disegna il riquadro di selezione con un contorno tratteggiato",
-            "AutoSelectBox": "Seleziona automaticamente dopo aver disegnato il riquadro di selezione",
-            "Show3DWidgets": "Mostra il congegno della trasformazione 3D",
-            "SelectByCenterHandles": "Abilita la selezione mediante gli appigli centrali",
-            "OnlySelectByCenterHandles": "Permetti la selezione solo mediante gli appigli centrali",
-            "KeepVisgroupsWhenCloning": "Mantieni i visgroups dopo la clonazione"
-        } 
-    },
-    "MenuDataProvider": {
-        "Map": "Mappa"
-    },
-    "Brush": {
-        "BrushTool": {
-            "CreateObject": "Crea {0}"
-        },
-        "BrushSidebarPanel": {
-            "BrushType": "Tipologia Brush:",
-            "RoundVertices": "Arrotonda i vertici creati"
-        },
-        "Brushes": {
-            "ArchBrush": {
-                "Name": "Arcata",
-                "NumberOfSides": "Numero di lati",
-                "WallWidth": "Larghezza muro",
-                "Arc": "Arco",
-                "StartAngle": "Angolo d'inizio",
-                "AddHeight": "Aggiungi altezza",
-                "CurvedRamp": "Rampa curva",
-                "TiltAngle": "Inclinazione angolo",
-                "TiltInterpolation": "Interpolazione dell'inclinazione"
-            },
-            "BlockBrush": {
-                "Name": "Blocco"
-            },
-            "ConeBrush": {
-                "Name": "Cono",
-                "NumberOfSides": "Numero di lati"
-            },
-            "CylinderBrush": {
-                "Name": "Cilindro",
-                "NumberOfSides": "Numero di lati"
-            },
-            "PipeBrush": {
-                "Name": "Tubo",
-                "NumberOfSides": "Numero di lati",
-                "WallWidth": "Larghezza muro"
-            },
-            "PyramidBrush": {
-                "Name": "Piramide"
-            },
-            "SphereBrush": {
-                "Name": "Sfera",
-                "NumberOfSides": "Numero di lati"
-            },
-            "TetrahedronBrush": {
-                "Name": "Tetraedro",
-                "TopVertexAtCentroid": "Vertice sopra il baricentro"
-            },
-            "TextBrush": {
-                "Name": "Testo",
-                "Font": "Carattere",
-                "AliasingFactor": "Fattore di alias" ,
-                "EnteredText": "Scrivi il testo qui",
-                "Text": "Testo"
-            },
-            "TorusBrush": {
-                "Name": "Toroide",
-                "CrossSectionSides": "Lati sez. trasversale",
-                "RingWidth": "Larghezza anello",
-                "CrossSectionStart": "Inizio sez. trasversale",
-                "MakeHollow": "Crea cavità",
-                "CrossSectionArc": "Arco sez. trasversale",
-                "HollowWallWidth": "Larghezza cavità",
-                "RingSides": "Lati anello",
-                "RingArc": "Anello ad arco",
-                "RingStart": "Inizio anello",
-                "RotationHeight": "Altezza rotazione"
-            },
-            "WedgeBrush": {
-                "Name": "Cuneo"
-            }
-        }
-    },
-    "Entity": {
-        "EntityTool": {
-            "CreateObject": "Crea {0}"
-        }
-    },
-    "Grid": {
-        "GridStatusItem": {
-            "Snap": "Agganciato",
-            "NoSnap": "Non agganciato",
-            "Grid": "Griglia"
-        },
-        "IncreaseGrid": {
-            "Name": "Griglia più grande",
-            "Details": "Aumenta grandezza griglia"
-        },
-        "DecreaseGrid": {
-            "Name": "Griglia più piccola",
-            "Details": "Diminuisci grandezza griglia"
-        },
-        "SwitchGrid": {
-            "Name": "Scorrimento griglie",
-            "Details": "Scorri tra le tipologie di griglia"
-        }
-    }, 
-    "Selection": {
-        "SelectTool": {
-            "Align": "Allinea a...",
-            "Flip": "Capovolgi...",
-            "Rotate": "Ruota...",
-            "Left": "Sinistra",
-            "Right": "Destra",
-            "Top": "In alto",
-            "Bottom": "In basso",
-            "Vertically": "Verticalmente",
-            "Horizontally": "Orizzontalmente",
-            "Clockwise": "90° in senso orario",
-            "AntiClockwise": "90° in senso anti-orario"
-        }
-    },
-    "Texture": {
-        "BrowseActiveTexture": {
-            "Name": "Sfoglia texture",
-            "Details": "Apri la ricerca delle texture"
-        },
-        "ReplaceTextures": {
-            "Name": "Rimpiazza texture...",
-            "Details": "Rimpiazza texture nella mappa"
-        },
-        "SmartEditTextureBrowser": {
-            "Browse": "Sfoglia..."
-        },
-        "TextureApplicationForm": {
-            "Scale": "Scalo",
-            "Shift": "Spostamento",
-            "Browse": "Sfoglia...",
-            "Replace": "Rimpiazza...",
-            "Apply": "Applica",
-            "Rotation": "Rotazione",
-            "Lightmap": "Lightmap",
-            "SmoothingGroups": "Smoothing groups",
-            "Align": "Allinea",
-            "World": "Globale",
-            "Face": "Faccia",
-            "Justify": "Giustifica",
-            "Fit": "Adatta",
-            "TreatAsOne": "Tratta come singola",
-            "HideMask": "Nascondi maschera",
-            "FilterRecent:": "Filtra recente",
-            "LeftClick": "Sinistra",
-            "RightClick": "Destra",
-            "ActionLift": "Solleva",
-            "ActionSelect": "Seleziona",
-            "ActionApply": "Applica",
-            "ActionValues": "Valori",
-            "ActionAxis": "Assi",
-            "ActionAlignToView": "Allinea alla vista"
-        },
-        "TextureBrowser": {
-            "Title": "Lista texture",
-            "FavouriteTextures": "Texture preferite (trascina e lascia)",
-            "AddFolder": "Aggiungi cartella",
-            "DeleteFolder": "Cancella cartella",
-            "RemoveSelected": "Rimuovi selezionati dalla cartella",
-            "Filter": "Filtra",
-            "Size": "Grandezza",
-            "UsedTexturesOnly": "Solo texture usate",
-            "Select": "Seleziona",
-            "SortBy": "Ordina per",
-            "SortDescending": "Ordine decrescente"
-        },
-        "TextureReplaceDialog": {
-            "Title": "Rimpiazza texture",
-            "Find": "Trova:",
-            "Replace": "Rimpiazza:",
-            "Browse": "Sfoglia...",
-            "ReplaceIn": "Rimpiazza in:",
-            "ReplaceSelection": "Selezione",
-            "ReplaceVisible": "Tutti i solidi visibili",
-            "ReplaceEverything": "Tutto",
-            "RescaleTextures": "Riscala coordinate texture",
-            "Action": "Azione:",
-            "ActionExact": "Rimpiazza abbinamenti esatti",
-            "ActionPartial": "Rimpiazza abbinamenti parziali",
-            "ActionSubstitute": "Sostituisci abbinamenti parziali",
-            "ActionSelect": "Seleziona abbinamenti (non rimpiazzare)",
-            "OK": "OK",
-            "Cancel": "Cancella"
-        },
-        "TextureSidebarPanel": {
-            "Apply": "Applica",
-            "Browse": "Sfoglia...",
-            "Replace": "Rimpiazza..." 
-        },
-        "TextureToolSidebarPanel": {
-            "RandomiseShiftValues": "Randomizza valori spostamento",
-            "Min": "Min",
-            "Max": "Max",
-            "RandomiseX": "Randomizzare X",
-            "RandomiseY": "Randomizzare Y",
-            "FitToMultipleTiles": "Adatta ad affiancamenti multipli",
-            "TimesToTile": "Quantità di volte da affiancare alla faccia:",
-            "Fit": "Adatta"
-        } 
-    },
-    "Vertex": {
-        "Tools": {
-            "VertexPointTool": {
-                "Title": "Standard"
-            },
-            "VertexScaleTool": {
-                "Title": "Scala"
-            },
-            "VertexFaceEditTool": {
-                "Title": "Modifica faccia"
-            }
-        },
-        "Controls": {
-            "VertexSidebarPanel": {
-                "DeselectAll": "Deseleziona tutto",
-                "ResetToOriginal": "Reimposta originale"
-            },
-            "VertexPointControl": {
-                "MergeOverlappingVertices": "Unisci vertici sovrapposti",
-                "MergeAutomatically": "Unisci automaticamente",
-                "SplitFace": "Dividi facce",
-                "ShowPoints": "Mostra punti",
-                "ShowMidpoints": "Mostra punti centrali",
-                "MergeResults": "Rimossi: {0} punto/i, {1} faccia/e"
-            },
-            "VertexScaleControl": {
-                "ScaleDistance": "Scala distanza (%)",
-                "Reset": "Reimposta",
-                "ResetOrigin": "Reimposta origine"
-            },
-            "VertexEditFaceControl": {
-                "WithSelectedFaces": "Con le facce selezionate:",
-                "Units": "unità",
-                "PokeBy": "Sporgi da",
-                "BevelBy": "Smussa da",
-                "Poke": "Sporgi",
-                "Bevel": "Smussa"
-            } 
-        },
-        "Errors": {
-            "BackwardsFace": "Faccia all'indietro",
-            "ConcaveFace": "Faccia concava",
-            "CoplanarFaces": "Vertici complanari",
-            "NonPlanarVertices": "Vertici non planari",
-            "OverlappingVertices": "Vertici sovrapposti"
-        }
-    } 
+{
+  "@Meta": {
+    "Base": "Sledge.BspEditor.Tools",
+    "Language": "it",
+    "LanguageDescription": "Italiano / Italian",
+    "Inherit": "en"
+  },
+  "@Settings": {
+    "@Group.Tools": "Strumenti",
+    "@Group.Tools/Brush": "Strumento Brush",
+    "@Group.Tools/Entity": "Strumento Entità",
+    "@Group.Tools/Selection": "Strumento Selezione",
+    "BrushTool.SelectionBoxBackgroundOpacity": "Opacità dello sfondo del riquadro selezione",
+    "BrushTool.SelectCreatedBrush": "Seleziona il brush dopo la creazione",
+    "BrushTool.SwitchToSelectAfterBrushCreation": "Passa allo strumento di selezione dopo la creazione del brush",
+    "BrushTool.ResetBrushTypeOnCreation": "Reimposta il tipo di brush predefinito dopo la creazione del brush",
+    "EntityTool.SelectCreatedEntity": "Seleziona l'entità dopo la creazione",
+    "EntityTool.SwitchToSelectAfterEntityCreation": "Passa allo strumento di selezione dopo la creazione dell'entità",
+    "EntityTool.ResetEntityTypeOnCreation": "Reimposta il tipo di entità predefinita dopo la creazione dell'entità",
+    "SelectTool.SelectionBoxBackgroundOpacity": "Opacità dello sfondo del riquadro selezione",
+    "SelectTool.SelectionBoxStippled": "Disegna il riquadro di selezione con un contorno tratteggiato",
+    "SelectTool.AutoSelectBox": "Seleziona automaticamente dopo aver disegnato il riquadro di selezione",
+    "SelectTool.Show3DWidgets": "Mostra il congegno della trasformazione 3D",
+    "SelectTool.SelectByCenterHandles": "Abilita la selezione mediante gli appigli centrali",
+    "SelectTool.OnlySelectByCenterHandles": "Permetti la selezione solo mediante gli appigli centrali",
+    "SelectTool.KeepVisgroupsWhenCloning": "Mantieni i visgroups dopo la clonazione"
+  },
+  "MenuDataProvider.Map": "Mappa",
+  "Brush.BrushTool.CreateObject": "Crea {0}",
+  "Brush.BrushSidebarPanel.Title": "Strumento Brush",
+  "Brush.BrushSidebarPanel.BrushType": "Tipologia Brush:",
+  "Brush.BrushSidebarPanel.RoundVertices": "Arrotonda i vertici creati",
+  "Brush.Brushes.ArchBrush.Name": "Arcata",
+  "Brush.Brushes.ArchBrush.NumberOfSides": "Numero di lati",
+  "Brush.Brushes.ArchBrush.WallWidth": "Larghezza muro",
+  "Brush.Brushes.ArchBrush.Arc": "Arco",
+  "Brush.Brushes.ArchBrush.StartAngle": "Angolo d'inizio",
+  "Brush.Brushes.ArchBrush.AddHeight": "Aggiungi altezza",
+  "Brush.Brushes.ArchBrush.CurvedRamp": "Rampa curva",
+  "Brush.Brushes.ArchBrush.TiltAngle": "Inclinazione angolo",
+  "Brush.Brushes.ArchBrush.TiltInterpolation": "Interpolazione dell'inclinazione",
+  "Brush.Brushes.BlockBrush.Name": "Blocco",
+  "Brush.Brushes.ConeBrush.Name": "Cono",
+  "Brush.Brushes.ConeBrush.NumberOfSides": "Numero di lati",
+  "Brush.Brushes.CylinderBrush.Name": "Cilindro",
+  "Brush.Brushes.CylinderBrush.NumberOfSides": "Numero di lati",
+  "Brush.Brushes.PipeBrush.Name": "Tubo",
+  "Brush.Brushes.PipeBrush.NumberOfSides": "Numero di lati",
+  "Brush.Brushes.PipeBrush.WallWidth": "Larghezza muro",
+  "Brush.Brushes.PyramidBrush.Name": "Piramide",
+  "Brush.Brushes.SphereBrush.Name": "Sfera",
+  "Brush.Brushes.SphereBrush.NumberOfSides": "Numero di lati",
+  "Brush.Brushes.TetrahedronBrush.Name": "Tetraedro",
+  "Brush.Brushes.TetrahedronBrush.TopVertexAtCentroid": "Vertice sopra il baricentro",
+  "Brush.Brushes.TextBrush.Name": "Testo",
+  "Brush.Brushes.TextBrush.Font": "Carattere",
+  "Brush.Brushes.TextBrush.AliasingFactor": "Fattore di alias",
+  "Brush.Brushes.TextBrush.EnteredText": "Scrivi il testo qui",
+  "Brush.Brushes.TextBrush.Text": "Testo",
+  "Brush.Brushes.TorusBrush.Name": "Toroide",
+  "Brush.Brushes.TorusBrush.CrossSectionSides": "Lati sez. trasversale",
+  "Brush.Brushes.TorusBrush.RingWidth": "Larghezza anello",
+  "Brush.Brushes.TorusBrush.CrossSectionStart": "Inizio sez. trasversale",
+  "Brush.Brushes.TorusBrush.MakeHollow": "Crea cavità",
+  "Brush.Brushes.TorusBrush.CrossSectionArc": "Arco sez. trasversale",
+  "Brush.Brushes.TorusBrush.HollowWallWidth": "Larghezza cavità",
+  "Brush.Brushes.TorusBrush.RingSides": "Lati anello",
+  "Brush.Brushes.TorusBrush.RingArc": "Anello ad arco",
+  "Brush.Brushes.TorusBrush.RingStart": "Inizio anello",
+  "Brush.Brushes.TorusBrush.RotationHeight": "Altezza rotazione",
+  "Brush.Brushes.WedgeBrush.Name": "Cuneo",
+  "Cordon.ToggleCordon.Name": "Limiti cordone",
+  "Cordon.ToggleCordon.Details": "Abilita limiti cordone",
+  "Entity.EntityTool.CreateObject": "Crea {0}",
+  "Entity.EntitySidebarPanel.Title": "Strumento Entità",
+  "Entity.EntitySidebarPanel.EntityTypeLabelText": "Tipo Entità:",
+  "Grid.GridStatusItem.Snap": "Agganciato",
+  "Grid.GridStatusItem.NoSnap": "Non agganciato",
+  "Grid.GridStatusItem.Grid": "Griglia",
+  "Grid.IncreaseGrid.Name": "Griglia più grande",
+  "Grid.IncreaseGrid.Details": "Aumenta grandezza griglia",
+  "Grid.DecreaseGrid.Name": "Griglia più piccola",
+  "Grid.DecreaseGrid.Details": "Diminuisci grandezza griglia",
+  "Grid.SwitchGrid.Name": "Scorrimento griglie",
+  "Grid.SwitchGrid.Details": "Scorri tra le tipologie di griglia",
+  "Grid.ToggleSnapToGrid.Name": "Agganciamento griglia",
+  "Grid.ToggleSnapToGrid.Details": "Abilita agganciamento griglia",
+  "Selection.SelectTool.Align": "Allinea a...",
+  "Selection.SelectTool.Flip": "Capovolgi...",
+  "Selection.SelectTool.Rotate": "Ruota...",
+  "Selection.SelectTool.Left": "Sinistra",
+  "Selection.SelectTool.Right": "Destra",
+  "Selection.SelectTool.Top": "In alto",
+  "Selection.SelectTool.Bottom": "In basso",
+  "Selection.SelectTool.Vertically": "Verticalmente",
+  "Selection.SelectTool.Horizontally": "Orizzontalmente",
+  "Selection.SelectTool.Clockwise": "90° in senso orario",
+  "Selection.SelectTool.AntiClockwise": "90° in senso anti-orario",
+  "Selection.SelectToolSidebarPanel.Title": "Strumento Selezione",
+  "Selection.SelectToolSidebarPanel.Mode": "Modalità manipolazione:",
+  "Selection.SelectToolSidebarPanel.Translate": "Traduci",
+  "Selection.SelectToolSidebarPanel.Rotate": "Ruota",
+  "Selection.SelectToolSidebarPanel.Skew": "Inclina",
+  "Selection.SelectToolSidebarPanel.Show3DWidgets": "Mostra congegni 3D",
+  "Selection.SelectToolSidebarPanel.Actions": "Azioni:",
+  "Selection.SelectToolSidebarPanel.MoveToWorld": "Converti in non-entità",
+  "Selection.SelectToolSidebarPanel.TieToEntity": "Converti in entità",
+  "Selection.ToggleIgnoreGroupingCommand.Name": "Ignora raggruppamento",
+  "Selection.ToggleIgnoreGroupingCommand.Details": "Abilita/Disabilita ignora raggruppamento",
+  "Texture.BrowseActiveTexture.Name": "Sfoglia texture",
+  "Texture.BrowseActiveTexture.Details": "Apri la ricerca delle texture",
+  "Texture.ReplaceTextures.Name": "Rimpiazza texture...",
+  "Texture.ReplaceTextures.Details": "Rimpiazza texture nella mappa",
+  "Texture.SmartEditTextureBrowser.Browse": "Sfoglia...",
+  "Texture.TextureApplicationForm.Title": "Applicatore Texture",
+  "Texture.TextureApplicationForm.Scale": "Scalo",
+  "Texture.TextureApplicationForm.Shift": "Spostamento",
+  "Texture.TextureApplicationForm.Browse": "Sfoglia...",
+  "Texture.TextureApplicationForm.Replace": "Rimpiazza...",
+  "Texture.TextureApplicationForm.Apply": "Applica",
+  "Texture.TextureApplicationForm.Rotation": "Rotazione",
+  "Texture.TextureApplicationForm.Lightmap": "Lightmap",
+  "Texture.TextureApplicationForm.SmoothingGroups": "Smoothing groups",
+  "Texture.TextureApplicationForm.Align": "Allinea",
+  "Texture.TextureApplicationForm.World": "Globale",
+  "Texture.TextureApplicationForm.Face": "Faccia",
+  "Texture.TextureApplicationForm.Justify": "Giustifica",
+  "Texture.TextureApplicationForm.Fit": "Adatta",
+  "Texture.TextureApplicationForm.TreatAsOne": "Tratta come singola",
+  "Texture.TextureApplicationForm.HideMask": "Nascondi maschera",
+  "Texture.TextureApplicationForm.FilterRecent:": "Filtra recente",
+  "Texture.TextureApplicationForm.LeftClick": "Sinistra",
+  "Texture.TextureApplicationForm.RightClick": "Destra",
+  "Texture.TextureApplicationForm.ActionLift": "Solleva",
+  "Texture.TextureApplicationForm.ActionSelect": "Seleziona",
+  "Texture.TextureApplicationForm.ActionApply": "Applica",
+  "Texture.TextureApplicationForm.ActionValues": "Valori",
+  "Texture.TextureApplicationForm.ActionAxis": "Assi",
+  "Texture.TextureApplicationForm.ActionAlignToView": "Allinea alla vista",
+  "Texture.TextureBrowser.Title": "Lista texture",
+  "Texture.TextureBrowser.FavouriteTextures": "Texture preferite (trascina e lascia)",
+  "Texture.TextureBrowser.AddFolder": "Aggiungi cartella",
+  "Texture.TextureBrowser.DeleteFolder": "Cancella cartella",
+  "Texture.TextureBrowser.RemoveSelected": "Rimuovi selezionati dalla cartella",
+  "Texture.TextureBrowser.Filter": "Filtra",
+  "Texture.TextureBrowser.Size": "Grandezza",
+  "Texture.TextureBrowser.UsedTexturesOnly": "Solo texture usate",
+  "Texture.TextureBrowser.Select": "Seleziona",
+  "Texture.TextureBrowser.SortBy": "Ordina per",
+  "Texture.TextureBrowser.SortDescending": "Ordine decrescente",
+  "Texture.TextureReplaceDialog.Title": "Rimpiazza texture",
+  "Texture.TextureReplaceDialog.Find": "Trova:",
+  "Texture.TextureReplaceDialog.Replace": "Rimpiazza:",
+  "Texture.TextureReplaceDialog.Browse": "Sfoglia...",
+  "Texture.TextureReplaceDialog.ReplaceIn": "Rimpiazza in:",
+  "Texture.TextureReplaceDialog.ReplaceSelection": "Selezione",
+  "Texture.TextureReplaceDialog.ReplaceVisible": "Tutti i solidi visibili",
+  "Texture.TextureReplaceDialog.ReplaceEverything": "Tutto",
+  "Texture.TextureReplaceDialog.RescaleTextures": "Riscala coordinate texture",
+  "Texture.TextureReplaceDialog.Action": "Azione:",
+  "Texture.TextureReplaceDialog.ActionExact": "Rimpiazza abbinamenti esatti",
+  "Texture.TextureReplaceDialog.ActionPartial": "Rimpiazza abbinamenti parziali",
+  "Texture.TextureReplaceDialog.ActionSubstitute": "Sostituisci abbinamenti parziali",
+  "Texture.TextureReplaceDialog.ActionSelect": "Seleziona abbinamenti (non rimpiazzare)",
+  "Texture.TextureReplaceDialog.OK": "OK",
+  "Texture.TextureReplaceDialog.Cancel": "Cancella",
+  "Texture.TextureSidebarPanel.Title": "Texture",
+  "Texture.TextureSidebarPanel.Apply": "Applica",
+  "Texture.TextureSidebarPanel.Browse": "Sfoglia...",
+  "Texture.TextureSidebarPanel.Replace": "Rimpiazza...",
+  "Texture.TextureToolSidebarPanel.Title": "Strumenti Texture Avanzati",
+  "Texture.TextureToolSidebarPanel.RandomiseShiftValues": "Randomizza valori spostamento",
+  "Texture.TextureToolSidebarPanel.Min": "Min",
+  "Texture.TextureToolSidebarPanel.Max": "Max",
+  "Texture.TextureToolSidebarPanel.RandomiseX": "Randomizzare X",
+  "Texture.TextureToolSidebarPanel.RandomiseY": "Randomizzare Y",
+  "Texture.TextureToolSidebarPanel.FitToMultipleTiles": "Adatta ad affiancamenti multipli",
+  "Texture.TextureToolSidebarPanel.TimesToTile": "Quantità di volte da affiancare alla faccia:",
+  "Texture.TextureToolSidebarPanel.Fit": "Adatta",
+  "Vertex.Tools.VertexPointTool.Title": "Standard",
+  "Vertex.Tools.VertexScaleTool.Title": "Scala",
+  "Vertex.Tools.VertexFaceEditTool.Title": "Modifica faccia",
+  "Vertex.Controls.VertexSidebarPanel.Title": "Strumento Vertici",
+  "Vertex.Controls.VertexSidebarPanel.DeselectAll": "Deseleziona tutto",
+  "Vertex.Controls.VertexSidebarPanel.ResetToOriginal": "Reimposta originale",
+  "Vertex.Controls.VertexErrorsSidebarPanel.Title": "Errori Strumento Vertici",
+  "Vertex.Controls.VertexPointControl.MergeOverlappingVertices": "Unisci vertici sovrapposti",
+  "Vertex.Controls.VertexPointControl.MergeAutomatically": "Unisci automaticamente",
+  "Vertex.Controls.VertexPointControl.SplitFace": "Dividi facce",
+  "Vertex.Controls.VertexPointControl.ShowPoints": "Mostra punti",
+  "Vertex.Controls.VertexPointControl.ShowMidpoints": "Mostra punti centrali",
+  "Vertex.Controls.VertexPointControl.MergeResults": "Rimossi: {0} punto/i, {1} faccia/e",
+  "Vertex.Controls.VertexScaleControl.ScaleDistance": "Scala distanza (%)",
+  "Vertex.Controls.VertexScaleControl.Reset": "Reimposta",
+  "Vertex.Controls.VertexScaleControl.ResetOrigin": "Reimposta origine",
+  "Vertex.Controls.VertexEditFaceControl.WithSelectedFaces": "Con le facce selezionate:",
+  "Vertex.Controls.VertexEditFaceControl.Units": "unità",
+  "Vertex.Controls.VertexEditFaceControl.PokeBy": "Sporgi da",
+  "Vertex.Controls.VertexEditFaceControl.BevelBy": "Smussa da",
+  "Vertex.Controls.VertexEditFaceControl.Poke": "Sporgi",
+  "Vertex.Controls.VertexEditFaceControl.Bevel": "Smussa",
+  "Vertex.Errors.BackwardsFace": "Faccia all'indietro",
+  "Vertex.Errors.ConcaveFace": "Faccia concava",
+  "Vertex.Errors.CoplanarFaces": "Vertici complanari",
+  "Vertex.Errors.NonPlanarVertices": "Vertici non planari",
+  "Vertex.Errors.OverlappingVertices": "Vertici sovrapposti"
 }

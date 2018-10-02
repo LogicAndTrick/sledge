@@ -1,116 +1,107 @@
-﻿{
-    "@Meta": {
-        "Base": "Sledge.BspEditor", 
-        "Language": "it",
-        "LanguageDescription":  "Italiano / Italian",
-        "Inherit": "en"
-    },
-    "@Settings": {
-        "Grid": {
-            "SquareGridFactory": {
-                "GridHideSmallerThan": "Nascondi le linee della griglia quando sono più vicine di questa quantità di pixel insieme",
-                "GridHideFactor": "Fattore da saltare da quando si nascondono le linee della griglia vicine",
-                "GridSecondaryHighlight": "Evidenzia le linee della griglia ogni X unità (0 disabilitato)", 
-                "GridPrimaryHighlight": "Evidenzia ogni X della linea della griglia (0 disabilita)"
-            }
-        } 
-    },
-    "Commands": {
-        "Modification": {
-            "SelectNone": {
-                "Name": "Selezione nulla",
-                "Details": "Toglie dalla selezione corrente."
-            },
-            "SelectAll": {
-                "Name": "Seleziona Tutto",
-                "Details": "Seleziona tutti gli oggetti nel documento."
-            }
-        },
-        "Clipboard": {
-            "Paste": {
-                "Name": "Incolla",
-                "Details": "Incolla il contenuto corrente degli appunti."
-            },
-            "Cut": {
-                "Name": "Taglia",
-                "Details": "Copia la selezione corrente e la rimuove."
-            },
-            "Copy": {
-                "Name": "Copia",
-                "Details": "Copia la selezione corrente."
-            }
-        },
-        "Grouping": {
-            "Group": {
-                "Name": "Raggruppa",
-                "Details": "Raggruppa gli oggetti selezionati."
-            },
-            "Ungroup": {
-                "Name": "Separa",
-                "Details": "Separa il gruppo selezionato"
-            }
-        }
-    },
-    "Components": {
-        "ClipboardManager": {
-            "NothingSelected": "Nulla",
-            "NumSelected": "{0} oggetti"
-        },
-        "ClipboardSidebarPanel": {
-            "Title": "Appunti"
-        }
-    },
-    "Documents": {
-        "BspSourceDocumentLoader": {
-            "FileTypeDescription": "File sorgente del BSP",
-            "UntitledDocumentName": "Senza nome {0}" 
-        }
-    },
-    "Environment": {
-        "Goldsource": {
-            "AutomaticVisgroups": {
-                "Entities": "Entità",
-                "ToolBrushes": "Strumenti brush",
-                "WorldGeometry": "Geometria del mondo",
-
-                "BrushEntities": "Entità brush",
-                "PointEntities": "Entità punto",
-                "Lights": "Luci",
-                "Triggers": "Triggers",
-                "Nodes": "Nodi",
-
-                "Bevel": "Bevel",
-                "Hint": "Hint",
-                "Origin": "Origin",
-                "Skip": "Skip",
-                "Trigger": "Trigger",
-
-                "Brushes": "Brushes",
-                "Null": "Null",
-                "Sky": "Cielo",
-                "Water": "Acqua"
-            },
-            "GoldsourceEnvironmentFactory": {
-                "Description": "Goldsource (HL1)"
-            }
-        }
-    },
-    "Grid": {
-        "NoGridFactory": {
-            "Name": "Nessuna griglia",
-            "Details": "Non mostra alcuna griglia."
-        },
-        "SquareGridFactory": {
-            "Name": "Griglia standard",
-            "Details": "Una normale griglia quadrata basata su potenze di due."
-        }
-    },
-    "Modification": {
-        "ChangeHandling": {
-            "SelectionHandler": {
-                "NoObjectsSelected": "Nessun oggetto selezionato",
-                "NumObjectsSelected": "{0} oggetti selezionati"
-            }
-        }
-    } 
+{
+  "@Meta": {
+    "Base": "Sledge.BspEditor",
+    "Language": "it",
+    "LanguageDescription": "Italiano / Italian",
+    "Inherit": "en"
+  },
+  "@Settings": {
+    "Grid.SquareGridFactory.GridHideSmallerThan": "Nascondi le linee della griglia quando sono più vicine di questa quantità di pixel insieme",
+    "Grid.SquareGridFactory.GridHideFactor": "Fattore da saltare da quando si nascondono le linee della griglia vicine",
+    "Grid.SquareGridFactory.GridSecondaryHighlight": "Evidenzia le linee della griglia ogni X unità (0 disabilitato)",
+    "Grid.SquareGridFactory.GridPrimaryHighlight": "Evidenzia ogni X della linea della griglia (0 disabilita)"
+  },
+  "Commands.Modification.SelectNone.Name": "Selezione nulla",
+  "Commands.Modification.SelectNone.Details": "Toglie dalla selezione corrente.",
+  "Commands.Modification.SelectAll.Name": "Seleziona Tutto",
+  "Commands.Modification.SelectAll.Details": "Seleziona tutti gli oggetti nel documento.",
+  "Commands.Clipboard.Paste.Name": "Incolla",
+  "Commands.Clipboard.Paste.Details": "Incolla il contenuto corrente degli appunti.",
+  "Commands.Clipboard.Cut.Name": "Taglia",
+  "Commands.Clipboard.Cut.Details": "Copia la selezione corrente e la rimuove.",
+  "Commands.Clipboard.Copy.Name": "Copia",
+  "Commands.Clipboard.Copy.Details": "Copia la selezione corrente.",
+  "Commands.Clipboard.Delete.Name": "Elimina",
+  "Commands.Clipboard.Delete.Details": "Elimina la selezione corrente.",
+  "Commands.Grouping.Group.Name": "Raggruppa",
+  "Commands.Grouping.Group.Details": "Raggruppa gli oggetti selezionati.",
+  "Commands.Grouping.Ungroup.Name": "Separa",
+  "Commands.Grouping.Ungroup.Details": "Separa il gruppo selezionato",
+  "Compile.BatchProcess.ProgramNotFoundTitle": "Errore di configurazione",
+  "Compile.BatchProcess.ProgramNotFoundMessage": "Il batch sta tentando di avviare un processo che non esiste.\r\n\r\nControlla la tua configurazione e assicurati che i programmi di compilazione siano impostati correttamente.",
+  "Components.ClipboardManager.NothingSelected": "Nulla",
+  "Components.ClipboardManager.NumSelected": "{0} oggetti",
+  "Components.ClipboardSidebarPanel.Title": "Appunti",
+  "Controls.Layout.OpenWindowSettings.Name": "Modifica disposizione finestre...",
+  "Controls.Layout.OpenWindowSettings.Details": "Apre la finestra di dialogo per le impostazioni della disposizione",
+  "Controls.Layout.CreateLayoutWindow.Name": "Nuova finestra",
+  "Controls.Layout.CreateLayoutWindow.Details": "Crea una nuova finestra",
+  "Controls.Layout.LayoutSettings.Title": "Impostazioni disposizione",
+  "Controls.Layout.LayoutSettings.Window": "Finestra",
+  "Controls.Layout.LayoutSettings.Rows": "Righe",
+  "Controls.Layout.LayoutSettings.Columns": "Colonne",
+  "Controls.Layout.LayoutSettings.Apply": "Applica",
+  "Controls.Layout.LayoutSettings.Cancel": "Cancella",
+  "Controls.Layout.LayoutSettings.Instructions": "Ogni rettangolo rappresenta un riquadro.\r\nClicca e trascina i rettangoli per combinare i riquadri.\r\nClicca un riquadro combinato per disassemblarlo.",
+  "Controls.Layout.LayoutSettings.ClickAPreset": "Clicca per provare una disposizione preimpostata:",
+  "Documents.BspSourceDocumentLoader.FileTypeDescription": "File sorgente del BSP",
+  "Documents.BspSourceDocumentLoader.UntitledDocumentName": "Senza nome {0}",
+  "Environment.Controls.EnvironmentCollectionEditor.Add": "Aggiungi",
+  "Environment.Controls.EnvironmentCollectionEditor.Remove": "Rimuovi",
+  "Environment.Controls.EnvironmentCollectionEditor.Name": "Nome",
+  "Environment.Goldsource.AutomaticVisgroups.Entities": "Entità",
+  "Environment.Goldsource.AutomaticVisgroups.ToolBrushes": "Strumenti brush",
+  "Environment.Goldsource.AutomaticVisgroups.WorldGeometry": "Geometria del mondo",
+  "Environment.Goldsource.AutomaticVisgroups.BrushEntities": "Entità brush",
+  "Environment.Goldsource.AutomaticVisgroups.PointEntities": "Entità punto",
+  "Environment.Goldsource.AutomaticVisgroups.Lights": "Luci",
+  "Environment.Goldsource.AutomaticVisgroups.Triggers": "Triggers",
+  "Environment.Goldsource.AutomaticVisgroups.Nodes": "Nodi",
+  "Environment.Goldsource.AutomaticVisgroups.Bevel": "Bevel",
+  "Environment.Goldsource.AutomaticVisgroups.Hint": "Hint",
+  "Environment.Goldsource.AutomaticVisgroups.Origin": "Origin",
+  "Environment.Goldsource.AutomaticVisgroups.Skip": "Skip",
+  "Environment.Goldsource.AutomaticVisgroups.Trigger": "Trigger",
+  "Environment.Goldsource.AutomaticVisgroups.Brushes": "Brushes",
+  "Environment.Goldsource.AutomaticVisgroups.Null": "Null",
+  "Environment.Goldsource.AutomaticVisgroups.Sky": "Cielo",
+  "Environment.Goldsource.AutomaticVisgroups.Water": "Acqua",
+  "Environment.Goldsource.GoldsourceEnvironmentFactory.Description": "Goldsource (HL1)",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.Directories": "Cartelle",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.GameDataFiles": "File dati di gioco (FGD)",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.BuildTools": "Strumenti di compilazione",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.Textures": "Texture",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.Browse": "Sfoglia...",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.Add": "Aggiungi...",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.Remove": "Rimuovi",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.Name": "Nome",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.Path": "Percorso",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.GameDirectory": "Cartella di gioco",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.BaseDirectory": "Cartella di gioco base (es: 'valve')",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.ModDirectory": "Cartella Mod (es: 'cstrike')",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.GameExecutable": "Eseguibile del gioco (es: 'hl.exe')",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.LoadHDModels": "Carica modelli HD (se disponibili)",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.DefaultPointEntity": "Entità punto predefinita",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.DefaultBrushEntity": "Entità brush predefinita",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.Low": "Minimo",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.High": "Massimo",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.OverrideMapSize": "Sfora grandezza mappa",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.IncludeFgdDirectories": "Carica le sprite e i modelli dalle cartelle degli FGD",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.BuildDirectory": "Cartella contenente gli strumenti di compilazione:",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.IncludeToolsDirectory": "Include automaticamente le texture trovate in questa cartella",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.CopyBspToGameFolder": "Copia i BSP/RES nella cartella di gioco",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.RunGame": "Avvia il gioco dopo una corretta compilazione",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.AskToRunGame": "Chiedi prima di avviare il gioco",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.CopyToMapFolder": "Copia nella cartella delle mappe:",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.DefaultTextureScale": "Scalo texture di base:",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.TexturePackagesToInclude": "Pacchetti di texture da includere:",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.ToggleAll": "Seleziona tutti",
+  "Environment.Goldsource.GoldsourceEnvironmentEditor.AdditionalTexturePackages": "Pacchetti di texture aggiuntivi:",
+  "Grid.NoGridFactory.Name": "Nessuna griglia",
+  "Grid.NoGridFactory.Details": "Non mostra alcuna griglia.",
+  "Grid.SquareGridFactory.Name": "Griglia standard",
+  "Grid.SquareGridFactory.Details": "Una normale griglia quadrata basata su potenze di due.",
+  "Modification.ChangeHandling.SelectionHandler.NoObjectsSelected": "Nessun oggetto selezionato",
+  "Modification.ChangeHandling.SelectionHandler.NumObjectsSelected": "{0} oggetti selezionati",
+  "MenuDataProvider.Window": "Finestra"
 }

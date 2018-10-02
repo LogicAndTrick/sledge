@@ -1,97 +1,59 @@
-﻿{
-    "@Meta": {
-        "Base": "Sledge.Shell", 
-        "Language": "it",
-        "LanguageDescription":  "Italiano / Italian",
-        "Inherit": "en"
-    },
-    "@Settings": {
-        "@Group.FileAssociations": "Associazione file",
-        "@Group.Hotkeys": "Tasti a scelta rapida",
-        "@Group.Interface": "Interfaccia",
-        "@Group.Autosaving": "Autosalvataggio",
-        "Translations": {
-            "Language": "Lingua interfaccia (richiede il riavvio)"
-        },
-        "Autosaver": {
-            "Enabled": "Abilita salvataggio automatico",
-            "IntervalMinutes": "Intervallo degli autosalvataggi (minuti)",
-            "RetainNumber": "Numero degli autosalvataggi da tenere (0 tieni tutti)",
-            "SaveToAlternateDirectory": "Salva gli autosalvataggi in una cartella diversa",
-            "AutosaveDirectory": "Cartella degli autosalvataggi (se non è la cartella Documenti)",
-            "OnlySaveIfChanged": "Crea un autosalvataggio solo se il documento ha dei cambiamenti non salvati",
-            "SaveDocumentOnAutosave": "Salva anche il documento principale quando si crea un autosalvataggio (automatico con Ctrl+S)"
-        }
-    },
-    "Commands": {
-        "NewFile": {
-            "Name": "Nuovo",
-            "Details": "Crea un nuovo documento." 
-        },
-        "OpenFile": {
-            "Name": "Apri...",
-            "Details": "Apri un documento."
-        },
-        "SaveFile": {
-            "Name": "Salva",
-            "Details": "Salva il documento attuale."
-        },
-        "SaveFileAs": {
-            "Name": "Salva come...",
-            "Details": "Salva il documento attuale in un formato diverso."
-        },
-        "Export": {
-            "Name": "Esporta...",
-            "Details": "Salva una copia del documento attuale."
-        },
-        "CloseFile": {
-            "Name": "Chiudi",
-            "Details": "Chiudi il documento attuale."
-        },
-        "Exit": {
-            "Name": "Esci",
-            "Details": "Esci dall'applicazione."
-        },
-        "OpenCommandBox": {
-            "Name": "Riquadro dei comandi",
-            "Details": "Apri il riquadro dei comandi."
-        },
-        "OpenSettingsForm": {
-            "Name": "Impostazioni",
-            "Details": "Apri la finestra delle impostazioni."
-        }
-    },
-    "Components": {
-        "ContextExplorerComponent": {
-            "Title": "Esplora contenuti"
-        },
-        "LogComponent": {
-            "Title": "Log"
-        },
-        "DefaultMenuMetadataProvider": {
-            "File": "File",
-            "Edit": "Modifica",
-            "View": "Visualizza",
-            "Help": "Aiuto",
-            "Tools": "Strumenti"
-        } 
-    },
-    "Forms": {
-        "Shell": {
-            "UnsavedChanges": "Il documento ha dei cambiamenti non salvati",
-            "SaveChangesToFile": "Salvare i documenti su {0}?"
-        },
-        "SettingsForm": {
-            "Title": "Impostazioni",
-            "OK": "OK",
-            "Cancel": "Cancella"
-        },
-        "SaveChangesForm": {
-            "SaveAll": "Salva tutto",
-            "DiscardAll": "Annulla tutto",
-            "Cancel": "Cancella",
-            "UnsavedChangesMessage": "Alcuni documenti hanno dei cambiamenti non salvati. Vuoi salvarli o annullare i cambiamenti?",
-            "Title": "Cambiamenti non salvati nei documenti aperti"
-        }
-    }
+{
+  "@Meta": {
+    "Base": "Sledge.Shell",
+    "Language": "it",
+    "LanguageDescription": "Italiano / Italian",
+    "Inherit": "en"
+  },
+  "@Settings": {
+    "@Group.FileAssociations": "Associazione file",
+    "@Group.Hotkeys": "Tasti a scelta rapida",
+    "@Group.Interface": "Interfaccia",
+    "@Group.Autosaving": "Autosalvataggio",
+    "Translations.Language": "Lingua interfaccia (richiede il riavvio)",
+    "Autosaver.Enabled": "Abilita salvataggio automatico",
+    "Autosaver.IntervalMinutes": "Intervallo degli autosalvataggi (minuti)",
+    "Autosaver.RetainNumber": "Numero degli autosalvataggi da tenere (0 tieni tutti)",
+    "Autosaver.SaveToAlternateDirectory": "Salva gli autosalvataggi in una cartella diversa",
+    "Autosaver.AutosaveDirectory": "Cartella degli autosalvataggi (se non è la cartella Documenti)",
+    "Autosaver.OnlySaveIfChanged": "Crea un autosalvataggio solo se il documento ha dei cambiamenti non salvati",
+    "Autosaver.SaveDocumentOnAutosave": "Salva anche il documento principale quando si crea un autosalvataggio (automatico con Ctrl+S)"
+  },
+  "Commands.NewFile.Name": "Nuovo",
+  "Commands.NewFile.Details": "Crea un nuovo documento.",
+  "Commands.OpenFile.Name": "Apri...",
+  "Commands.OpenFile.Details": "Apri un documento.",
+  "Commands.SaveFile.Name": "Salva",
+  "Commands.SaveFile.Details": "Salva il documento attuale.",
+  "Commands.SaveFileAs.Name": "Salva come...",
+  "Commands.SaveFileAs.Details": "Salva il documento attuale in un formato diverso.",
+  "Commands.Export.Name": "Esporta...",
+  "Commands.Export.Details": "Salva una copia del documento attuale.",
+  "Commands.CloseFile.Name": "Chiudi",
+  "Commands.CloseFile.Details": "Chiudi il documento attuale.",
+  "Commands.Exit.Name": "Esci",
+  "Commands.Exit.Details": "Esci dall'applicazione.",
+  "Commands.OpenCommandBox.Name": "Riquadro dei comandi",
+  "Commands.OpenCommandBox.Details": "Apri il riquadro dei comandi.",
+  "Commands.OpenSettingsForm.Name": "Impostazioni",
+  "Commands.OpenSettingsForm.Details": "Apri la finestra delle impostazioni.",
+  "Commands.OpenTranslator.Name": "Traduttore Sledge...",
+  "Commands.OpenTranslator.Details": "Apri il traduttore.",
+  "Components.ContextExplorerComponent.Title": "Esplora contenuti",
+  "Components.LogComponent.Title": "Log",
+  "Components.DefaultMenuMetadataProvider.File": "File",
+  "Components.DefaultMenuMetadataProvider.Edit": "Modifica",
+  "Components.DefaultMenuMetadataProvider.View": "Visualizza",
+  "Components.DefaultMenuMetadataProvider.Help": "Aiuto",
+  "Components.DefaultMenuMetadataProvider.Tools": "Strumenti",
+  "Forms.Shell.UnsavedChanges": "Il documento ha dei cambiamenti non salvati",
+  "Forms.Shell.SaveChangesToFile": "Salvare i documenti su {0}?",
+  "Forms.SettingsForm.Title": "Impostazioni",
+  "Forms.SettingsForm.OK": "OK",
+  "Forms.SettingsForm.Cancel": "Cancella",
+  "Forms.SaveChangesForm.SaveAll": "Salva tutto",
+  "Forms.SaveChangesForm.DiscardAll": "Annulla tutto",
+  "Forms.SaveChangesForm.Cancel": "Cancella",
+  "Forms.SaveChangesForm.UnsavedChangesMessage": "Alcuni documenti hanno dei cambiamenti non salvati. Vuoi salvarli o annullare i cambiamenti?",
+  "Forms.SaveChangesForm.Title": "Cambiamenti non salvati nei documenti aperti"
 }

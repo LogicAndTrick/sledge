@@ -1,425 +1,275 @@
-﻿{
-    "@Meta": {
-        "Base": "Sledge.BspEditor.Editing", 
-        "Language": "it",
-        "LanguageDescription":  "Italiano / Italian",
-        "Inherit": "en"
-    },
-    "@Settings": {
-        
-    },
-    "Commands": {
-        "EditVisgroups": {
-            "Name": "Modifica visgroups",
-            "Details": "Visualizza e modifica i visgroups della mappa."
-        },
-        "OpenAboutWindow": {
-            "Name": "Riguardo a Sledge",
-            "Details": "Visualizza informazioni riguardo questa applicazione."
-        },
-        "OpenSledgeWebsite": {
-            "Name": "Sito web di Sledge",
-            "Details": "Vai al sito web di Sledge."
-        },
-        "OpenEntityReport": {
-            "Name": "Riporto entità",
-            "Details": "Apre la finestra di riporto dell'entità."
-        },
-        "OpenMapTreeWindow": {
-            "Name": "Mostra albero logico",
-            "Details": "Mostra l'albero logico del documento corrente."
-        },
-        "OpenSelectionDetails": {
-            "Name": "Mostra informazioni del brush selezionato",
-            "Details": "Mostra i dettagli dell'oggetto attualmente selezionato."
-        },
-        "OpenMapInformation": {
-            "Name": "Informazioni mappa",
-            "Details": "Apre la finestra delle informazioni della mappa."
-        },
-        "OpenObjectProperties": {
-            "Name": "Proprietà oggetto",
-            "Details": "Apre la finestra delle proprietà dell'oggetto."
-        },
-        "OpenRootProperties": {
-            "Name": "Proprietà mappa",
-            "Details": "Apre la finestra delle proprietà della mappa."
-        },
-        "PasteSpecial": {
-            "Name": "Incolla speciale...",
-            "Details": "Incolla molteplici copie con una trasformazione applicata."
-        },
-        "TieToEntity": {
-            "Name": "Converti a entità",
-            "Details": "Converte in entità l'oggetto attualmente selezionato.",
-            "EntitySelectedTitle": "Entità già selezionata",
-            "OneEntitySelectedMessage": "Hai selezionato un'entità esistente (un '{0}'), come vuoi procedere?\n - Mantieni l'entità esistente e aggiungi l'oggetto selezionato all'entità\n - Crea una nuova entità e aggiungi l'oggetto selezionato alla nuova entità",
-            "MultipleEntitiesSelectedMessage": "Hai selezionato entità multiple, quale vuoi mantenere?",
-            "KeepExisting": "Tieni esistente",
-            "CreateNew": "Crea nuova",
-            "OK": "OK",
-            "Cancel": "Cancella"
-        },
-        "Modification": {
-            "Carve": {
-                "Name": "Intaglia",
-                "Details": "Intaglia la selezione in ogni brush che si sovrappone. (Usare con cautela)"
-            },
-            "Hollow": {
-                "Name": "Scava...",
-                "Details": "Rende i solidi selezionati scavati. (Usare con cautela)",
-                "PromptTitle": "Seleziona larghezza muro",
-                "PromptWallWidth": "Larghezza muro (valori negativi per scavare esternamente)",
-                "WarningMessage": "Questo scaverà tutti gli {0} solidi che sono selezionati.",
-                "OK": "OK",
-                "Cancel": "Cancella"
-            },
-            "Transform": {
-                "Name": "Trasforma...",
-                "Details": "Trasforma la selezione corrente.",
-                "ErrorCannotScaleByZeroTitle": "Impossibile scalare da zero",
-                "ErrorCannotScaleByZeroMessage": "Per favore inserisci un valore diverso da zero per tutte le assi quando scali."
-            },
-            "SnapToGrid": {
-                "Name": "Aggancia alla griglia",
-                "Details": "Aggancia tutta la selezione alla griglia in un unico pezzo."
-            },
-            "SnapToGridIndividually": {
-                "Name": "Aggancia alla griglia individualmente",
-                "Details": "Aggancia ogni oggetto selezionato alla griglia come oggetti separati."
-            },
-            "AlignObjectsXMin": {
-                "Name": "Allinea all'asse X al valore minimo",
-                "Details": "Allinea gli oggetti selezionati al minimo valore X nella selezione."
-            },
-            "AlignObjectsYMin": {
-                "Name": "Allinea all'asse Y al valore minimo",
-                "Details": "Allinea gli oggetti selezionati al minimo valore Y nella selezione."
-            },
-            "AlignObjectsZMin": {
-                "Name": "Allinea all'asse Z al valore minimo",
-                "Details": "Allinea gli oggetti selezionati al minimo valore Z nella selezione."
-            },
-            "AlignObjectsXMax": {
-                "Name": "Allinea all'asse X al valore massimo",
-                "Details": "Allinea gli oggetti selezionati al massimo valore X nella selezione."
-            },
-            "AlignObjectsYMax": {
-                "Name": "Allinea all'asse Y al valore massimo",
-                "Details": "Allinea gli oggetti selezionati al massimo valore Y nella selezione."
-            },
-            "AlignObjectsZMax": {
-                "Name": "Allinea all'asse Z al valore massimo",
-                "Details": "Allinea gli oggetti selezionati al massimo valore Z nella selezione."
-            },
-            "FlipSelectionX": {
-                "Name": "Capovolgi nell'asse X",
-                "Details": "Capovolge l'oggetto selezionato nell'asse X." 
-            },
-            "FlipSelectionY": {
-                "Name": "Capovolgi nell'asse Y",
-                "Details": "Capovolge l'oggetto selezionato nell'asse Y." 
-            },
-            "FlipSelectionZ": {
-                "Name": "Capovolgi nell'asse Z",
-                "Details": "Capovolge l'oggetto selezionato nell'asse Z." 
-            }
-        },
-        "Toggles": {
-            "ToggleTextureLock": {
-                "Name": "Blocca texture",
-                "Details": "Abilita il blocco texture per operazioni uniformi (trasforma, ruota)."
-            },
-            "ToggleTextureScalingLock": {
-                "Name": "Blocca scalo texture",
-                "Details": "Abilita il blocco texture per le operazioni di scalo."
-            }
-        },
-        "Pointfile": {
-            "LoadPointfile": {
-                "Name": "Carica pointfile...",
-                "Details": "Seleziona un pointfile (.lin, .pts) generato dagli strumenti di compilazione.",
-                "InvalidPointfile": "{0} non è un pointfile valido!"
-            },
-            "QuickLoadPointfile": {
-                "Name": "Carica pointfile veloce...",
-                "Details": "Cerca un pointfile per questa mappa. Se trovato, viene caricato.",
-                "InvalidPointfile": "{0} non è un pointfile valido!",
-                "NoPointfileFoundTitle": "Pointfile non trovato",
-                "NoPointfileFoundMessage": "Nessun pointfile trovato. Vuoi cercarne uno?"
-            },
-            "UnloadPointfile": {
-                "Name": "Rimuovi pointfile",
-                "Details": "Rimuove il pointfile attualmente caricato."
-            }
-        },
-        "View": {
-            "CenterSelectionAll": {
-                "Name": "Centra tutte le visuali alla selezione",
-                "Details": "Sposta le telecamere di tutte le visuali e le focalizza sull'oggetto selezionato."
-            },
-            "CenterSelection3D": {
-                "Name": "Centra le visuali 3D alla selezione",
-                "Details": "Sposta le telecamere delle visuali 3D per focalizzarle negli oggetti selezionati."
-            },
-            "CenterSelection2D": {
-                "Name": "Centra le visuali 2D alla selezione",
-                "Details": "Sposta le telecamere delle visuali 2D per focalizzarle negli oggetti selezionati."
-            },
-            "GoToObjectID": {
-                "Name": "Vai all'ID dell'oggetto",
-                "Details": "Seleziona e centra la visuale in uno specifico ID dell'oggetto.",
-                "Title": "Inserisci ID",
-                "ObjectID": "ID oggetto",
-                "OK": "OK",
-                "Cancel": "Cancella"
-            },
-            "GoToLocation": {
-                "Name": "Vai alle coordinate",
-                "Details": "Centra le visuali in un set specifico di coordinate.",
-                "Title": "Inserisci coordinate",
-                "OK": "OK",
-                "Cancel": "Cancella"
-            },
-            "AutosizeViews": {
-                "Name": "Autoridimensiona visuali",
-                "Details": "Ridimensiona automaticamente le visuali divise cosicché abbiano la stessa grandezza."
-            }
-        },
-        "Quick": {
-            "HideSelectedObjects": {
-                "Name": "Nascondi oggetti selezionati",
-                "Details": "Nasconde tutti gli oggetti che sono attualmente selezionati." 
-            },
-            "HideUnselectedObjects": {
-                "Name": "Nascondi oggetti non selezionati",
-                "Details": "Nasconde tutti gli oggetti che non sono attualmente selezionati." 
-            },
-            "ShowHiddenObjects": {
-                "Name": "Mostra oggetti nascosti",
-                "Details": "Mostra tutti gli oggetti che sono stati nascosti." 
-            }
-        }
-    },
-    "Components": {
-        "Properties": {
-            "ObjectPropertiesDialog": {
-                "Apply": "Applica",
-                "OK": "OK",
-                "Cancel": "Cancella",
-                "ResetUnsavedChanges": "Reimposta cambiamenti non salvati",
-                "UnsavedChanges": "I cambiamenti non sono stati salvati",
-                "DoYouWantToSaveFirst": "Ci sono cambiamenti non salvati. Li vuoi salvare?"
-            },
-            "Tabs": {
-                "EmptyTab": {
-                    "NothingIsSelected": "Nulla è attualmente selezionato."
-                }, 
-                "VisgroupTab": {
-                    "Name": "Visgroups",
-                    "MemberOfGroup": "Membro del gruppo:",
-                    "EditVisgroups": "Modifica Visgroups"
-                },
-                "ClassInfoTab": {
-                    "Name": "Info Classe",
-                    "ClassLabel": "Classe:",
-                    "KeyValuesLabel": "Valori Chiave:",
-                    "PropertyNameLabel": "Nome Proprietà",
-                    "PropertyValueLabel": "Valore",
-                    "HelpLabel": "Aiuto:",
-                    "CommentsLabel": "Commenti:",
-                    "SmartEditButton": "Smart Edit",
-                    "HelpButton": "Aiuto",
-                    "CopyButton": "Copia",
-                    "PasteButton": "Incolla",
-                    "AddButton": "Aggiungi",
-                    "DeleteButton": "Elimina",
-                    "MultipleClassesText": "<classi multiple>",
-                    "MultipleValuesText": "<valori multipli>"
-                },
-                "FlagsTab": {
-                    "Name": "Flag"
-                }
-            },
-            "SmartEdit": {
-                "SmartEditFileBrowser": {
-                    "Browse": "Sfoglia...",
-                    "Preview": "Anteprima"
-                }
-            }
-        }, 
-        "Visgroup": {
-            "VisgroupEditForm": {
-                "Title": "Editor Visgroup",
-                "NameLabel": "Nome",
-                "ColorLabel": "Colore (clicca per cambiare)",
-                "AddButton": "Aggiungi gruppo",
-                "RemoveButton": "Rimuovi gruppo",
-                "OkButton": "OK",
-                "CancelButton": "Cancella"
-            },
-            "VisgroupSidebarPanel": {
-                "EditButton": "Modifica",
-                "SelectButton": "Seleziona",
-                "ShowAllButton": "Mostra tutto",
-                "NewButton": "Nuovo",
-                "AutoVisgroups": "Automatico" 
-            }
-        },
-        "AboutDialog": {
-
-        },
-        "CheckForProblemsDialog": {
-            "Title": "Problemi nella mappa",
-            "Details": "Dettagli",
-            "GoToError": "Vai all'errore",
-            "FixError": "Ripara errore",
-            "FixAllOfType": "Ripara tutti dello stesso tipo",
-            "FixAll": "Ripara tutti gli errori",
-            "VisibleObjectsOnly": "Solo oggetti visibili",
-            "SelectedObjectsOnly": "Solo oggetti selezionati",
-            "ClickForAdditionalDetails" : "Clicca qui per informazioni aggiuntive", 
-            "CloseButton": "Chiudi"
-        },
-        "PasteSpecialDialog": {
-            "Title": "Incolla Speciale",
-            "NumberOfCopies": "Numero di copie da incollare:",
-            "StartPoint": "Punto d'inizio",
-            "StartAtOrigin": "Inizia all'origine della mappa",
-            "StartAtCenterOfOriginal": "Inizia al centro dell'originale",
-            "StartAtCenterOfSelection": "Inizia al centro della selezione corrente",
-            "Grouping": "Raggruppamento",
-            "NoGrouping": "Nessun raggruppamento",
-            "GroupIndividual": "Raggruppa copie individuali",
-            "GroupAll": "Raggruppa tutte le copie",
-            "Offset": "Offset (accumulativo)",
-            "Rotation": "Rotazione (accumulativo)",
-            "MakeEntityNamesUnique": "Rendi unici i nomi delle entità",
-            "PrevixEntityNames": "Prefissa entità nominate con:",
-            "OK": "OK",
-            "Cancel": "Cancella"
-        },
-        "TransformDialog": {
-            "Title": "Trasforma",
-            "Source": "Sorgente",
-            "Rotate": "Ruota",
-            "Translate": "Traduci",
-            "Scale": "Scala",
-            "OK": "OK",
-            "Cancel": "Cancella"
-        },
-        "Compile": {
-            "CompileOutputComponent": {
-                "Title": "Compila",
-                "CompileCompletedSuccessfully": "Compilazione avvenuta con successo.",
-                "CompileFailed": "Compilazione fallita. Controlla il log dei messaggi per maggiori dettagli."
-            },
-            "CompileDialog": {
-                
-            } 
-        },
-        "EntityReportDialog": {
-            "Title": "Rapporto Entità",
-            "ClassHeader": "Classe",
-            "NameHeader": "Nome",
-            "GoTo": "Vai a",
-            "Delete": "Elimina",
-            "Properties": "Proprietà",
-            "FollowSelection": "Segui selezione",
-            "Filter": "Filtra",
-            "ShowAll": "Mostra tutto",
-            "ShowPoint": "Solo Entità Punto",
-            "ShowBrush": "Solo Entità Brush",
-            "IncludeHidden": "Includi oggetti nascosti",
-            "FilterByKeyValue": "Filtra per chiave/valore:",
-            "Exact": "Specifico",
-            "FilterByClass": "Filtra per classe",
-            "ResetFilters": "Reimposta filtri",
-            "Close": "Chiudi"
-        },
-        "MapInformationDialog": {
-            "Title": "Informazioni Mappa",
-            "Solids": "Solidi",
-            "Faces": "Facce",
-            "PointEntities": "Entità Punto",
-            "SolidEntities": "Entità Solide",
-            "UniqueTextures": "Texture uniche",
-            "TextureMemory": "Memoria texture",
-            "TexturePackagesUsed": "Pacchetti di texture usati",
-            "CloseButton": "Chiudi",
-            "CalculatingTextureMemoryUsage": "Calcolo..." 
-        },
-        "SelectionDetailsDialog": {
-            "Title": "Dettagli selezione"
-        },
-        "MapTreeWindow": {
-            "Title": "Albero logico della mappa"
-        }
-    },
-    "MenuDataProvider": {
-        "Flip": "Capovolgi",
-        "Align": "Allinea" 
-    },
-    "Problems": {
-        "DuplicateFaceIDs": {
-            "Name": "Più facce hanno lo stesso ID",
-            "Details": "È stata trovata più di una faccia con lo stesso ID. Ogni ID della faccia dovrebbe essere unico. Riparare questo problema assegnerà le facce duplicate ad un nuovo ID."
-        },
-        "DuplicateKeyValues": {
-            "Name": "L'entità ha chiavi duplicate",
-            "Details": "Questa entità ha la stessa chiave specificata molteplici volte. Riparare il problema cancellerà le chiavi duplicate."
-        },
-        "DuplicateObjectIDs": {
-            "Name": "Più oggetti hanno lo stesso ID",
-            "Details": "Più di un oggetto ha lo stesso ID. Ogni ID dell'oggetto dovrebbe essere unico. Riparare questo problema assegnerà i duplicati ad un nuovo ID."
-        },
-        "EntityWithEntityChildren": {
-            "Name": "L'entità ha delle sotto-entità",
-            "Details": "È stata trovata un'entità con sotto-entità. Riparare il problema sposterà le sotto-entità fuori dal gruppo delle entità."
-        },
-        "GameDataNotFound": {
-            "Name": "Classe Entità non trovata",
-            "Details": "Questa Classe Entità non è stata trovata negli attuali dati di gioco. Assicurati che i corretti FGD siano caricati."
-        },
-        "GroupWithoutChildren": {
-            "Name": "Il gruppo non ha sotto-entità",
-            "Details": "Questo gruppo è vuoto. Un gruppo deve avere contenuti. Riparare il problema cancellerà il gruppo."
-        },
-        "InvalidKeyValues": {
-            "Name": "L'entità ha chiavi/valori pari",
-            "Details": "Ci sono chiavi/valori pari che non sono specificati nei dati di gioco. Assicurati che gli FGD più recenti siano caricati. Riparare il problema rimuoverà le chiavi non valide."
-        },
-        "InvalidSolid": {
-            "Name": "Solido invalido",
-            "Details": "Questo solido non è valido. Potrebbe non essere convesso, avere facce complanari, o avere vertici fuori piano. Riparare il problema cancellerà il solido."
-        },
-        "NoPlayerStart": {
-            "Name": "Questo documento non ha il punto d'inizio del giocatore",
-            "Details": "Non c'è nessuna entità info_player_start in questo documento. Il giocatore nascerà all'origine. Questo potrebbe posizionare il giocatore all'interno della geometria o nel vuoto. Riparare il problema posizionerà l'entità d'inizio del giocatore all'origine del documento. È consigliato riparare questo problema manualmente." 
-        },
-        "PointEntityWithChildren": {
-            "Name": "L'Entità Punto ha sotto-entità",
-            "Details": "È stata trovata un'Entità Punto con sotto-entità. Un'Entità Punto non può avere contenuti. Riparare il problema sposterà le sotto-entità fuori dal gruppo delle entità." 
-        },
-        "SolidEntityWithoutChildren": {
-            "Name": "L'Entità Brush non ha sotto-entità solide",
-            "Details": "È stata trovata un'Entità Brush con sotto-entità non solide. Un'Entità Brush deve avere contenuti solidi. Riparare il problema cancellerà l'entità." 
-        },
-        "SolidWithChildren": {
-            "Name": "Il solido ha sotto-entità",
-            "Details": "È stato trovato un solido con sotto-entità. Un solido non può avere contenuti. Riparare il problema sposterà le sotto-entità fuori dal gruppo del solido." 
-        },
-        "TargetWithoutMatchingName": {
-            "Name": "La destinazione dell'entità non ha un'entità con nome corrispondente",
-            "Details": "Il valore della destinazione di questa entità non ha un'entità con nome corrispondente. Ogni destinazione dovrebbe avere un nome di destinazione corrispondente. Riparare il problema reimposterà il valore di destinazione a una stringa vuota." 
-        },
-        "TextureAxisPerpendicularToFace": {
-            "Name": "Assi della texture perpendicolari alla faccia",
-            "Details": "Le assi della texture di questa faccia sono perpendicolari al piano della faccia. Questo accade quando si manipolano oggetti con il blocco texture disabilitato, come anche eseguendo altre varie operazioni. Per riparare, riallinea la texture alla faccia. Riparare il problema reimposterà la texture alla faccia del piano."
-        },
-        "TextureNotFound": {
-            "Name": "Texture non trovata",
-            "Details": "Questa texture non è stata trovata nei pacchetti di texture attuali. Assicurati che i corretti pacchetti di texture siano caricati. Riparare il problema reimposterà la texture della faccia alla texture predefinita."
-        }
-    }
+{
+  "@Meta": {
+    "Base": "Sledge.BspEditor.Editing",
+    "Language": "it",
+    "LanguageDescription": "Italiano / Italian",
+    "Inherit": "en"
+  },
+  "Commands.EditVisgroups.Name": "Modifica visgroups",
+  "Commands.EditVisgroups.Details": "Visualizza e modifica i visgroups della mappa.",
+  "Commands.MoveToWorld.Name": "Converti in non-entità",
+  "Commands.MoveToWorld.Details": "Elimina tutte le entità solide selezionate e riporta i suoi brush allo stadio originale.",
+  "Commands.OpenAboutWindow.Name": "Riguardo a Sledge",
+  "Commands.OpenAboutWindow.Details": "Visualizza informazioni riguardo questa applicazione.",
+  "Commands.OpenCheckForProblemsDialog.Name": "Verifica problematiche",
+  "Commands.OpenCheckForProblemsDialog.Details": "Apre la finestra di verifica dei problemi.",
+  "Commands.OpenCompileWindow.Name": "Compila...",
+  "Commands.OpenCompileWindow.Details": "Apri la finestra di compilazione.",
+  "Commands.OpenSledgeWebsite.Name": "Sito web di Sledge",
+  "Commands.OpenSledgeWebsite.Details": "Vai al sito web di Sledge.",
+  "Commands.OpenEntityReport.Name": "Riporto entità",
+  "Commands.OpenEntityReport.Details": "Apre la finestra di riporto dell'entità.",
+  "Commands.OpenMapTreeWindow.Name": "Mostra albero logico",
+  "Commands.OpenMapTreeWindow.Details": "Mostra l'albero logico del documento corrente.",
+  "Commands.OpenSelectionDetails.Name": "Mostra informazioni del brush selezionato",
+  "Commands.OpenSelectionDetails.Details": "Mostra i dettagli dell'oggetto attualmente selezionato.",
+  "Commands.OpenMapInformation.Name": "Informazioni mappa",
+  "Commands.OpenMapInformation.Details": "Apre la finestra delle informazioni della mappa.",
+  "Commands.OpenObjectProperties.Name": "Proprietà oggetto",
+  "Commands.OpenObjectProperties.Details": "Apre la finestra delle proprietà dell'oggetto.",
+  "Commands.OpenRootProperties.Name": "Proprietà mappa",
+  "Commands.OpenRootProperties.Details": "Apre la finestra delle proprietà della mappa.",
+  "Commands.PasteSpecial.Name": "Incolla speciale...",
+  "Commands.PasteSpecial.Details": "Incolla molteplici copie con una trasformazione applicata.",
+  "Commands.TieToEntity.Name": "Converti a entità",
+  "Commands.TieToEntity.Details": "Converte in entità l'oggetto attualmente selezionato.",
+  "Commands.TieToEntity.EntitySelectedTitle": "Entità già selezionata",
+  "Commands.TieToEntity.OneEntitySelectedMessage": "Hai selezionato un'entità esistente (un '{0}'), come vuoi procedere?\n - Mantieni l'entità esistente e aggiungi l'oggetto selezionato all'entità\n - Crea una nuova entità e aggiungi l'oggetto selezionato alla nuova entità",
+  "Commands.TieToEntity.MultipleEntitiesSelectedMessage": "Hai selezionato entità multiple, quale vuoi mantenere?",
+  "Commands.TieToEntity.KeepExisting": "Tieni esistente",
+  "Commands.TieToEntity.CreateNew": "Crea nuova",
+  "Commands.TieToEntity.OK": "OK",
+  "Commands.TieToEntity.Cancel": "Cancella",
+  "Commands.Modification.Carve.Name": "Intaglia",
+  "Commands.Modification.Carve.Details": "Intaglia la selezione in ogni brush che si sovrappone. (Usare con cautela)",
+  "Commands.Modification.Hollow.Name": "Scava...",
+  "Commands.Modification.Hollow.Details": "Rende i solidi selezionati scavati. (Usare con cautela)",
+  "Commands.Modification.Hollow.PromptTitle": "Seleziona larghezza muro",
+  "Commands.Modification.Hollow.PromptWallWidth": "Larghezza muro (valori negativi per scavare esternamente)",
+  "Commands.Modification.Hollow.WarningMessage": "Questo scaverà tutti gli {0} solidi che sono selezionati.",
+  "Commands.Modification.Hollow.OK": "OK",
+  "Commands.Modification.Hollow.Cancel": "Cancella",
+  "Commands.Modification.Transform.Name": "Trasforma...",
+  "Commands.Modification.Transform.Details": "Trasforma la selezione corrente.",
+  "Commands.Modification.Transform.ErrorCannotScaleByZeroTitle": "Impossibile scalare da zero",
+  "Commands.Modification.Transform.ErrorCannotScaleByZeroMessage": "Per favore inserisci un valore diverso da zero per tutte le assi quando scali.",
+  "Commands.Modification.SnapToGrid.Name": "Aggancia alla griglia",
+  "Commands.Modification.SnapToGrid.Details": "Aggancia tutta la selezione alla griglia in un unico pezzo.",
+  "Commands.Modification.SnapToGridIndividually.Name": "Aggancia alla griglia individualmente",
+  "Commands.Modification.SnapToGridIndividually.Details": "Aggancia ogni oggetto selezionato alla griglia come oggetti separati.",
+  "Commands.Modification.AlignObjectsXMin.Name": "Allinea all'asse X al valore minimo",
+  "Commands.Modification.AlignObjectsXMin.Details": "Allinea gli oggetti selezionati al minimo valore X nella selezione.",
+  "Commands.Modification.AlignObjectsYMin.Name": "Allinea all'asse Y al valore minimo",
+  "Commands.Modification.AlignObjectsYMin.Details": "Allinea gli oggetti selezionati al minimo valore Y nella selezione.",
+  "Commands.Modification.AlignObjectsZMin.Name": "Allinea all'asse Z al valore minimo",
+  "Commands.Modification.AlignObjectsZMin.Details": "Allinea gli oggetti selezionati al minimo valore Z nella selezione.",
+  "Commands.Modification.AlignObjectsXMax.Name": "Allinea all'asse X al valore massimo",
+  "Commands.Modification.AlignObjectsXMax.Details": "Allinea gli oggetti selezionati al massimo valore X nella selezione.",
+  "Commands.Modification.AlignObjectsYMax.Name": "Allinea all'asse Y al valore massimo",
+  "Commands.Modification.AlignObjectsYMax.Details": "Allinea gli oggetti selezionati al massimo valore Y nella selezione.",
+  "Commands.Modification.AlignObjectsZMax.Name": "Allinea all'asse Z al valore massimo",
+  "Commands.Modification.AlignObjectsZMax.Details": "Allinea gli oggetti selezionati al massimo valore Z nella selezione.",
+  "Commands.Modification.FlipSelectionX.Name": "Capovolgi nell'asse X",
+  "Commands.Modification.FlipSelectionX.Details": "Capovolge l'oggetto selezionato nell'asse X.",
+  "Commands.Modification.FlipSelectionY.Name": "Capovolgi nell'asse Y",
+  "Commands.Modification.FlipSelectionY.Details": "Capovolge l'oggetto selezionato nell'asse Y.",
+  "Commands.Modification.FlipSelectionZ.Name": "Capovolgi nell'asse Z",
+  "Commands.Modification.FlipSelectionZ.Details": "Capovolge l'oggetto selezionato nell'asse Z.",
+  "Commands.Toggles.ToggleTextureLock.Name": "Blocca texture",
+  "Commands.Toggles.ToggleTextureLock.Details": "Abilita il blocco texture per operazioni uniformi (trasforma, ruota).",
+  "Commands.Toggles.ToggleTextureScalingLock.Name": "Blocca scalo texture",
+  "Commands.Toggles.ToggleTextureScalingLock.Details": "Abilita il blocco texture per le operazioni di scalo.",
+  "Commands.Toggles.ToggleHideNullTextures.Name": "Nascondi texture null",
+  "Commands.Toggles.ToggleHideNullTextures.Details": "Attiva/Disattiva visualizzazione texture null",
+  "Commands.Pointfile.LoadPointfile.Name": "Carica pointfile...",
+  "Commands.Pointfile.LoadPointfile.Details": "Seleziona un pointfile (.lin, .pts) generato dagli strumenti di compilazione.",
+  "Commands.Pointfile.LoadPointfile.InvalidPointfile": "{0} non è un pointfile valido!",
+  "Commands.Pointfile.QuickLoadPointfile.Name": "Carica pointfile veloce...",
+  "Commands.Pointfile.QuickLoadPointfile.Details": "Cerca un pointfile per questa mappa. Se trovato, viene caricato.",
+  "Commands.Pointfile.QuickLoadPointfile.InvalidPointfile": "{0} non è un pointfile valido!",
+  "Commands.Pointfile.QuickLoadPointfile.NoPointfileFoundTitle": "Pointfile non trovato",
+  "Commands.Pointfile.QuickLoadPointfile.NoPointfileFoundMessage": "Nessun pointfile trovato. Vuoi cercarne uno?",
+  "Commands.Pointfile.UnloadPointfile.Name": "Rimuovi pointfile",
+  "Commands.Pointfile.UnloadPointfile.Details": "Rimuove il pointfile attualmente caricato.",
+  "Commands.View.CenterSelectionAll.Name": "Centra tutte le visuali alla selezione",
+  "Commands.View.CenterSelectionAll.Details": "Sposta le telecamere di tutte le visuali e le focalizza sull'oggetto selezionato.",
+  "Commands.View.CenterSelection3D.Name": "Centra le visuali 3D alla selezione",
+  "Commands.View.CenterSelection3D.Details": "Sposta le telecamere delle visuali 3D per focalizzarle negli oggetti selezionati.",
+  "Commands.View.CenterSelection2D.Name": "Centra le visuali 2D alla selezione",
+  "Commands.View.CenterSelection2D.Details": "Sposta le telecamere delle visuali 2D per focalizzarle negli oggetti selezionati.",
+  "Commands.View.GoToObjectID.Name": "Vai all'ID dell'oggetto",
+  "Commands.View.GoToObjectID.Details": "Seleziona e centra la visuale in uno specifico ID dell'oggetto.",
+  "Commands.View.GoToObjectID.Title": "Inserisci ID",
+  "Commands.View.GoToObjectID.ObjectID": "ID oggetto",
+  "Commands.View.GoToObjectID.OK": "OK",
+  "Commands.View.GoToObjectID.Cancel": "Cancella",
+  "Commands.View.GoToLocation.Name": "Vai alle coordinate",
+  "Commands.View.GoToLocation.Details": "Centra le visuali in un set specifico di coordinate.",
+  "Commands.View.GoToLocation.Title": "Inserisci coordinate",
+  "Commands.View.GoToLocation.OK": "OK",
+  "Commands.View.GoToLocation.Cancel": "Cancella",
+  "Commands.View.AutosizeViews.Name": "Autoridimensiona visuali",
+  "Commands.View.AutosizeViews.Details": "Ridimensiona automaticamente le visuali divise cosicché abbiano la stessa grandezza.",
+  "Commands.View.FocusOnCurrentView.Name": "Focalizza sulla vista attuale",
+  "Commands.View.FocusOnCurrentView.Details": "Massimizza la vista corrente nel riquadro della griglia",
+  "Commands.Quick.HideSelectedObjects.Name": "Nascondi oggetti selezionati",
+  "Commands.Quick.HideSelectedObjects.Details": "Nasconde tutti gli oggetti che sono attualmente selezionati.",
+  "Commands.Quick.HideUnselectedObjects.Name": "Nascondi oggetti non selezionati",
+  "Commands.Quick.HideUnselectedObjects.Details": "Nasconde tutti gli oggetti che non sono attualmente selezionati.",
+  "Commands.Quick.ShowHiddenObjects.Name": "Mostra oggetti nascosti",
+  "Commands.Quick.ShowHiddenObjects.Details": "Mostra tutti gli oggetti che sono stati nascosti.",
+  "Components.Properties.ObjectPropertiesDialog.Title": "Proprietà oggetto",
+  "Components.Properties.ObjectPropertiesDialog.Apply": "Applica",
+  "Components.Properties.ObjectPropertiesDialog.CloseButton": "Chiudi",
+  "Components.Properties.ObjectPropertiesDialog.ResetUnsavedChanges": "Reimposta cambiamenti non salvati",
+  "Components.Properties.Tabs.EmptyTab.NothingIsSelected": "Nulla è attualmente selezionato.",
+  "Components.Properties.Tabs.VisgroupTab.Name": "Visgroups",
+  "Components.Properties.Tabs.VisgroupTab.MemberOfGroup": "Membro del gruppo:",
+  "Components.Properties.Tabs.VisgroupTab.EditVisgroups": "Modifica Visgroups",
+  "Components.Properties.Tabs.ClassInfoTab.Name": "Info Classe",
+  "Components.Properties.Tabs.ClassInfoTab.ClassLabel": "Classe:",
+  "Components.Properties.Tabs.ClassInfoTab.AnglesLabel": "Angoli:",
+  "Components.Properties.Tabs.ClassInfoTab.KeyValuesLabel": "Valori Chiave:",
+  "Components.Properties.Tabs.ClassInfoTab.PropertyNameLabel": "Nome Proprietà",
+  "Components.Properties.Tabs.ClassInfoTab.PropertyValueLabel": "Valore",
+  "Components.Properties.Tabs.ClassInfoTab.HelpLabel": "Aiuto:",
+  "Components.Properties.Tabs.ClassInfoTab.CommentsLabel": "Commenti:",
+  "Components.Properties.Tabs.ClassInfoTab.SmartEditButton": "Smart Edit",
+  "Components.Properties.Tabs.ClassInfoTab.HelpButton": "Aiuto",
+  "Components.Properties.Tabs.ClassInfoTab.CopyButton": "Copia",
+  "Components.Properties.Tabs.ClassInfoTab.PasteButton": "Incolla",
+  "Components.Properties.Tabs.ClassInfoTab.AddButton": "Aggiungi",
+  "Components.Properties.Tabs.ClassInfoTab.DeleteButton": "Elimina",
+  "Components.Properties.Tabs.ClassInfoTab.MultipleClassesText": "<classi multiple>",
+  "Components.Properties.Tabs.ClassInfoTab.MultipleValuesText": "<valori multipli>",
+  "Components.Properties.Tabs.FlagsTab.Name": "Flag",
+  "Components.Properties.SmartEdit.SmartEditFileBrowser.Browse": "Sfoglia...",
+  "Components.Properties.SmartEdit.SmartEditFileBrowser.Preview": "Anteprima",
+  "Components.Visgroup.VisgroupEditForm.Title": "Editor Visgroup",
+  "Components.Visgroup.VisgroupEditForm.NameLabel": "Nome",
+  "Components.Visgroup.VisgroupEditForm.ColorLabel": "Colore (clicca per cambiare)",
+  "Components.Visgroup.VisgroupEditForm.AddButton": "Aggiungi gruppo",
+  "Components.Visgroup.VisgroupEditForm.RemoveButton": "Rimuovi gruppo",
+  "Components.Visgroup.VisgroupEditForm.OkButton": "OK",
+  "Components.Visgroup.VisgroupEditForm.CancelButton": "Cancella",
+  "Components.Visgroup.VisgroupSidebarPanel.Title": "Visgroups",
+  "Components.Visgroup.VisgroupSidebarPanel.EditButton": "Modifica",
+  "Components.Visgroup.VisgroupSidebarPanel.SelectButton": "Seleziona",
+  "Components.Visgroup.VisgroupSidebarPanel.ShowAllButton": "Mostra tutto",
+  "Components.Visgroup.VisgroupSidebarPanel.NewButton": "Nuovo",
+  "Components.Visgroup.VisgroupSidebarPanel.AutoVisgroups": "Automatico",
+  "Components.CheckForProblemsDialog.Title": "Problemi nella mappa",
+  "Components.CheckForProblemsDialog.Details": "Dettagli",
+  "Components.CheckForProblemsDialog.GoToError": "Vai all'errore",
+  "Components.CheckForProblemsDialog.FixError": "Ripara errore",
+  "Components.CheckForProblemsDialog.FixAllOfType": "Ripara tutti dello stesso tipo",
+  "Components.CheckForProblemsDialog.FixAll": "Ripara tutti gli errori",
+  "Components.CheckForProblemsDialog.VisibleObjectsOnly": "Solo oggetti visibili",
+  "Components.CheckForProblemsDialog.SelectedObjectsOnly": "Solo oggetti selezionati",
+  "Components.CheckForProblemsDialog.ClickForAdditionalDetails": "Clicca qui per informazioni aggiuntive",
+  "Components.CheckForProblemsDialog.CloseButton": "Chiudi",
+  "Components.PasteSpecialDialog.Title": "Incolla Speciale",
+  "Components.PasteSpecialDialog.NumberOfCopies": "Numero di copie da incollare:",
+  "Components.PasteSpecialDialog.StartPoint": "Punto d'inizio",
+  "Components.PasteSpecialDialog.StartAtOrigin": "Inizia all'origine della mappa",
+  "Components.PasteSpecialDialog.StartAtCenterOfOriginal": "Inizia al centro dell'originale",
+  "Components.PasteSpecialDialog.StartAtCenterOfSelection": "Inizia al centro della selezione corrente",
+  "Components.PasteSpecialDialog.Grouping": "Raggruppamento",
+  "Components.PasteSpecialDialog.NoGrouping": "Nessun raggruppamento",
+  "Components.PasteSpecialDialog.GroupIndividual": "Raggruppa copie individuali",
+  "Components.PasteSpecialDialog.GroupAll": "Raggruppa tutte le copie",
+  "Components.PasteSpecialDialog.Offset": "Offset (accumulativo)",
+  "Components.PasteSpecialDialog.Rotation": "Rotazione (accumulativo)",
+  "Components.PasteSpecialDialog.MakeEntityNamesUnique": "Rendi unici i nomi delle entità",
+  "Components.PasteSpecialDialog.PrevixEntityNames": "Prefissa entità nominate con:",
+  "Components.PasteSpecialDialog.OK": "OK",
+  "Components.PasteSpecialDialog.Cancel": "Cancella",
+  "Components.TransformDialog.Title": "Trasforma",
+  "Components.TransformDialog.Source": "Sorgente",
+  "Components.TransformDialog.Rotate": "Ruota",
+  "Components.TransformDialog.Translate": "Traduci",
+  "Components.TransformDialog.Scale": "Scala",
+  "Components.TransformDialog.OK": "OK",
+  "Components.TransformDialog.Cancel": "Cancella",
+  "Components.Compile.CompileOutputComponent.Title": "Compila",
+  "Components.Compile.CompileOutputComponent.CompileCompletedSuccessfully": "Compilazione avvenuta con successo.",
+  "Components.Compile.CompileOutputComponent.CompileFailed": "Compilazione fallita. Controlla il log dei messaggi per maggiori dettagli.",
+  "Components.Compile.CompileDialog.Title": "Compila Mappa",
+  "Components.Compile.CompileDialog.AdvancedMode": "Modalità avanzata",
+  "Components.Compile.CompileDialog.Profile": "Profilo:",
+  "Components.Compile.CompileDialog.StepsToRun": "Procedura d'esecuzione",
+  "Components.Compile.CompileDialog.SimpleMode": "Modalità semplice",
+  "Components.Compile.CompileDialog.SaveProfile": "Salva profilo",
+  "Components.Compile.CompileDialog.SaveProfileAs": "Salva profilo come...",
+  "Components.Compile.CompileDialog.OK": "OK",
+  "Components.Compile.CompileDialog.Cancel": "Cancella",
+  "Components.Compile.CompileDialog.Compile": "Compila",
+  "Components.Compile.CompileDialog.ProfileName": "Nome profilo",
+  "Components.Compile.CompileDialog.DeleteProfile": "Cancella profilo",
+  "Components.Compile.CompileDialog.DeleteAreYouSure": "Sei sicuro di voler eliminare questo profilo?",
+  "Components.EntityReportDialog.Title": "Rapporto Entità",
+  "Components.EntityReportDialog.ClassHeader": "Classe",
+  "Components.EntityReportDialog.NameHeader": "Nome",
+  "Components.EntityReportDialog.GoTo": "Vai a",
+  "Components.EntityReportDialog.Delete": "Elimina",
+  "Components.EntityReportDialog.Properties": "Proprietà",
+  "Components.EntityReportDialog.FollowSelection": "Segui selezione",
+  "Components.EntityReportDialog.Filter": "Filtra",
+  "Components.EntityReportDialog.ShowAll": "Mostra tutto",
+  "Components.EntityReportDialog.ShowPoint": "Solo Entità Punto",
+  "Components.EntityReportDialog.ShowBrush": "Solo Entità Brush",
+  "Components.EntityReportDialog.IncludeHidden": "Includi oggetti nascosti",
+  "Components.EntityReportDialog.FilterByKeyValue": "Filtra per chiave/valore:",
+  "Components.EntityReportDialog.Exact": "Specifico",
+  "Components.EntityReportDialog.FilterByClass": "Filtra per classe",
+  "Components.EntityReportDialog.ResetFilters": "Reimposta filtri",
+  "Components.EntityReportDialog.Close": "Chiudi",
+  "Components.MapInformationDialog.Title": "Informazioni Mappa",
+  "Components.MapInformationDialog.Solids": "Solidi",
+  "Components.MapInformationDialog.Faces": "Facce",
+  "Components.MapInformationDialog.PointEntities": "Entità Punto",
+  "Components.MapInformationDialog.SolidEntities": "Entità Solide",
+  "Components.MapInformationDialog.UniqueTextures": "Texture uniche",
+  "Components.MapInformationDialog.TextureMemory": "Memoria texture",
+  "Components.MapInformationDialog.TexturePackagesUsed": "Pacchetti di texture usati",
+  "Components.MapInformationDialog.CloseButton": "Chiudi",
+  "Components.MapInformationDialog.CalculatingTextureMemoryUsage": "Calcolo...",
+  "Components.SelectionDetailsDialog.Title": "Dettagli selezione",
+  "Components.MapTreeWindow.Title": "Albero logico della mappa",
+  "History.UndoCommand.Name": "Annulla",
+  "History.UndoCommand.Details": "Annulla l'ultima operazione",
+  "History.RedoCommand.Name": "Ripeti",
+  "History.RedoCommand.Details": "Ripeti l'ultima operazione annullata",
+  "MenuDataProvider.Flip": "Capovolgi",
+  "MenuDataProvider.Align": "Allinea",
+  "Problems.DuplicateFaceIDs.Name": "Più facce hanno lo stesso ID",
+  "Problems.DuplicateFaceIDs.Details": "È stata trovata più di una faccia con lo stesso ID. Ogni ID della faccia dovrebbe essere unico. Riparare questo problema assegnerà le facce duplicate ad un nuovo ID.",
+  "Problems.DuplicateKeyValues.Name": "L'entità ha chiavi duplicate",
+  "Problems.DuplicateKeyValues.Details": "Questa entità ha la stessa chiave specificata molteplici volte. Riparare il problema cancellerà le chiavi duplicate.",
+  "Problems.DuplicateObjectIDs.Name": "Più oggetti hanno lo stesso ID",
+  "Problems.DuplicateObjectIDs.Details": "Più di un oggetto ha lo stesso ID. Ogni ID dell'oggetto dovrebbe essere unico. Riparare questo problema assegnerà i duplicati ad un nuovo ID.",
+  "Problems.EntityWithEntityChildren.Name": "L'entità ha delle sotto-entità",
+  "Problems.EntityWithEntityChildren.Details": "È stata trovata un'entità con sotto-entità. Riparare il problema sposterà le sotto-entità fuori dal gruppo delle entità.",
+  "Problems.GameDataNotFound.Name": "Classe Entità non trovata",
+  "Problems.GameDataNotFound.Details": "Questa Classe Entità non è stata trovata negli attuali dati di gioco. Assicurati che i corretti FGD siano caricati.",
+  "Problems.GroupWithoutChildren.Name": "Il gruppo non ha sotto-entità",
+  "Problems.GroupWithoutChildren.Details": "Questo gruppo è vuoto. Un gruppo deve avere contenuti. Riparare il problema cancellerà il gruppo.",
+  "Problems.InvalidKeyValues.Name": "L'entità ha chiavi/valori pari",
+  "Problems.InvalidKeyValues.Details": "Ci sono chiavi/valori pari che non sono specificati nei dati di gioco. Assicurati che gli FGD più recenti siano caricati. Riparare il problema rimuoverà le chiavi non valide.",
+  "Problems.InvalidSolid.Name": "Solido invalido",
+  "Problems.InvalidSolid.Details": "Questo solido non è valido. Potrebbe non essere convesso, avere facce complanari, o avere vertici fuori piano. Riparare il problema cancellerà il solido.",
+  "Problems.NoPlayerStart.Name": "Questo documento non ha il punto d'inizio del giocatore",
+  "Problems.NoPlayerStart.Details": "Non c'è nessuna entità info_player_start in questo documento. Il giocatore nascerà all'origine. Questo potrebbe posizionare il giocatore all'interno della geometria o nel vuoto. Riparare il problema posizionerà l'entità d'inizio del giocatore all'origine del documento. È consigliato riparare questo problema manualmente.",
+  "Problems.PointEntityWithChildren.Name": "L'Entità Punto ha sotto-entità",
+  "Problems.PointEntityWithChildren.Details": "È stata trovata un'Entità Punto con sotto-entità. Un'Entità Punto non può avere contenuti. Riparare il problema sposterà le sotto-entità fuori dal gruppo delle entità.",
+  "Problems.SolidEntityWithoutChildren.Name": "L'Entità Brush non ha sotto-entità solide",
+  "Problems.SolidEntityWithoutChildren.Details": "È stata trovata un'Entità Brush con sotto-entità non solide. Un'Entità Brush deve avere contenuti solidi. Riparare il problema cancellerà l'entità.",
+  "Problems.SolidWithChildren.Name": "Il solido ha sotto-entità",
+  "Problems.SolidWithChildren.Details": "È stato trovato un solido con sotto-entità. Un solido non può avere contenuti. Riparare il problema sposterà le sotto-entità fuori dal gruppo del solido.",
+  "Problems.TargetWithoutMatchingName.Name": "La destinazione dell'entità non ha un'entità con nome corrispondente",
+  "Problems.TargetWithoutMatchingName.Details": "Il valore della destinazione di questa entità non ha un'entità con nome corrispondente. Ogni destinazione dovrebbe avere un nome di destinazione corrispondente. Riparare il problema reimposterà il valore di destinazione a una stringa vuota.",
+  "Problems.TextureAxisPerpendicularToFace.Name": "Assi della texture perpendicolari alla faccia",
+  "Problems.TextureAxisPerpendicularToFace.Details": "Le assi della texture di questa faccia sono perpendicolari al piano della faccia. Questo accade quando si manipolano oggetti con il blocco texture disabilitato, come anche eseguendo altre varie operazioni. Per riparare, riallinea la texture alla faccia. Riparare il problema reimposterà la texture alla faccia del piano.",
+  "Problems.TextureNotFound.Name": "Texture non trovata",
+  "Problems.TextureNotFound.Details": "Questa texture non è stata trovata nei pacchetti di texture attuali. Assicurati che i corretti pacchetti di texture siano caricati. Riparare il problema reimposterà la texture della faccia alla texture predefinita."
 }

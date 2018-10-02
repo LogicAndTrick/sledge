@@ -1,50 +1,40 @@
-﻿{
-    "@Meta": {
-        "Base": "Sledge.BspEditor.Rendering", 
-        "Language": "it",
-        "LanguageDescription":  "Italiano / Italian",
-        "Inherit": "en"
-    },
-    "@Settings": {
-        "@Group.Navigation": "Navigazione",
-        "@Group.Navigation/2D": "2D",
-        "@Group.Navigation/3D": "3D",
-        "@Group.Rendering": "Rendering",
-        "@Group.Rendering/Grid": "Griglia",
-        "CameraNavigationViewportSettings": {
-            "Camera2DPanRequiresMouseClick": "Muovere la telecamera 2D (premendo spazio) richiede un click del mouse",
-            "Camera3DPanRequiresMouseClick": "Muovere la telecamera 3D (premendo spazio) richiede un click del mouse",
-            "FOV": "Campo visivo verticale (FOV)",
-            "ForwardSpeed": "Massima velocità in avanti (unità)",
-            "TimeToTopSpeed": "Tempo per la velocità massima (secondi)",
-            "MouseWheelMoveDistance": "Distanza di movimento rotella mouse",
-            "MouseWheelZoomMultiplier": "Moltiplicatore zoom rotella mouse",
-            "InvertX": "Inverti asse X",
-            "InvertY": "Inverti asse Y"
-        },
-        "Converters": {
-            "CenterHandlesConverter": {
-                "DrawCenterHandles": "Mostra appigli centrali degli oggetti",
-                "CenterHandlesActiveViewportOnly": "Mostra appigli centrali solo nella finestra attiva"
-            },
-            "EntityAngleConverter": {
-                "DrawEntityAngles": "Mostra angoli entità"
-            }
-        },
-        "Renderer": {
-            "PerspectiveBackgroundColour": "Colore sfondo della vista 3D",
-            "OrthographicBackgroundColour": "Colore sfondo della vista 2D",
-            "FractionalGridLineColour": "Colore linea della griglia per valori frazionari",
-            "StandardGridLineColour": "Colore linea della griglia per le linee regolari",
-            "PrimaryGridLineColour": "Colore linea della griglia per le linee in evidenza primarie",
-            "SecondaryGridLineColour": "Colore linea della griglia per le linee in evidenza secondarie",
-            "AxisGridLineColour": "Colore linea della griglia per linee delle assi",
-            "BoundaryGridLineColour": "Colore linea della griglia per il confine"
-        } 
-    },
-    "Components": {
-        "ViewportZoomStatusItem": {
-            "Zoom": "Zoom"
-        }
-    } 
+{
+  "@Meta": {
+    "Base": "Sledge.BspEditor.Rendering",
+    "Language": "it",
+    "LanguageDescription": "Italiano / Italian",
+    "Inherit": "en"
+  },
+  "@Settings": {
+    "@Group.Navigation": "Navigazione",
+    "@Group.Navigation/2D": "2D",
+    "@Group.Navigation/3D": "3D",
+    "@Group.Rendering": "Rendering",
+    "@Group.Rendering/Grid": "Griglia",
+    "CameraNavigationViewportSettings.Camera2DPanRequiresMouseClick": "Muovere la telecamera 2D (premendo spazio) richiede un click del mouse",
+    "CameraNavigationViewportSettings.Camera3DPanRequiresMouseClick": "Muovere la telecamera 3D (premendo spazio) richiede un click del mouse",
+    "CameraNavigationViewportSettings.FOV": "Campo visivo verticale (FOV)",
+    "CameraNavigationViewportSettings.ForwardSpeed": "Massima velocità in avanti (unità)",
+    "CameraNavigationViewportSettings.TimeToTopSpeed": "Tempo per la velocità massima (secondi)",
+    "CameraNavigationViewportSettings.MouseWheelMoveDistance": "Distanza di movimento rotella mouse",
+    "CameraNavigationViewportSettings.MouseWheelZoomMultiplier": "Moltiplicatore zoom rotella mouse",
+    "CameraNavigationViewportSettings.InvertX": "Inverti asse X",
+    "CameraNavigationViewportSettings.InvertY": "Inverti asse Y",
+    "Converters.CenterHandlesConverter.DrawCenterHandles": "Mostra appigli centrali degli oggetti",
+    "Converters.CenterHandlesConverter.CenterHandlesActiveViewportOnly": "Mostra appigli centrali solo nella finestra attiva",
+    "Converters.EntityAngleConverter.DrawEntityAngles": "Mostra angoli entità",
+    "Renderer.PerspectiveBackgroundColour": "Colore sfondo della vista 3D",
+    "Renderer.OrthographicBackgroundColour": "Colore sfondo della vista 2D",
+    "Renderer.FractionalGridLineColour": "Colore linea della griglia per valori frazionari",
+    "Renderer.StandardGridLineColour": "Colore linea della griglia per le linee regolari",
+    "Renderer.PrimaryGridLineColour": "Colore linea della griglia per le linee in evidenza primarie",
+    "Renderer.SecondaryGridLineColour": "Colore linea della griglia per le linee in evidenza secondarie",
+    "Renderer.AxisGridLineColour": "Colore linea della griglia per linee delle assi",
+    "Renderer.BoundaryGridLineColour": "Colore linea della griglia per il confine"
+  },
+  "Components.ViewportZoomStatusItem.Zoom": "Zoom",
+  "Viewport.MapViewportControlFactory.Perspective": "Vista 3D",
+  "Viewport.MapViewportControlFactory.OrthographicTop": "2D Sopra",
+  "Viewport.MapViewportControlFactory.OrthographicFront": "2D Fronte",
+  "Viewport.MapViewportControlFactory.OrthographicSide": "2D Lato"
 }
