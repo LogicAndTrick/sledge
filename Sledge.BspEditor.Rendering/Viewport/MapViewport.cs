@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -66,7 +65,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         public delegate void ListenerExceptionEventHandler(object sender, Exception exception);
         public event ListenerExceptionEventHandler ListenerException;
-        protected void OnListenerException(Exception ex)
+
+        private void OnListenerException(Exception ex)
         {
             if (ListenerException != null)
             {
@@ -248,12 +248,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
         private void OnUpdate(object sender, long frame)
         {
             ListenerDo(x => x.UpdateFrame(frame));
-        }
-
-        private void CameraPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Position") ListenerDo(x => x.PositionChanged(new ViewportEvent(this, e)));
-            if (e.PropertyName == "Zoom") ListenerDo(x => x.ZoomChanged(new ViewportEvent(this, e)));
         }
 
         #endregion

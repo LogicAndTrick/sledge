@@ -1,8 +1,10 @@
+using System;
+using Sledge.Common.Shell.Hotkeys;
+
 namespace Sledge.BspEditor.Rendering.Viewport
 {
-    public interface IViewportEventListener
+    public interface IViewportEventListener : IHotkeyFilter, IDisposable
     {
-        string OrderHint { get; }
         MapViewport Viewport { get; set; }
 
         bool IsActive();
@@ -23,9 +25,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         void MouseEnter(ViewportEvent e);
         void MouseLeave(ViewportEvent e);
-
-        void ZoomChanged(ViewportEvent e);
-        void PositionChanged(ViewportEvent e);
 
         void UpdateFrame(long frame);
     }

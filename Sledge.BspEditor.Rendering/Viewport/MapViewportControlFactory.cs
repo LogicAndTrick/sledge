@@ -12,8 +12,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
     [AutoTranslate]
     public class MapViewportControlFactory : IMapDocumentControlFactory
     {
-        [ImportMany] private IEnumerable<Lazy<IViewportEventListenerFactory>> _viewportEventListenerFactories;
-        [Import] private Lazy<EngineInterface> _engine;
+        private readonly IEnumerable<Lazy<IViewportEventListenerFactory>> _viewportEventListenerFactories;
+        private readonly Lazy<EngineInterface> _engine;
 
         public string Perspective { get; set; }
         public string OrthographicTop { get; set; }
@@ -21,6 +21,16 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public string OrthographicSide { get; set; }
 
         public string Type => "MapViewport";
+
+        [ImportingConstructor]
+        public MapViewportControlFactory(
+            [ImportMany] IEnumerable<Lazy<IViewportEventListenerFactory>> viewportEventListenerFactories,
+            [Import] Lazy<EngineInterface> engine
+        )
+        {
+            _viewportEventListenerFactories = viewportEventListenerFactories;
+            _engine = engine;
+        }
 
         public IMapDocumentControl Create()
         {

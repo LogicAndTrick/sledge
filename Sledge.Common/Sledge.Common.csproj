@@ -66,6 +66,7 @@
     <Compile Include="Shell\Documents\NoDocument.cs" />
     <Compile Include="Shell\Hooks\IUIShutdownHook.cs" />
     <Compile Include="Shell\Hooks\IUIStartupHook.cs" />
+    <Compile Include="Shell\Hotkeys\IHotkeyFilter.cs" />
     <Compile Include="Shell\Hotkeys\IHotkeyProvider.cs" />
     <Compile Include="Shell\IApplicationInfo.cs" />
     <Compile Include="Shell\Commands\InternalCommandAttribute.cs" />

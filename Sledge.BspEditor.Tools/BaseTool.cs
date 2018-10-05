@@ -319,18 +319,17 @@ namespace Sledge.BspEditor.Tools
             if (viewport.Is3D) UpdateFrame(viewport, viewport.Viewport.Camera as PerspectiveCamera, frame);
         }
 
-        public virtual void PositionChanged(MapViewport viewport, ViewportEvent e)
+        public virtual bool FilterHotkey(MapViewport viewport, string hotkey, Keys keys)
         {
-            if (!Active || Document == null) return;
-            if (ChildAction((w, vp, ev) => w.PositionChanged(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) PositionChanged(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-        }
+            if (!Active || Document == null) return false;
+            foreach (var child in Children)
+            {
+                if (child.FilterHotkey(viewport, hotkey, keys)) return true;
+            }
 
-        public virtual void ZoomChanged(MapViewport viewport, ViewportEvent e)
-        {
-            if (!Active || Document == null) return;
-            if (ChildAction((w, vp, ev) => w.ZoomChanged(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) ZoomChanged(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is2D) return FilterHotkey(viewport, viewport.Viewport.Camera as OrthographicCamera, hotkey, keys);
+            if (viewport.Is3D) return FilterHotkey(viewport, viewport.Viewport.Camera as PerspectiveCamera, hotkey, keys);
+            return false;
         }
 
         protected virtual void MouseEnter(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
@@ -363,9 +362,8 @@ namespace Sledge.BspEditor.Tools
         protected virtual void KeyUp(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
         protected virtual void UpdateFrame(MapViewport viewport, OrthographicCamera camera, long frame) { }
         protected virtual void UpdateFrame(MapViewport viewport, PerspectiveCamera camera, long frame) { }
-
-        public virtual void PositionChanged(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        public virtual void ZoomChanged(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual bool FilterHotkey(MapViewport viewport, OrthographicCamera camera, string hotkey, Keys keys) => false;
+        protected virtual bool FilterHotkey(MapViewport viewport, PerspectiveCamera camera, string hotkey, Keys keys) => false;
 
         #endregion
 

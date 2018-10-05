@@ -249,14 +249,14 @@ namespace Sledge.BspEditor.Rendering.Viewport
             Oy.Publish<Vector3?>("MapDocument:ViewportMouseLocationStatus:UpdateValue", null);
         }
 
-        public void ZoomChanged(ViewportEvent e)
+        public bool Filter(string hotkey, int keys)
         {
-
+            return false;
         }
 
-        public void PositionChanged(ViewportEvent e)
+        public void Dispose()
         {
-
+            // 
         }
     }
 }

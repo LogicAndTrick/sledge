@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Common.Shell.Components;
@@ -9,6 +10,7 @@ namespace Sledge.BspEditor.Tools
     public class ToolViewportListener : IViewportEventListener
     {
         public string OrderHint => "D";
+
         private WeakReference<BaseTool> _activeTool = new WeakReference<BaseTool>(null);
 
         private BaseTool ActiveTool => _activeTool.TryGetTarget(out var t) ? t : null;
@@ -126,22 +128,21 @@ namespace Sledge.BspEditor.Tools
             ActiveTool.MouseLeave(Viewport, e);
         }
 
-        public void ZoomChanged(ViewportEvent e)
-        {
-            if (!ShouldRelayEvent(ActiveTool)) return;
-            ActiveTool.ZoomChanged(Viewport, e);
-        }
-
-        public void PositionChanged(ViewportEvent e)
-        {
-            if (!ShouldRelayEvent(ActiveTool)) return;
-            ActiveTool.PositionChanged(Viewport, e);
-        }
-
         public void UpdateFrame(long frame)
         {
             if (!ShouldRelayEvent(ActiveTool)) return;
             ActiveTool.UpdateFrame(Viewport, frame);
+        }
+
+        public bool Filter(string hotkey, int keys)
+        {
+            if (!ShouldRelayEvent(ActiveTool)) return false;
+            return ActiveTool.FilterHotkey(Viewport, hotkey, (Keys) keys);
+        }
+
+        public virtual void Dispose()
+        {
+            // 
         }
     }
 }

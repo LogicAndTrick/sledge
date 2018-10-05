@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LogicAndTrick.Oy;
 using Sledge.Common.Shell.Commands;
 using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hooks;
@@ -23,11 +24,45 @@ namespace Sledge.Shell.Registers
     internal class HotkeyRegister : IStartupHook, ISettingsContainer
     {
         // Store the context (the hotkey register is one of the few things that should need static access to the context)
-        [Import] private IContext _context;
-        [ImportMany] private IEnumerable<Lazy<ICommand>> _commands;
-        [ImportMany] private IEnumerable<Lazy<IHotkeyProvider>> _hotkeyProviders;
+        private readonly IContext _context;
+        private readonly IEnumerable<Lazy<ICommand>> _commands;
+        private readonly IEnumerable<Lazy<IHotkeyProvider>> _hotkeyProviders;
+        private readonly IEnumerable<Lazy<IHotkeyFilter>> _hotkeyFilters;
 
-        public async Task OnStartup()
+        /// <summary>
+        /// The list of all hotkeys by ID
+        /// </summary>
+        private readonly Dictionary<string, IHotkey> _hotkeys;
+
+        /// <summary>
+        /// The list of registered hotkeys by shortcut
+        /// </summary>
+        private readonly Dictionary<string, IHotkey> _registeredHotkeys;
+
+        /// <summary>
+        /// The list of registered hotkey filters
+        /// </summary>
+        private readonly List<IHotkeyFilter> _registeredFilters;
+
+        [ImportingConstructor]
+        public HotkeyRegister(
+            [Import] IContext context, 
+            [ImportMany] IEnumerable<Lazy<ICommand>> commands, 
+            [ImportMany] IEnumerable<Lazy<IHotkeyProvider>> hotkeyProviders, 
+            [ImportMany] IEnumerable<Lazy<IHotkeyFilter>> hotkeyFilters
+        )
+        {
+            _context = context;
+            _commands = commands;
+            _hotkeyProviders = hotkeyProviders;
+            _hotkeyFilters = hotkeyFilters;
+
+            _hotkeys = new Dictionary<string, IHotkey>();
+            _registeredHotkeys = new Dictionary<string, IHotkey>();
+            _registeredFilters = new List<IHotkeyFilter>();
+        }
+
+        public Task OnStartup()
         {
             // Register all commands as hotkeys
             foreach (var export in _commands)
@@ -42,24 +77,15 @@ namespace Sledge.Shell.Registers
                 Add(hotkey);
             }
 
+            _registeredFilters.AddRange(_hotkeyFilters.Select(x => x.Value));
+
+            Oy.Subscribe<IHotkeyFilter>("Hotkeys:AddFilter", f => _registeredFilters.Add(f));
+            Oy.Subscribe<IHotkeyFilter>("Hotkeys:RemoveFilter", f => _registeredFilters.Remove(f));
+
             // Register this as the hotkey register for all base forms
             BaseForm.HotkeyRegister = this;
-        }
 
-        /// <summary>
-        /// The list of all hotkeys by ID
-        /// </summary>
-        private readonly Dictionary<string, IHotkey> _hotkeys;
-
-        /// <summary>
-        /// The list of registered hotkeys by shortcut
-        /// </summary>
-        private readonly Dictionary<string, IHotkey> _registeredHotkeys;
-
-        public HotkeyRegister()
-        {
-            _hotkeys = new Dictionary<string, IHotkey>();
-            _registeredHotkeys = new Dictionary<string, IHotkey>();
+            return Task.CompletedTask;
         }
 
         public IEnumerable<IHotkey> GetHotkeys()
@@ -106,6 +132,9 @@ namespace Sledge.Shell.Registers
         internal bool Fire(Keys keyData)
         {
             var cmd = KeyboardState.KeysToString(keyData);
+            var keys = (int) keyData;
+            if (_registeredFilters.OrderBy(x => x.OrderHint).Any(f => f.Filter(cmd, keys))) return false;
+
             if (_registeredHotkeys.ContainsKey(cmd))
             {
                 var hk = _registeredHotkeys[cmd];

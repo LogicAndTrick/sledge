@@ -99,14 +99,14 @@ namespace Sledge.BspEditor.Rendering.Viewport
         {
         }
 
-        public void ZoomChanged(ViewportEvent e)
+        public bool Filter(string hotkey, int keys)
         {
-
+            return false;
         }
 
-        public void PositionChanged(ViewportEvent e)
+        public void Dispose()
         {
-
+            // 
         }
 
         public void UpdateFrame(long frame)

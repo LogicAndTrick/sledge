@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
+using Sledge.Common.Shell.Hotkeys;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
@@ -15,22 +16,22 @@ using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Rendering.Viewport
 {
-    public class ViewportMapDocumentControl : IMapDocumentControl
+    public class ViewportMapDocumentControl : IMapDocumentControl, IHotkeyFilter
     {
         private readonly EngineInterface _engine;
-        private readonly IEnumerable<IViewportEventListenerFactory> _listeners;
-        private readonly Control _panel;
-        private IViewport _viewport;
-        private MapViewport _mapViewport;
-        private ListenerOverlayRenderable _overlayRenderable;
+        private readonly IViewport _viewport;
+        private readonly MapViewport _mapViewport;
+        private readonly ListenerOverlayRenderable _overlayRenderable;
 
         private readonly List<Subscription> _subscriptions;
         private ICamera _camera;
 
         public bool IsFocused => _viewport.IsFocused;
 
+        public string OrderHint => "M";
+
         public string Type => "MapViewport";
-        public Control Control => _panel;
+        public Control Control { get; }
 
         public ICamera Camera
         {
@@ -45,9 +46,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
         public ViewportMapDocumentControl(EngineInterface engine, IEnumerable<IViewportEventListenerFactory> listeners)
         {
             _engine = engine;
-            _listeners = listeners;
             _camera = new PerspectiveCamera();
-            _panel = new Panel {Dock = DockStyle.Fill, BackColor = Color.Black};
+            Control = new Panel {Dock = DockStyle.Fill, BackColor = Color.Black};
 
             _subscriptions = new List<Subscription>
             {
@@ -64,16 +64,22 @@ namespace Sledge.BspEditor.Rendering.Viewport
             _viewport = _engine.CreateViewport();
             _viewport.Camera = _camera;
             _viewport.Control.Dock = DockStyle.Fill;
-            _panel.Controls.Add(_viewport.Control);
+            Control.Controls.Add(_viewport.Control);
 
             _mapViewport = new MapViewport(_viewport);
-            _mapViewport.Listeners.AddRange(_listeners.SelectMany(x => x.Create(_mapViewport)));
+            _mapViewport.Listeners.AddRange(listeners.SelectMany(x => x.Create(_mapViewport)));
             _mapViewport.ListenerException += ListenerException;
 
             _overlayRenderable = new ListenerOverlayRenderable(_mapViewport);
             _engine.Add(_overlayRenderable);
 
             Oy.Publish("MapViewport:Created", _mapViewport);
+            Oy.Publish<IHotkeyFilter>("Hotkeys:AddFilter", this);
+        }
+
+        public bool Filter(string hotkey, int keys)
+        {
+            return _mapViewport.Listeners.OrderBy(x => x.OrderHint).Any(l => l.Filter(hotkey, keys));
         }
 
         private void ListenerException(object sender, Exception exception)
@@ -189,8 +195,14 @@ namespace Sledge.BspEditor.Rendering.Viewport
 
         public void Dispose()
         {
+            Oy.Publish<IHotkeyFilter>("Hotkeys:RemoveFilter", this);
+
+            _mapViewport.Listeners.ForEach(x => x.Dispose());
+            _mapViewport.Listeners.Clear();
+
             _engine.Remove(_overlayRenderable);
             _subscriptions.ForEach(Oy.Unsubscribe);
+
             _viewport?.Dispose();
         }
 

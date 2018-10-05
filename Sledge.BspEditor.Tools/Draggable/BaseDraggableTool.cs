@@ -159,31 +159,6 @@ namespace Sledge.BspEditor.Tools.Draggable
             Invalidate();
         }
 
-        public override void PositionChanged(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
-        {
-            if (viewport.Is2D && _lastDragMoveEvent != null && _lastDragPoint.HasValue && CurrentDraggable != null && _lastDragMoveEvent.Sender == viewport)
-            {
-                var point = camera.Flatten(camera.ScreenToWorld(_lastDragMoveEvent.X, _lastDragMoveEvent.Y));
-                var last = _lastDragPoint.Value;
-
-                var ev = new ViewportEvent(viewport)
-                {
-                    Dragging = true,
-                    Button = _lastDragMoveEvent.Button,
-                    StartX = _lastDragMoveEvent.StartX,
-                    StartY = _lastDragMoveEvent.StartY
-                };
-                ev.X = ev.LastX = _lastDragMoveEvent.X;
-                ev.Y = ev.LastY = _lastDragMoveEvent.Y;
-                
-                OnDraggableDragMoving(viewport, camera, ev, last, point, CurrentDraggable);
-                if (!ev.Handled) CurrentDraggable.Drag(viewport, camera, ev, last, point);
-                if (!ev.Handled) OnDraggableDragMoved(viewport, camera, ev, last, point, CurrentDraggable);
-                _lastDragPoint = point;
-                Invalidate();
-            }
-        }
-
         private IEnumerable<T> CollectObjects<T>(Func<IDraggable, IEnumerable<T>> collector)
         {
             var list = new List<T>();

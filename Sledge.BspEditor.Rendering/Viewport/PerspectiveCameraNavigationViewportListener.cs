@@ -94,7 +94,11 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 if (downFor >= 0 && downFor < 1) units *= (float) _easing.Evaluate((double) downFor);
             }
 
-            if (KeyboardState.Shift) units *= 2;
+            if (FreeLook)
+            {
+                if (KeyboardState.Shift) units *= 2;
+                if (KeyboardState.Ctrl) units /= 2;
+            }
 
             if (float.IsNaN(units) || float.IsInfinity(units) || units < 0.001f) units = 0;
 
@@ -342,7 +346,6 @@ namespace Sledge.BspEditor.Rendering.Viewport
                 LastKnownX = Viewport.Width/2;
                 LastKnownY = Viewport.Height/2;
                 Cursor.Position = Viewport.Control.PointToScreen(new Point(LastKnownX, LastKnownY));
-
             }
             else
             {
@@ -358,14 +361,27 @@ namespace Sledge.BspEditor.Rendering.Viewport
             }
         }
 
-        public void ZoomChanged(ViewportEvent e)
+        public bool Filter(string hotkey, int keys)
         {
-
+            // If we're freelooking, consume any hotkeys using WASD/QE and ctrl or shift
+            if (FreeLook)
+            {
+                var k = (Keys) keys;
+                if (
+                    k.HasFlag(Keys.W) || k.HasFlag(Keys.A) ||
+                    k.HasFlag(Keys.S) || k.HasFlag(Keys.D) ||
+                    k.HasFlag(Keys.Q) || k.HasFlag(Keys.E)
+                )
+                {
+                    return !k.HasFlag(Keys.Alt);
+                }
+            }
+            return false;
         }
 
-        public void PositionChanged(ViewportEvent e)
+        public void Dispose()
         {
-
+            // 
         }
 
         public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
