@@ -48,7 +48,7 @@ namespace Sledge.Providers.Texture.Spr
 
         public override Task<IEnumerable<TextureItem>> GetTextures(IEnumerable<string> names)
         {
-            var textures = new HashSet<string>(names);
+            var textures = new HashSet<string>(names, GetComparer);
             textures.IntersectWith(Textures);
 
             var list = new List<TextureItem>();
