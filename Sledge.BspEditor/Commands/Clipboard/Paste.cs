@@ -1,9 +1,11 @@
 using System;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
+using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Properties;
 using Sledge.Common.Shell.Commands;
@@ -36,9 +38,15 @@ namespace Sledge.BspEditor.Commands.Clipboard
         {
             if (_clipboard.Value.CanPaste())
             {
-                var content = _clipboard.Value.GetPastedContent(document);
-                var op = new Attach(document.Map.Root.ID, content);
-                await MapDocumentOperation.Perform(document, op);
+                var content = _clipboard.Value.GetPastedContent(document).ToList();
+
+                var transaction = new Transaction(
+                    new Deselect(document.Selection),
+                    new Attach(document.Map.Root.ID, content),
+                    new Select(content)
+                );
+
+                await MapDocumentOperation.Perform(document, transaction);
             }
         }
     }

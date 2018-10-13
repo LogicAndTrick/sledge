@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
@@ -106,11 +107,16 @@ namespace Sledge.BspEditor.Components
 
         private IEnumerable<IMapObject> ReIndex(IEnumerable<IMapObject> objects, MapDocument document)
         {
+            var rand = new Random();
             foreach (var o in objects)
             {
                 if (document.Map.Root.Hierarchy.HasDescendant(o.ID))
                 {
-                    yield return (IMapObject) o.Copy(document.Map.NumberGenerator);
+                    // If this object already exists in the tree, copy it with a new number and move it around a bit
+                    var copy = (IMapObject) o.Copy(document.Map.NumberGenerator);
+                    var step = copy.BoundingBox.Dimensions / 16;
+                    copy.Transform(Matrix4x4.CreateTranslation(rand.Next(1, 16) * step.X, rand.Next(1, 16) * step.Y, rand.Next(1, 16) * step.Z));
+                    yield return copy;
                 }
                 else
                 {
