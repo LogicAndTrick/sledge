@@ -213,8 +213,8 @@ namespace Sledge.Rendering.Cameras
         {
             var rad = degrees * (Pi / 180);
             _angles.Y -= rad;
-            if (_angles.Y < 0) _angles.Y = 0;
-            if (_angles.Y > Pi) _angles.Y = Pi;
+            if (_angles.Y < 0.01f) _angles.Y = 0.01f;
+            if (_angles.Y > Pi - 0.01f) _angles.Y = Pi - 0.01f;
         }
 
         public void Advance(float units)
@@ -255,7 +255,7 @@ namespace Sledge.Rendering.Cameras
         {
             var temp = Direction;
             temp.Z = 0;
-            if (temp.Length() < 0.01f) temp = Vector3.UnitY;
+            if (temp.Length() < 0.001f) temp = Vector3.UnitY;
             temp = Vector3.Normalize(temp);
 
             var normal = Vector3.Cross(temp, Vector3.UnitZ);
