@@ -52,15 +52,15 @@ namespace Sledge.BspEditor.Tools.Draggable
         {
             BoxHandles = new[]
             {
-                new InternalBoxResizeHandle(this, ResizeHandle.TopLeft),
-                new InternalBoxResizeHandle(this, ResizeHandle.TopRight),
-                new InternalBoxResizeHandle(this, ResizeHandle.BottomLeft),
-                new InternalBoxResizeHandle(this, ResizeHandle.BottomRight),
+                new BoxResizeHandle(this, ResizeHandle.TopLeft),
+                new BoxResizeHandle(this, ResizeHandle.TopRight),
+                new BoxResizeHandle(this, ResizeHandle.BottomLeft),
+                new BoxResizeHandle(this, ResizeHandle.BottomRight),
                 
-                new InternalBoxResizeHandle(this, ResizeHandle.Top),
-                new InternalBoxResizeHandle(this, ResizeHandle.Left),
-                new InternalBoxResizeHandle(this, ResizeHandle.Right),
-                new InternalBoxResizeHandle(this, ResizeHandle.Bottom),
+                new BoxResizeHandle(this, ResizeHandle.Top),
+                new BoxResizeHandle(this, ResizeHandle.Left),
+                new BoxResizeHandle(this, ResizeHandle.Right),
+                new BoxResizeHandle(this, ResizeHandle.Bottom),
 
                 new InternalBoxResizeHandle(this, ResizeHandle.Center), 
             };

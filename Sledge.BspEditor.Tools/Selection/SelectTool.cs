@@ -512,7 +512,7 @@ namespace Sledge.BspEditor.Tools.Selection
                 }
                 SetSelected(desel, sel, !ctrl, IgnoreGrouping());
             }
-            else if (_selectionBox.State.Action == BoxAction.Drawn && draggable is ResizeTransformHandle && ((ResizeTransformHandle) draggable).Handle == ResizeHandle.Center)
+            else if (_selectionBox.State.Action == BoxAction.Drawn && draggable is ResizeTransformHandle res && res.Handle == ResizeHandle.Center)
             {
                 _selectionBox.Cycle();
             }
@@ -521,9 +521,19 @@ namespace Sledge.BspEditor.Tools.Selection
         protected override void OnDraggableDragStarted(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
         {
             var ctrl = KeyboardState.Ctrl;
+
             if (draggable == _emptyBox && !ctrl && !Document.Selection.IsEmpty)
             {
                 SetSelected(null, null, true, IgnoreGrouping());
+            }
+
+            // If all selected items have an origin, snap to the closest one
+            if (draggable is ResizeTransformHandle res && res.Handle == ResizeHandle.Center && !Document.Selection.IsEmpty)
+            {
+                var origins = Document.Selection.Select(x => x.Data.GetOne<Origin>()).ToList();
+                if (origins.Any(x => x == null)) return;
+                var closest = origins.Select(x => camera.Flatten(x.Location)).OrderBy(x => (x - position).LengthSquared()).First();
+                res.SetMoveOrigin(closest);
             }
         }
 

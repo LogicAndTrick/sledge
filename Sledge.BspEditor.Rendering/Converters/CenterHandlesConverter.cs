@@ -79,7 +79,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 let color = mo.IsSelected ? Color.Red : mo.Data.GetOne<ObjectColor>()?.Color ?? Color.White
                 select new VertexStandard
                 {
-                    Position = mo.BoundingBox.Center,
+                    Position = mo.Data.GetOne<Origin>()?.Location ?? mo.BoundingBox.Center,
                     Normal = new Vector3(9, 9, 0),
                     Colour = color.ToVector4(),
                     Tint = Vector4.One
@@ -91,7 +91,7 @@ namespace Sledge.BspEditor.Rendering.Converters
                 let color = Color.Red
                 select new VertexStandard
                 {
-                    Position = mo.BoundingBox.Center,
+                    Position = mo.Data.GetOne<Origin>()?.Location ?? mo.BoundingBox.Center,
                     Normal = new Vector3(9, 9, 0),
                     Colour = color.ToVector4(),
                     Tint = Vector4.One,

@@ -32,14 +32,12 @@ namespace Sledge.BspEditor.Tools.Draggable
             DragEnded?.Invoke(this, EventArgs.Empty);
         }
 
-        public virtual void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
-            Vector3 position)
+        public virtual void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             OnDragStarted();
         }
 
-        public virtual void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition,
-            Vector3 position)
+        public virtual void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
             OnDragMoved();
         }
@@ -50,8 +48,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         }
 
 
-        public virtual void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
-            Vector3 position)
+        public virtual void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
 
         }

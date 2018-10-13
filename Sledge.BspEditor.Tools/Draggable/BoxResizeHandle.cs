@@ -106,6 +106,12 @@ namespace Sledge.BspEditor.Tools.Draggable
         protected Vector3? MoveOrigin;
         protected Vector3? SnappedMoveOrigin;
 
+        public void SetMoveOrigin(Vector3 origin)
+        {
+            MoveOrigin = origin;
+            SnappedMoveOrigin = origin;
+        }
+
         public override void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
 
@@ -120,13 +126,12 @@ namespace Sledge.BspEditor.Tools.Draggable
             return diff.X < width && diff.Y < width;
         }
 
-        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
-            Vector3 position)
+        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             BoxState.OrigStart = BoxState.Start;
             BoxState.OrigEnd = BoxState.End;
-            MoveOrigin = GetResizeOrigin(viewport, camera, position);
-            SnappedMoveOrigin = MoveOrigin;
+            if (!MoveOrigin.HasValue) MoveOrigin = GetResizeOrigin(viewport, camera, position);
+            if (!SnappedMoveOrigin.HasValue) SnappedMoveOrigin = MoveOrigin;
             BoxState.Action = BoxAction.Resizing;
             base.StartDrag(viewport, camera, e, position);
         }

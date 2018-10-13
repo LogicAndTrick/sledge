@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
 using Sledge.BspEditor.Documents;
@@ -15,8 +16,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
     {
         public string Name => Handle == ResizeHandle.Center ? "Move" : "Resize";
 
-        public ResizeTransformHandle(BoxDraggableState state, ResizeHandle handle)
-            : base(state, handle)
+        public ResizeTransformHandle(BoxDraggableState state, ResizeHandle handle) : base(state, handle)
         {
         }
 
@@ -51,12 +51,25 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             {
                 if (HighlightedViewport != viewport) return;
 
+                var start = camera.WorldToScreen(BoxState.Start);
+                var end = camera.WorldToScreen(BoxState.End);
+
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+
                 using (var br = new SolidBrush(State.FillColour))
                 {
-                    var start = camera.WorldToScreen(BoxState.Start);
-                    var end = camera.WorldToScreen(BoxState.End);
                     graphics.FillRectangle(br, start.X, end.Y, end.X - start.X, start.Y - end.Y);
                 }
+                if (SnappedMoveOrigin != null)
+                {
+                    const int size = 4;
+                    var orig = camera.WorldToScreen(camera.Expand(SnappedMoveOrigin.Value));
+
+                    graphics.DrawLine(Pens.Yellow, orig.X - size, orig.Y - size, orig.X + size, orig.Y + size);
+                    graphics.DrawLine(Pens.Yellow, orig.X + size, orig.Y - size, orig.X - size, orig.Y + size);
+                }
+
+                graphics.SmoothingMode = SmoothingMode.Default;
             }
             else
             {
