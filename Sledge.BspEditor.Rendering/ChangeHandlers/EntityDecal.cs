@@ -13,10 +13,13 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
     public class EntityDecal : IMapObjectData, IBoundingBoxProvider
     {
         public string Name { get; set; }
+        public IReadOnlyCollection<long> SolidIDs { get; }
         public List<Face> Geometry { get; set; }
-        public EntityDecal(string name, IEnumerable<Face> geometry)
+
+        public EntityDecal(string name, IEnumerable<long> solidIds, IEnumerable<Face> geometry)
         {
             Name = name;
+            SolidIDs = solidIds.ToList();
             Geometry = geometry.ToList();
         }
 
@@ -48,7 +51,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
 
         public IMapElement Clone()
         {
-            return new EntityDecal(Name, Geometry.Select(x => (Face) x.Clone()));
+            return new EntityDecal(Name, SolidIDs.ToList(), Geometry.Select(x => (Face) x.Clone()));
         }
 
         public SerialisedObject ToSerialisedObject()

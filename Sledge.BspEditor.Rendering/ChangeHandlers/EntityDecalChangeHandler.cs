@@ -24,7 +24,38 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
         public async Task Changed(Change change)
         {
             var tc = await change.Document.Environment.GetTextureCollection();
-            foreach (var entity in change.Added.Union(change.Updated).OfType<Entity>())
+
+            // Update any decal entities that have been changed
+            var changedEntities = change.Added.Union(change.Updated).OfType<Entity>().ToHashSet();
+            
+            // Also update any decals had geometry for a changed solid
+            var documentEntities = change.Document.Map.Root
+                .Find(x => x is Entity e && !String.IsNullOrWhiteSpace(GetDecalName(e))).OfType<Entity>()
+                .Except(changedEntities) // don't bother checking entities already in the change
+                .Select(x => new
+                {
+                    Entity = x,
+                    Box = new Box(x.Origin - Vector3.One * 4, x.Origin + Vector3.One * 4),
+                    Decal = x.Data.GetOne<EntityDecal>()
+                })
+                .ToList();
+
+            // Include removed solids in the test so we can delete decal geometry for deleted solids
+            var changedSolids = change.Added.Union(change.Updated).Union(change.Removed).OfType<Solid>().ToList();
+            foreach (var cs in changedSolids)
+            {
+                // Get decals that have geometry for the solid or decals that intersect with the solid
+                var intersects = documentEntities.Where(x => x.Decal?.SolidIDs.Contains(cs.ID) == true || x.Box.IntersectsWith(cs.BoundingBox))
+                    .Select(x => x.Entity)
+                    .ToHashSet();
+
+                // Add the intersecting decals to the change set
+                change.UpdateRange(intersects);
+                changedEntities.UnionWith(intersects);
+            }
+
+            // Perform the update
+            foreach (var entity in changedEntities)
             {
                 var sn = GetDecalName(entity);
                 var dd = sn == null ? null : await CreateDecalData(entity, change.Document, tc, sn);
@@ -46,8 +77,9 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             var texture = await tc.GetTextureItem(name);
             if (texture == null) return null;
 
-            var geometry = CalculateDecalGeometry(entity, texture, doc);
-            return new EntityDecal(name, geometry);
+            var solidIds = new List<long>();
+            var geometry = CalculateDecalGeometry(entity, texture, doc, solidIds).ToList();
+            return new EntityDecal(name, solidIds, geometry);
         }
 
         private static IEnumerable<IMapObject> GetBoxIntersections(MapDocument document, Box box)
@@ -58,7 +90,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             );
         }
 
-        private static IEnumerable<Face> CalculateDecalGeometry(Entity entity, TextureItem decal, MapDocument document)
+        private static IEnumerable<Face> CalculateDecalGeometry(Entity entity, TextureItem decal, MapDocument document, ICollection<long> solidIds)
         {
             if (decal == null || entity.Hierarchy.Parent == null) yield break; // Texture not found
 
@@ -83,6 +115,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
             {
                 var solid = sf.Solid;
                 var face = sf.Face;
+                solidIds.Add(solid.ID);
 
                 // Project the decal onto the face
                 var center = face.Plane.Project(entity.Origin);
