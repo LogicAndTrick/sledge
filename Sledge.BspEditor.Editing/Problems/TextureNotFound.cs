@@ -33,8 +33,8 @@ namespace Sledge.BspEditor.Editing.Problems
                 .ToList();
 
             // Get the list of textures in the map and in the texture collection
-            var textureNames = faces.Select(x => x.Face.Texture.Name).ToHashSet();
-            var knownTextureNames = tc.GetAllTextures().ToHashSet();
+            var textureNames = faces.Select(x => x.Face.Texture.Name).ToHashSet(StringComparer.InvariantCultureIgnoreCase);
+            var knownTextureNames = tc.GetAllTextures().ToHashSet(StringComparer.InvariantCultureIgnoreCase);
 
             // The set only contains textures that aren't known
             textureNames.ExceptWith(knownTextureNames);
