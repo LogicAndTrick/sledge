@@ -95,7 +95,12 @@
     "Documents": {
         "BspSourceDocumentLoader": {
             "FileTypeDescription": "BSP Source File",
-            "UntitledDocumentName": "Untitled {0}" 
+            "UntitledDocumentName": "Untitled {0}",
+            "UnsupportedFileFormat": "Unsupported file format",
+            "FileTypeNotSupported": "This file type is not supported.",
+            "LoadResultTitle": "Load completed with warnings",
+            "InvalidObjectsWereDiscarded":  "{0} object(s) in the file were found to be invalid and were discarded.",
+            "OK": "OK"
         }
     },
     "Environment": {

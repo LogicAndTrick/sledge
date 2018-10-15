@@ -48,12 +48,14 @@ namespace Sledge.BspEditor.Providers
             new FileExtensionInfo("Worldcraft map formats", ".rmf", ".rmx"), 
         };
 
-        public async Task<Map> Load(Stream stream, IEnvironment environment)
+        public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
         {
             return await Task.Factory.StartNew(() =>
             {
                 using (var br = new BinaryReader(stream, Encoding.ASCII, true))
                 {
+                    var result = new BspFileLoadResult();
+
                     // Only RMF version 2.2 is supported for the moment.
                     var version = Math.Round(br.ReadSingle(), 1);
                     if (Math.Abs(version - 2.2) > 0.01)
@@ -86,7 +88,8 @@ namespace Sledge.BspEditor.Providers
                         ReadCameras(map, br);
                     }
 
-                    return map;
+                    result.Map = map;
+                    return result;
                 }
             });
         }

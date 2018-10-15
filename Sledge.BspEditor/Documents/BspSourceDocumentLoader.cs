@@ -32,8 +32,12 @@ namespace Sledge.BspEditor.Documents
 
         /// <inheritdoc />
         public string FileTypeDescription { get; set; }
-
         public string UntitledDocumentName { get; set; }
+        public string UnsupportedFileFormat { get; set; }
+        public string FileTypeNotSupported { get; set; }
+        public string LoadResultTitle { get; set; }
+        public string InvalidObjectsWereDiscarded { get; set; }
+        public string OK { get; set; }
 
         private static int _untitled = 1;
 
@@ -116,7 +120,7 @@ namespace Sledge.BspEditor.Documents
                 Name = string.Format(UntitledDocumentName, _untitled++),
                 HasUnsavedChanges = true
             };
-            await ProcessAfterLoad(env, md);
+            await ProcessAfterLoad(env, md, new BspFileLoadResult { Map = md.Map });
             return md;
         }
 
@@ -133,9 +137,15 @@ namespace Sledge.BspEditor.Documents
                 {
                     try
                     {
-                        var map = await provider.Value.Load(stream, env);
-                        var md = new MapDocument(map, env) { FileName = location };
-                        await ProcessAfterLoad(env, md);
+                        var result = await provider.Value.Load(stream, env);
+                        if (result.Map == null)
+                        {
+                            stream.Seek(0, SeekOrigin.Begin);
+                            continue;
+                        }
+
+                        var md = new MapDocument(result.Map, env) { FileName = location };
+                        await ProcessAfterLoad(env, md, result);
                         return md;
                     }
                     catch (NotSupportedException e)
@@ -149,10 +159,10 @@ namespace Sledge.BspEditor.Documents
             if (ex != null)
             {
                 // This file type is explicitly supported, but the provider rejected it.
-                MessageBox.Show(ex.Message, "Unsupported file format", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, UnsupportedFileFormat, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
-            throw new NotSupportedException("This file type is not supported.");
+            throw new NotSupportedException(FileTypeNotSupported);
         }
 
         /// <summary>
@@ -160,13 +170,25 @@ namespace Sledge.BspEditor.Documents
         /// </summary>
         /// <param name="env">The document's environment</param>
         /// <param name="document">The document to process</param>
-        private async Task ProcessAfterLoad(IEnvironment env, MapDocument document)
+        /// <param name="result">The result of the load operation</param>
+        private async Task ProcessAfterLoad(IEnvironment env, MapDocument document, BspFileLoadResult result)
         {
             await env.UpdateDocumentData(document);
 
             foreach (var p in _processors.Select(x => x.Value).OrderBy(x => x.OrderHint))
             {
                 await p.AfterLoad(document);
+            }
+
+            if (result.InvalidObjects.Any() || result.Messages.Any())
+            {
+                var messages = new List<string>();
+                if (result.InvalidObjects.Any()) messages.Add(String.Format(InvalidObjectsWereDiscarded, result.InvalidObjects.Count));
+                foreach (var m in result.Messages) messages.Add(m);
+                _shell.Value.InvokeSync(() =>
+                {
+                    MessageBox.Show(String.Join(System.Environment.NewLine, messages), LoadResultTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                });
             }
         }
 
@@ -205,7 +227,7 @@ namespace Sledge.BspEditor.Documents
                     }
                 }
             }
-            throw new NotSupportedException("This file type is not supported.");
+            throw new NotSupportedException(FileTypeNotSupported);
         }
 
         /// <summary>
@@ -252,9 +274,15 @@ namespace Sledge.BspEditor.Documents
                 {
                     try
                     {
-                        var map = await provider.Value.Load(stream, env);
-                        var md = new MapDocument(map, env) { FileName = fileName };
-                        await ProcessAfterLoad(env, md);
+                        var result = await provider.Value.Load(stream, env);
+                        if (result.Map == null)
+                        {
+                            stream.Seek(0, SeekOrigin.Begin);
+                            continue;
+                        }
+
+                        var md = new MapDocument(result.Map, env) { FileName = fileName };
+                        await ProcessAfterLoad(env, md, result);
                         return md;
                     }
                     catch (NotSupportedException)

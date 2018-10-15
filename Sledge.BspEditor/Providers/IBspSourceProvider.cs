@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Sledge.BspEditor.Environment;
 using Sledge.BspEditor.Primitives;
+using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.Common.Shell.Documents;
 
 namespace Sledge.BspEditor.Providers
@@ -31,7 +32,7 @@ namespace Sledge.BspEditor.Providers
         /// <param name="stream">The stream</param>
         /// <param name="environment">The environment to load the map into</param>
         /// <returns>Completion task for the map</returns>
-        Task<Map> Load(Stream stream, IEnvironment environment);
+        Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment);
 
         /// <summary>
         /// Save the map to a stream

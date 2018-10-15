@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -40,14 +39,16 @@ namespace Sledge.BspEditor.Providers
             new FileExtensionInfo("Quake map formats", ".map", ".max"), 
         };
 
-        public async Task<Map> Load(Stream stream, IEnvironment environment)
+        public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
         {
             return await Task.Factory.StartNew(() =>
             {
                 using (var reader = new StreamReader(stream, Encoding.ASCII, true, 1024, false))
                 {
+                    var result = new BspFileLoadResult();
+
                     var map = new Map();
-                    var entities = ReadAllEntities(reader, map.NumberGenerator);
+                    var entities = ReadAllEntities(reader, map.NumberGenerator, result);
 
                     var worldspawn = entities.FirstOrDefault(x => x.EntityData?.Name == "worldspawn")
                                      ?? new Entity(0) { Data = { new EntityData { Name = "worldspawn" } } };
@@ -70,14 +71,16 @@ namespace Sledge.BspEditor.Providers
                     }
 
                     map.Root.DescendantsChanged();
-                    return map;
+
+                    result.Map = map;
+                    return result;
                 }
             });
         }
 
         #region Reading
         
-        private string CleanLine(string line)
+        private static string CleanLine(string line)
         {
             if (line == null) return null;
             var ret = line;
@@ -177,7 +180,7 @@ namespace Sledge.BspEditor.Providers
             return face;
         }
 
-        private Solid ReadSolid(StreamReader rdr, UniqueNumberGenerator generator)
+        private Solid ReadSolid(StreamReader rdr, UniqueNumberGenerator generator, BspFileLoadResult result)
         {
             var faces = new List<Face>();
             string line;
@@ -194,11 +197,10 @@ namespace Sledge.BspEditor.Providers
 
                     foreach (var face in faces)
                     {
-                        var pg = poly.Polygons.FirstOrDefault(x => x.Plane.Normal.EquivalentTo(face.Plane.Normal));
+                        var pg = poly.Polygons.FirstOrDefault(x => x.Plane.Normal.EquivalentTo(face.Plane.Normal, 0.0075f)); // Magic number that seems to match VHE
                         if (pg == null)
                         {
-                            // TODO: Report invalid solids
-                            Debug.WriteLine("Invalid solid!");
+                            result.InvalidObjects.Add(poly);
                             return null;
                         }
                         face.Vertices.AddRange(pg.Vertices);
@@ -257,7 +259,7 @@ namespace Sledge.BspEditor.Providers
             }
         }
 
-        private Entity ReadEntity(StreamReader rdr, UniqueNumberGenerator generator)
+        private Entity ReadEntity(StreamReader rdr, UniqueNumberGenerator generator, BspFileLoadResult result)
         {
             var ent = new Entity(generator.Next("Face"))
             {
@@ -274,7 +276,7 @@ namespace Sledge.BspEditor.Providers
                 if (line[0] == '"') ReadProperty(ent, line);
                 else if (line[0] == '{')
                 {
-                    var s = ReadSolid(rdr, generator);
+                    var s = ReadSolid(rdr, generator, result);
                     if (s != null) s.Hierarchy.Parent = ent;
                 }
                 else if (line[0] == '}') break;
@@ -283,14 +285,14 @@ namespace Sledge.BspEditor.Providers
             return ent;
         }
 
-        private List<Entity> ReadAllEntities(StreamReader rdr, UniqueNumberGenerator generator)
+        private List<Entity> ReadAllEntities(StreamReader rdr, UniqueNumberGenerator generator, BspFileLoadResult result)
         {
             var list = new List<Entity>();
             string line;
             while ((line = CleanLine(rdr.ReadLine())) != null)
             {
                 if (String.IsNullOrWhiteSpace(line)) continue;
-                if (line == "{") list.Add(ReadEntity(rdr, generator));
+                if (line == "{") list.Add(ReadEntity(rdr, generator, result));
             }
             return list;
         }

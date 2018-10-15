@@ -42,10 +42,12 @@ namespace Sledge.BspEditor.Providers
             new FileExtensionInfo("Sledge map format", ".smf"), 
         };
 
-        public async Task<Map> Load(Stream stream, IEnvironment environment)
+        public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
         {
             return await Task.Factory.StartNew(() =>
             {
+                var result = new BspFileLoadResult();
+
                 var map = new Map();
                 var so = _formatter.Deserialize(stream);
                 foreach (var o in so)
@@ -60,7 +62,9 @@ namespace Sledge.BspEditor.Providers
                     }
                 }
                 map.Root.DescendantsChanged();
-                return map;
+
+                result.Map = map;
+                return result;
             });
         }
         

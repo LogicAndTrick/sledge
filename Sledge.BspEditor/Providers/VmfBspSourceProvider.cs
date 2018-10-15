@@ -54,10 +54,12 @@ namespace Sledge.BspEditor.Providers
             new FileExtensionInfo("Valve map format", ".vmf", ".vmx"), 
         };
 
-        public async Task<Map> Load(Stream stream, IEnvironment environment)
+        public async Task<BspFileLoadResult> Load(Stream stream, IEnvironment environment)
         {
             var task = await Task.Factory.StartNew(async () =>
             {
+                var result = new BspFileLoadResult();
+
                 var map = new Map();
                 var so = _formatter.Deserialize(stream).ToList();
 
@@ -92,8 +94,11 @@ namespace Sledge.BspEditor.Providers
                 }
 
                 map.Root.DescendantsChanged();
-                return map;
+
+                result.Map = map;
+                return result;
             });
+
             return await task;
         }
 
