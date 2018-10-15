@@ -321,9 +321,13 @@ namespace Sledge.BspEditor.Providers
                     WriteVisgroups(map, bw);
                     WriteWorldspawn(map, bw);
 
-                    // Docinfo footer
-                    bw.WriteFixedLengthString(Encoding.ASCII, 8, "DOCINFO");
-                    WriteCameras(map, bw);
+                    // Only write docinfo if there's cameras in the document
+                    if (map.Data.Get<Camera>().Any())
+                    {
+                        // Docinfo footer
+                        bw.WriteFixedLengthString(Encoding.ASCII, 8, "DOCINFO");
+                        WriteCameras(map, bw);
+                    }
                 }
             });
         }

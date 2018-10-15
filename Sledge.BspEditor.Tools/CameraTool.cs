@@ -159,6 +159,7 @@ namespace Sledge.BspEditor.Tools
         private List<Camera> GetCameraList()
         {
             var c = GetViewportCamera();
+            if (Document == null) return new List<Camera>();
             if (!Document.Map.Data.Get<Camera>().Any())
             {
                 Document.Map.Data.Add(new Camera {EyePosition = c.Item1, LookPosition = c.Item2});

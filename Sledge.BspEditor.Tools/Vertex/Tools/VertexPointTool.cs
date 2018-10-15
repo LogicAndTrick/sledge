@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
@@ -40,13 +41,13 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         public override Control Control => _control;
 
         private readonly BoxDraggableState _boxState;
-        private readonly Dictionary<VertexSolid, VertexList> _vertices;
+        private ConcurrentDictionary<VertexSolid, VertexList> _vertices;
 
         private VisiblePoints _showPoints;
 
         public VertexPointTool()
         {
-            _vertices = new Dictionary<VertexSolid, VertexList>();
+            _vertices = new ConcurrentDictionary<VertexSolid, VertexList>();
             
             States.Add(new WrapperDraggableState(GetDraggables));
 
@@ -171,7 +172,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         public override void Update()
         {
-            foreach (var v in _vertices.Values)
+            foreach (var v in _vertices.Values.ToList())
             {
                 v.Update();
             }
@@ -186,26 +187,31 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 solid.IsDirty = true;
             }
 
-            foreach (var vl in _vertices.Values) vl.Update();
+            foreach (var vl in _vertices.Values.ToList()) vl.Update();
             Invalidate();
         }
 
-        private async Task UpdateVertices()
+        private Task UpdateVertices()
         {
             var existing = new Dictionary<VertexSolid, VertexList>(_vertices);
-            _vertices.Clear();
+
+            var newVerts = new ConcurrentDictionary<VertexSolid, VertexList>();
             foreach (var solid in Selection)
             {
                 if (existing.ContainsKey(solid))
                 {
                     existing[solid].Update();
-                    _vertices.Add(solid, existing[solid]);
+                    newVerts.TryAdd(solid, existing[solid]);
                 }
                 else
                 {
-                    _vertices.Add(solid, new VertexList(this, solid));
+                    newVerts.TryAdd(solid, new VertexList(this, solid));
                 }
             }
+
+            _vertices = newVerts;
+
+            return Task.CompletedTask;
         }
 
         #region Merging vertices
@@ -463,7 +469,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         private void Select(List<VertexPoint> points, bool toggle)
         {
             if (!points.Any()) return;
-            if (!toggle) _vertices.SelectMany(x => x.Value.Points).ToList().ForEach(x => x.IsSelected = false);
+            if (!toggle) _vertices.ToList().SelectMany(x => x.Value.Points).ToList().ForEach(x => x.IsSelected = false);
             var first = points[0];
             var val = !toggle || !first.IsSelected;
             points.ForEach(x => x.IsSelected = val);
@@ -474,7 +480,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         private void DeselectAll()
         {
-            foreach (var point in _vertices.SelectMany(x => x.Value.Points))
+            foreach (var point in _vertices.ToList().SelectMany(x => x.Value.Points))
             {
                 point.IsSelected = false;
             }
@@ -542,7 +548,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             selected.ForEach(x => x.DragMove(delta));
             
 
-            foreach (var midpoint in selected.Select(x => x.Solid).Distinct().SelectMany(x => _vertices[x].Points.Where(p => p.IsMidpoint)))
+            foreach (var midpoint in selected.Select(x => x.Solid).Distinct().SelectMany(x => _vertices.TryGetValue(x, out var l) ? l.Points.Where(p => p.IsMidpoint) : new List<VertexPoint>()))
             {
                 var p1 = midpoint.MidpointStart.IsDragging ? midpoint.MidpointStart.DraggingPosition : midpoint.MidpointStart.Position;
                 var p2 = midpoint.MidpointEnd.IsDragging ? midpoint.MidpointEnd.DraggingPosition : midpoint.MidpointEnd.Position;
