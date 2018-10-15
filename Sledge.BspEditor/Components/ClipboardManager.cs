@@ -96,27 +96,29 @@ namespace Sledge.BspEditor.Components
 
         public IEnumerable<IMapObject> GetPastedContent(MapDocument document)
         {
+            return GetPastedContent(document, (d, o) => o);
+        }
+
+        public IEnumerable<IMapObject> GetPastedContent(MapDocument document, Func<MapDocument, IMapObject, IMapObject> existingIdTransform)
+        {
             if (!System.Windows.Forms.Clipboard.ContainsText()) return null;
 
             var str = System.Windows.Forms.Clipboard.GetText();
             if (!str.StartsWith(SerialisedName)) return null;
 
             var ecc = ExtractCopyStream(str);
-            return ReIndex(ecc, document);
+            return ReIndex(ecc, document, existingIdTransform);
         }
 
-        private IEnumerable<IMapObject> ReIndex(IEnumerable<IMapObject> objects, MapDocument document)
+        private IEnumerable<IMapObject> ReIndex(IEnumerable<IMapObject> objects, MapDocument document, Func<MapDocument, IMapObject, IMapObject> existingIdTransform)
         {
             var rand = new Random();
             foreach (var o in objects)
             {
                 if (document.Map.Root.Hierarchy.HasDescendant(o.ID))
                 {
-                    // If this object already exists in the tree, copy it with a new number and move it around a bit
-                    var copy = (IMapObject) o.Copy(document.Map.NumberGenerator);
-                    var step = copy.BoundingBox.Dimensions / 16;
-                    copy.Transform(Matrix4x4.CreateTranslation(rand.Next(1, 16) * step.X, rand.Next(1, 16) * step.Y, rand.Next(1, 16) * step.Z));
-                    yield return copy;
+                    // If this object already exists in the tree, transform it through the callback
+                    yield return existingIdTransform(document, o);
                 }
                 else
                 {

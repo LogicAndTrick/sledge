@@ -31,11 +31,21 @@ namespace Sledge.BspEditor.Editing.Commands
     [DefaultHotkey("Ctrl+Shift+V")]
     public class PasteSpecial : BaseCommand
     {
-        [Import] private Lazy<ClipboardManager> _clipboard;
-        [Import] private Lazy<ITranslationStringProvider> _translator;
+        private readonly Lazy<ClipboardManager> _clipboard;
+        private readonly Lazy<ITranslationStringProvider> _translator;
 
         public override string Name { get; set; } = "Paste Special...";
         public override string Details { get; set; } = "Paste multiple copies";
+
+        [ImportingConstructor]
+        public PasteSpecial(
+            [Import] Lazy<ClipboardManager> clipboard,
+            [Import] Lazy<ITranslationStringProvider> translator
+        )
+        {
+            _clipboard = clipboard;
+            _translator = translator;
+        }
 
         protected override async Task Invoke(MapDocument document, CommandParameters parameters)
         {
