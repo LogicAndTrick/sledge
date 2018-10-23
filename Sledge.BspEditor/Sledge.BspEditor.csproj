@@ -245,6 +245,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Providers\BspFileLoadResult.cs" />
+    <Compile Include="Providers\ObjBspSourceProvider.cs" />
     <Compile Include="Providers\Processors\AddDefaults.cs" />
     <Compile Include="Providers\Processors\HandleSelection.cs" />
     <Compile Include="Providers\Processors\HandleVisgroups.cs" />
