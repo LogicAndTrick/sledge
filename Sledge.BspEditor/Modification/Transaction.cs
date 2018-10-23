@@ -25,6 +25,11 @@ namespace Sledge.BspEditor.Modification
             _operations.Add(operation);
         }
 
+        public void AddRange(IEnumerable<IOperation> operations)
+        {
+            _operations.AddRange(operations);
+        }
+
         public async Task<Change> Perform(MapDocument document)
         {
             var ch = new Change(document);
