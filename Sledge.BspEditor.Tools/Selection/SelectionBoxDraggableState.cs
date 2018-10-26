@@ -195,6 +195,12 @@ namespace Sledge.BspEditor.Tools.Selection
             SetTransformationMode((TransformationMode) nextMode);
         }
 
+        public void SetRotationOrigin(Vector3 origin)
+        {
+            _rotationOrigin.Position = origin;
+            Update();
+        }
+
         public void SetTransformationMode(TransformationMode mode)
         {
             CurrentTransformationMode = mode;

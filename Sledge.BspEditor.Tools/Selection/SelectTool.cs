@@ -162,7 +162,7 @@ namespace Sledge.BspEditor.Tools.Selection
             {
                 if (x.Document == Document)
                 {
-                    if (x.HasObjectChanges) SelectionChanged();
+                    if (x.HasObjectChanges) UpdateBoxBasedOnSelection();
                     if (x.HasDataChanges && x.AffectedData.Any(d => d is SelectionOptions)) IgnoreGroupingPossiblyChanged();
                 }
             });
@@ -288,10 +288,14 @@ namespace Sledge.BspEditor.Tools.Selection
         private void SelectionChanged()
         {
             if (Document == null) return;
+
+            foreach (var widget in Children.OfType<Widget>()) widget.SelectionChanged();
             UpdateBoxBasedOnSelection();
-            foreach (var widget in Children.OfType<Widget>())
+
+            if (!Document.Selection.IsEmpty)
             {
-                widget.SelectionChanged();
+                var box = Document.Selection.GetSelectionBoundingBox();
+                _selectionBox.SetRotationOrigin(box.Center);
             }
         }
 
