@@ -11,7 +11,6 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
     {
         protected VertexSubtool()
         {
-            UseValidation = true;
             Active = false;
             Title = GetName() ?? GetType().Name;
         }
@@ -25,9 +24,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         public abstract Control Control { get; }
         public string Title { get; set; }
 
-        protected override void Invalidate()
+        protected void Invalidate()
         {
-            base.Invalidate();
             Parent.Invalidate();
         }
         

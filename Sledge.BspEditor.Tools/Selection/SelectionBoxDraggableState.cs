@@ -55,7 +55,7 @@ namespace Sledge.BspEditor.Tools.Selection
             _tool = tool;
             Widgets = new List<Widget>
             {
-                (_rotationWidget = new RotationWidget(tool.Document) { Active = false })
+                (_rotationWidget = new RotationWidget(tool.GetDocument()) { Active = false })
             };
             BindWidgets();
         }
@@ -79,10 +79,12 @@ namespace Sledge.BspEditor.Tools.Selection
 
         private void WidgetTransformed(Widget sender, Matrix4x4? transformation)
         {
+            var document = Tool.GetDocument();
             var task = Task.CompletedTask;
-            if (transformation.HasValue)
+
+            if (document != null && transformation.HasValue)
             {
-                var objects = Tool.Document.Selection.GetSelectedParents().ToList();
+                var objects = document.Selection.GetSelectedParents().ToList();
 
                 var transaction = new Transaction();
 
@@ -92,7 +94,7 @@ namespace Sledge.BspEditor.Tools.Selection
                 transaction.Add(transformOperation);
 
                 // Texture for texture operations
-                var tl = Tool.Document.Map.Data.GetOne<TransformationFlags>() ?? new TransformationFlags();
+                var tl = document.Map.Data.GetOne<TransformationFlags>() ?? new TransformationFlags();
                 if (tl.TextureLock && sender.IsUniformTransformation)
                 {
                     transaction.Add(new TransformTexturesUniform(matrix, objects.SelectMany(x => x.FindAll())));
@@ -102,7 +104,7 @@ namespace Sledge.BspEditor.Tools.Selection
                     transaction.Add(new TransformTexturesScale(matrix, objects.SelectMany(x => x.FindAll())));
                 }
 
-                task = MapDocumentOperation.Perform(Tool.Document, transaction);
+                task = MapDocumentOperation.Perform(document, transaction);
             }
 
             task.ContinueWith(_ => Engine.Interface.SetSelectiveTransform(Matrix4x4.Identity));
@@ -168,7 +170,8 @@ namespace Sledge.BspEditor.Tools.Selection
             return _handles[(int)CurrentTransformationMode];
         }
 
-        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 position)
         {
             return false;
         }

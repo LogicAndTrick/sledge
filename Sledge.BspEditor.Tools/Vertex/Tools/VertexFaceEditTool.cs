@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Vertex.Controls;
@@ -134,7 +135,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             return new Polygon(face.Vertices.Select(x => x.Position)).GetIntersectionPoint(line);
         }
         
-        protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera,
+            ViewportEvent e)
         {
             if (e.Button != MouseButtons.Left) return;
 
@@ -206,9 +208,9 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             Invalidate();
         }
 
-        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
+        protected override void Render(MapDocument document, BufferBuilder builder, ResourceCollector resourceCollector)
         {
-            base.Render(builder, resourceCollector);
+            base.Render(document, builder, resourceCollector);
 
             var verts = new List<VertexStandard>();
             var indices = new List<int>();

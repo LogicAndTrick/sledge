@@ -83,10 +83,11 @@ namespace Sledge.BspEditor.Tools.Widgets
 
         public override void SelectionChanged()
         {
-            if (Document.Selection.IsEmpty) _autoPivot = true;
+            var document = GetDocument();
+            if (document != null && document.Selection.IsEmpty) _autoPivot = true;
             if (!_autoPivot) return;
 
-            var bb = Document.Selection.GetSelectionBoundingBox();
+            var bb = document?.Selection.GetSelectionBoundingBox();
             _pivotPoint = bb?.Center ?? Vector3.Zero;
         }
 
@@ -244,16 +245,16 @@ namespace Sledge.BspEditor.Tools.Widgets
             return lines.Any(x => (x.ClosestPoint(point) - point).Length() <= 8);
         }
 
-        protected override void MouseLeave(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        protected override void MouseLeave(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             viewport.Control.Cursor = Cursors.Default;
         }
 
-        protected override void MouseMove(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        protected override void MouseMove(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            if (viewport != _activeViewport) return;
+            if (viewport != ActiveViewport) return;
 
-            if (Document.Selection.IsEmpty || !viewport.IsUnlocked(this)) return;
+            if (document.Selection.IsEmpty || !viewport.IsUnlocked(this)) return;
 
             if (_mouseDown != CircleType.None)
             {
@@ -274,9 +275,9 @@ namespace Sledge.BspEditor.Tools.Widgets
             }
         }
 
-        protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            if (viewport != _activeViewport) return;
+            if (viewport != ActiveViewport) return;
 
             if (e.Button != MouseButtons.Left || _mouseOver == CircleType.None) return;
             _mouseDown = _mouseOver;
@@ -286,9 +287,9 @@ namespace Sledge.BspEditor.Tools.Widgets
             viewport.AquireInputLock(this);
         }
 
-        protected override void MouseUp(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        protected override void MouseUp(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            if (viewport != _activeViewport) return;
+            if (viewport != ActiveViewport) return;
 
             if (_mouseDown != CircleType.None && _mouseMovePoint != null) e.Handled = true;
 
@@ -299,13 +300,13 @@ namespace Sledge.BspEditor.Tools.Widgets
             viewport.ReleaseInputLock(this);
         }
 
-        protected override void MouseWheel(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        protected override void MouseWheel(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            if (viewport != _activeViewport) return;
+            if (viewport != ActiveViewport) return;
             if (_mouseDown != CircleType.None) e.Handled = true;
         }
 
-        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
+        protected override void Render(MapDocument document, BufferBuilder builder, ResourceCollector resourceCollector)
         {
             if (_mouseMovePoint.HasValue && _mouseDown != CircleType.None)
             {
@@ -327,7 +328,7 @@ namespace Sledge.BspEditor.Tools.Widgets
                         c = Color.Blue;
                         break;
                     case CircleType.Outer:
-                        if (_activeViewport == null || !(_activeViewport.Viewport.Camera is PerspectiveCamera pc)) return;
+                        if (ActiveViewport == null || !(ActiveViewport.Viewport.Camera is PerspectiveCamera pc)) return;
                         axis = pc.Direction;
                         c = Color.White;
                         break;
@@ -352,12 +353,12 @@ namespace Sledge.BspEditor.Tools.Widgets
                 );
             }
 
-            base.Render(builder, resourceCollector);
+            base.Render(document, builder, resourceCollector);
         }
 
-        public override void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+        protected override void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, Graphics graphics)
         {
-            if (!Document.Selection.IsEmpty)
+            if (!document.Selection.IsEmpty)
             {
                 switch (_mouseMovePoint == null ? CircleType.None : _mouseDown)
                 {
@@ -372,12 +373,12 @@ namespace Sledge.BspEditor.Tools.Widgets
                         break;
                 }
             }
-            base.Render(viewport, camera, graphics);
+            base.Render(document, viewport, camera, graphics);
         }
 
         private void RenderAxisRotating(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
         {
-            if (_activeViewport.Viewport != viewport || !_mouseDownPoint.HasValue || !_mouseMovePoint.HasValue) return;
+            if (ActiveViewport.Viewport != viewport || !_mouseDownPoint.HasValue || !_mouseMovePoint.HasValue) return;
 
 
             graphics.SmoothingMode = SmoothingMode.HighQuality;

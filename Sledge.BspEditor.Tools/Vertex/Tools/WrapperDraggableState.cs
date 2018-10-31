@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.Rendering.Cameras;
@@ -43,17 +44,16 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         public event EventHandler DragStarted;
         public event EventHandler DragMoved;
         public event EventHandler DragEnded;
-        public void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
-        public void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
-        public void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
-        public bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) => false;
-        public void Highlight(MapViewport viewport) { }
-        public void Unhighlight(MapViewport viewport) { }
-        public void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
-        public void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition,
-            Vector3 position) { }
-        public void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
-        public void Render(BufferBuilder builder) { }
+        public void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
+        public void MouseUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
+        public void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
+        public bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) => false;
+        public void Highlight(MapDocument document, MapViewport viewport) { }
+        public void Unhighlight(MapDocument document, MapViewport viewport) { }
+        public void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
+        public void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position) { }
+        public void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
+        public void Render(MapDocument document, BufferBuilder builder) { }
         public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics) { }
         public void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics) { }
     }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
@@ -61,7 +62,10 @@ namespace Sledge.BspEditor.Tools
 
         private Task CameraNext(object param)
         {
-            var cams = GetDocumentCameras();
+            var document = GetDocument();
+            if (document == null) return Task.CompletedTask;
+
+            var cams = GetDocumentCameras(document);
 
             if (_state == State.None && cams.Count >= 2)
             {
@@ -77,7 +81,10 @@ namespace Sledge.BspEditor.Tools
 
         private Task CameraPrevious(object param)
         {
-            var cams = GetDocumentCameras();
+            var document = GetDocument();
+            if (document == null) return Task.CompletedTask;
+
+            var cams = GetDocumentCameras(document);
 
             if (_state == State.None && cams.Count >= 2)
             {
@@ -94,11 +101,14 @@ namespace Sledge.BspEditor.Tools
 
         private void CameraDelete()
         {
-            var cams = GetDocumentCameras();
+            var document = GetDocument();
+            if (document == null) return;
+
+            var cams = GetDocumentCameras(document);
             if (_state != State.None || cams.Count < 2) return;
             var del = cams.FirstOrDefault(x => x.IsActive);
             CameraPrevious(null);
-            if (del != GetDocumentCameras().FirstOrDefault(x => x.IsActive)) Document.Map.Data.Remove(del);
+            if (del != GetDocumentCameras(document).FirstOrDefault(x => x.IsActive)) document.Map.Data.Remove(del);
         }
 
         public override Image GetIcon()
@@ -133,11 +143,11 @@ namespace Sledge.BspEditor.Tools
             cam.Direction = look - position;
         }
 
-        private State GetStateAtPoint(int x, int y, OrthographicCamera camera, out Camera activeCamera)
+        private State GetStateAtPoint(MapDocument document, int x, int y, OrthographicCamera camera, out Camera activeCamera)
         {
             var d = 5 / camera.Zoom;
 
-            foreach (var cam in GetCameraList())
+            foreach (var cam in GetCameraList(document))
             {
                 var p = camera.Flatten(camera.ScreenToWorld(new Vector3(x, y, 0)));
                 var pos = camera.Flatten(cam.EyePosition);
@@ -151,32 +161,31 @@ namespace Sledge.BspEditor.Tools
             return State.None;
         }
 
-        private List<Camera> GetDocumentCameras()
+        private List<Camera> GetDocumentCameras(MapDocument document)
         {
-            return Document.Map.Data.Get<Camera>().ToList();
+            return document.Map.Data.Get<Camera>().ToList();
         }
 
-        private List<Camera> GetCameraList()
+        private List<Camera> GetCameraList(MapDocument document)
         {
             var c = GetViewportCamera();
-            if (Document == null) return new List<Camera>();
-            if (!Document.Map.Data.Get<Camera>().Any())
+            if (!document.Map.Data.Get<Camera>().Any())
             {
-                Document.Map.Data.Add(new Camera {EyePosition = c.Item1, LookPosition = c.Item2});
+                document.Map.Data.Add(new Camera {EyePosition = c.Item1, LookPosition = c.Item2});
             }
-            var active = Document.Map.Data.Get<Camera>().FirstOrDefault(x => x.IsActive);
+            var active = document.Map.Data.Get<Camera>().FirstOrDefault(x => x.IsActive);
             if (active == null)
             {
-                active = Document.Map.Data.GetOne<Camera>() ?? new Camera();
+                active = document.Map.Data.GetOne<Camera>() ?? new Camera();
                 active.IsActive = true;
             }
             var len = active.Length;
             active.EyePosition = c.Item1;
             active.LookPosition = c.Item1 + (c.Item2 - c.Item1).Normalise() * len;
 
-            var gs = Document.Map.Data.GetOne<GridData>()?.Grid?.Spacing ?? 64;
+            var gs = document.Map.Data.GetOne<GridData>()?.Grid?.Spacing ?? 64;
             var cameras = new List<Camera>();
-            foreach (var camera in Document.Map.Data.Get<Camera>())
+            foreach (var camera in document.Map.Data.Get<Camera>())
             {
                 var dir = camera.LookPosition - camera.EyePosition;
                 camera.LookPosition = camera.EyePosition + dir.Normalise() * Math.Max(gs * 1.5f, dir.Length());
@@ -185,35 +194,35 @@ namespace Sledge.BspEditor.Tools
             return cameras;
         }
 
-        protected override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             var vp = viewport;
             if (vp == null) return;
 
-            var gs = Document.Map.Data.GetOne<GridData>()?.Grid?.Spacing ?? 64;
+            var gs = document.Map.Data.GetOne<GridData>()?.Grid?.Spacing ?? 64;
 
-            _state = GetStateAtPoint(e.X, e.Y, camera, out _stateCamera);
+            _state = GetStateAtPoint(document, e.X, e.Y, camera, out _stateCamera);
             if (_state == State.None && KeyboardState.Shift)
             {
                 var p = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
                 _stateCamera = new Camera { EyePosition = p, LookPosition = p + Vector3.UnitX * 1.5f * gs };
-                Document.Map.Data.Add(_stateCamera);
+                document.Map.Data.Add(_stateCamera);
                 _state = State.MovingLook;
             }
             if (_stateCamera != null)
             {
                 SetViewportCamera(_stateCamera.EyePosition, _stateCamera.LookPosition);
-                GetDocumentCameras().ForEach(x => x.IsActive = false);
+                GetDocumentCameras(document).ForEach(x => x.IsActive = false);
                 _stateCamera.IsActive = true;
             }
         }
 
-        protected override void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             _state = State.None;
         }
 
-        protected override void MouseMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseMove(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             var vp = viewport;
             if (vp == null) return;
@@ -224,7 +233,7 @@ namespace Sledge.BspEditor.Tools
             switch (_state)
             {
                 case State.None:
-                    var st = GetStateAtPoint(e.X, e.Y, camera, out _stateCamera);
+                    var st = GetStateAtPoint(document, e.X, e.Y, camera, out _stateCamera);
                     if (st != State.None) cursor = Cursors.SizeAll;
                     break;
                 case State.MovingPosition:
@@ -245,13 +254,13 @@ namespace Sledge.BspEditor.Tools
             vp.Control.Cursor = cursor;
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            base.Render(viewport, camera, worldMin, worldMax, graphics);
+            base.Render(document, viewport, camera, worldMin, worldMax, graphics);
 
             graphics.SmoothingMode = SmoothingMode.HighQuality;
 
-            foreach (var cam in GetCameraList())
+            foreach (var cam in GetCameraList(document))
             {
                 var p1 = camera.WorldToScreen(cam.EyePosition);
                 var p2 = camera.WorldToScreen(cam.LookPosition);

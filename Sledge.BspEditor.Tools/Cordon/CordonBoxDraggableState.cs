@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
@@ -14,25 +15,28 @@ namespace Sledge.BspEditor.Tools.Cordon
 
         public void Update()
         {
-            if (Tool.Document == null)
+            var document = Tool.GetDocument();
+            if (document == null)
             {
                 State.Action = BoxAction.Idle;
             }
             else
             {
-                var cordon = Tool.Document.Map.Data.GetOne<CordonBounds>() ?? new CordonBounds {Enabled = false};
+                var cordon = document.Map.Data.GetOne<CordonBounds>() ?? new CordonBounds {Enabled = false};
                 State.Start = cordon.Box.Start;
                 State.End = cordon.Box.End;
                 State.Action = BoxAction.Drawn;
             }
         }
 
-        public override void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 position)
         {
             //
         }
 
-        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 position)
         {
             return false;
         }

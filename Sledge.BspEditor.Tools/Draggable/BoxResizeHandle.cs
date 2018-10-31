@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Resources;
@@ -84,13 +85,13 @@ namespace Sledge.BspEditor.Tools.Draggable
             viewport.Control.Cursor = handle.GetCursorType();
         }
 
-        public override void Highlight(MapViewport viewport)
+        public override void Highlight(MapDocument document, MapViewport viewport)
         {
             HighlightedViewport = viewport.Viewport;
             SetCursorForHandle(viewport, Handle);
         }
 
-        public override void Unhighlight(MapViewport viewport)
+        public override void Unhighlight(MapDocument document, MapViewport viewport)
         {
             HighlightedViewport = null;
             viewport.Control.Cursor = Cursors.Default;
@@ -112,12 +113,14 @@ namespace Sledge.BspEditor.Tools.Draggable
             SnappedMoveOrigin = origin;
         }
 
-        public override void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 position)
         {
 
         }
 
-        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 position)
         {
             const int width = 8;
             var pos = GetWorldPositionAndScreenOffset(viewport.Viewport.Camera);
@@ -126,17 +129,19 @@ namespace Sledge.BspEditor.Tools.Draggable
             return diff.X < width && diff.Y < width;
         }
 
-        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 position)
         {
             BoxState.OrigStart = BoxState.Start;
             BoxState.OrigEnd = BoxState.End;
             if (!MoveOrigin.HasValue) MoveOrigin = GetResizeOrigin(viewport, camera, position);
             if (!SnappedMoveOrigin.HasValue) SnappedMoveOrigin = MoveOrigin;
             BoxState.Action = BoxAction.Resizing;
-            base.StartDrag(viewport, camera, e, position);
+            base.StartDrag(document, viewport, camera, e, position);
         }
 
-        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+        public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
             if (Handle == ResizeHandle.Center)
             {
@@ -152,18 +157,18 @@ namespace Sledge.BspEditor.Tools.Draggable
                 var snapped = State.Tool.SnapIfNeeded(position);
                 BoxState.Resize(Handle, viewport, camera, snapped);
             }
-            base.Drag(viewport, camera, e, lastPosition, position);
+            base.Drag(document, viewport, camera, e, lastPosition, position);
         }
 
-        public override void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             BoxState.FixBounds();
             BoxState.Action = BoxAction.Drawn;
             MoveOrigin = SnappedMoveOrigin = null;
-            base.EndDrag(viewport, camera, e, position);
+            base.EndDrag(document, viewport, camera, e, position);
         }
 
-        public override void Render(BufferBuilder builder)
+        public override void Render(MapDocument document, BufferBuilder builder)
         {
             //
         }

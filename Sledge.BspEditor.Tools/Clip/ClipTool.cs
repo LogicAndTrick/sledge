@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives;
@@ -62,8 +63,6 @@ namespace Sledge.BspEditor.Tools.Clip
             _clipPlanePoint1 = _clipPlanePoint2 = _clipPlanePoint3 = _drawingPoint = null;
             _state = _prevState = ClipState.None;
             _side = ClipSide.Both;
-
-            UseValidation = true;
         }
 
         public override Image GetIcon()
@@ -87,7 +86,6 @@ namespace Sledge.BspEditor.Tools.Clip
             if (Enum.TryParse(visiblePoints, true, out ClipSide s) && s != _side)
             {
                 _side = s;
-                Invalidate();
             }
         }
         
@@ -96,7 +94,6 @@ namespace Sledge.BspEditor.Tools.Clip
             var side = (int) _side;
             side = (side + 1) % Enum.GetValues(typeof (ClipSide)).Length;
             _side = (ClipSide) side;
-            Invalidate();
         }
 
         private ClipState GetStateAtPoint(int x, int y, OrthographicCamera camera)
@@ -117,9 +114,8 @@ namespace Sledge.BspEditor.Tools.Clip
             return ClipState.None;
         }
 
-        protected override void MouseDown(MapViewport vp, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseDown(MapDocument document, MapViewport vp, OrthographicCamera camera, ViewportEvent e)
         {
-            var viewport = vp;
             _prevState = _state;
 
             var point = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
@@ -133,31 +129,14 @@ namespace Sledge.BspEditor.Tools.Clip
             {
                 _state = st;
             }
-            Invalidate();
         }
 
-        protected override void MouseUp(MapViewport vp, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseUp(MapDocument document, MapViewport vp, OrthographicCamera camera, ViewportEvent e)
         {
-            var viewport = vp;
-
-            var point = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
-            if (_state == ClipState.Drawing)
-            {
-                // Do nothing
-                _state = _prevState;
-            }
-            else
-            {
-                _state = ClipState.Drawn;
-            }
-
-            // todo
-            // Editor.Instance.CaptureAltPresses = false;
-
-            Invalidate();
+            _state = _state == ClipState.Drawing ? _prevState : ClipState.Drawn;
         }
 
-        protected override void MouseMove(MapViewport vp, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseMove(MapDocument document, MapViewport vp, OrthographicCamera camera, ViewportEvent e)
         {
             var viewport = vp;
 
@@ -207,9 +186,6 @@ namespace Sledge.BspEditor.Tools.Clip
                 _clipPlanePoint3 = cp3;
             }
 
-            // todo?
-            // Editor.Instance.CaptureAltPresses = _state != ClipState.None && _state != ClipState.Drawn;
-
             if (st != ClipState.None || _state != ClipState.None && _state != ClipState.Drawn)
             {
                 viewport.Control.Cursor = Cursors.Cross;
@@ -218,11 +194,21 @@ namespace Sledge.BspEditor.Tools.Clip
             {
                 viewport.Control.Cursor = Cursors.Default;
             }
-
-            Invalidate();
         }
 
-        public override void KeyDown(MapViewport viewport, ViewportEvent e)
+        protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        {
+            OnKeyDown(document, viewport, e);
+            base.KeyDown(document, viewport, camera, e);
+        }
+
+        protected override void KeyDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        {
+            OnKeyDown(document, viewport, e);
+            base.KeyDown(document, viewport, camera, e);
+        }
+
+        private void OnKeyDown(MapDocument document, MapViewport viewport, ViewportEvent e)
         {
             if (e.KeyCode == Keys.Enter && _state != ClipState.None)
             {
@@ -230,7 +216,7 @@ namespace Sledge.BspEditor.Tools.Clip
                     && !_clipPlanePoint2.Value.EquivalentTo(_clipPlanePoint3.Value)
                     && !_clipPlanePoint1.Value.EquivalentTo(_clipPlanePoint3.Value)) // Don't clip if the points are too close together
                 {
-                    PerformClip();
+                    PerformClip(document);
                 }
             }
             if (e.KeyCode == Keys.Escape || e.KeyCode == Keys.Enter) // Escape cancels, Enter commits and resets
@@ -238,15 +224,11 @@ namespace Sledge.BspEditor.Tools.Clip
                 _clipPlanePoint1 = _clipPlanePoint2 = _clipPlanePoint3 = _drawingPoint = null;
                 _state = _prevState = ClipState.None;
             }
-
-            Invalidate();
-
-            base.KeyDown(viewport, e);
         }
 
-        private void PerformClip()
+        private void PerformClip(MapDocument document)
         {
-            var objects = Document.Selection.OfType<Solid>().ToList();
+            var objects = document.Selection.OfType<Solid>().ToList();
             if (!objects.Any()) return;
 
             var plane = new Plane(_clipPlanePoint1.Value, _clipPlanePoint2.Value, _clipPlanePoint3.Value);
@@ -254,7 +236,7 @@ namespace Sledge.BspEditor.Tools.Clip
             var found = false;
             foreach (var solid in objects)
             {
-                solid.Split(Document.Map.NumberGenerator, plane, out var backSolid, out var frontSolid);
+                solid.Split(document.Map.NumberGenerator, plane, out var backSolid, out var frontSolid);
                 found = true;
                 
                 // Remove the clipped solid
@@ -274,13 +256,13 @@ namespace Sledge.BspEditor.Tools.Clip
             }
             if (found)
             {
-                MapDocumentOperation.Perform(Document, clip);
+                MapDocumentOperation.Perform(document, clip);
             }
         }
 
-        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
+        protected override void Render(MapDocument document, BufferBuilder builder, ResourceCollector resourceCollector)
         {
-            base.Render(builder, resourceCollector);
+            base.Render(document, builder, resourceCollector);
 
             if (_state != ClipState.None && _clipPlanePoint1 != null && _clipPlanePoint2 != null && _clipPlanePoint3 != null)
             {
@@ -306,14 +288,14 @@ namespace Sledge.BspEditor.Tools.Clip
                 if (!p1.EquivalentTo(p2)
                     && !p2.EquivalentTo(p3)
                     && !p1.EquivalentTo(p3)
-                    && !Document.Selection.IsEmpty)
+                    && !document.Selection.IsEmpty)
                 {
                     var plane = new Plane(p1, p2, p3);
                     var pp = plane.ToPrecisionPlane();
 
                     // Draw the clipped solids
                     var faces = new List<Polygon>();
-                    foreach (var solid in Document.Selection.OfType<Solid>().ToList())
+                    foreach (var solid in document.Selection.OfType<Solid>().ToList())
                     {
                         var s = solid.ToPolyhedron().ToPrecisionPolyhedron();
                         s.Split(pp, out var back, out var front);
@@ -344,7 +326,7 @@ namespace Sledge.BspEditor.Tools.Clip
                     // Draw the clipping plane
                     
                     var poly = new DataStructures.Geometric.Precision.Polygon(pp);
-                    var bbox = Document.Selection.GetSelectionBoundingBox();
+                    var bbox = document.Selection.GetSelectionBoundingBox();
                     var point = bbox.Center;
                     foreach (var boxPlane in bbox.GetBoxPlanes())
                     {
@@ -389,9 +371,9 @@ namespace Sledge.BspEditor.Tools.Clip
             }
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            base.Render(viewport, camera, worldMin, worldMax, graphics);
+            base.Render(document, viewport, camera, worldMin, worldMax, graphics);
 
             if (_state != ClipState.None && _clipPlanePoint1 != null && _clipPlanePoint2 != null && _clipPlanePoint3 != null)
             {

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
@@ -76,27 +77,30 @@ namespace Sledge.BspEditor.Tools.Draggable
             // 
         }
 
-        public override void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 position)
         {
             State.Action = BoxAction.Idle;
         }
 
-        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 position)
         {
             return true;
         }
 
-        public override void Highlight(MapViewport viewport)
+        public override void Highlight(MapDocument document, MapViewport viewport)
         {
             //
         }
 
-        public override void Unhighlight(MapViewport viewport)
+        public override void Unhighlight(MapDocument document, MapViewport viewport)
         {
             //
         }
 
-        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 position)
         {
             State.Viewport = viewport;
             State.Action = BoxAction.Drawing;
@@ -106,25 +110,27 @@ namespace Sledge.BspEditor.Tools.Draggable
             var wid = RememberedDimensions == null ? Vector3.Zero : camera.GetUnusedCoordinate(RememberedDimensions.End - RememberedDimensions.Start);
             State.Start = Tool.SnapIfNeeded(camera.Expand(position) + st);
             State.End = State.Start + wid;
-            base.StartDrag(viewport, camera, e, position);
+            base.StartDrag(document, viewport, camera, e, position);
         }
 
-        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+        public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
             State.End = Tool.SnapIfNeeded(camera.Expand(position)) + camera.GetUnusedCoordinate(State.End);
-            base.Drag(viewport, camera, e, lastPosition, position);
+            base.Drag(document, viewport, camera, e, lastPosition, position);
         }
 
-        public override void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 position)
         {
             State.Viewport = null;
             State.Action = BoxAction.Drawn;
             State.End = Tool.SnapIfNeeded(camera.Expand(position)) + camera.GetUnusedCoordinate(State.End);
             State.FixBounds();
-            base.EndDrag(viewport, camera, e, position);
+            base.EndDrag(document, viewport, camera, e, position);
         }
 
-        public override void Render(BufferBuilder builder)
+        public override void Render(MapDocument document, BufferBuilder builder)
         {
             if (ShouldDrawBox())
             {

@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Vertex.Controls;
@@ -86,7 +87,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         #region Box confirm / cancel
 
-        public override void KeyDown(MapViewport viewport, ViewportEvent e)
+        private void HandleKeyDown(ViewportEvent e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -98,7 +99,18 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 Cancel();
                 e.Handled = true;
             }
-            base.KeyDown(viewport, e);
+        }
+
+        protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        {
+            HandleKeyDown(e);
+            base.KeyDown(document, viewport, camera, e);
+        }
+
+        protected override void KeyDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        {
+            HandleKeyDown(e);
+            base.KeyDown(document, viewport, camera, e);
         }
 
         private void Confirm()
@@ -223,7 +235,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
 
         #region Point selection
 
-        protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera,
+            ViewportEvent e)
         {
             var toggle = KeyboardState.Ctrl;
 
@@ -368,35 +381,38 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 return _selfArray ?? (_selfArray = new[] {this});
             }
 
-            public override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+            public override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+                ViewportEvent e,
                 Vector3 position)
             {
                 e.Handled = true;
             }
 
-            public override void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+            public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+                ViewportEvent e,
                 Vector3 position)
             {
                 // 
             }
 
-            public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+            public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+                ViewportEvent e,
                 Vector3 position)
             {
                 return false;
             }
 
-            public override void Highlight(MapViewport viewport)
+            public override void Highlight(MapDocument document, MapViewport viewport)
             {
                 IsHighlighted = true;
             }
 
-            public override void Unhighlight(MapViewport viewport)
+            public override void Unhighlight(MapDocument document, MapViewport viewport)
             {
                 IsHighlighted = false;
             }
 
-            public override void Render(BufferBuilder builder)
+            public override void Render(MapDocument document, BufferBuilder builder)
             {
                 // 
             }
@@ -442,7 +458,8 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 Width = 10;
             }
 
-            public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+            public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+                ViewportEvent e,
                 Vector3 lastPosition, Vector3 position)
             {
                 Position = _vmScaleTool.SnapIfNeeded(camera.Expand(position) + camera.GetUnusedCoordinate(Position));

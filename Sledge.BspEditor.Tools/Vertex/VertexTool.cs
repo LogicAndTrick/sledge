@@ -41,22 +41,18 @@ namespace Sledge.BspEditor.Tools.Vertex
     [DefaultHotkey("Shift+V")]
     public class VertexTool : BaseDraggableTool, IInitialiseHook
     {
-        private readonly EngineInterface _engine;
         private readonly IEnumerable<Lazy<VertexSubtool>> _subTools;
 
         private readonly VertexSelection _selection;
 
         [ImportingConstructor]
         public VertexTool(
-            [Import] EngineInterface engine,
             [ImportMany] IEnumerable<Lazy<VertexSubtool>> subTools
         )
         {
-            _engine = engine;
             _subTools = subTools;
 
             Usage = ToolUsage.Both;
-            UseValidation = true;
 
             _selection = new VertexSelection();
         }
@@ -87,7 +83,7 @@ namespace Sledge.BspEditor.Tools.Vertex
         {
             yield return Oy.Subscribe<IDocument>("MapDocument:SelectionChanged", x =>
             {
-                if (x == Document) SelectionChanged();
+                if (x == GetDocument()) SelectionChanged();
             });
             yield return Oy.Subscribe<Type>("VertexTool:SetSubTool", t =>
             {
@@ -95,7 +91,8 @@ namespace Sledge.BspEditor.Tools.Vertex
             });
             yield return Oy.Subscribe<String>("VertexTool:Reset", async _ =>
             {
-                await _selection.Reset(Document);
+                var document = GetDocument();
+                if (document != null) await _selection.Reset(document);
                 CurrentSubTool?.Update();
                 Invalidate();
             });
@@ -111,8 +108,13 @@ namespace Sledge.BspEditor.Tools.Vertex
 
         public override async Task ToolDeselected()
         {
-            await _selection.Commit(Document);
-            await _selection.Clear(Document);
+            var document = GetDocument();
+            if (document != null)
+            {
+                await _selection.Commit(document);
+                await _selection.Clear(document);
+            }
+
             var ct = CurrentSubTool;
             if (ct != null) await ct.ToolDeselected();
             await base.ToolDeselected();
@@ -120,8 +122,13 @@ namespace Sledge.BspEditor.Tools.Vertex
 
         private async Task SelectionChanged()
         {
-            await _selection.Commit(Document);
-            await _selection.Update(Document);
+            var document = GetDocument();
+            if (document != null)
+            {
+                await _selection.Commit(document);
+                await _selection.Update(document);
+            }
+
             var ct = CurrentSubTool;
             if (ct != null) await ct.SelectionChanged();
             Invalidate();
@@ -151,7 +158,7 @@ namespace Sledge.BspEditor.Tools.Vertex
 
         #endregion
 
-        private void SelectObject(Solid closestObject)
+        private void SelectObject(MapDocument document, Solid closestObject)
         {
             // Nothing was clicked, don't change the selection
             if (closestObject == null) return;
@@ -164,7 +171,7 @@ namespace Sledge.BspEditor.Tools.Vertex
             if (!KeyboardState.Ctrl)
             {
                 // Ctrl isn't down, so we want to clear the selection
-                operation.Add(new Deselect(Document.Selection.Where(x => !ReferenceEquals(x, closestObject)).ToList()));
+                operation.Add(new Deselect(document.Selection.Where(x => !ReferenceEquals(x, closestObject)).ToList()));
             }
 
             if (!closestObject.IsSelected)
@@ -175,7 +182,7 @@ namespace Sledge.BspEditor.Tools.Vertex
 
             if (!operation.IsEmpty)
             {
-                MapDocumentOperation.Perform(Document, operation);
+                MapDocumentOperation.Perform(document, operation);
             }
         }
         
@@ -184,37 +191,38 @@ namespace Sledge.BspEditor.Tools.Vertex
         /// <summary>
         /// When the mouse is pressed in the 3D view, we want to select the clicked object.
         /// </summary>
+        /// <param name="document"></param>
         /// <param name="viewport">The viewport that was clicked</param>
         /// <param name="camera"></param>
         /// <param name="e">The click event</param>
-        protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             // First, get the ray that is cast from the clicked point along the viewport frustrum
             var (start, end) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
             var ray = new Line(start, end);
 
             // Grab all the elements that intersect with the ray
-            var closestObject = Document.Map.Root.GetIntersectionsForVisibleObjects(ray)
+            var closestObject = document.Map.Root.GetIntersectionsForVisibleObjects(ray)
                 .Where(x => x.Object is Solid)
                 .Select(x => (Solid) x.Object)
                 .FirstOrDefault();
 
-            SelectObject(closestObject);
+            SelectObject(document, closestObject);
         }
 
         #endregion
 
         #region 2D interaction
 
-        private IEnumerable<IMapObject> GetLineIntersections(Box box)
+        private IEnumerable<IMapObject> GetLineIntersections(MapDocument document, Box box)
         {
-            return Document.Map.Root.Collect(
+            return document.Map.Root.Collect(
                 x => x is Root || (x.BoundingBox != null && x.BoundingBox.IntersectsWith(box)),
                 x => x.Hierarchy.Parent != null && !x.Hierarchy.HasChildren && x is Solid && x.GetPolygons().Any(p => p.GetLines().Any(box.IntersectsWith))
             );
         }
 
-        private IMapObject SelectionTest(OrthographicCamera camera, ViewportEvent e)
+        private IMapObject SelectionTest(MapDocument document, OrthographicCamera camera, ViewportEvent e)
         {
             // Create a box to represent the click, with a tolerance level
             var unused = camera.GetUnusedCoordinate(new Vector3(100000, 100000, 100000));
@@ -223,36 +231,35 @@ namespace Sledge.BspEditor.Tools.Vertex
             var add = used + unused;
             var click = camera.ScreenToWorld(e.X, e.Y);
             var box = new Box(click - add, click + add);
-            return GetLineIntersections(box).FirstOrDefault();
+            return GetLineIntersections(document, box).FirstOrDefault();
         }
 
-        protected override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             // Get the first element that intersects with the box, selecting or deselecting as needed
-            var closestObject = SelectionTest(camera, e) as Solid;
-            SelectObject(closestObject);
+            var closestObject = SelectionTest(document, camera, e) as Solid;
+            SelectObject(document, closestObject);
         }
 
         #endregion
 
-        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
+        protected override void Render(MapDocument document, BufferBuilder builder, ResourceCollector resourceCollector)
         {
-            base.Render(builder, resourceCollector);
+            base.Render(document, builder, resourceCollector);
 
             // Force this work to happen on a new thread so waiting on it won't block the context
             Task.Run(async () =>
             {
                 foreach (var obj in _selection)
                 {
-                    await Convert(builder, Document, obj.Copy, resourceCollector);
+                    await Convert(builder, document, obj.Copy, resourceCollector);
                 }
             }).Wait();
         }
 
-        public new void Invalidate()
+        public void Invalidate()
         {
             Oy.Publish("VertexTool:Updated", _selection);
-            base.Invalidate();
         }
 
         private async Task Convert(BufferBuilder builder, MapDocument document, MutableSolid solid, ResourceCollector resourceCollector)

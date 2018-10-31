@@ -79,7 +79,7 @@ namespace Sledge.BspEditor.Tools.Entity
 
         private async Task ResetEntityType(EntityTool tool)
         {
-            var doc = tool.Document;
+            var doc = tool.GetDocument();
             if (doc == null) return;
 
             var gameData = await doc.Environment.GetGameData();

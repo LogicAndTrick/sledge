@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
@@ -14,9 +15,17 @@ namespace Sledge.BspEditor.Rendering.Overlay
     [Export(typeof(IMapDocumentOverlayRenderable))]
     public class MapObject2DOverlayManager : IMapDocumentOverlayRenderable
     {
-        [ImportMany] private IMapObject2DOverlay[] _overlays;
+        private readonly IEnumerable<Lazy<IMapObject2DOverlay>> _overlays;
 
         private readonly WeakReference<MapDocument> _document = new WeakReference<MapDocument>(null);
+
+        [ImportingConstructor]
+        public MapObject2DOverlayManager(
+            [ImportMany] IEnumerable<Lazy<IMapObject2DOverlay>> overlays
+        )
+        {
+            _overlays = overlays;
+        }
 
         public void SetActiveDocument(MapDocument doc)
         {
@@ -25,7 +34,7 @@ namespace Sledge.BspEditor.Rendering.Overlay
 
         public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            if (_overlays.Length == 0) return;
+            if (!_overlays.Any()) return;
             if (!_document.TryGetTarget(out var doc)) return;
 
             // Determine which objects are visible
@@ -36,7 +45,7 @@ namespace Sledge.BspEditor.Rendering.Overlay
             // Render the overlay for each object
             foreach (var overlay in _overlays)
             {
-                overlay.Render(viewport, objects, camera, worldMin, worldMax, graphics);
+                overlay.Value.Render(viewport, objects, camera, worldMin, worldMax, graphics);
             }
         }
 

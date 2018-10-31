@@ -459,6 +459,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 {
                     Path.Combine(txtGameDir.Text, sbg),
                     Path.Combine(txtGameDir.Text, sbg + "_hd"),
+                    Path.Combine(txtGameDir.Text, sbg + "_downloads"),
                     Path.Combine(txtGameDir.Text, sbg + "_addon"),
                 });
             }
@@ -468,6 +469,7 @@ namespace Sledge.BspEditor.Environment.Goldsource
                 {
                     Path.Combine(txtGameDir.Text, sgm),
                     Path.Combine(txtGameDir.Text, sgm + "_hd"),
+                    Path.Combine(txtGameDir.Text, sgm + "_downloads"),
                     Path.Combine(txtGameDir.Text, sgm + "_addon"),
                 });
             }

@@ -40,23 +40,26 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             viewport.Control.Cursor = ct;
         }
 
-        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+        public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e,
             Vector3 position)
         {
             _skewStart = _skewEnd = position;
-            base.StartDrag(viewport, camera, e, position);
+            base.StartDrag(document, viewport, camera, e, position);
         }
 
-        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+        public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e,
             Vector3 lastPosition, Vector3 position)
         {
             _skewEnd = position;
         }
 
-        public override void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 position)
         {
             _skewStart = _skewEnd = null;
-            base.EndDrag(viewport, camera, e, position);
+            base.EndDrag(document, viewport, camera, e, position);
         }
 
         public Matrix4x4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)

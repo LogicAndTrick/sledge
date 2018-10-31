@@ -1,12 +1,14 @@
 using System.Drawing;
 using System.Numerics;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
+using Sledge.Rendering.Cameras;
 
 namespace Sledge.BspEditor.Tools.Widgets
 {
     public abstract class Widget : BaseTool
     {
-        protected MapViewport _activeViewport;
+        protected MapViewport ActiveViewport { get; private set; }
 
         public delegate void TransformEventHandler(Widget sender, Matrix4x4? transformation);
         public event TransformEventHandler Transforming;
@@ -28,16 +30,28 @@ namespace Sledge.BspEditor.Tools.Widgets
         public override Image GetIcon() { return null; }
         public override string GetName() { return "Widget"; }
 
-        public override void MouseEnter(MapViewport viewport, ViewportEvent e)
+        protected override void MouseEnter(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            _activeViewport = viewport;
-            base.MouseEnter(viewport, e);
+            ActiveViewport = viewport;
+            base.MouseEnter(document, viewport, camera, e);
         }
 
-        public override void MouseLeave(MapViewport viewport, ViewportEvent e)
+        protected override void MouseEnter(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            _activeViewport = null;
-            base.MouseLeave(viewport, e);
+            ActiveViewport = viewport;
+            base.MouseEnter(document, viewport, camera, e);
+        }
+
+        protected override void MouseLeave(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        {
+            ActiveViewport = null;
+            base.MouseLeave(document, viewport, camera, e);
+        }
+
+        protected override void MouseLeave(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        {
+            ActiveViewport = null;
+            base.MouseLeave(document, viewport, camera, e);
         }
 
         public abstract void SelectionChanged();

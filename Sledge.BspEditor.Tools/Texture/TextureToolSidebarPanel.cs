@@ -82,7 +82,8 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private void RandomShiftXButtonClicked(object sender, EventArgs e)
         {
-            var fs = _tool.Document?.Map.Data.GetOne<FaceSelection>();
+            var document = _tool.GetDocument();
+            var fs = document?.Map.Data.GetOne<FaceSelection>();
             if (fs == null || fs.IsEmpty) return;
 
             var min = (int) RandomShiftMin.Value;
@@ -100,12 +101,13 @@ namespace Sledge.BspEditor.Tools.Texture
                 edit.Add(new AddMapObjectData(it.Key.ID, clone));
             }
 
-            MapDocumentOperation.Perform(_tool.Document, edit);
+            MapDocumentOperation.Perform(document, edit);
         }
 
         private void RandomShiftYButtonClicked(object sender, EventArgs e)
         {
-            var fs = _tool.Document?.Map.Data.GetOne<FaceSelection>();
+            var document = _tool.GetDocument();
+            var fs = document?.Map.Data.GetOne<FaceSelection>();
             if (fs == null || fs.IsEmpty) return;
 
             var min = (int) RandomShiftMin.Value;
@@ -123,7 +125,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 edit.Add(new AddMapObjectData(it.Key.ID, clone));
             }
 
-            MapDocumentOperation.Perform(_tool.Document, edit);
+            MapDocumentOperation.Perform(document, edit);
         }
 
         private void TileFitButtonClicked(object sender, EventArgs e)
@@ -133,10 +135,11 @@ namespace Sledge.BspEditor.Tools.Texture
 
         private async Task ApplyFit()
         {
-            var fs = _tool.Document?.Map.Data.GetOne<FaceSelection>();
+            var document = _tool.GetDocument();
+            var fs = document?.Map.Data.GetOne<FaceSelection>();
             if (fs == null || fs.IsEmpty) return;
             
-            var tc = await _tool.Document.Environment.GetTextureCollection();
+            var tc = await document.Environment.GetTextureCollection();
             if (tc == null) return;
             
             var tileX = (int) TileFitX.Value;
@@ -156,7 +159,7 @@ namespace Sledge.BspEditor.Tools.Texture
                 edit.Add(new AddMapObjectData(it.Key.ID, clone));
             }
 
-            if (!edit.IsEmpty) await MapDocumentOperation.Perform(_tool.Document, edit);
+            if (!edit.IsEmpty) await MapDocumentOperation.Perform(document, edit);
         }
     }
 }

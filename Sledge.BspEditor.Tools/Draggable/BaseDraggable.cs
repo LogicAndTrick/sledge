@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Numerics;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Resources;
@@ -32,37 +33,36 @@ namespace Sledge.BspEditor.Tools.Draggable
             DragEnded?.Invoke(this, EventArgs.Empty);
         }
 
-        public virtual void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public virtual void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             OnDragStarted();
         }
 
-        public virtual void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+        public virtual void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
             OnDragMoved();
         }
 
-        public virtual void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public virtual void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             OnDragEnded();
         }
-
-
-        public virtual void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        
+        public virtual void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
 
         }
 
-        public virtual void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public virtual void MouseUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             
         }
 
-        public abstract void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position);
-        public abstract bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position);
-        public abstract void Highlight(MapViewport viewport);
-        public abstract void Unhighlight(MapViewport viewport);
-        public abstract void Render(BufferBuilder builder);
+        public abstract void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position);
+        public abstract bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position);
+        public abstract void Highlight(MapDocument document, MapViewport viewport);
+        public abstract void Unhighlight(MapDocument document, MapViewport viewport);
+        public abstract void Render(MapDocument document, BufferBuilder builder);
         public abstract void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics);
         public abstract void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics);
     }

@@ -12,6 +12,12 @@ namespace Sledge.BspEditor.Primitives.MapObjects
     /// </summary>
     public class Root : BaseMapObject
     {
+        public override bool IsSelected
+        {
+            get => false;
+            set {}
+        }
+
         public Root(long id) : base(id)
         {
         }

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Tree;
 using Sledge.BspEditor.Primitives.MapData;
@@ -44,7 +44,7 @@ namespace Sledge.BspEditor.Tools.Decal
             return "Decal Tool";
         }
 
-        protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             var vp = viewport;
             if (vp == null) return;
@@ -54,31 +54,29 @@ namespace Sledge.BspEditor.Tools.Decal
             var ray = new Line(rs, re);
 
             // Grab all the elements that intersect with the ray
-            var hit = Document.Map.Root.GetIntersectionsForVisibleObjects(ray)
-                .FirstOrDefault();
+            var hit = document.Map.Root.GetIntersectionsForVisibleObjects(ray).FirstOrDefault();
 
             if (hit == null) return; // Nothing was clicked
 
-            CreateDecal(hit.Intersection);
+            CreateDecal(document, hit.Intersection);
         }
 
-        private async Task CreateDecal(Vector3 origin)
+        private async Task CreateDecal(MapDocument document, Vector3 origin)
         {
-            var gameData = await Document.Environment.GetGameData();
-            if (gameData == null) return;
-            
-            var gd = gameData.Classes.FirstOrDefault(x => x.Name == "infodecal");
+            var gameData = await document.Environment.GetGameData();
+
+            var gd = gameData?.Classes.FirstOrDefault(x => x.Name == "infodecal");
             if (gd == null) return;
 
-            var texture = Document.Map.Data.GetOne<ActiveTexture>()?.Name;
+            var texture = document.Map.Data.GetOne<ActiveTexture>()?.Name;
             if (String.IsNullOrWhiteSpace(texture)) return;
 
-            var tc = await Document.Environment.GetTextureCollection();
+            var tc = await document.Environment.GetTextureCollection();
             if (tc == null) return;
             
             if (!tc.HasTexture(texture)) return;
 
-            var decal = new Primitives.MapObjects.Entity(Document.Map.NumberGenerator.Next("MapObject"))
+            var decal = new Primitives.MapObjects.Entity(document.Map.NumberGenerator.Next("MapObject"))
             {
                 Data =
                 {
@@ -92,7 +90,7 @@ namespace Sledge.BspEditor.Tools.Decal
                 }
             };
 
-            await MapDocumentOperation.Perform(Document, new Attach(Document.Map.Root.ID, decal));
+            await MapDocumentOperation.Perform(document, new Attach(document.Map.Root.ID, decal));
         }
     }
 }

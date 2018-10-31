@@ -19,7 +19,7 @@ namespace Sledge.BspEditor.Primitives.MapObjects
         public long ID { get; }
 
         /// <inheritdoc />
-        public bool IsSelected { get; set; }
+        public virtual bool IsSelected { get; set; }
 
         /// <inheritdoc />
         public Box BoundingBox { get; private set; }

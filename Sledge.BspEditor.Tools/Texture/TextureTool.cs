@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations;
 using Sledge.BspEditor.Modification.Operations.Data;
@@ -41,7 +42,6 @@ namespace Sledge.BspEditor.Tools.Texture
         public TextureTool()
         {
             Usage = ToolUsage.View3D;
-            UseValidation = true;
         }
 
         public override Image GetIcon()
@@ -54,48 +54,47 @@ namespace Sledge.BspEditor.Tools.Texture
             return "Texture Application Tool";
         }
 
-        public FaceSelection GetSelection()
+        private FaceSelection GetSelection(MapDocument document)
         {
-            var fs = Document.Map.Data.GetOne<FaceSelection>();
+            var fs = document.Map.Data.GetOne<FaceSelection>();
             if (fs == null)
             {
                 fs = new FaceSelection();
-                Document.Map.Data.Add(fs);
+                document.Map.Data.Add(fs);
             }
             return fs;
         }
 
-        private bool ShouldHideFaceMask => Document?.Map.Data.GetOne<HideFaceMask>()?.Hidden == true;
+        private bool ShouldHideFaceMask => GetDocument()?.Map.Data.GetOne<HideFaceMask>()?.Hidden == true;
 
-        private void SetActiveTexture(ITextured tex)
+        private void SetActiveTexture(MapDocument document, ITextured tex)
         {
             if (tex == null) return;
 
             var at = new ActiveTexture {Name = tex.Texture.Name};
-            MapDocumentOperation.Perform(Document, new TrivialOperation(x => x.Map.Data.Replace(at), x => x.Update(at)));
+            MapDocumentOperation.Perform(document, new TrivialOperation(x => x.Map.Data.Replace(at), x => x.Update(at)));
         }
 
-        private void SetFaceSelectionFromObjectSelection()
+        private void SetFaceSelectionFromObjectSelection(MapDocument document)
         {
-            var sel = GetSelection();
+            var sel = GetSelection(document);
             sel.Clear();
-            foreach (var obj in Document.Selection)
+            foreach (var obj in document.Selection)
             {
                 sel.Add(obj, obj.Data.OfType<Face>().ToArray());
             }
-            SetActiveTexture(sel.FirstOrDefault());
+            SetActiveTexture(document, sel.FirstOrDefault());
         }
 
         protected override void DocumentChanged()
         {
-            if (Document != null) SetFaceSelectionFromObjectSelection();
+            var document = GetDocument();
+            if (document != null) SetFaceSelectionFromObjectSelection(document);
             base.DocumentChanged();
         }
 
         protected override IEnumerable<Subscription> Subscribe()
         {
-            yield return Oy.Subscribe<Change>("MapDocument:Changed", DocumentUpdated);
-
             yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", b =>
             {
                 b.Intercepted = true;
@@ -105,46 +104,36 @@ namespace Sledge.BspEditor.Tools.Texture
             yield return Oy.Subscribe<ClickAction>("BspEditor:TextureTool:SetRightClickAction", a => _rightClickAction = a);
         }
 
-        private Task DocumentUpdated(Change change)
-        {
-            if (change.Document == Document)
-            {
-                if (change.HasObjectChanges && change.Updated.Intersect(GetSelection().GetSelectedParents()).Any())
-                {
-                    Invalidate();
-                }
-                else if (change.HasDataChanges && change.AffectedData.Any(x => x is HideFaceMask))
-                {
-                    Invalidate();
-                }
-            }
-            return Task.CompletedTask;
-        }
-
         public override async Task ToolSelected()
         {
-            SetFaceSelectionFromObjectSelection();
+            var document = GetDocument();
+            if (document != null)
+            {
+                SetFaceSelectionFromObjectSelection(document);
 
-            /*
-               Bypass normal operations - this won't ever appear in the history!
-               Means our undo stack gets corrupted, but since we don't have knowledge of history
-               at this point (and don't really care too much), we're just sitting in the world
-               of "eh, whatever" at this point. Just deselect everything and stop worrying!
-               Hammer 4 seems to have similar behaviour. It's just easier...
-               This is just for rendering anyway so who cares.
-            */
+                /*
+                   Bypass normal operations - this won't ever appear in the history!
+                   Means our undo stack gets corrupted, but since we don't have knowledge of history
+                   at this point (and don't really care too much), we're just sitting in the world
+                   of "eh, whatever" at this point. Just deselect everything and stop worrying!
+                   Hammer 4 seems to have similar behaviour. It's just easier...
+                   This is just for rendering anyway so who cares.
+                */
 
-            await MapDocumentOperation.Bypass(Document, new Deselect(Document.Selection));
+                await MapDocumentOperation.Bypass(document, new Deselect(document.Selection));
+            }
+
             await base.ToolSelected();
         }
         
         public override async Task ToolDeselected()
         {
-            GetSelection().Clear();
+            var document = GetDocument();
+            if (document != null) GetSelection(document).Clear();
             await base.ToolDeselected();
         }
 
-        protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             var vp = viewport;
             if (vp == null || (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right)) return;
@@ -152,7 +141,7 @@ namespace Sledge.BspEditor.Tools.Texture
             var (start, end) = camera.CastRayFromScreen(new Vector3(e.X, e.Y, 0));
             var ray = new Line(start, end);
             
-            var clickedFace = Document.Map.Root.GetBoudingBoxIntersectionsForVisibleObjects(ray)
+            var clickedFace = document.Map.Root.GetBoudingBoxIntersectionsForVisibleObjects(ray)
                 // We only care about solids
                 .OfType<Solid>()
                 // Specifically, their faces
@@ -167,11 +156,11 @@ namespace Sledge.BspEditor.Tools.Texture
 
             if (clickedFace == null) return;
 
-            if (e.Button == MouseButtons.Left) SelectFace(camera, clickedFace.Face, clickedFace.Solid);
-            else if (e.Button == MouseButtons.Right) ApplyFace(camera, clickedFace.Face, clickedFace.Solid);
+            if (e.Button == MouseButtons.Left) SelectFace(document, camera, clickedFace.Face, clickedFace.Solid);
+            else if (e.Button == MouseButtons.Right) ApplyFace(document, camera, clickedFace.Face, clickedFace.Solid);
         }
 
-        private Task SelectFace(PerspectiveCamera camera, Face face, IMapObject parent)
+        private Task SelectFace(MapDocument document, PerspectiveCamera camera, Face face, IMapObject parent)
         {
             // Left:       use defined action
             // Alt+Left:   lift
@@ -182,14 +171,14 @@ namespace Sledge.BspEditor.Tools.Texture
             if (KeyboardState.Alt) action = ClickAction.Lift;
             if (KeyboardState.Shift || KeyboardState.Ctrl) action = ClickAction.Select | ClickAction.Lift;
 
-            var sel = GetSelection();
+            var sel = GetSelection(document);
 
             if (action.HasFlag(ClickAction.Lift))
             {
                 // Only sample the face if we're selecting it
                 if (!KeyboardState.Ctrl || !sel.IsSelected(parent, face))
                 {
-                    SetActiveTexture(face);
+                    SetActiveTexture(document, face);
                 }
             }
 
@@ -212,13 +201,12 @@ namespace Sledge.BspEditor.Tools.Texture
                 else sel.Add(parent, tf);
             }
 
-            Oy.Publish("TextureTool:SelectionChanged", GetSelection());
-
-            Invalidate();
+            Oy.Publish("TextureTool:SelectionChanged", GetSelection(document));
+            
             return Task.CompletedTask;
         }
 
-        private Task ApplyFace(PerspectiveCamera camera, Face face, IMapObject parent)
+        private Task ApplyFace(MapDocument document, PerspectiveCamera camera, Face face, IMapObject parent)
         {
             // Right:       use defined action
             // Alt+Right:   apply + align
@@ -229,9 +217,9 @@ namespace Sledge.BspEditor.Tools.Texture
             if (KeyboardState.Alt) action = ClickAction.Apply | ClickAction.AlignToSample;
             if (KeyboardState.Shift) action = ClickAction.Apply;
 
-            var sampleFace = GetSelection().FirstOrDefault();
+            var sampleFace = GetSelection(document).FirstOrDefault();
 
-            var activeTexture = Document.Map.Data.GetOne<ActiveTexture>()?.Name ?? sampleFace?.Texture.Name ?? "";
+            var activeTexture = document.Map.Data.GetOne<ActiveTexture>()?.Name ?? sampleFace?.Texture.Name ?? "";
             if (String.IsNullOrWhiteSpace(activeTexture)) return Task.CompletedTask;
 
             var clone = (Face) face.Clone();
@@ -285,14 +273,14 @@ namespace Sledge.BspEditor.Tools.Texture
                 new AddMapObjectData(parent.ID, clone)
             );
 
-            return MapDocumentOperation.Perform(Document, edit);
+            return MapDocumentOperation.Perform(document, edit);
         }
 
-        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
+        protected override void Render(MapDocument document, BufferBuilder builder, ResourceCollector resourceCollector)
         {
-            base.Render(builder, resourceCollector);
+            base.Render(document, builder, resourceCollector);
 
-            var sel = GetSelection();
+            var sel = GetSelection(document);
             if (sel.IsEmpty) return;
 
             var verts = new List<VertexStandard>();

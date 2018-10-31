@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Selection;
 using Sledge.BspEditor.Modification.Operations.Tree;
@@ -85,7 +86,6 @@ namespace Sledge.BspEditor.Tools.Entity
         protected override void ContextChanged(IContext context)
         {
             _activeEntity = context.Get<string>("EntityTool:ActiveEntity");
-            Invalidate();
 
             base.ContextChanged(context);
         }
@@ -101,9 +101,10 @@ namespace Sledge.BspEditor.Tools.Entity
         private async void BuildMenu()
         {
             _menu = null;
-            if (Document == null) return;
+            var document = GetDocument();
+            if (document == null) return;
 
-            var gd = await Document.Environment.GetGameData();
+            var gd = await document.Environment.GetGameData();
             if (gd == null) return;
 
             var items = new List<ToolStripItem>();
@@ -161,7 +162,7 @@ namespace Sledge.BspEditor.Tools.Entity
 
         // 3D interaction
 
-        protected override void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
+        protected override void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
             if (e.Button != MouseButtons.Left) return;
 
@@ -170,77 +171,77 @@ namespace Sledge.BspEditor.Tools.Entity
             var ray = new Line(rs, re);
 
             // Grab all the elements that intersect with the ray
-            var hit = Document.Map.Root.GetIntersectionsForVisibleObjects(ray)
-                .FirstOrDefault();
+            var hit = document.Map.Root.GetIntersectionsForVisibleObjects(ray).FirstOrDefault();
 
             if (hit == null) return; // Nothing was clicked
 
-            CreateEntity(hit.Intersection);
+            CreateEntity(document, hit.Intersection);
         }
 
         // 2D interaction
 
-        protected override void MouseEnter(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseEnter(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             viewport.Control.Cursor = Cursors.Cross;
         }
 
-        protected override void MouseLeave(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseLeave(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             viewport.Control.Cursor = Cursors.Cross;
         }
 
-        protected override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (e.Button != MouseButtons.Left && e.Button != MouseButtons.Right) return;
 
             _state = EntityState.Moving;
             var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
             _location = camera.GetUnusedCoordinate(_location) + loc;
-            Invalidate();
         }
 
-        protected override void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (e.Button != MouseButtons.Left) return;
             _state = EntityState.Drawn;
             var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
             _location = camera.GetUnusedCoordinate(_location) + loc;
-            Invalidate();
         }
 
-        protected override void MouseMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseMove(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (!Control.MouseButtons.HasFlag(MouseButtons.Left)) return;
             if (_state != EntityState.Moving) return;
             var loc = SnapIfNeeded(camera.ScreenToWorld(e.X, e.Y));
             _location = camera.GetUnusedCoordinate(_location) + loc;
-            Invalidate();
         }
 
-        protected override void KeyDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             switch (e.KeyCode)
             {
                 case Keys.Enter:
-                    CreateEntity(_location);
+                    CreateEntity(document, _location);
                     _state = EntityState.None;
-                    Invalidate();
                     break;
                 case Keys.Escape:
                     _state = EntityState.None;
-                    Invalidate();
                     break;
             }
         }
 
-        private async Task CreateEntity(Vector3 origin, string gd = null)
+        private Task CreateEntity(Vector3 origin, string gd = null)
+        {
+            var document = GetDocument();
+            return document == null ? Task.CompletedTask : CreateEntity(document, origin, gd);
+        }
+
+        private async Task CreateEntity(MapDocument document, Vector3 origin, string gd = null)
         {
             if (gd == null) gd = _activeEntity;
             if (gd == null) return;
 
             var colour = Colour.GetDefaultEntityColour();
-            var data = await Document.Environment.GetGameData();
+            var data = await document.Environment.GetGameData();
             if (data != null)
             {
                 var cls = data.Classes.FirstOrDefault(x => String.Equals(x.Name, gd, StringComparison.InvariantCultureIgnoreCase));
@@ -251,7 +252,7 @@ namespace Sledge.BspEditor.Tools.Entity
                 }
             }
 
-            var entity = new Primitives.MapObjects.Entity(Document.Map.NumberGenerator.Next("MapObject"))
+            var entity = new Primitives.MapObjects.Entity(document.Map.NumberGenerator.Next("MapObject"))
             {
                 Data =
                 {
@@ -263,15 +264,15 @@ namespace Sledge.BspEditor.Tools.Entity
 
             var transaction = new Transaction();
 
-            transaction.Add(new Attach(Document.Map.Root.ID, entity));
+            transaction.Add(new Attach(document.Map.Root.ID, entity));
 
             if (_selectCreatedEntity)
             {
-                transaction.Add(new Deselect(Document.Selection));
+                transaction.Add(new Deselect(document.Selection));
                 transaction.Add(new Select(entity.FindAll()));
             }
 
-            await MapDocumentOperation.Perform(Document, transaction);
+            await MapDocumentOperation.Perform(document, transaction);
 
             if (_switchToSelectAfterCreation)
             {
@@ -286,7 +287,7 @@ namespace Sledge.BspEditor.Tools.Entity
 
         // Rendering
 
-        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
+        protected override void Render(MapDocument document, BufferBuilder builder, ResourceCollector resourceCollector)
         {
             if (_state != EntityState.None)
             {
@@ -353,7 +354,7 @@ namespace Sledge.BspEditor.Tools.Entity
                 builder.Append(points, indices, groups);
             }
 
-            base.Render(builder, resourceCollector);
+            base.Render(document, builder, resourceCollector);
         }
     }
 }

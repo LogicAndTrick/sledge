@@ -87,15 +87,13 @@ namespace Sledge.BspEditor.Tools.Brush
             box.FillColour = Color.FromArgb(_selectionBoxBackgroundOpacity, Color.Green);
             box.State.Changed += BoxChanged;
             States.Add(box);
-
-            UseValidation = true;
         }
 
         protected override IEnumerable<Subscription> Subscribe()
         {
             yield return Oy.Subscribe<Change>("MapDocument:Changed", x =>
             {
-                if (x.Document == Document)
+                if (x.Document == GetDocument())
                 {
                     TextureSelected();
                 }
@@ -104,12 +102,15 @@ namespace Sledge.BspEditor.Tools.Brush
             yield return Oy.Subscribe<object>("BrushTool:ValuesChanged", x =>
             {
                 _updatePreview = true;
-                Invalidate();
             });
             yield return Oy.Subscribe<RightClickMenuBuilder>("MapViewport:RightClick", x =>
             {
                 x.Clear();
-                x.AddCallback(String.Format(CreateObject, _activeBrush?.Name), () => Confirm(x.Viewport));
+                x.AddCallback(String.Format(CreateObject, _activeBrush?.Name), () =>
+                {
+                    var doc = GetDocument();
+                    if (doc != null) Confirm(doc, x.Viewport);
+                });
             });
         }
 
@@ -117,21 +118,23 @@ namespace Sledge.BspEditor.Tools.Brush
         {
             _activeBrush = context.Get<IBrush>("BrushTool:ActiveBrush");
             _updatePreview = true;
-            Invalidate();
 
             base.ContextChanged(context);
         }
 
         public override async Task ToolSelected()
         {
-            var sel = Document.Selection.OfType<Solid>().ToList();
+            var document = GetDocument();
+            if (document == null) return;
+
+            var sel = document.Selection.OfType<Solid>().ToList();
             if (sel.Any())
             {
                 box.RememberedDimensions = new Box(sel.Select(x => x.BoundingBox));
             }
             else if (box.RememberedDimensions == null)
             {
-                var gs = Document.Map.Data.GetOne<GridData>()?.Grid;
+                var gs = document.Map.Data.GetOne<GridData>()?.Grid;
                 var start = Vector3.Zero;
                 var next = gs?.AddStep(Vector3.Zero, Vector3.One) ?? Vector3.One * 64;
                 box.RememberedDimensions = new Box(start, next);
@@ -150,13 +153,11 @@ namespace Sledge.BspEditor.Tools.Brush
         private void TextureSelected()
         {
             _updatePreview = true;
-            Invalidate();
         }
 
         private void BoxChanged(object sender, EventArgs e)
         {
             _updatePreview = true;
-            Invalidate();
         }
 
         public override Image GetIcon()
@@ -169,38 +170,41 @@ namespace Sledge.BspEditor.Tools.Brush
             return "BrushTool";
         }
 
-        public override void KeyDown(MapViewport viewport, ViewportEvent e)
+        protected override void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                Confirm(viewport);
-            }
-            else if (e.KeyCode == Keys.Escape)
-            {
-                Cancel(viewport);
-            }
-            base.KeyDown(viewport, e);
+            if (e.KeyCode == Keys.Enter) Confirm(document, viewport);
+            else if (e.KeyCode == Keys.Escape) Cancel(document, viewport);
+
+            base.KeyDown(document, viewport, camera, e);
         }
 
-        private void CreateBrush(Box bounds)
+        protected override void KeyDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e)
         {
-            var brush = GetBrush(bounds, Document.Map.NumberGenerator);
+            if (e.KeyCode == Keys.Enter) Confirm(document, viewport);
+            else if (e.KeyCode == Keys.Escape) Cancel(document, viewport);
+
+            base.KeyDown(document, viewport, camera, e);
+        }
+
+        private void CreateBrush(MapDocument document, Box bounds)
+        {
+            var brush = GetBrush(document, bounds, document.Map.NumberGenerator);
             if (brush == null) return;
             
             var transaction = new Transaction();
 
-            transaction.Add(new Attach(Document.Map.Root.ID, brush));
+            transaction.Add(new Attach(document.Map.Root.ID, brush));
 
             if (_selectCreatedBrush)
             {
-                transaction.Add(new Deselect(Document.Selection));
+                transaction.Add(new Deselect(document.Selection));
                 transaction.Add(new Select(brush.FindAll()));
             }
 
-            MapDocumentOperation.Perform(Document, transaction);
+            MapDocumentOperation.Perform(document, transaction);
         }
 
-        private IMapObject GetBrush(Box bounds, UniqueNumberGenerator idg)
+        private IMapObject GetBrush(MapDocument document, Box bounds, UniqueNumberGenerator idg)
         {
             var brush = _activeBrush;
             if (brush == null) return null;
@@ -209,13 +213,13 @@ namespace Sledge.BspEditor.Tools.Brush
             var rounding = RoundVertices ? 0 : 2;
             if (bounds.SmallestDimension < 10) rounding = 2;
 
-            var ti = Document.Map.Data.GetOne<ActiveTexture>()?.Name ?? "aaatrigger";
+            var ti = document.Map.Data.GetOne<ActiveTexture>()?.Name ?? "aaatrigger";
             var created = brush.Create(idg, bounds, ti, rounding).ToList();
 
             // Align all textures to the face and set the texture scale
             foreach (var f in created.SelectMany(x => x.Data.OfType<Face>()))
             {
-                f.Texture.XScale = f.Texture.YScale = (float) Document.Environment.DefaultTextureScale;
+                f.Texture.XScale = f.Texture.YScale = (float) document.Environment.DefaultTextureScale;
                 f.Texture.AlignToNormal(f.Plane.Normal);
             }
 
@@ -231,13 +235,13 @@ namespace Sledge.BspEditor.Tools.Brush
             return created.FirstOrDefault();
         }
 
-        private void Confirm(MapViewport viewport)
+        private void Confirm(MapDocument document, MapViewport viewport)
         {
             if (box.State.Action != BoxAction.Drawn) return;
             var bbox = new Box(box.State.Start, box.State.End);
             if (!bbox.IsEmpty())
             {
-                CreateBrush(bbox);
+                CreateBrush(document, bbox);
                 box.RememberedDimensions = bbox;
             }
             _preview = null;
@@ -252,19 +256,19 @@ namespace Sledge.BspEditor.Tools.Brush
             }
         }
 
-        private void Cancel(MapViewport viewport)
+        private void Cancel(MapDocument document, MapViewport viewport)
         {
             box.RememberedDimensions = new Box(box.State.Start, box.State.End);
             _preview = null;
             box.State.Action = BoxAction.Idle;
         }
 
-        private List<IMapObject> GetPreview()
+        private List<IMapObject> GetPreview(MapDocument document)
         {
             if (_updatePreview)
             {
                 var bbox = new Box(box.State.Start, box.State.End);
-                var brush = GetBrush(bbox, new UniqueNumberGenerator()).FindAll();
+                var brush = GetBrush(document, bbox, new UniqueNumberGenerator()).FindAll();
                 _preview = brush;
             }
 
@@ -272,21 +276,21 @@ namespace Sledge.BspEditor.Tools.Brush
             return _preview ?? new List<IMapObject>();
         }
 
-        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
+        protected override void Render(MapDocument document, BufferBuilder builder, ResourceCollector resourceCollector)
         {
             if (box.State.Action != BoxAction.Idle)
             {
                 // Force this work to happen on a new thread so waiting on it won't block the context
                 Task.Run(async () =>
                 {
-                    foreach (var obj in GetPreview().OfType<Solid>())
+                    foreach (var obj in GetPreview(document).OfType<Solid>())
                     {
-                        await Convert(builder, Document, obj, resourceCollector);
+                        await Convert(builder, document, obj, resourceCollector);
                     }
                 }).Wait();
             }
 
-            base.Render(builder, resourceCollector);
+            base.Render(document, builder, resourceCollector);
         }
 
         private async Task Convert(BufferBuilder builder, MapDocument document, IMapObject obj, ResourceCollector resourceCollector)

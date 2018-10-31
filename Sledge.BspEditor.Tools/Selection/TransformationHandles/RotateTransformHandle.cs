@@ -31,23 +31,26 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             viewport.Control.Cursor = ct;
         }
 
-        public override void StartDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+        public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e,
             Vector3 position)
         {
             _rotateStart = _rotateEnd = position;
-            base.StartDrag(viewport, camera, e, position);
+            base.StartDrag(document, viewport, camera, e, position);
         }
 
-        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e,
+        public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e,
             Vector3 lastPosition, Vector3 position)
         {
             _rotateEnd = position;
         }
 
-        public override void EndDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
+            ViewportEvent e, Vector3 position)
         {
             _rotateStart = _rotateEnd = null;
-            base.EndDrag(viewport, camera, e, position);
+            base.EndDrag(document, viewport, camera, e, position);
         }
 
         public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)

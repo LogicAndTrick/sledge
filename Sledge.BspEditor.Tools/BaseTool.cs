@@ -16,14 +16,13 @@ using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Documents;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
-using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
 
 namespace Sledge.BspEditor.Tools
 {
-    public abstract class BaseTool : ITool, IOverlayRenderable
+    public abstract class BaseTool : ITool
     {
         public enum ToolUsage
         {
@@ -42,7 +41,7 @@ namespace Sledge.BspEditor.Tools
 
         public Vector3 SnapIfNeeded(Vector3 c)
         {
-            var gridData = Document.Map.Data.GetOne<GridData>();
+            var gridData = GetDocument()?.Map.Data.GetOne<GridData>();
             var snap = !KeyboardState.Alt && gridData?.SnapToGrid == true;
             var grid = gridData?.Grid;
             return snap && grid != null ? grid.Snap(c) : c.Snap(1);
@@ -50,19 +49,20 @@ namespace Sledge.BspEditor.Tools
 
         public Vector3 SnapToSelection(Vector3 c, OrthographicCamera camera)
         {
-            var gridData = Document.Map.Data.GetOne<GridData>();
+            var doc = GetDocument();
+            var gridData = doc?.Map.Data.GetOne<GridData>();
             var snap = !KeyboardState.Alt && gridData?.SnapToGrid == true;
-            if (!snap) return c.Snap(1);
+            if (doc == null || !snap) return c.Snap(1);
 
             var snapped = gridData.Grid?.Snap(c) ?? c.Snap(1);
-            if (Document.Selection.IsEmpty) return snapped;
+            if (doc.Selection.IsEmpty) return snapped;
 
             // Try and snap the the selection box center
-            var selBox = Document.Selection.GetSelectionBoundingBox();
+            var selBox = doc.Selection.GetSelectionBoundingBox();
             var selCenter = camera.Flatten(selBox.Center);
             if (Math.Abs(selCenter.X - c.X) < selBox.Width / 10 && Math.Abs(selCenter.Y - c.Y) < selBox.Height / 10) return selCenter;
 
-            var objects = Document.Selection.ToList();
+            var objects = doc.Selection.ToList();
 
             // Try and snap to an object center
             foreach (var mo in objects)
@@ -105,7 +105,7 @@ namespace Sledge.BspEditor.Tools
 
         protected Vector3? GetNudgeValue(Keys k)
         {
-            var gridData = Document.Map.Data.GetOne<GridData>();
+            var gridData = GetDocument()?.Map.Data.GetOne<GridData>();
             var useGrid = !KeyboardState.Ctrl && gridData?.SnapToGrid != false;
             var grid = gridData?.Grid;
             var val = grid != null && !useGrid ? grid.AddStep(Vector3.Zero, Vector3.One) : Vector3.One;
@@ -122,13 +122,12 @@ namespace Sledge.BspEditor.Tools
             }
             return null;
         }
-
-        public MapDocument Document { get; private set; }
-        public MapViewport Viewport { get; set; }
-        public ToolUsage Usage { get; set; }
+        
+        private readonly WeakReference<MapDocument> _document;
+        public MapDocument GetDocument() => _document.TryGetTarget(out var doc) ? doc : null;
+        
+        public ToolUsage Usage { get; protected set; }
         public bool Active { get; set; }
-
-        protected bool UseValidation { get; set; }
 
         protected List<BaseTool> Children { get; private set; }
 
@@ -137,10 +136,9 @@ namespace Sledge.BspEditor.Tools
 
         protected BaseTool()
         {
+            _document = new WeakReference<MapDocument>(null);
             Active = true;
-            Viewport = null;
             Usage = ToolUsage.View2D;
-            UseValidation = false;
             Children = new List<BaseTool>();
 
             Oy.Subscribe<IDocument>("Document:Activated", id => SetDocument(id as MapDocument));
@@ -149,12 +147,12 @@ namespace Sledge.BspEditor.Tools
 
         protected virtual void ContextChanged(IContext context)
         {
-
+            // Virtual
         }
 
         protected void SetDocument(MapDocument document)
         {
-            Document = document;
+            _document.SetTarget(document);
             foreach (var t in Children) t.SetDocument(document);
             DocumentChanged();
         }
@@ -169,21 +167,18 @@ namespace Sledge.BspEditor.Tools
         public virtual Task ToolSelected()
         {
             _subscriptions = Subscribe().ToList();
-            Invalidate();
             return Task.CompletedTask;
         }
 
         public virtual Task ToolDeselected()
         {
             _subscriptions?.ForEach(x => x.Dispose());
-            Invalidate();
             return Task.CompletedTask;
         }
 
         protected virtual void DocumentChanged()
         {
             // Virtual
-            Invalidate();
         }
 
         #region Viewport event listeners
@@ -198,211 +193,289 @@ namespace Sledge.BspEditor.Tools
             return false;
         }
 
-        public virtual void MouseEnter(MapViewport viewport, ViewportEvent e)
+        public void MouseEnter(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.MouseEnter(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) MouseEnter(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) MouseEnter(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) MouseEnter(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseEnter(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void MouseLeave(MapViewport viewport, ViewportEvent e)
+        public void MouseLeave(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.MouseLeave(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) MouseLeave(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) MouseLeave(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) MouseLeave(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseLeave(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void MouseDown(MapViewport viewport, ViewportEvent e)
+        public void MouseDown(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.MouseDown(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) MouseDown(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) MouseDown(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) MouseDown(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseDown(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void MouseClick(MapViewport viewport, ViewportEvent e)
+        public void MouseClick(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.MouseClick(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) MouseClick(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) MouseClick(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+            if (viewport.Is2D) MouseClick(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseClick(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
+        public void MouseDoubleClick(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.MouseDoubleClick(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) MouseDoubleClick(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) MouseDoubleClick(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) MouseDoubleClick(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseDoubleClick(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void MouseUp(MapViewport viewport, ViewportEvent e)
+        public void MouseUp(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.MouseUp(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) MouseUp(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) MouseUp(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) MouseUp(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseUp(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void MouseWheel(MapViewport viewport, ViewportEvent e)
+        public void MouseWheel(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.MouseWheel(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) MouseWheel(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) MouseWheel(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) MouseWheel(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseWheel(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void MouseMove(MapViewport viewport, ViewportEvent e)
+        public void MouseMove(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.MouseMove(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) MouseMove(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) MouseMove(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) MouseMove(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) MouseMove(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void DragStart(MapViewport viewport, ViewportEvent e)
+        public void DragStart(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.DragStart(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) DragStart(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) DragStart(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) DragStart(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) DragStart(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void DragMove(MapViewport viewport, ViewportEvent e)
+        public void DragMove(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.DragMove(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) DragMove(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) DragMove(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) DragMove(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) DragMove(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void DragEnd(MapViewport viewport, ViewportEvent e)
+        public void DragEnd(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.DragEnd(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) DragEnd(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) DragEnd(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) DragEnd(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) DragEnd(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void KeyPress(MapViewport viewport, ViewportEvent e)
+        public void KeyPress(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.KeyPress(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) KeyPress(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) KeyPress(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) KeyPress(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) KeyPress(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void KeyDown(MapViewport viewport, ViewportEvent e)
+        public void KeyDown(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.KeyDown(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) KeyDown(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) KeyDown(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) KeyDown(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) KeyDown(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void KeyUp(MapViewport viewport, ViewportEvent e)
+        public void KeyUp(MapViewport viewport, ViewportEvent e)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             if (ChildAction((w, vp, ev) => w.KeyUp(vp, ev), viewport, e)) return;
-            if (viewport.Is2D) KeyUp(viewport, viewport.Viewport.Camera as OrthographicCamera, e);
-            if (viewport.Is3D) KeyUp(viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
+
+            if (viewport.Is2D) KeyUp(document, viewport, viewport.Viewport.Camera as OrthographicCamera, e);
+            if (viewport.Is3D) KeyUp(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, e);
         }
 
-        public virtual void UpdateFrame(MapViewport viewport, long frame)
+        public void UpdateFrame(MapViewport viewport, long frame)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
             foreach (var child in Children) child.UpdateFrame(viewport, frame);
 
-            if (viewport.Is2D) UpdateFrame(viewport, viewport.Viewport.Camera as OrthographicCamera, frame);
-            if (viewport.Is3D) UpdateFrame(viewport, viewport.Viewport.Camera as PerspectiveCamera, frame);
+            if (viewport.Is2D) UpdateFrame(document, viewport, viewport.Viewport.Camera as OrthographicCamera, frame);
+            if (viewport.Is3D) UpdateFrame(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, frame);
         }
 
-        public virtual bool FilterHotkey(MapViewport viewport, string hotkey, Keys keys)
+        public bool FilterHotkey(MapViewport viewport, string hotkey, Keys keys)
         {
-            if (!Active || Document == null) return false;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return false;
+
+            if (!Active) return false;
             foreach (var child in Children)
             {
                 if (child.FilterHotkey(viewport, hotkey, keys)) return true;
             }
 
-            if (viewport.Is2D) return FilterHotkey(viewport, viewport.Viewport.Camera as OrthographicCamera, hotkey, keys);
-            if (viewport.Is3D) return FilterHotkey(viewport, viewport.Viewport.Camera as PerspectiveCamera, hotkey, keys);
+            if (viewport.Is2D) return FilterHotkey(document, viewport, viewport.Viewport.Camera as OrthographicCamera, hotkey, keys);
+            if (viewport.Is3D) return FilterHotkey(document, viewport, viewport.Viewport.Camera as PerspectiveCamera, hotkey, keys);
             return false;
         }
 
-        protected virtual void MouseEnter(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void MouseEnter(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void MouseLeave(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void MouseLeave(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void MouseDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void MouseClick(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void MouseClick(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void MouseDoubleClick(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void MouseDoubleClick(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void MouseUp(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void MouseWheel(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void MouseWheel(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void MouseMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void MouseMove(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void DragStart(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void DragStart(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void DragMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void DragMove(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void DragEnd(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void DragEnd(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void KeyPress(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void KeyPress(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void KeyDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void KeyDown(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void KeyUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
-        protected virtual void KeyUp(MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
-        protected virtual void UpdateFrame(MapViewport viewport, OrthographicCamera camera, long frame) { }
-        protected virtual void UpdateFrame(MapViewport viewport, PerspectiveCamera camera, long frame) { }
-        protected virtual bool FilterHotkey(MapViewport viewport, OrthographicCamera camera, string hotkey, Keys keys) => false;
-        protected virtual bool FilterHotkey(MapViewport viewport, PerspectiveCamera camera, string hotkey, Keys keys) => false;
+        protected virtual void MouseEnter(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseEnter(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseLeave(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseLeave(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseClick(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseClick(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseDoubleClick(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseDoubleClick(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseUp(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseWheel(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseWheel(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void MouseMove(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void MouseMove(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void DragStart(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void DragStart(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void DragMove(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void DragMove(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void DragEnd(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void DragEnd(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void KeyPress(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void KeyPress(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void KeyDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void KeyDown(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void KeyUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e) { }
+        protected virtual void KeyUp(MapDocument document, MapViewport viewport, PerspectiveCamera camera, ViewportEvent e) { }
+        protected virtual void UpdateFrame(MapDocument document, MapViewport viewport, OrthographicCamera camera, long frame) { }
+        protected virtual void UpdateFrame(MapDocument document, MapViewport viewport, PerspectiveCamera camera, long frame) { }
+        protected virtual bool FilterHotkey(MapDocument document, MapViewport viewport, OrthographicCamera camera, string hotkey, Keys keys) => false;
+        protected virtual bool FilterHotkey(MapDocument document, MapViewport viewport, PerspectiveCamera camera, string hotkey, Keys keys) => false;
 
         #endregion
 
-        public virtual bool IsCapturingMouseWheel()
-        {
-            return false;
-        }
-
         #region Scene / rendering
 
-        protected virtual void Invalidate()
+        public void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
-            // todo BETA: investigate adding invalidation back into BaseTool rendering
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
+
+            Render(document, builder, resourceCollector);
         }
 
-        public virtual void Render(BufferBuilder builder, ResourceCollector resourceCollector)
+        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            if (!Active || Document == null) return;
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
+
+            Render(document, viewport, camera, worldMin, worldMax, graphics);
+        }
+
+        public void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+        {
+            var document = _document.TryGetTarget(out var doc) ? doc : null;
+            if (document == null) return;
+
+            if (!Active) return;
+
+            Render(document, viewport, camera, graphics);
+        }
+
+        protected virtual void Render(MapDocument document, BufferBuilder builder, ResourceCollector resourceCollector)
+        {
             foreach (var c in Children.Where(x => x.Active))
             {
-                c.Render(builder, resourceCollector);
+                c.Render(document, builder, resourceCollector);
             }
         }
 
-        public virtual void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        protected virtual void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
-            if (!Active || Document == null) return;
             foreach (var c in Children.Where(x => x.Active))
             {
-                c.Render(viewport, camera, worldMin, worldMax, graphics);
+                c.Render(document, viewport, camera, worldMin, worldMax, graphics);
             }
         }
 
-        public virtual void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+        protected virtual void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, Graphics graphics)
         {
-            if (!Active || Document == null) return;
             foreach (var c in Children.Where(x => x.Active))
             {
-                c.Render(viewport, camera, graphics);
+                c.Render(document, viewport, camera, graphics);
             }
         }
 

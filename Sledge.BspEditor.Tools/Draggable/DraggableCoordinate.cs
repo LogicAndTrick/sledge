@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Resources;
@@ -22,12 +23,12 @@ namespace Sledge.BspEditor.Tools.Draggable
             Position = Vector3.Zero;
         }
 
-        public override void Click(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             
         }
 
-        public override bool CanDrag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             var width = Width;
             var screenPosition = camera.WorldToScreen(Position);
@@ -40,25 +41,25 @@ namespace Sledge.BspEditor.Tools.Draggable
             viewport.Control.Cursor = Cursors.SizeAll;
         }
 
-        public override void Highlight(MapViewport viewport)
+        public override void Highlight(MapDocument document, MapViewport viewport)
         {
             Highlighted = true;
             SetMoveCursor(viewport);
         }
 
-        public override void Unhighlight(MapViewport viewport)
+        public override void Unhighlight(MapDocument document, MapViewport viewport)
         {
             Highlighted = false;
             viewport.Control.Cursor = Cursors.Default;
         }
 
-        public override void Drag(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
+        public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
             Position = camera.Expand(position) + camera.GetUnusedCoordinate(Position);
-            base.Drag(viewport, camera, e, lastPosition, position);
+            base.Drag(document, viewport, camera, e, lastPosition, position);
         }
 
-        public override void Render(BufferBuilder builder)
+        public override void Render(MapDocument document, BufferBuilder builder)
         {
             //
         }

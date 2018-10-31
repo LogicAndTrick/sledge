@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
+using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
@@ -14,10 +15,9 @@ namespace Sledge.BspEditor.Tools.Draggable
 {
     public abstract class BaseDraggableTool : BaseTool
     {
-        public List<IDraggableState> States { get; set; }
+        protected List<IDraggableState> States { get; }
 
         public IDraggable CurrentDraggable { get; private set; }
-        private ViewportEvent _lastDragMoveEvent;
         private Vector3? _lastDragPoint;
 
         protected BaseDraggableTool()
@@ -26,72 +26,69 @@ namespace Sledge.BspEditor.Tools.Draggable
         }
 
         #region Virtual events
-        protected virtual void OnDraggableMouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
+        protected virtual void OnDraggableMouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
         {
 
         }
-        protected virtual void OnDraggableMouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
+        protected virtual void OnDraggableMouseUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
         {
 
         }
-        protected virtual void OnDraggableClicked(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
-        {
-
-        }
-
-        protected virtual void OnDraggableDragStarted(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
+        protected virtual void OnDraggableClicked(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
         {
 
         }
 
-        protected virtual void OnDraggableDragMoving(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 previousPosition, Vector3 position, IDraggable draggable)
+        protected virtual void OnDraggableDragStarted(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
         {
 
         }
 
-        protected virtual void OnDraggableDragMoved(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 previousPosition, Vector3 position, IDraggable draggable)
+        protected virtual void OnDraggableDragMoving(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 previousPosition, Vector3 position, IDraggable draggable)
         {
 
         }
 
-        protected virtual void OnDraggableDragEnded(MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
+        protected virtual void OnDraggableDragMoved(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 previousPosition, Vector3 position, IDraggable draggable)
+        {
+
+        }
+
+        protected virtual void OnDraggableDragEnded(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position, IDraggable draggable)
         {
 
         }
         #endregion
 
-        protected override void MouseClick(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseClick(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (e.Dragging || e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null) return;
             var point = camera.ScreenToWorld(e.X, e.Y);
             point = camera.Flatten(point);
-            OnDraggableClicked(viewport, camera, e, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.Click(viewport, camera, e, point);
-            Invalidate();
+            OnDraggableClicked(document, viewport, camera, e, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.Click(document, viewport, camera, e, point);
         }
 
-        protected override void MouseDown(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (CurrentDraggable == null) return;
             var point = camera.ScreenToWorld(e.X, e.Y);
             point = camera.Flatten(point);
-            OnDraggableMouseDown(viewport, camera, e, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.MouseDown(viewport, camera, e, point);
-            Invalidate();
+            OnDraggableMouseDown(document, viewport, camera, e, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.MouseDown(document, viewport, camera, e, point);
         }
 
-        protected override void MouseUp(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseUp(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (CurrentDraggable == null) return;
             var point = camera.ScreenToWorld(e.X, e.Y);
             point = camera.Flatten(point);
-            OnDraggableMouseUp(viewport, camera, e, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.MouseUp(viewport, camera, e, point);
-            Invalidate();
+            OnDraggableMouseUp(document, viewport, camera, e, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.MouseUp(document, viewport, camera, e, point);
         }
 
-        protected override void MouseMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void MouseMove(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (e.Dragging || e.Button == MouseButtons.Left) return;
             var point = camera.ScreenToWorld(e.X, e.Y);
@@ -103,7 +100,7 @@ namespace Sledge.BspEditor.Tools.Draggable
                 drags.Add(state);
                 foreach (var draggable in drags)
                 {
-                    if (draggable.CanDrag(viewport, camera, e, point))
+                    if (draggable.CanDrag(document, viewport, camera, e, point))
                     {
                         drag = draggable;
                         break;
@@ -113,50 +110,43 @@ namespace Sledge.BspEditor.Tools.Draggable
             }
             if (drag != CurrentDraggable)
             {
-                CurrentDraggable?.Unhighlight(viewport);
+                CurrentDraggable?.Unhighlight(document, viewport);
                 CurrentDraggable = drag;
-                CurrentDraggable?.Highlight(viewport);
-                Invalidate();
+                CurrentDraggable?.Highlight(document, viewport);
             }
         }
 
-        protected override void DragStart(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void DragStart(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null) return;
             var point = camera.Flatten(camera.ScreenToWorld(e.X, e.Y));
-            OnDraggableDragStarted(viewport, camera, e, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.StartDrag(viewport, camera, e, point);
+            OnDraggableDragStarted(document, viewport, camera, e, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.StartDrag(document, viewport, camera, e, point);
             _lastDragPoint = point;
-            _lastDragMoveEvent = e;
-            Invalidate();
         }
 
-        protected override void DragMove(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void DragMove(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null || !_lastDragPoint.HasValue) return;
             var point = camera.Flatten(camera.ScreenToWorld(e.X, e.Y));
             var last = _lastDragPoint.Value;
-            OnDraggableDragMoving(viewport, camera, e, last, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.Drag(viewport, camera, e, last, point);
-            if (!e.Handled) OnDraggableDragMoved(viewport, camera, e, last, point, CurrentDraggable);
+            OnDraggableDragMoving(document, viewport, camera, e, last, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.Drag(document, viewport, camera, e, last, point);
+            if (!e.Handled) OnDraggableDragMoved(document, viewport, camera, e, last, point, CurrentDraggable);
             _lastDragPoint = point;
-            _lastDragMoveEvent = e;
-            Invalidate();
         }
 
-        protected override void DragEnd(MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
+        protected override void DragEnd(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e)
         {
             if (e.Button != MouseButtons.Left) return;
             if (CurrentDraggable == null) return;
             var point = camera.ScreenToWorld(e.X, e.Y);
             point = camera.Flatten(point);
-            OnDraggableDragEnded(viewport, camera, e, point, CurrentDraggable);
-            if (!e.Handled) CurrentDraggable.EndDrag(viewport, camera, e, point);
-            _lastDragMoveEvent = null;
+            OnDraggableDragEnded(document, viewport, camera, e, point, CurrentDraggable);
+            if (!e.Handled) CurrentDraggable.EndDrag(document, viewport, camera, e, point);
             _lastDragPoint = null;
-            Invalidate();
         }
 
         private IEnumerable<T> CollectObjects<T>(Func<IDraggable, IEnumerable<T>> collector)
@@ -179,31 +169,31 @@ namespace Sledge.BspEditor.Tools.Draggable
             return list;
         }
 
-        public override void Render(BufferBuilder builder, ResourceCollector resourceCollector)
+        protected override void Render(MapDocument document, BufferBuilder builder, ResourceCollector resourceCollector)
         {
             foreach (var obj in CollectObjects(x => new[] {x}))
             {
-                obj.Render(builder);
+                obj.Render(document, builder);
             }
-            base.Render(builder, resourceCollector);
+            base.Render(document, builder, resourceCollector);
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
         {
             foreach (var obj in CollectObjects(x => new[] { x }).OrderBy(x => camera.GetUnusedValue(x.ZIndex)))
             {
                 obj.Render(viewport, camera, worldMin, worldMax, graphics);
             }
-            base.Render(viewport, camera, worldMin, worldMax, graphics);
+            base.Render(document, viewport, camera, worldMin, worldMax, graphics);
         }
 
-        public override void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+        protected override void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, Graphics graphics)
         {
             foreach (var obj in CollectObjects(x => new[] { x }).OrderByDescending(x => (x.Origin - camera.Position).LengthSquared()))
             {
                 obj.Render(viewport, camera, graphics);
             }
-            base.Render(viewport, camera, graphics);
+            base.Render(document, viewport, camera, graphics);
         }
     }
 }

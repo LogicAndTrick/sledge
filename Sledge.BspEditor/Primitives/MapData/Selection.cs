@@ -126,7 +126,7 @@ namespace Sledge.BspEditor.Primitives.MapData
         {
             var sel = _selectedObjects.ToList();
             sel.SelectMany(x => x.Hierarchy).ToList().ForEach(x => sel.Remove(x));
-            return sel;
+            return sel.Where(x => x.Hierarchy.Parent != null);
         }
     }
 }
