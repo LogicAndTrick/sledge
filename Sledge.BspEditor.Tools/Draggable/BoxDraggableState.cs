@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Pipelines;
@@ -23,7 +25,9 @@ namespace Sledge.BspEditor.Tools.Draggable
         public Color FillColour { get; set; }
         public Box RememberedDimensions { get; set; }
         internal BoxState State { get; set; }
-        public bool Stippled { get; set; }
+
+        public bool RenderBoxText { get; set; } = true;
+        public bool RenderBox { get; set; } = true;
 
         protected IDraggable[] BoxHandles { get; set; }
 
@@ -77,14 +81,12 @@ namespace Sledge.BspEditor.Tools.Draggable
             // 
         }
 
-        public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e, Vector3 position)
+        public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             State.Action = BoxAction.Idle;
         }
 
-        public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             return true;
         }
@@ -99,8 +101,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             //
         }
 
-        public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e, Vector3 position)
+        public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             State.Viewport = viewport;
             State.Action = BoxAction.Drawing;
@@ -113,15 +114,13 @@ namespace Sledge.BspEditor.Tools.Draggable
             base.StartDrag(document, viewport, camera, e, position);
         }
 
-        public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e, Vector3 lastPosition, Vector3 position)
+        public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
             State.End = Tool.SnapIfNeeded(camera.Expand(position)) + camera.GetUnusedCoordinate(State.End);
             base.Drag(document, viewport, camera, e, lastPosition, position);
         }
 
-        public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e, Vector3 position)
+        public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             State.Viewport = null;
             State.Action = BoxAction.Drawn;
@@ -183,11 +182,13 @@ namespace Sledge.BspEditor.Tools.Draggable
 
         protected virtual bool ShouldDrawBox()
         {
+            if (!RenderBox) return false;
             return State.Action == BoxAction.Drawing || State.Action == BoxAction.Drawn || State.Action == BoxAction.Resizing;
         }
 
         protected virtual bool ShouldDrawBoxText()
         {
+            if (!RenderBoxText) return false;
             return ShouldDrawBox();
         }
 
@@ -201,39 +202,33 @@ namespace Sledge.BspEditor.Tools.Draggable
             return BoxColour;
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
         {
             if (ShouldDrawBox())
             {
                 var start = camera.WorldToScreen(Vector3.Min(State.Start, State.End));
                 var end = camera.WorldToScreen(Vector3.Max(State.Start, State.End));
-                DrawBox(viewport, camera, graphics, start, end);
+                DrawBox(viewport, camera, im, start, end);
             }
 
             if (ShouldDrawBoxText())
             {
                 var start = camera.WorldToScreen(Vector3.Min(State.Start, State.End));
                 var end = camera.WorldToScreen(Vector3.Max(State.Start, State.End));
-                DrawBoxText(viewport, camera, graphics, start, end);
+                DrawBoxText(viewport, camera, im, start, end);
             }
         }
 
-        protected virtual void DrawBox(IViewport viewport, OrthographicCamera camera, Graphics graphics, Vector3 start, Vector3 end)
+        protected virtual void DrawBox(IViewport viewport, OrthographicCamera camera, ImDrawListPtr im, Vector3 start, Vector3 end)
         {
             start = Vector3.Max(start, new Vector3(-100, -100, -100));
             end = Vector3.Min(end, new Vector3(viewport.Width + 100, viewport.Height + 100, 100));
-            using (var b = new SolidBrush(GetRenderFillColour()))
-            {
-                graphics.FillRectangle(b, start.X, end.Y, end.X - start.X, start.Y - end.Y);
-            }
-
-            using (var p = new Pen(GetRenderBoxColour()))
-            {
-                graphics.DrawRectangle(p, start.X, end.Y, end.X - start.X, start.Y - end.Y);
-            }
+            
+            im.AddRectFilled(start.ToVector2(), end.ToVector2(), GetRenderFillColour().ToImGuiColor());
+            im.AddRect(start.ToVector2(), end.ToVector2(), GetRenderBoxColour().ToImGuiColor());
         }
 
-        protected virtual void DrawBoxText(IViewport viewport, OrthographicCamera camera, Graphics graphics, Vector3 start, Vector3 end)
+        protected virtual void DrawBoxText(IViewport viewport, OrthographicCamera camera, ImDrawListPtr im, Vector3 start, Vector3 end)
         {
             // Don't draw the text at all if the rectangle is entirely outside the viewport
             if (start.X > camera.Width || end.X < 0) return;
@@ -245,32 +240,27 @@ namespace Sledge.BspEditor.Tools.Draggable
 
             var widthText = (Math.Abs(Math.Round(en.X - st.X, 1))).ToString("0.##");
             var heightText = (Math.Abs(Math.Round(en.Y - st.Y, 1))).ToString("0.##");
-
-            using (var f = new Font(FontFamily.GenericSansSerif, SystemFonts.DefaultFont.Size * 2))
-            using (var b = new SolidBrush(GetRenderBoxColour()))
-            {
-                // Determine the size of the value strings
-                var mWidth = graphics.MeasureString(widthText, f);
-                var mHeight = graphics.MeasureString(heightText, f);
-
-                const int padding = 6;
-
-                // Ensure the text is clamped inside the viewport
-                var vWidth = new Vector3((end.X + start.X - mWidth.Width) / 2, end.Y - mWidth.Height - padding, 0);
-                vWidth = Vector3.Clamp(vWidth, Vector3.Zero,
-                    new Vector3(camera.Width - mWidth.Width - padding, camera.Height - mHeight.Height - padding, 0));
-
-                var vHeight = new Vector3(end.X + padding, (end.Y + start.Y - mHeight.Height) / 2, 0);
-                vHeight = Vector3.Clamp(vHeight, new Vector3(0, mWidth.Height + padding, 0),
-                    new Vector3(camera.Width - mWidth.Width - padding, camera.Height - mHeight.Height - padding, 0));
-
-                // Draw the strings
-                graphics.DrawString(widthText, f, b, vWidth.X, vWidth.Y);
-                graphics.DrawString(heightText, f, b, vHeight.X, vHeight.Y);
-            }
+            
+            // Determine the size of the value strings
+            var mWidth = ImGui.CalcTextSize(widthText);
+            var mHeight = ImGui.CalcTextSize(heightText);
+            
+            const int padding = 6;
+            
+            // Ensure the text is clamped inside the viewport
+            var vWidth = new Vector3((end.X + start.X - mWidth.X) / 2, end.Y - mWidth.Y - padding, 0);
+            vWidth = Vector3.Clamp(vWidth, Vector3.Zero, new Vector3(camera.Width - mWidth.X - padding, camera.Height - mHeight.Y - padding, 0));
+            
+            var vHeight = new Vector3(end.X + padding, (end.Y + start.Y - mHeight.Y) / 2, 0); 
+            vHeight = Vector3.Clamp(vHeight, new Vector3(0, mWidth.Y + padding, 0), new Vector3(camera.Width - mWidth.X - padding, camera.Height - mHeight.Y - padding, 0));
+            
+            // Draw the strings
+            im.AddText(vWidth.ToVector2(), GetRenderBoxColour().ToImGuiColor(), widthText);
+            im.AddText(vHeight.ToVector2(), GetRenderBoxColour().ToImGuiColor(), heightText);
+            
         }
 
-        public override void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+        public override void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
         {
             //
         }

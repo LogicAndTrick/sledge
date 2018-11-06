@@ -116,7 +116,7 @@
     <Compile Include="Draggable\BoxDraggableState.cs" />
     <Compile Include="Draggable\BoxResizeHandle.cs" />
     <Compile Include="Draggable\BoxState.cs" />
-    <Compile Include="Draggable\DraggableCoordinate.cs" />
+    <Compile Include="Draggable\DraggableVector3.cs" />
     <Compile Include="Draggable\IDraggable.cs" />
     <Compile Include="Draggable\IDraggableState.cs" />
     <Compile Include="Draggable\InternalBoxResizeHandle.cs" />

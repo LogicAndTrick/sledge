@@ -1,7 +1,9 @@
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition.Hosting;
 using System.Windows.Forms;
 using LogicAndTrick.Oy;
+using Sledge.Common;
 
 namespace Sledge.Shell
 {
@@ -11,13 +13,21 @@ namespace Sledge.Shell
     public static class Startup
     {
         /// <summary>
+        /// Called before the composition container is created, but after the default catalog has been created.
+        /// </summary>
+        public static event EventHandler<AggregateCatalog> BuildCatalog;
+
+        /// <summary>
         /// Run the shell as an application using a container from the application catalog
         /// </summary>
         public static void Run()
         {
             var catalog = new AggregateCatalog();
-            catalog.Catalogs.Add(new ApplicationCatalog());
-            var container = new CompositionContainer(catalog);
+            
+            catalog.Catalogs.Add(new ValidAssembliesInDirectoryContainer(AppDomain.CurrentDomain.BaseDirectory));
+            BuildCatalog?.Invoke(null, catalog);
+
+            var container = new CompositionContainer(catalog, CompositionOptions.DisableSilentRejection);
 
             Run(container);
         }

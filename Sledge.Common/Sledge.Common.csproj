@@ -129,6 +129,7 @@
     <Compile Include="Transport\SerialisedObject.cs" />
     <Compile Include="Transport\SerialisedObjectExtensions.cs" />
     <Compile Include="Transport\SerialisedObjectFormatter.cs" />
+    <Compile Include="ValidAssembliesInDirectoryContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LogicAndTrick.Oy">

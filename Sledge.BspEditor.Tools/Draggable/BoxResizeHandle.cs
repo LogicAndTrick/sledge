@@ -2,8 +2,10 @@ using System;
 using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
+using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
+using Sledge.Common;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
@@ -113,14 +115,12 @@ namespace Sledge.BspEditor.Tools.Draggable
             SnappedMoveOrigin = origin;
         }
 
-        public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e, Vector3 position)
+        public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
 
         }
 
-        public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             const int width = 8;
             var pos = GetWorldPositionAndScreenOffset(viewport.Viewport.Camera);
@@ -129,8 +129,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             return diff.X < width && diff.Y < width;
         }
 
-        public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e, Vector3 position)
+        public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             BoxState.OrigStart = BoxState.Start;
             BoxState.OrigEnd = BoxState.End;
@@ -140,8 +139,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             base.StartDrag(document, viewport, camera, e, position);
         }
 
-        public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e, Vector3 lastPosition, Vector3 position)
+        public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
             if (Handle == ResizeHandle.Center)
             {
@@ -173,21 +171,20 @@ namespace Sledge.BspEditor.Tools.Draggable
             //
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
         {
             if (State.State.Action != BoxAction.Drawn) return;
 
             var (wpos, soff) = GetWorldPositionAndScreenOffset(camera);
             var spos = camera.WorldToScreen(wpos) + soff;
 
-            const int size = 8;
-            var rect = new Rectangle((int) spos.X - size / 2, (int) spos.Y - size / 2, size, size);
+            const int size = 4;
 
-            graphics.FillRectangle(Brushes.White, rect);
-            graphics.DrawRectangle(Pens.Black, rect);
+            im.AddRectFilled(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.White.ToImGuiColor());
+            im.AddRect(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black.ToImGuiColor());
         }
 
-        public override void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+        public override void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
         {
             //
         }

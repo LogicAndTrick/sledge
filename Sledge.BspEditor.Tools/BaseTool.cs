@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
@@ -435,24 +436,24 @@ namespace Sledge.BspEditor.Tools
             Render(document, builder, resourceCollector);
         }
 
-        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
         {
             var document = _document.TryGetTarget(out var doc) ? doc : null;
             if (document == null) return;
 
             if (!Active) return;
 
-            Render(document, viewport, camera, worldMin, worldMax, graphics);
+            Render(document, viewport, camera, worldMin, worldMax, im);
         }
 
-        public void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+        public void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
         {
             var document = _document.TryGetTarget(out var doc) ? doc : null;
             if (document == null) return;
 
             if (!Active) return;
 
-            Render(document, viewport, camera, graphics);
+            Render(document, viewport, camera, im);
         }
 
         protected virtual void Render(MapDocument document, BufferBuilder builder, ResourceCollector resourceCollector)
@@ -463,19 +464,19 @@ namespace Sledge.BspEditor.Tools
             }
         }
 
-        protected virtual void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        protected virtual void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
         {
             foreach (var c in Children.Where(x => x.Active))
             {
-                c.Render(document, viewport, camera, worldMin, worldMax, graphics);
+                c.Render(document, viewport, camera, worldMin, worldMax, im);
             }
         }
 
-        protected virtual void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+        protected virtual void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
         {
             foreach (var c in Children.Where(x => x.Active))
             {
-                c.Render(document, viewport, camera, graphics);
+                c.Render(document, viewport, camera, im);
             }
         }
 

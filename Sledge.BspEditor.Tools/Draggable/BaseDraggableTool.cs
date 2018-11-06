@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
+using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
@@ -178,22 +178,22 @@ namespace Sledge.BspEditor.Tools.Draggable
             base.Render(document, builder, resourceCollector);
         }
 
-        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
         {
             foreach (var obj in CollectObjects(x => new[] { x }).OrderBy(x => camera.GetUnusedValue(x.ZIndex)))
             {
-                obj.Render(viewport, camera, worldMin, worldMax, graphics);
+                obj.Render(viewport, camera, worldMin, worldMax, im);
             }
-            base.Render(document, viewport, camera, worldMin, worldMax, graphics);
+            base.Render(document, viewport, camera, worldMin, worldMax, im);
         }
 
-        protected override void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+        protected override void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
         {
             foreach (var obj in CollectObjects(x => new[] { x }).OrderByDescending(x => (x.Origin - camera.Position).LengthSquared()))
             {
-                obj.Render(viewport, camera, graphics);
+                obj.Render(viewport, camera, im);
             }
-            base.Render(document, viewport, camera, graphics);
+            base.Render(document, viewport, camera, im);
         }
     }
 }

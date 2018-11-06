@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using SharpDX.Direct3D;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Interfaces;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Renderables;
 using Sledge.Rendering.Viewports;
@@ -215,7 +216,7 @@ namespace Sledge.Rendering.Engine
                 foreach (var rt in _renderTargets)
                 {
                     rt.Update(frame);
-                    rt.Overlay.Build(Context, overlays);
+                    rt.Overlay.Build(overlays);
                     if (rt.ShouldRender(frame))
                     {
                         Render(rt);
@@ -316,7 +317,8 @@ namespace Sledge.Rendering.Engine
                 if (!_renderTargets.Any()) Start();
                 _renderTargets.Add(control);
 
-                Scene.Add(control.Overlay);
+                Scene.Add((IRenderable) control.Overlay);
+                Scene.Add((IUpdateable) control.Overlay);
                 ViewportCreated?.Invoke(this, control);
 
                 return control;
@@ -335,7 +337,8 @@ namespace Sledge.Rendering.Engine
                 if (!_renderTargets.Any()) Stop();
 
                 ViewportDestroyed?.Invoke(this, t);
-                Scene.Remove(t.Overlay);
+                Scene.Remove((IRenderable) t.Overlay);
+                Scene.Remove((IUpdateable) t.Overlay);
 
                 t.Control.Disposed -= DestroyViewport;
                 t.Dispose();

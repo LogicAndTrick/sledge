@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using System.Drawing;
 using System.Numerics;
 using System.Threading.Tasks;
+using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Rendering.Dynamic;
 using Sledge.BspEditor.Rendering.Resources;
@@ -35,19 +35,19 @@ namespace Sledge.BspEditor.Tools
             return Task.CompletedTask;
         }
 
-        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
-        {
-            ActiveTool?.Render(viewport, camera, worldMin, worldMax, graphics);
-        }
-
-        public void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
-        {
-            ActiveTool?.Render(viewport, camera, graphics);
-        }
-
         public void Render(BufferBuilder builder, ResourceCollector resourceCollector)
         {
             ActiveTool?.Render(builder, resourceCollector);
+        }
+
+        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        {
+            ActiveTool?.Render(viewport, camera, worldMin, worldMax, im);
+        }
+
+        public void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
+        {
+            ActiveTool?.Render(viewport, camera, im);
         }
     }
 }

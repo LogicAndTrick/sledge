@@ -9,6 +9,12 @@ namespace Sledge.DataStructures.Geometric
     {
         public const float Epsilon = 0.0001f;
 
+        // Vector2
+        public static Vector3 ToVector3(this Vector2 self)
+        {
+            return new Vector3(self, 0);
+        }
+
         // Vector3
         public static bool EquivalentTo(this Vector3 self, Vector3 test, float delta = Epsilon)
         {
@@ -51,6 +57,11 @@ namespace Sledge.DataStructures.Geometric
         public static Precision.Vector3 ToPrecisionVector3(this Vector3 self)
         {
             return new Precision.Vector3(self.X, self.Y, self.Z);
+        }
+
+        public static Vector2 ToVector2(this Vector3 self)
+        {
+            return new Vector2(self.X, self.Y);
         }
 
         // Vector4

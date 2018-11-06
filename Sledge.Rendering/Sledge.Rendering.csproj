@@ -74,6 +74,7 @@
     <Compile Include="Engine\Scene.cs" />
     <Compile Include="Interfaces\IModel.cs" />
     <Compile Include="Interfaces\IModelRenderable.cs" />
+    <Compile Include="Overlay\ImGuiController.cs" />
     <Compile Include="Pipelines\PipelineGroup.cs" />
     <Compile Include="Pipelines\TexturedAdditivePipeline.cs" />
     <Compile Include="Pipelines\TexturedAlphaPipeline.cs" />
@@ -149,8 +150,13 @@
     <EmbeddedResource Include="Shaders\TexturedModel.vert.hlsl.bytes" />
     <EmbeddedResource Include="Shaders\WireframeModel.frag.hlsl.bytes" />
     <EmbeddedResource Include="Shaders\WireframeModel.vert.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\imgui.frag.hlsl.bytes" />
+    <EmbeddedResource Include="Shaders\imgui.vert.hlsl.bytes" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="ImGui.NET">
+      <Version>1.65.0-beta3</Version>
+    </PackageReference>
     <PackageReference Include="System.Diagnostics.DiagnosticSource">
       <Version>4.5.0</Version>
     </PackageReference>
@@ -209,6 +215,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Shaders\WireframeModel.frag.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders\imgui.frag.hlsl" />
+    <EmbeddedResource Include="Shaders\imgui.vert.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="cimgui.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

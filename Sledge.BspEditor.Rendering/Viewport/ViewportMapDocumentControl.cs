@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.Common.Shell.Hotkeys;
@@ -214,20 +215,20 @@ namespace Sledge.BspEditor.Rendering.Viewport
             {
                 _control = control;
             }
-
-            public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+            
+            public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
             {
                 foreach (var r in _control.Listeners.OfType<IOverlayRenderable>())
                 {
-                    r.Render(viewport, camera, worldMin, worldMax, graphics);
+                    r.Render(viewport, camera, worldMin, worldMax, im);
                 }
             }
 
-            public void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+            public void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
             {
                 foreach (var r in _control.Listeners.OfType<IOverlayRenderable>())
                 {
-                    r.Render(viewport, camera, graphics);
+                    r.Render(viewport, camera, im);
                 }
             }
         }

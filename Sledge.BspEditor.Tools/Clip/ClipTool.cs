@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
+using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
@@ -14,6 +15,7 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
+using Sledge.Common;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Rendering.Cameras;
@@ -350,8 +352,8 @@ namespace Sledge.BspEditor.Tools.Clip
                         verts.AddRange(p.Select(x => new VertexStandard
                         {
                             Position = x,
-                            Colour = colour,
-                            Tint = Vector4.One,
+                            Colour = Vector4.One,
+                            Tint = colour,
                             Flags = VertexFlags.FlatColour
                         }));
 
@@ -371,9 +373,9 @@ namespace Sledge.BspEditor.Tools.Clip
             }
         }
 
-        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
         {
-            base.Render(document, viewport, camera, worldMin, worldMax, graphics);
+            base.Render(document, viewport, camera, worldMin, worldMax, im);
 
             if (_state != ClipState.None && _clipPlanePoint1 != null && _clipPlanePoint2 != null && _clipPlanePoint3 != null)
             {
@@ -384,12 +386,11 @@ namespace Sledge.BspEditor.Tools.Clip
 
                 foreach (var p in points)
                 {
-                    const int size = 8;
+                    const int size = 4;
                     var spos = camera.WorldToScreen(p);
-                    var rect = new Rectangle((int)spos.X - size / 2, (int)spos.Y - size / 2, size, size);
 
-                    graphics.FillRectangle(Brushes.White, rect);
-                    graphics.DrawRectangle(Pens.Black, rect);
+                    im.AddRectFilled(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.White.ToImGuiColor());
+                    im.AddRect(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black.ToImGuiColor());
                 }
             }
         }

@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
+using Sledge.Common;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.DataStructures.Geometric;
@@ -254,28 +255,24 @@ namespace Sledge.BspEditor.Tools
             vp.Control.Cursor = cursor;
         }
 
-        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
         {
-            base.Render(document, viewport, camera, worldMin, worldMax, graphics);
-
-            graphics.SmoothingMode = SmoothingMode.HighQuality;
+            base.Render(document, viewport, camera, worldMin, worldMax, im);
 
             foreach (var cam in GetCameraList(document))
             {
                 var p1 = camera.WorldToScreen(cam.EyePosition);
                 var p2 = camera.WorldToScreen(cam.LookPosition);
                 
-                var linePen = cam.IsActive ? Pens.Red : Pens.Cyan;
-                var handleBrush = cam.IsActive ? Brushes.DarkOrange : Brushes.LawnGreen;
+                var lineColor = cam.IsActive ? Color.Red : Color.Cyan;
+                var handleColor = cam.IsActive ? Color.DarkOrange : Color.LawnGreen;
 
-                graphics.DrawLine(linePen, p1.X, p1.Y, p2.X, p2.Y);
-                graphics.FillEllipse(handleBrush, p1.X - 4, p1.Y - 4, 8, 8);
-                graphics.DrawEllipse(Pens.Black, p1.X - 4, p1.Y - 4, 8, 8);
-
+                im.AddLine(p1.ToVector2(), p2.ToVector2(), lineColor.ToImGuiColor());
+                im.AddCircleFilled(p1.ToVector2(), 4, handleColor.ToImGuiColor());
+                im.AddCircle(p1.ToVector2(), 4, Color.Black.ToImGuiColor());
+                
                 // todo post-beta: triangle arrow for cameras in 2D?
             }
-
-            graphics.SmoothingMode = SmoothingMode.Default;
         }
     }
 }

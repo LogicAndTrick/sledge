@@ -1,7 +1,9 @@
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Numerics;
+using ImGuiNET;
 using Sledge.BspEditor.Documents;
+using Sledge.Common;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Viewports;
 
@@ -15,19 +17,20 @@ namespace Sledge.BspEditor.Rendering.Overlay
             //
         }
 
-        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
         {
             var str = $"2D {camera.ViewType}";
-            var size = graphics.MeasureString(str, SystemFonts.DefaultFont);
-            graphics.DrawString(str, SystemFonts.DefaultFont, Brushes.White, 0, 0);
-            using (var b = new SolidBrush(Color.FromArgb(128, Color.Pink))) graphics.FillRectangle(b, 0, 0, size.Width, size.Height);
+            var size = ImGui.CalcTextSize(str);
+            im.AddText(new Vector2(2, 2), Color.White.ToImGuiColor(), str);
+            im.AddRectFilled(Vector2.Zero, size + new Vector2(4, 4), Color.FromArgb(128, Color.Pink).ToImGuiColor());
         }
 
-        public void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+        public void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
         {
-            var size = graphics.MeasureString("3D View", SystemFonts.DefaultFont);
-            graphics.DrawString("3D View", SystemFonts.DefaultFont, Brushes.White, 0, 0);
-            using (var b = new SolidBrush(Color.FromArgb(128, Color.Pink))) graphics.FillRectangle(b, 0, 0, size.Width, size.Height);
+            var str = $"3D View";
+            var size = ImGui.CalcTextSize(str);
+            im.AddText(new Vector2(2, 2), Color.White.ToImGuiColor(), str);
+            im.AddRectFilled(Vector2.Zero, size + new Vector2(4, 4), Color.FromArgb(128, Color.Pink).ToImGuiColor());
         }
     }
 }

@@ -2,10 +2,12 @@
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
+using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Viewports;
@@ -20,8 +22,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
         {
         }
 
-        public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e, Vector3 position)
+        public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             if (Handle == ResizeHandle.Center)
             {
@@ -46,7 +47,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             return base.GetResizeOrigin(viewport, camera, position);
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
         {
             if (Handle == ResizeHandle.Center)
             {
@@ -55,26 +56,22 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
                 var start = camera.WorldToScreen(BoxState.Start);
                 var end = camera.WorldToScreen(BoxState.End);
 
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                im.AddRectFilled(start.ToVector2(), end.ToVector2(), State.FillColour.ToImGuiColor());
 
-                using (var br = new SolidBrush(State.FillColour))
-                {
-                    graphics.FillRectangle(br, start.X, end.Y, end.X - start.X, start.Y - end.Y);
-                }
                 if (SnappedMoveOrigin != null)
                 {
                     const int size = 4;
                     var orig = camera.WorldToScreen(camera.Expand(SnappedMoveOrigin.Value));
 
-                    graphics.DrawLine(Pens.Yellow, orig.X - size, orig.Y - size, orig.X + size, orig.Y + size);
-                    graphics.DrawLine(Pens.Yellow, orig.X + size, orig.Y - size, orig.X - size, orig.Y + size);
-                }
+                    var yellow = Color.Yellow.ToImGuiColor();
 
-                graphics.SmoothingMode = SmoothingMode.Default;
+                    im.AddLine(new Vector2(orig.X - size, orig.Y - size), new Vector2(orig.X + size, orig.Y + size), yellow);
+                    im.AddLine(new Vector2(orig.X + size, orig.Y - size), new Vector2(orig.X - size, orig.Y + size), yellow);
+                }
             }
             else
             {
-                base.Render(viewport, camera, worldMin, worldMax, graphics);
+                base.Render(viewport, camera, worldMin, worldMax, im);
             }
         }
 

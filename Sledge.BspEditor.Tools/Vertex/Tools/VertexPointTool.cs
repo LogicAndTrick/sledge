@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
@@ -52,9 +53,12 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
             
             States.Add(new WrapperDraggableState(GetDraggables));
 
-            _boxState = new BoxDraggableState(this);
-            _boxState.BoxColour = Color.Orange;
-            _boxState.FillColour = Color.FromArgb(64, Color.DodgerBlue);
+            _boxState = new BoxDraggableState(this)
+            {
+                RenderBoxText = false,
+                BoxColour = Color.Orange,
+                FillColour = Color.FromArgb(64, Color.DodgerBlue)
+            };
             _boxState.DragStarted += (sender, args) =>
             {
                 if (!KeyboardState.Ctrl)
@@ -751,21 +755,18 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 return _selfArray ?? (_selfArray = IsMidpoint ? new[] {MidpointStart, MidpointEnd} : new[] {this});
             }
 
-            public override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-                ViewportEvent e, Vector3 position)
+            public override void MouseDown(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
             {
                 e.Handled = true;
                 Tool.PointMouseDown(camera, this);
             }
 
-            public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-                ViewportEvent e, Vector3 position)
+            public override void Click(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
             {
                 Tool.PointClick(camera, this);
             }
 
-            public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-                ViewportEvent e, Vector3 position)
+            public override bool CanDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
             {
                 const int width = 5;
                 var screenPosition = camera.WorldToScreen(Position);
@@ -790,23 +791,20 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 viewport.Control.Cursor = Cursors.Default;
             }
 
-            public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-                ViewportEvent e, Vector3 position)
+            public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
             {
                 Tool.StartPointDrag(camera, e, Position);
                 base.StartDrag(document, viewport, camera, e, position);
             }
 
-            public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-                ViewportEvent e, Vector3 lastPosition, Vector3 position)
+            public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
             {
                 position = Tool.SnapIfNeeded(camera.Expand(position));
                 Tool.PointDrag(camera, e, lastPosition, position);
                 base.Drag(document, viewport, camera, e, lastPosition, position);
             }
 
-            public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-                ViewportEvent e, Vector3 position)
+            public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
             {
                 position = Tool.SnapIfNeeded(camera.Expand(position));
                 Tool.EndPointDrag(camera, e, position);
@@ -818,48 +816,37 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 // 
             }
 
-            public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+            public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
             {
-                const int size = 8;
+                const int size = 4;
 
                 var opac = IsDragging ? 128 : 255;
                 var spos = camera.WorldToScreen(Position);
-                var rect = new Rectangle((int)spos.X - size / 2, (int)spos.Y - size / 2, size, size);
 
-                var color = Color.FromArgb(opac, GetColor());
-                using (var brush = new SolidBrush(color))
-                {
-                    graphics.FillRectangle(brush, rect);
-                    graphics.DrawRectangle(Pens.Black, rect);
-                }
+                var color = Color.FromArgb(opac, GetColor()).ToImGuiColor();
+                im.AddRectFilled(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), color);
+                im.AddRect(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black.ToImGuiColor());
 
                 if (IsDragging)
                 {
                     spos = camera.WorldToScreen(DraggingPosition);
-                    rect = new Rectangle((int)spos.X - size / 2, (int)spos.Y - size / 2, size, size);
-                    color = Color.FromArgb(128, GetColor());
-                    using (var brush = new SolidBrush(color))
-                    {
-                        graphics.FillRectangle(brush, rect);
-                        graphics.DrawRectangle(Pens.Black, rect);
-                    }
+                    color = Color.FromArgb(128, GetColor()).ToImGuiColor();
+                    im.AddRectFilled(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), color);
+                    im.AddRect(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black.ToImGuiColor());
                 }
             }
 
-            public override void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+            public override void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
             {
-                const int size = 8;
+                const int size = 4;
                 var p = IsDragging ? DraggingPosition : Position;
 
                 var spos = camera.WorldToScreen(p);
-                var rect = new Rectangle((int)spos.X - size / 2, (int)spos.Y - size / 2, size, size);
 
-                var color = Color.FromArgb(255, GetColor());
-                using (var brush = new SolidBrush(color))
-                {
-                    graphics.FillRectangle(brush, rect);
-                    graphics.DrawRectangle(Pens.Black, rect);
-                }
+                var color = Color.FromArgb(255, GetColor()).ToImGuiColor();
+
+                im.AddRectFilled(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), color);
+                im.AddRect(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black.ToImGuiColor());
             }
         }
     }

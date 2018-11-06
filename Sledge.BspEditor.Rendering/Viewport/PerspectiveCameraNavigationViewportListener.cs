@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.Common;
 using Sledge.Common.Easings;
@@ -384,12 +385,12 @@ namespace Sledge.BspEditor.Rendering.Viewport
             // 
         }
 
-        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
         {
             // 
         }
 
-        public void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics)
+        public void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
         {
             if (CursorVisible) return;
             if (Viewport.Viewport != viewport) return;
@@ -398,11 +399,11 @@ namespace Sledge.BspEditor.Rendering.Viewport
             var y = viewport.Height / 2;
             const int size = 3;
 
-            graphics.FillRectangle(Brushes.Black, x - 1, y - size - 1, 3, size + size + 3);
-            graphics.FillRectangle(Brushes.Black, x - size - 1, y - 1, size + size + 3, 3);
+            im.AddRectFilled(new Vector2(x - 1, y - size - 1), new Vector2(x + 2, y + size + 2), Color.Black.ToImGuiColor());
+            im.AddRectFilled(new Vector2(x - size - 1, y - 1), new Vector2(x + size + 2, y + 2), Color.Black.ToImGuiColor());
 
-            graphics.DrawLine(Pens.White, x, y - size, x, y + size);
-            graphics.DrawLine(Pens.White, x - size, y, x + size, y);
+            im.AddLine(new Vector2(x, y - size), new Vector2(x, y + size + 1), Color.White.ToImGuiColor());
+            im.AddLine(new Vector2(x - size, y), new Vector2(x + size + 1, y), Color.White.ToImGuiColor());
         }
     }
 }

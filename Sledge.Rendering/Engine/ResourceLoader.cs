@@ -104,7 +104,7 @@ namespace Sledge.Rendering.Engine
         }
 
         private static readonly Assembly ResourceAssembly = Assembly.GetExecutingAssembly();
-        private static byte[] GetEmbeddedShader(string name)
+        internal static byte[] GetEmbeddedShader(string name)
         {
             var names = new[] {name + ".bytes", name};
 #if DEBUG

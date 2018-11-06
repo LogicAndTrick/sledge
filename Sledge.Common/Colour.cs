@@ -130,5 +130,18 @@ namespace Sledge.Common
             var luminance = (0.299 * color.R + 0.587 * color.G + 0.114 * color.B) / 255;
             return luminance > 0.5 ? Color.Black : Color.White;
         }
+
+        public static uint ToImGuiColor(this Color color)
+        {
+            unchecked
+            {
+                return (uint) (
+                           color.R << 0 |
+                           color.G << 8 |
+                           color.B << 16 |
+                           color.A << 24
+                       ) & 0xffffffff;
+            }
+        }
     }
 }

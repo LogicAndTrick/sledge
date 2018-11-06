@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Mutation;
@@ -13,6 +14,7 @@ using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Selection.TransformationHandles;
 using Sledge.BspEditor.Tools.Widgets;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
@@ -218,18 +220,10 @@ namespace Sledge.BspEditor.Tools.Selection
             Update();
         }
 
-        protected override void DrawBox(IViewport viewport, OrthographicCamera camera, Graphics graphics, Vector3 start, Vector3 end)
+        protected override void DrawBox(IViewport viewport, OrthographicCamera camera, ImDrawListPtr im, Vector3 start, Vector3 end)
         {
-            using (var b = new SolidBrush(GetRenderFillColour()))
-            {
-                graphics.FillRectangle(b, start.X, end.Y, end.X - start.X, start.Y - end.Y);
-            }
-
-            using (var p = new Pen(GetRenderBoxColour()))
-            {
-                if (_tool.SelectionBoxStippled) p.DashPattern = new float[] { 4, 4 };
-                graphics.DrawRectangle(p, start.X, end.Y, end.X - start.X, start.Y - end.Y);
-            }
+            im.AddRectFilled(start.ToVector2(), end.ToVector2(), GetRenderFillColour().ToImGuiColor());
+            im.AddRect(start.ToVector2(), end.ToVector2(), GetRenderBoxColour().ToImGuiColor());
         }
 
         protected override Color GetRenderFillColour()

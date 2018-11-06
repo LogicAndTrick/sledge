@@ -56,7 +56,6 @@ namespace Sledge.BspEditor.Tools.Selection
         // Settings
 
         [Setting] public int SelectionBoxBackgroundOpacity { get;set; } = 64;
-        [Setting] public bool SelectionBoxStippled { get; set; } = false;
         [Setting] public bool AutoSelectBox { get; set; } = false;
         [Setting] public bool Show3DWidgets { get; set; } = false;
         [Setting] public bool SelectByCenterHandles { get; set; } = true;
@@ -68,7 +67,6 @@ namespace Sledge.BspEditor.Tools.Selection
         IEnumerable<SettingKey> ISettingsContainer.GetKeys()
         {
             yield return new SettingKey("Tools/Selection", "SelectionBoxBackgroundOpacity", typeof(int));
-            yield return new SettingKey("Tools/Selection", "SelectionBoxStippled", typeof(bool));
             yield return new SettingKey("Tools/Selection", "AutoSelectBox", typeof(bool));
             yield return new SettingKey("Tools/Selection", "Show3DWidgets", typeof(bool));
             yield return new SettingKey("Tools/Selection", "SelectByCenterHandles", typeof(bool));
@@ -104,7 +102,6 @@ namespace Sledge.BspEditor.Tools.Selection
             _selectionBox = new SelectionBoxDraggableState(this);
             _selectionBox.BoxColour = Color.Yellow;
             _selectionBox.FillColour = Color.FromArgb(SelectionBoxBackgroundOpacity, Color.White);
-            _selectionBox.Stippled = SelectionBoxStippled;
             _selectionBox.State.Changed += SelectionBoxChanged;
             States.Add(_selectionBox);
             Children.AddRange(_selectionBox.Widgets);
@@ -112,7 +109,6 @@ namespace Sledge.BspEditor.Tools.Selection
             _emptyBox = new BoxDraggableState(this);
             _emptyBox.BoxColour = Color.Yellow;
             _emptyBox.FillColour = Color.FromArgb(SelectionBoxBackgroundOpacity, Color.White);
-            _emptyBox.Stippled = SelectionBoxStippled;
             _emptyBox.State.Changed += EmptyBoxChanged;
             _emptyBox.DragEnded += (sender, args) =>
             {

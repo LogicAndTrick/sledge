@@ -1,10 +1,12 @@
 using System;
 using System.Drawing;
 using System.Numerics;
+using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
+using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Viewports;
@@ -31,38 +33,32 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             viewport.Control.Cursor = ct;
         }
 
-        public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e,
-            Vector3 position)
+        public override void StartDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             _rotateStart = _rotateEnd = position;
             base.StartDrag(document, viewport, camera, e, position);
         }
 
-        public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e,
-            Vector3 lastPosition, Vector3 position)
+        public override void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position)
         {
             _rotateEnd = position;
         }
 
-        public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera,
-            ViewportEvent e, Vector3 position)
+        public override void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position)
         {
             _rotateStart = _rotateEnd = null;
             base.EndDrag(document, viewport, camera, e, position);
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
         {
             var (wpos, soff) = GetWorldPositionAndScreenOffset(camera);
             var spos = camera.WorldToScreen(wpos) + soff;
 
-            const int size = 8;
-            var rect = new Rectangle((int)spos.X - size / 2, (int)spos.Y - size / 2, size, size);
+            const float radius = 4;
 
-            graphics.FillEllipse(Brushes.White, rect);
-            graphics.DrawEllipse(Pens.Black, rect);
+            im.AddCircleFilled(spos.ToVector2(), radius, Color.White.ToImGuiColor());
+            im.AddCircle(spos.ToVector2(), radius, Color.Black.ToImGuiColor());
         }
 
         public Matrix4x4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)

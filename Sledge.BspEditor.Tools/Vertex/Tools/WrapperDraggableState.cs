@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
@@ -54,7 +54,7 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         public void Drag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 lastPosition, Vector3 position) { }
         public void EndDrag(MapDocument document, MapViewport viewport, OrthographicCamera camera, ViewportEvent e, Vector3 position) { }
         public void Render(MapDocument document, BufferBuilder builder) { }
-        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, Graphics graphics) { }
-        public void Render(IViewport viewport, PerspectiveCamera camera, Graphics graphics) { }
+        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im) { }
+        public void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im) { }
     }
 }
