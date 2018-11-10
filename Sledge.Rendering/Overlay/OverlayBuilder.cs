@@ -60,23 +60,14 @@ namespace Sledge.Rendering.Overlay
                 max = Vector3.Max(tl, br);
             }
 
-            ImGui.SetCurrentContext(_controller.Context);
-            ImGui.PushFont(_controller.DefaultFont);
-
-            ImGui.SetNextWindowPos(new Vector2(0, 0), ImGuiCond.Always, Vector2.Zero);
-            ImGui.SetNextWindowSizeConstraints(new Vector2(_viewport.Width, _viewport.Height), new Vector2(_viewport.Width, _viewport.Height));
-            ImGui.SetNextWindowBgAlpha(0);
-
-            var createWindow = ImGui.Begin("Viewport", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoNav);
-            if (createWindow)
+            using (var renderer = new ImGui2DRenderer(_viewport, _controller))
             {
-                var list = ImGui.GetWindowDrawList();
                 foreach (var b in builders)
                 {
                     try
                     {
-                        if (pc != null) b.Render(_viewport, pc, list);
-                        if (oc != null) b.Render(_viewport, oc, min, max, list);
+                        if (pc != null) b.Render(_viewport, pc, renderer);
+                        if (oc != null) b.Render(_viewport, oc, min, max, renderer);
                     }
                     catch (Exception ex)
                     {
@@ -84,8 +75,6 @@ namespace Sledge.Rendering.Overlay
                     }
                 }
             }
-
-            ImGui.End();
         }
 
         private long _lastFrame = -1;

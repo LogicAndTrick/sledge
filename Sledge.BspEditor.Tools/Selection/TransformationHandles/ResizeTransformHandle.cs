@@ -1,15 +1,13 @@
 ﻿using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
-using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
-using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
@@ -47,7 +45,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             return base.GetResizeOrigin(viewport, camera, position);
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
             if (Handle == ResizeHandle.Center)
             {
@@ -56,17 +54,15 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
                 var start = camera.WorldToScreen(BoxState.Start);
                 var end = camera.WorldToScreen(BoxState.End);
 
-                im.AddRectFilled(start.ToVector2(), end.ToVector2(), State.FillColour.ToImGuiColor());
+                im.AddRectFilled(start.ToVector2(), end.ToVector2(), State.FillColour);
 
                 if (SnappedMoveOrigin != null)
                 {
                     const int size = 4;
                     var orig = camera.WorldToScreen(camera.Expand(SnappedMoveOrigin.Value));
 
-                    var yellow = Color.Yellow.ToImGuiColor();
-
-                    im.AddLine(new Vector2(orig.X - size, orig.Y - size), new Vector2(orig.X + size, orig.Y + size), yellow);
-                    im.AddLine(new Vector2(orig.X + size, orig.Y - size), new Vector2(orig.X - size, orig.Y + size), yellow);
+                    im.AddLine(new Vector2(orig.X - size, orig.Y - size), new Vector2(orig.X + size, orig.Y + size), Color.Yellow, 1, false);
+                    im.AddLine(new Vector2(orig.X + size, orig.Y - size), new Vector2(orig.X - size, orig.Y + size), Color.Yellow, 1, false);
                 }
             }
             else

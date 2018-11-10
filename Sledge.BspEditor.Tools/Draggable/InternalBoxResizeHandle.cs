@@ -1,14 +1,12 @@
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
-using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
-using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Draggable
@@ -70,7 +68,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             return points.OrderBy(x => (position - x).LengthSquared()).First();
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
             if (HighlightedViewport != viewport) return;
             
@@ -78,17 +76,15 @@ namespace Sledge.BspEditor.Tools.Draggable
             var start = camera.WorldToScreen(camera.Expand(b.Start));
             var end = camera.WorldToScreen(camera.Expand(b.End));
 
-            im.AddRectFilled(start.ToVector2(), end.ToVector2(), State.FillColour.ToImGuiColor());
+            im.AddRectFilled(start.ToVector2(), end.ToVector2(), State.FillColour);
 
             if (Handle == ResizeHandle.Center && SnappedMoveOrigin != null)
             {
                 const int size = 4;
                 var orig = camera.WorldToScreen(camera.Expand(SnappedMoveOrigin.Value));
 
-                var yellow = Color.Yellow.ToImGuiColor();
-
-                im.AddLine(new Vector2(orig.X - size, orig.Y - size), new Vector2(orig.X + size, orig.Y + size), yellow);
-                im.AddLine(new Vector2(orig.X + size, orig.Y - size), new Vector2(orig.X - size, orig.Y + size), yellow);
+                im.AddLine(new Vector2(orig.X - size, orig.Y - size), new Vector2(orig.X + size, orig.Y + size), Color.Yellow, 1, false);
+                im.AddLine(new Vector2(orig.X + size, orig.Y - size), new Vector2(orig.X - size, orig.Y + size), Color.Yellow, 1, false);
             }
         }
     }

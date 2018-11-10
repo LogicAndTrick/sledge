@@ -4,13 +4,12 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
-using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
-using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
@@ -357,7 +356,7 @@ namespace Sledge.BspEditor.Tools.Widgets
             base.Render(document, builder, resourceCollector);
         }
 
-        protected override void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
+        protected override void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
         {
             if (!document.Selection.IsEmpty)
             {
@@ -377,27 +376,20 @@ namespace Sledge.BspEditor.Tools.Widgets
             base.Render(document, viewport, camera, im);
         }
 
-        private void RenderAxisRotating(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
+        private void RenderAxisRotating(IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
         {
             if (ActiveViewport.Viewport != viewport || !_mouseDownPoint.HasValue || !_mouseMovePoint.HasValue) return;
 
-            var gray = Color.Gray.ToImGuiColor();
-            var lightgray = Color.LightGray.ToImGuiColor();
-
             var st = camera.WorldToScreen(_pivotPoint);
             var en = _mouseDownPoint.Value;
-            im.AddLine(st.ToVector2(), en.ToVector2(), gray);
+            im.AddLine(st.ToVector2(), en.ToVector2(), Color.Gray);
 
             en = _mouseMovePoint.Value;
-            im.AddLine(st.ToVector2(), en.ToVector2(), lightgray);
+            im.AddLine(st.ToVector2(), en.ToVector2(), Color.LightGray);
         }
 
-        private void RenderCircleTypeNone(PerspectiveCamera camera, ImDrawListPtr im)
+        private void RenderCircleTypeNone(PerspectiveCamera camera, I2DRenderer im)
         {
-            var white = Color.White.ToImGuiColor();
-            var darkgray = Color.DarkGray.ToImGuiColor();
-            var lightgray = Color.LightGray.ToImGuiColor();
-
             var center = _pivotPoint;
             var origin = new Vector3(center.X, center.Y, center.Z);
 
@@ -434,7 +426,7 @@ namespace Sledge.BspEditor.Tools.Widgets
                 var st = camera.WorldToScreen(line.Start);
                 var en = camera.WorldToScreen(line.End);
 
-                im.AddLine(st.ToVector2(), en.ToVector2(), darkgray);
+                im.AddLine(st.ToVector2(), en.ToVector2(), Color.DarkGray);
 
                 line = new Line(
                     origin + right * cos1 * radius * 1.2f + up * sin1 * radius * 1.2f,
@@ -444,7 +436,7 @@ namespace Sledge.BspEditor.Tools.Widgets
                 st = camera.WorldToScreen(line.Start);
                 en = camera.WorldToScreen(line.End);
 
-                var c = _mouseOver == CircleType.Outer ? white : lightgray;
+                var c = _mouseOver == CircleType.Outer ? Color.White : Color.LightGray;
                 im.AddLine(st.ToVector2(), en.ToVector2(), c);
             }
 
@@ -480,7 +472,7 @@ namespace Sledge.BspEditor.Tools.Widgets
             }
         }
 
-        private void RenderLine(Vector3 start, Vector3 end, Plane plane, Color color, ICamera camera, ImDrawListPtr im)
+        private void RenderLine(Vector3 start, Vector3 end, Plane plane, Color color, ICamera camera, I2DRenderer im)
         {
             var line = new Line(start, end);
             var cls = line.ClassifyAgainstPlane(plane);
@@ -496,7 +488,7 @@ namespace Sledge.BspEditor.Tools.Widgets
             var st = camera.WorldToScreen(line.Start);
             var en = camera.WorldToScreen(line.End);
 
-            im.AddLine(st.ToVector2(), en.ToVector2(), color.ToImGuiColor(), 2);
+            im.AddLine(st.ToVector2(), en.ToVector2(), color, 2);
         }
     }
 }

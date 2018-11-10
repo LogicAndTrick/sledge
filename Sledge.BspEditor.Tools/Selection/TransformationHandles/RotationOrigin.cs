@@ -1,13 +1,12 @@
 using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
-using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
-using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
@@ -34,7 +33,7 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             OnDragMoved();
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
             var spos = camera.WorldToScreen(Position);
 
@@ -42,8 +41,8 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             const float outer = 8;
 
             var col = Highlighted ? Color.Red : Color.White;
-            im.AddCircle(spos.ToVector2(), inner, Color.Cyan.ToImGuiColor());
-            im.AddCircle(spos.ToVector2(), outer, col.ToImGuiColor());
+            im.AddCircle(spos.ToVector2(), inner, Color.Cyan);
+            im.AddCircle(spos.ToVector2(), outer, col);
         }
     }
 }

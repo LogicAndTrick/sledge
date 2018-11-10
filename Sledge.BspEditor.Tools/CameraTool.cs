@@ -6,18 +6,17 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Components;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
-using Sledge.Common;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 using Sledge.Shell.Input;
 using Camera = Sledge.BspEditor.Primitives.MapData.Camera;
@@ -255,7 +254,7 @@ namespace Sledge.BspEditor.Tools
             vp.Control.Cursor = cursor;
         }
 
-        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
             base.Render(document, viewport, camera, worldMin, worldMax, im);
 
@@ -267,9 +266,9 @@ namespace Sledge.BspEditor.Tools
                 var lineColor = cam.IsActive ? Color.Red : Color.Cyan;
                 var handleColor = cam.IsActive ? Color.DarkOrange : Color.LawnGreen;
 
-                im.AddLine(p1.ToVector2(), p2.ToVector2(), lineColor.ToImGuiColor());
-                im.AddCircleFilled(p1.ToVector2(), 4, handleColor.ToImGuiColor());
-                im.AddCircle(p1.ToVector2(), 4, Color.Black.ToImGuiColor());
+                im.AddLine(p1.ToVector2(), p2.ToVector2(), lineColor);
+                im.AddCircleFilled(p1.ToVector2(), 4, handleColor);
+                im.AddCircle(p1.ToVector2(), 4, Color.Black);
                 
                 // todo post-beta: triangle arrow for cameras in 2D?
             }

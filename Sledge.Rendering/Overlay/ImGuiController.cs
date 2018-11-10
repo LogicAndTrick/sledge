@@ -53,6 +53,8 @@ namespace Sledge.Rendering.Overlay
 
         public IntPtr Context { get; }
         public ImFontPtr DefaultFont { get; }
+        public ImFontPtr BoldFont { get; }
+        public ImFontPtr LargeFont { get; }
 
         /// <summary>
         /// Constructs a new ImGuiController.
@@ -69,27 +71,43 @@ namespace Sledge.Rendering.Overlay
             ImGui.GetIO().Fonts.AddFontDefault();
             
             var arial = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf");
+            var arialbd = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arialbd.ttf");
+
+            var cfg = new ImFontConfig
+            {
+                FontDataOwnedByAtlas = 1,
+                OversampleH = 5,
+                OversampleV = 1,
+                PixelSnapH = 0,
+                GlyphMinAdvanceX = 0,
+                GlyphMaxAdvanceX = float.MaxValue,
+                RasterizerMultiply = 1.2f
+            };
 
             if (File.Exists(arial))
             {
                 unsafe
                 {
-                    var cfg = new ImFontConfig
-                    {
-                        FontDataOwnedByAtlas = 1,
-                        OversampleH = 5,
-                        OversampleV = 1,
-                        PixelSnapH = 0,
-                        GlyphMinAdvanceX = 0,
-                        GlyphMaxAdvanceX = float.MaxValue,
-                        RasterizerMultiply = 1.2f
-                    };
                     DefaultFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(arial, 14, new ImFontConfigPtr(&cfg));
+                    LargeFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(arial, 24, new ImFontConfigPtr(&cfg));
                 }
             }
             else
             {
                 DefaultFont = null;
+                LargeFont = null;
+            }
+
+            if (File.Exists(arialbd))
+            {
+                unsafe
+                {
+                    BoldFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(arialbd, 14, new ImFontConfigPtr(&cfg));
+                }
+            }
+            else
+            {
+                BoldFont = null;
             }
 
             var style = ImGui.GetStyle();
@@ -97,8 +115,8 @@ namespace Sledge.Rendering.Overlay
             style.WindowRounding = 0;
             style.WindowPadding = Vector2.Zero;
             style.WindowBorderSize = 0;
-            style.AntiAliasedFill = true;
-            style.AntiAliasedLines = true;
+            style.AntiAliasedFill = false;
+            style.AntiAliasedLines = false;
 
             CreateDeviceResources(gd, outputDescription);
 

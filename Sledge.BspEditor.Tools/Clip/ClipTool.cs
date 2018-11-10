@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
-using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
@@ -15,11 +14,11 @@ using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Properties;
-using Sledge.Common;
 using Sledge.Common.Shell.Components;
 using Sledge.Common.Shell.Hotkeys;
 using Sledge.Rendering.Cameras;
 using Sledge.DataStructures.Geometric;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
@@ -373,7 +372,7 @@ namespace Sledge.BspEditor.Tools.Clip
             }
         }
 
-        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
             base.Render(document, viewport, camera, worldMin, worldMax, im);
 
@@ -388,9 +387,8 @@ namespace Sledge.BspEditor.Tools.Clip
                 {
                     const int size = 4;
                     var spos = camera.WorldToScreen(p);
-
-                    im.AddRectFilled(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.White.ToImGuiColor());
-                    im.AddRect(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black.ToImGuiColor());
+                    
+                    im.AddRectOutlineOpaque(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black, Color.White);
                 }
             }
         }

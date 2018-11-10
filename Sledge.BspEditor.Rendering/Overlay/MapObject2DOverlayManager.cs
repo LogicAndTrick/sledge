@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapObjects;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Rendering.Overlay
@@ -33,7 +32,7 @@ namespace Sledge.BspEditor.Rendering.Overlay
             _document.SetTarget(doc);
         }
 
-        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
             if (!_overlays.Any()) return;
             if (!_document.TryGetTarget(out var doc)) return;
@@ -50,7 +49,7 @@ namespace Sledge.BspEditor.Rendering.Overlay
             }
         }
 
-        public void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
+        public void Render(IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
         {
             // 2D only
         }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
-using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Resources;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 
@@ -178,7 +178,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             base.Render(document, builder, resourceCollector);
         }
 
-        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        protected override void Render(MapDocument document, IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
             foreach (var obj in CollectObjects(x => new[] { x }).OrderBy(x => camera.GetUnusedValue(x.ZIndex)))
             {
@@ -187,7 +187,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             base.Render(document, viewport, camera, worldMin, worldMax, im);
         }
 
-        protected override void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
+        protected override void Render(MapDocument document, IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
         {
             foreach (var obj in CollectObjects(x => new[] { x }).OrderByDescending(x => (x.Origin - camera.Position).LengthSquared()))
             {

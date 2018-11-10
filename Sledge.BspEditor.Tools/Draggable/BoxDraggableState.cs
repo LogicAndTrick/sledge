@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
-using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Pipelines;
 using Sledge.Rendering.Primitives;
 using Sledge.Rendering.Resources;
@@ -202,7 +201,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             return BoxColour;
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
             if (ShouldDrawBox())
             {
@@ -219,16 +218,16 @@ namespace Sledge.BspEditor.Tools.Draggable
             }
         }
 
-        protected virtual void DrawBox(IViewport viewport, OrthographicCamera camera, ImDrawListPtr im, Vector3 start, Vector3 end)
+        protected virtual void DrawBox(IViewport viewport, OrthographicCamera camera, I2DRenderer im, Vector3 start, Vector3 end)
         {
             start = Vector3.Max(start, new Vector3(-100, -100, -100));
             end = Vector3.Min(end, new Vector3(viewport.Width + 100, viewport.Height + 100, 100));
             
-            im.AddRectFilled(start.ToVector2(), end.ToVector2(), GetRenderFillColour().ToImGuiColor());
-            im.AddRect(start.ToVector2(), end.ToVector2(), GetRenderBoxColour().ToImGuiColor());
+            im.AddRectFilled(start.ToVector2(), end.ToVector2(), GetRenderFillColour());
+            im.AddRect(start.ToVector2(), end.ToVector2(), GetRenderBoxColour());
         }
 
-        protected virtual void DrawBoxText(IViewport viewport, OrthographicCamera camera, ImDrawListPtr im, Vector3 start, Vector3 end)
+        protected virtual void DrawBoxText(IViewport viewport, OrthographicCamera camera, I2DRenderer im, Vector3 start, Vector3 end)
         {
             // Don't draw the text at all if the rectangle is entirely outside the viewport
             if (start.X > camera.Width || end.X < 0) return;
@@ -242,8 +241,8 @@ namespace Sledge.BspEditor.Tools.Draggable
             var heightText = (Math.Abs(Math.Round(en.Y - st.Y, 1))).ToString("0.##");
             
             // Determine the size of the value strings
-            var mWidth = ImGui.CalcTextSize(widthText);
-            var mHeight = ImGui.CalcTextSize(heightText);
+            var mWidth = im.CalcTextSize(FontType.Large, widthText);
+            var mHeight = im.CalcTextSize(FontType.Large, heightText);
             
             const int padding = 6;
             
@@ -255,12 +254,12 @@ namespace Sledge.BspEditor.Tools.Draggable
             vHeight = Vector3.Clamp(vHeight, new Vector3(0, mWidth.Y + padding, 0), new Vector3(camera.Width - mWidth.X - padding, camera.Height - mHeight.Y - padding, 0));
             
             // Draw the strings
-            im.AddText(vWidth.ToVector2(), GetRenderBoxColour().ToImGuiColor(), widthText);
-            im.AddText(vHeight.ToVector2(), GetRenderBoxColour().ToImGuiColor(), heightText);
+            im.AddText(vWidth.ToVector2(), GetRenderBoxColour(), FontType.Large, widthText);
+            im.AddText(vHeight.ToVector2(), GetRenderBoxColour(), FontType.Large, heightText);
             
         }
 
-        public override void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
+        public override void Render(IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
         {
             //
         }

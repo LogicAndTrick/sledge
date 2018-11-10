@@ -1,9 +1,9 @@
 using System;
 using System.Numerics;
-using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 
@@ -63,7 +63,7 @@ namespace Sledge.BspEditor.Tools.Draggable
         public abstract void Highlight(MapDocument document, MapViewport viewport);
         public abstract void Unhighlight(MapDocument document, MapViewport viewport);
         public abstract void Render(MapDocument document, BufferBuilder builder);
-        public abstract void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im);
-        public abstract void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im);
+        public abstract void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im);
+        public abstract void Render(IViewport viewport, PerspectiveCamera camera, I2DRenderer im);
     }
 }

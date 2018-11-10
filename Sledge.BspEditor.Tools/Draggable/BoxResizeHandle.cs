@@ -2,11 +2,10 @@ using System;
 using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
-using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
-using Sledge.Common;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 
@@ -171,7 +170,7 @@ namespace Sledge.BspEditor.Tools.Draggable
             //
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
             if (State.State.Action != BoxAction.Drawn) return;
 
@@ -179,12 +178,11 @@ namespace Sledge.BspEditor.Tools.Draggable
             var spos = camera.WorldToScreen(wpos) + soff;
 
             const int size = 4;
-
-            im.AddRectFilled(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.White.ToImGuiColor());
-            im.AddRect(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black.ToImGuiColor());
+            
+            im.AddRectOutlineOpaque(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black, Color.White);
         }
 
-        public override void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
+        public override void Render(IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
         {
             //
         }

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Rendering.Viewport;
@@ -18,6 +17,7 @@ using Sledge.Common;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Resources;
 using Sledge.Rendering.Viewports;
 using Sledge.Shell;
@@ -816,37 +816,34 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
                 // 
             }
 
-            public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+            public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
             {
                 const int size = 4;
 
                 var opac = IsDragging ? 128 : 255;
                 var spos = camera.WorldToScreen(Position);
 
-                var color = Color.FromArgb(opac, GetColor()).ToImGuiColor();
-                im.AddRectFilled(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), color);
-                im.AddRect(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black.ToImGuiColor());
+                var color = Color.FromArgb(opac, GetColor());
+                im.AddRectOutlineOpaque(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black, color);
 
                 if (IsDragging)
                 {
                     spos = camera.WorldToScreen(DraggingPosition);
-                    color = Color.FromArgb(128, GetColor()).ToImGuiColor();
-                    im.AddRectFilled(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), color);
-                    im.AddRect(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black.ToImGuiColor());
+                    color = Color.FromArgb(128, GetColor());
+                    im.AddRectOutlineOpaque(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black, color);
                 }
             }
 
-            public override void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
+            public override void Render(IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
             {
                 const int size = 4;
                 var p = IsDragging ? DraggingPosition : Position;
 
                 var spos = camera.WorldToScreen(p);
 
-                var color = Color.FromArgb(255, GetColor()).ToImGuiColor();
-
-                im.AddRectFilled(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), color);
-                im.AddRect(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black.ToImGuiColor());
+                var color = Color.FromArgb(255, GetColor());
+                
+                im.AddRectOutlineOpaque(new Vector2(spos.X - size, spos.Y - size), new Vector2(spos.X + size, spos.Y + size), Color.Black, color);
             }
         }
     }

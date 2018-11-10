@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using System.Numerics;
 using System.Threading.Tasks;
-using ImGuiNET;
 using LogicAndTrick.Oy;
 using Sledge.BspEditor.Rendering.Dynamic;
 using Sledge.BspEditor.Rendering.Resources;
@@ -40,12 +39,12 @@ namespace Sledge.BspEditor.Tools
             ActiveTool?.Render(builder, resourceCollector);
         }
 
-        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        public void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
             ActiveTool?.Render(viewport, camera, worldMin, worldMax, im);
         }
 
-        public void Render(IViewport viewport, PerspectiveCamera camera, ImDrawListPtr im)
+        public void Render(IViewport viewport, PerspectiveCamera camera, I2DRenderer im)
         {
             ActiveTool?.Render(viewport, camera, im);
         }

@@ -1,14 +1,13 @@
 using System;
 using System.Drawing;
 using System.Numerics;
-using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Primitives.MapData;
 using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
-using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 using KeyboardState = Sledge.Shell.Input.KeyboardState;
 
@@ -50,15 +49,15 @@ namespace Sledge.BspEditor.Tools.Selection.TransformationHandles
             base.EndDrag(document, viewport, camera, e, position);
         }
 
-        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        public override void Render(IViewport viewport, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
             var (wpos, soff) = GetWorldPositionAndScreenOffset(camera);
             var spos = camera.WorldToScreen(wpos) + soff;
 
             const float radius = 4;
 
-            im.AddCircleFilled(spos.ToVector2(), radius, Color.White.ToImGuiColor());
-            im.AddCircle(spos.ToVector2(), radius, Color.Black.ToImGuiColor());
+            im.AddCircleFilled(spos.ToVector2(), radius, Color.White);
+            im.AddCircle(spos.ToVector2(), radius, Color.Black);
         }
 
         public Matrix4x4? GetTransformationMatrix(MapViewport viewport, OrthographicCamera camera, BoxState state, MapDocument doc)

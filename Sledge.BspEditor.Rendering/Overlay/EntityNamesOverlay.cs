@@ -3,11 +3,10 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using ImGuiNET;
 using Sledge.BspEditor.Primitives.MapObjectData;
 using Sledge.BspEditor.Primitives.MapObjects;
-using Sledge.Common;
 using Sledge.Rendering.Cameras;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Rendering.Overlay
@@ -15,7 +14,7 @@ namespace Sledge.BspEditor.Rendering.Overlay
     [Export(typeof(IMapObject2DOverlay))]
     public class EntityNamesOverlay : IMapObject2DOverlay
     {
-        public void Render(IViewport viewport, ICollection<IMapObject> objects, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, ImDrawListPtr im)
+        public void Render(IViewport viewport, ICollection<IMapObject> objects, OrthographicCamera camera, Vector3 worldMin, Vector3 worldMax, I2DRenderer im)
         {
             if (camera.Zoom < 1) return;
 
@@ -38,17 +37,16 @@ namespace Sledge.BspEditor.Rendering.Overlay
                 var str = ed.EntityData.Name;
                 var targetname = ed.EntityData.Get<string>("targetname")?.Trim() ?? "";
 
-                var size = ImGui.CalcTextSize(str);
+                var size = im.CalcTextSize(FontType.Normal, str);
 
                 var pos = new Vector2(loc.X - size.X / 2, loc.Y - size.Y - 2);
-                var col = c.ToImGuiColor();
 
-                im.AddText(pos, col, str);
+                im.AddText(pos, c, FontType.Normal, str);
 
                 if (renderNames && targetname.Length > 0)
                 {
-                    var nmms = ImGui.CalcTextSize(targetname);
-                    im.AddText(new Vector2(loc.X - nmms.X / 2, loc.Y + 2), col, targetname);
+                    var nmms = im.CalcTextSize(FontType.Bold, targetname);
+                    im.AddText(new Vector2(loc.X - nmms.X / 2, loc.Y + 2), c, FontType.Bold, targetname);
                 }
             }
         }

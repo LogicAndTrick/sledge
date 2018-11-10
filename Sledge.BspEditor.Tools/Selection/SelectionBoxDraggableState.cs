@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using ImGuiNET;
 using Sledge.BspEditor.Documents;
 using Sledge.BspEditor.Modification;
 using Sledge.BspEditor.Modification.Operations.Mutation;
@@ -14,10 +13,10 @@ using Sledge.BspEditor.Rendering.Viewport;
 using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Selection.TransformationHandles;
 using Sledge.BspEditor.Tools.Widgets;
-using Sledge.Common;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
 using Sledge.Rendering.Engine;
+using Sledge.Rendering.Overlay;
 using Sledge.Rendering.Viewports;
 
 namespace Sledge.BspEditor.Tools.Selection
@@ -220,10 +219,10 @@ namespace Sledge.BspEditor.Tools.Selection
             Update();
         }
 
-        protected override void DrawBox(IViewport viewport, OrthographicCamera camera, ImDrawListPtr im, Vector3 start, Vector3 end)
+        protected override void DrawBox(IViewport viewport, OrthographicCamera camera, I2DRenderer im, Vector3 start, Vector3 end)
         {
-            im.AddRectFilled(start.ToVector2(), end.ToVector2(), GetRenderFillColour().ToImGuiColor());
-            im.AddRect(start.ToVector2(), end.ToVector2(), GetRenderBoxColour().ToImGuiColor());
+            im.AddRectFilled(start.ToVector2(), end.ToVector2(), GetRenderFillColour());
+            im.AddRect(start.ToVector2(), end.ToVector2(), GetRenderBoxColour());
         }
 
         protected override Color GetRenderFillColour()

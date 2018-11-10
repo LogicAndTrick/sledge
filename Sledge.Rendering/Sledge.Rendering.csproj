@@ -74,7 +74,10 @@
     <Compile Include="Engine\Scene.cs" />
     <Compile Include="Interfaces\IModel.cs" />
     <Compile Include="Interfaces\IModelRenderable.cs" />
+    <Compile Include="Overlay\FontType.cs" />
+    <Compile Include="Overlay\I2DRenderer.cs" />
     <Compile Include="Overlay\ImGuiController.cs" />
+    <Compile Include="Overlay\OverlayRenderer.cs" />
     <Compile Include="Pipelines\PipelineGroup.cs" />
     <Compile Include="Pipelines\TexturedAdditivePipeline.cs" />
     <Compile Include="Pipelines\TexturedAlphaPipeline.cs" />
