@@ -57,9 +57,9 @@ namespace Sledge.Common.Easings
                 case EasingType.Quintic:
                     return x => Math.Pow(x, 5);
                 case EasingType.Sinusoidal:
-                    return x => 1 - Math.Cos(x * Math.PI / 2); // Wait... That's not Sine!
+                    return x => 1 - Math.Cos(x * Math.PI / 2);
                 case EasingType.Exponential:
-                    return x => Math.Pow(x, 5);
+                    return x => Math.Pow(2, x) - 1;
                 case EasingType.Circular:
                     return x => 1 - Math.Sqrt(1 - x * x);
                 default:
