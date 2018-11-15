@@ -26,6 +26,7 @@ namespace Sledge.BspEditor.Rendering.ChangeHandlers
         public EntityDecal(SerialisedObject obj)
         {
             Name = obj.Get<string>("Name");
+            SolidIDs = new List<long>();
             Geometry = new List<Face>();
         }
 
