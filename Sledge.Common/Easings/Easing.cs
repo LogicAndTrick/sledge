@@ -59,7 +59,7 @@ namespace Sledge.Common.Easings
                 case EasingType.Sinusoidal:
                     return x => 1 - Math.Cos(x * Math.PI / 2);
                 case EasingType.Exponential:
-                    return x => Math.Pow(2, x) - 1;
+                    return x => Math.Pow(2, 10*(x-1));
                 case EasingType.Circular:
                     return x => 1 - Math.Sqrt(1 - x * x);
                 default:
