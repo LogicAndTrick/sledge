@@ -156,6 +156,12 @@ namespace Sledge.BspEditor.Editing.Components.Properties
             Save().ContinueWith(Close);
         }
 
+		protected override void OnMouseEnter(EventArgs e)
+		{
+            Focus();
+            base.OnMouseEnter(e);
+        }
+
         /// <summary>
         /// Conditionally close the dialog. Doesn't perform any change detection.
         /// </summary>

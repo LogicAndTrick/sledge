@@ -53,6 +53,12 @@ namespace Sledge.BspEditor.Editing.Components
             Oy.Publish("Context:Remove", new ContextInfo("BspEditor:MapInformation"));
         }
 
+        protected override void OnMouseEnter(EventArgs e)
+		{
+            Focus();
+            base.OnMouseEnter(e);
+        }
+
         public bool IsInContext(IContext context)
         {
             return context.HasAny("BspEditor:MapInformation");

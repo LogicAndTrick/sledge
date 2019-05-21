@@ -114,6 +114,12 @@ namespace Sledge.BspEditor.Tools.Texture
             Oy.Publish("Context:Remove", new ContextInfo("BspEditor:TextureReplace"));
         }
 
+		protected override void OnMouseEnter(EventArgs e)
+		{
+            Focus();
+            base.OnMouseEnter(e);
+        }
+
         public bool IsInContext(IContext context)
         {
             return context.HasAny("BspEditor:TextureReplace");
