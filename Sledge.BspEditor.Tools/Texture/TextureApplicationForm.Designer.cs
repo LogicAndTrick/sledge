@@ -306,7 +306,7 @@
             this.TextureDetailsLabel.Name = "TextureDetailsLabel";
             this.TextureDetailsLabel.Size = new System.Drawing.Size(393, 23);
             this.TextureDetailsLabel.TabIndex = 21;
-            this.TextureDetailsLabel.Text = "TEXTURENAMEANDSIZE";
+            this.TextureDetailsLabel.Text = "";
             this.TextureDetailsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tableLayoutPanel1
