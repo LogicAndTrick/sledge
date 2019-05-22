@@ -29,8 +29,9 @@
             "SelectByCenterHandles": "Allow selection by clicking center handles",
             "OnlySelectByCenterHandles": "Only allow selection by clicking center handles",
             "SelectionBoxOnlySelectsByCenterHandles": "Selection box only selects by center handles",
+            "SelectionClickCycles": "Clicking a selection cycles through transform modes",
             "KeepVisgroupsWhenCloning": "Keep visgroups when cloning"
-        } 
+        }
     },
     "MenuDataProvider": {
         "Map": "Map"

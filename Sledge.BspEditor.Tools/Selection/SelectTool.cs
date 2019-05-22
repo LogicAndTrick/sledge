@@ -60,7 +60,8 @@ namespace Sledge.BspEditor.Tools.Selection
         [Setting] public bool Show3DWidgets { get; set; } = false;
         [Setting] public bool SelectByCenterHandles { get; set; } = true;
         [Setting] public bool OnlySelectByCenterHandles { get; set; } = false;
-		[Setting] public bool SelectionBoxOnlySelectsByCenterHandles { get; set; } = false;
+        [Setting] public bool SelectionBoxOnlySelectsByCenterHandles { get; set; } = false;
+        [Setting] public bool SelectionClickCycles { get; set; } = true;
         [Setting] public bool KeepVisgroupsWhenCloning { get; set; } = true;
 
         string ISettingsContainer.Name => "Sledge.BspEditor.Tools.SelectTool";
@@ -73,6 +74,7 @@ namespace Sledge.BspEditor.Tools.Selection
             yield return new SettingKey("Tools/Selection", "SelectByCenterHandles", typeof(bool));
             yield return new SettingKey("Tools/Selection", "OnlySelectByCenterHandles", typeof(bool));
             yield return new SettingKey("Tools/Selection", "SelectionBoxOnlySelectsByCenterHandles", typeof(bool));
+            yield return new SettingKey("Tools/Selection", "SelectionClickCycles", typeof(bool));
             yield return new SettingKey("Tools/Selection", "KeepVisgroupsWhenCloning", typeof(bool));
         }
 
@@ -526,7 +528,9 @@ namespace Sledge.BspEditor.Tools.Selection
                 }
                 SetSelected(document, desel, sel, !ctrl, IgnoreGrouping());
             }
-            else if (_selectionBox.State.Action == BoxAction.Drawn && draggable is ResizeTransformHandle res && res.Handle == ResizeHandle.Center)
+            else if (_selectionBox.State.Action == BoxAction.Drawn 
+                && draggable is ResizeTransformHandle res 
+                && res.Handle == ResizeHandle.Center && SelectionClickCycles)
             {
                 _selectionBox.Cycle();
             }
