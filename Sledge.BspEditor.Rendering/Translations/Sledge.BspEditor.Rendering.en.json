@@ -20,7 +20,8 @@
             "MouseWheelMoveDistance": "Mouse wheel move distance",
             "MouseWheelZoomMultiplier": "Mouse wheel zoom multiplier",
             "InvertX": "Invert X axis",
-            "InvertY": "Invert Y axis"
+            "InvertY": "Invert Y axis",
+            "Sensitivity": "Mouse sensitivity"
         },
         "Converters": {
             "CenterHandlesConverter": {
