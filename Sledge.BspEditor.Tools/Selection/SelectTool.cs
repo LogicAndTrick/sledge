@@ -282,7 +282,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
         public override async Task ToolSelected()
         {
-            TransformationModeChanged(_selectionBox.CurrentTransformationMode);
+            TransformationModeChanged(SelectionBoxDraggableState.TransformationMode.Resize);
 
             var document = GetDocument();
             if (document != null)
@@ -307,6 +307,8 @@ namespace Sledge.BspEditor.Tools.Selection
                 var box = document.Selection.GetSelectionBoundingBox();
                 _selectionBox.SetRotationOrigin(box.Center);
             }
+            else
+                TransformationModeChanged(SelectionBoxDraggableState.TransformationMode.Resize);
         }
 
         /// <summary>
@@ -530,7 +532,8 @@ namespace Sledge.BspEditor.Tools.Selection
             }
             else if (_selectionBox.State.Action == BoxAction.Drawn 
                 && draggable is ResizeTransformHandle res 
-                && res.Handle == ResizeHandle.Center && SelectionClickCycles)
+                && res.Handle == ResizeHandle.Center 
+                && SelectionClickCycles)
             {
                 _selectionBox.Cycle();
             }
