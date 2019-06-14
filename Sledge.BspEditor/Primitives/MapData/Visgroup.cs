@@ -17,7 +17,7 @@ namespace Sledge.BspEditor.Primitives.MapData
         public long ID { get; set; }
         public string Name { get; set; }
         public bool Visible { get; set; } = true;
-        public Color Colour { get; set; }
+        public Color Colour { get; set; } = Color.Gray;
         public ISet<IMapObject> Objects { get; set; }
 
         public Visgroup()
@@ -28,6 +28,10 @@ namespace Sledge.BspEditor.Primitives.MapData
         public Visgroup(SerialisedObject obj)
         {
             Objects = new ThreadSafeSet<IMapObject>();
+            ID = obj.Get<long>("ID");
+            Name = obj.Get<string>("Name");
+            Visible = obj.Get<bool>("Visible");
+            Colour = obj.GetColor("Colour");
         }
 
         [Export(typeof(IMapElementFormatter))]
@@ -48,6 +52,7 @@ namespace Sledge.BspEditor.Primitives.MapData
             info.AddValue("ID", ID);
             info.AddValue("Name", Name);
             info.AddValue("Visible", Visible);
+            // Colour??
         }
 
         public virtual IMapElement Clone()
@@ -74,7 +79,7 @@ namespace Sledge.BspEditor.Primitives.MapData
 
         public SerialisedObject ToSerialisedObject()
         {
-            var v = new SerialisedObject("visgroup");
+            var v = new SerialisedObject("Visgroup");
             v.Set("ID", ID);
             v.Set("Name", Name);
             v.Set("Visible", Visible);
