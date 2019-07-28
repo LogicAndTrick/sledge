@@ -129,6 +129,12 @@ namespace Sledge.Shell.Forms
             GroupList.EndUpdate();
         }
         
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            Focus();
+            base.OnMouseEnter(e);
+        }
+
         private readonly List<ISettingEditor> _editors = new List<ISettingEditor>();
 
         private void LoadEditorList()

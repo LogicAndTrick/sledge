@@ -45,6 +45,12 @@ namespace Sledge.Shell.Forms
             PopulateFileList();
         }
 
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            Focus();
+            base.OnMouseEnter(e);
+        }
+
         private void PopulateLanguageList()
         {
             cmbLanguage.BeginUpdate();

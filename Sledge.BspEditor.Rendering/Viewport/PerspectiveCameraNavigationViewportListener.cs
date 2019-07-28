@@ -281,10 +281,15 @@ namespace Sledge.BspEditor.Rendering.Viewport
             }
             else // left mouse or z-toggle
             {
-                // Camera
-                var fovdiv = (Viewport.Width / 60f) / 2.5f;
-                Camera.Pan(dx / fovdiv);
-                Camera.Tilt(dy / fovdiv);
+                // adjust is an arbitrary and tunable parameter to get setting
+                // values that are sensible and not too high or too low.
+                const float adjust = 100.0f;
+
+                // Scale with FOV for consistency
+                float fovscale = CameraNavigationViewportSettings.FOV / 60f;
+                float scale = fovscale * ( (float)CameraNavigationViewportSettings.Sensitivity / adjust );
+                Camera.Pan(dx * scale);
+                Camera.Tilt(dy * scale);
             }
 
             LastKnownX = Viewport.Width/2;

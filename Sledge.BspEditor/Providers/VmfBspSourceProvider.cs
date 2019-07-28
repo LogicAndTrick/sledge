@@ -297,6 +297,7 @@ namespace Sledge.BspEditor.Providers
             foreach (var visgroup in map.Data.OfType<Visgroup>())
             {
                 var vgo = new SerialisedObject("visgroup");
+                vgo.Set("name", visgroup.Name);
                 vgo.Set("visgroupid", visgroup.ID);
                 vgo.SetColor("color", visgroup.Colour);
                 so.Children.Add(vgo);

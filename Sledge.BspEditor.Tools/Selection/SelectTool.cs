@@ -60,6 +60,8 @@ namespace Sledge.BspEditor.Tools.Selection
         [Setting] public bool Show3DWidgets { get; set; } = false;
         [Setting] public bool SelectByCenterHandles { get; set; } = true;
         [Setting] public bool OnlySelectByCenterHandles { get; set; } = false;
+        [Setting] public bool SelectionBoxOnlySelectsByCenterHandles { get; set; } = false;
+        [Setting] public bool SelectionClickCycles { get; set; } = true;
         [Setting] public bool KeepVisgroupsWhenCloning { get; set; } = true;
 
         string ISettingsContainer.Name => "Sledge.BspEditor.Tools.SelectTool";
@@ -71,6 +73,8 @@ namespace Sledge.BspEditor.Tools.Selection
             yield return new SettingKey("Tools/Selection", "Show3DWidgets", typeof(bool));
             yield return new SettingKey("Tools/Selection", "SelectByCenterHandles", typeof(bool));
             yield return new SettingKey("Tools/Selection", "OnlySelectByCenterHandles", typeof(bool));
+            yield return new SettingKey("Tools/Selection", "SelectionBoxOnlySelectsByCenterHandles", typeof(bool));
+            yield return new SettingKey("Tools/Selection", "SelectionClickCycles", typeof(bool));
             yield return new SettingKey("Tools/Selection", "KeepVisgroupsWhenCloning", typeof(bool));
         }
 
@@ -278,7 +282,7 @@ namespace Sledge.BspEditor.Tools.Selection
 
         public override async Task ToolSelected()
         {
-            TransformationModeChanged(_selectionBox.CurrentTransformationMode);
+            TransformationModeChanged(SelectionBoxDraggableState.TransformationMode.Resize);
 
             var document = GetDocument();
             if (document != null)
@@ -303,6 +307,8 @@ namespace Sledge.BspEditor.Tools.Selection
                 var box = document.Selection.GetSelectionBoundingBox();
                 _selectionBox.SetRotationOrigin(box.Center);
             }
+            else
+                TransformationModeChanged(SelectionBoxDraggableState.TransformationMode.Resize);
         }
 
         /// <summary>
@@ -524,7 +530,10 @@ namespace Sledge.BspEditor.Tools.Selection
                 }
                 SetSelected(document, desel, sel, !ctrl, IgnoreGrouping());
             }
-            else if (_selectionBox.State.Action == BoxAction.Drawn && draggable is ResizeTransformHandle res && res.Handle == ResizeHandle.Center)
+            else if (_selectionBox.State.Action == BoxAction.Drawn 
+                && draggable is ResizeTransformHandle res 
+                && res.Handle == ResizeHandle.Center 
+                && SelectionClickCycles)
             {
                 _selectionBox.Cycle();
             }
@@ -696,9 +705,14 @@ namespace Sledge.BspEditor.Tools.Selection
                 // If the shift key is down, select all brushes that are fully contained by the box
                 // If select by handles only is on, select all brushes with centers inside the box
                 // Otherwise, select all brushes that intersect with the box
+				Predicate<IMapObject> filter;
+				if ( KeyboardState.Shift )
+					filter = x => x.BoundingBox.ContainedWithin(boundingbox);
+				else if ( SelectionBoxOnlySelectsByCenterHandles )
+					filter = x => boundingbox.Vector3IsInside(x.BoundingBox.Center);
+				else
+					filter = x => true;
 
-                Predicate<IMapObject> filter = x => true;
-                if (KeyboardState.Shift) filter = x => x.BoundingBox.ContainedWithin(boundingbox);
                 var nodes = GetBoxIntersections(document, boundingbox, filter);
 
                 SetSelected(document, null, nodes, false, IgnoreGrouping());

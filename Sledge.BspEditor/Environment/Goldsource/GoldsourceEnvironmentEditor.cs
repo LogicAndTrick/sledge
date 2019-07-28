@@ -489,9 +489,13 @@ namespace Sledge.BspEditor.Environment.Goldsource
                         new NativeFile(txtGameDir.Text),
                         directories.Select(x => new NativeFile(x))
                     )).ToList();
+
+                    // Exclude game-internal packages that can not be used
+                    string[] _internalWads = new[] { "cached.wad", "fonts.wad", "gfx.wad", "tempdecal.wad" };
                     foreach (var pr in packages)
                     {
-                        if (!state.ContainsKey(pr.Name)) state[pr.Name] = true;
+                        if (!state.ContainsKey(pr.Name) && !_internalWads.Contains(pr.Name)) 
+                            state[pr.Name] = true;
                     }
 
                     foreach (var key in state.Keys.ToList())

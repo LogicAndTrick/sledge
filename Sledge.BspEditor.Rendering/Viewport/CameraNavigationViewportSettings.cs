@@ -18,6 +18,7 @@ namespace Sledge.BspEditor.Rendering.Viewport
         [Setting] public static int FOV { get; set; } = 60;
         [Setting] public static bool InvertX { get; set; } = false;
         [Setting] public static bool InvertY { get; set; } = false;
+        [Setting] public static decimal Sensitivity { get; set; } = 5;
 
         public string Name => "Sledge.BspEditor.Rendering.CameraNavigationViewportSettings";
 
@@ -32,6 +33,8 @@ namespace Sledge.BspEditor.Rendering.Viewport
             yield return new SettingKey("Navigation/2D", "MouseWheelZoomMultiplier", typeof(decimal));
             yield return new SettingKey("Navigation/3D", "InvertX", typeof(bool));
             yield return new SettingKey("Navigation/3D", "InvertY", typeof(bool));
+            yield return new SettingKey("Navigation/3D", "Sensitivity", typeof(decimal));
+
         }
 
         public void LoadValues(ISettingsStore store)
