@@ -14,6 +14,7 @@ using Sledge.Common.Shell.Context;
 using Sledge.Common.Shell.Hooks;
 using Sledge.Common.Translations;
 using Sledge.Shell;
+using Sledge.Shell.Forms;
 
 namespace Sledge.BspEditor.Editing.Components.Properties
 {
@@ -28,7 +29,7 @@ namespace Sledge.BspEditor.Editing.Components.Properties
     [Export(typeof(IDialog))]
     [Export(typeof(IInitialiseHook))]
     [AutoTranslate]
-    public sealed partial class ObjectPropertiesDialog : Form, IInitialiseHook, IDialog
+    public sealed partial class ObjectPropertiesDialog : BaseForm, IInitialiseHook, IDialog
     {
         private readonly Lazy<Form> _parent;
         private readonly IEnumerable<Lazy<IObjectPropertyEditorTab>> _tabs;
