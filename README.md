@@ -1,19 +1,21 @@
 Sledge
 ======
 
-[![Discord](https://img.shields.io/badge/chat-Sledge%20on%20TWHL%20discord-brightgreen.svg?logo=discord&style=flat-square)](https://discord.gg/Bj5bzjk)
+I have stopped working on Sledge due to personal reasons. I will be working on other projects, but Sledge is too large for me to manage on my own.
 
-**Pull requests are welcome!** Also, please submit an issue if you encounter a problem, you can also contact me via email (see GitHub profile).
+If you wish to continue development on the editor feel free to fork it - the only restriction is you don't call it Sledge. The BSD-3 license requires you to use a different name for your fork.
 
-*[Sledge beta has been released! It's ready!][1]*
+---
 
-Sledge is an open-source alternative to Valve's Hammer Editor for the Goldsource engine (and hopefully soon for Source too).
+Sledge is an open-source alternative to Valve's Hammer Editor for the Goldsource engine.
 It is written in .NET and uses [Veldrid][2] for rendering, with DirectX 10.
 
-Currently, Sledge supports Goldsource mapping and will be extended to support other BSP-based engines such as Source and Quake.
+Sledge supports Goldsource mapping but is rather incomplete and buggy. Please consider the following alternate projects:
 
-While progress is slow, I have every intention of continuing work on this project.
-The current focus is on Goldsource support. After that, Source will be added, followed by a plugin system and more features.
+- [TrenchBroom](https://github.com/kduske/TrenchBroom) (as of writing, has partial support for HL, hopefully more support is coming)
+- Valve Hammer Editor
+- [JACK](http://jack.hlfx.ru/en/download.html) (the free version, don't pay for it)
+- Older editors such as QuArK, BSP, Radiant, etc.
 
 The Sledge Editor is licensed under BSD-3.
 
