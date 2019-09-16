@@ -14,6 +14,8 @@ namespace Sledge.Rendering.Overlay
 
         private int _numObjects;
         private int _viewportId;
+        private ImDrawListPtr _currentList;
+
         private const int MaxObjects = 1000;
 
         public ImGui2DRenderer(IViewport viewport, ImGuiController controller)
@@ -35,10 +37,12 @@ namespace Sledge.Rendering.Overlay
             ImGui.SetNextWindowSizeConstraints(new Vector2(_viewport.Width, _viewport.Height), new Vector2(_viewport.Width, _viewport.Height));
             ImGui.SetNextWindowBgAlpha(0);
             ImGui.Begin("Viewport" + _viewportId++, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoNav);
+            _currentList = ImGui.GetWindowDrawList();
         }
 
         private void EndWindow()
         {
+            _currentList = null;
             ImGui.End();
         }
 
@@ -52,7 +56,7 @@ namespace Sledge.Rendering.Overlay
             }
 
             _numObjects += numObjects;
-            return ImGui.GetWindowDrawList();
+            return _currentList;
         }
 
         public void AddRect(Vector2 start, Vector2 end, Color color, bool antiAliased = false)

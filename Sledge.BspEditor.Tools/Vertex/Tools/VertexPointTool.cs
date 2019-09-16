@@ -14,6 +14,7 @@ using Sledge.BspEditor.Tools.Draggable;
 using Sledge.BspEditor.Tools.Vertex.Controls;
 using Sledge.BspEditor.Tools.Vertex.Selection;
 using Sledge.Common;
+using Sledge.Common.Threading;
 using Sledge.Common.Translations;
 using Sledge.DataStructures.Geometric;
 using Sledge.Rendering.Cameras;
@@ -600,13 +601,13 @@ namespace Sledge.BspEditor.Tools.Vertex.Tools
         {
             public VertexPointTool Tool { get; set; }
             public VertexSolid Solid { get; set; }
-            public List<VertexPoint> Points { get; set; }
+            public IList<VertexPoint> Points { get; set; }
             
             public VertexList(VertexPointTool tool, VertexSolid solid)
             {
                 Tool = tool;
                 Solid = solid;
-                Points = new List<VertexPoint>();
+                Points = new ThreadSafeList<VertexPoint>();
                 Update();
             }
 

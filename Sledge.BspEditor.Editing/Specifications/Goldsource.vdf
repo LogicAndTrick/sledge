@@ -199,6 +199,15 @@ Specification
 			Description "Manually specify the path to the directory containing the wad.cfg file instead of using the default folder."
 			Type "Folder"
 		}
+
+		Parameter
+		{
+			Name "Wad Include"
+			Flag "-wadinclude"
+			Description "Choose a WAD file to include in the map."
+			Type "File"
+			Filter "WAD files (*.wad)|*.wad"
+		}
 	}
 
 	Tool
